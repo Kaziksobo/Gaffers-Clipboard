@@ -29,11 +29,11 @@ The goal of this phase is to build the basic application framework around the pr
 - [x] Create the project file structure (`src`, `docs`, `assets`).
 - [x] Set up Obsidian vault in the `docs` folder.
 - [x] Create a virtual environment (`venv`) with system-site-packages.
-- [ ] **Move OCR Logic:**
-    - [ ] Create `src/ocr.py`.
-    - [ ] Move the template matching code into a reusable function within this file (e.g., `recognize_digit()`).
+- [x] **Move OCR Logic:**
+    - [x] Create `src/ocr.py`.
+    - [x] Move the template matching code into a reusable function within this file (e.g., `recognize_digit()`).
 - [ ] **Build the Basic GUI:**
-    - [ ] Create `src/gui.py`.
+    - [x] Create `src/gui.py`.
     - [ ] Using Tkinter, create a simple window with a text label and a "Capture" button, based on the [initial mock-up](basic_mockup.png).
 - [ ] **Create Main Entry Point:**
     - [ ] Create `src/__main__.py`.
@@ -63,7 +63,7 @@ The goal of this phase is to expand the application to handle all the required s
     - [ ] For each stats screen (Team, Player, etc.), create a configuration file or dictionary that maps every stat to its pixel coordinates on the screen.
 - [ ] **Expand OCR Capabilities:**
     - [ ] Create datasets for letters and symbols.
-    - [ ] Implement color masking to handle text that isn't white (e.g., player attributes).
+    - [ ] Implement colour masking to handle text that isn't white (e.g., player attributes).
 - [ ] **Build the Validator GUI:**
     - [ ] Create a new window that appears after a screen is captured.
     - [ ] Display all the extracted stats in editable text fields.
