@@ -16,5 +16,4 @@ def get_stat_roi(image_path, coords) -> np.ndarray:
     source_image = cv.imread(image_path)
     x1, y1, x2, y2 = coords
     roi = source_image[y1:y2, x1:x2]
-    resized_roi = cv.resize(roi, STANDARD_SIZE, interpolation=cv.INTER_CUBIC)
-    return resized_roi
+    return cv.resize(roi, STANDARD_SIZE, interpolation=cv.INTER_CUBIC)
