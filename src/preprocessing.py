@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-from OCR import STANDARD_SIZE
+from ocr import STANDARD_SIZE
 
 def get_stat_roi(image_path, coords) -> np.ndarray:
     '''Get the region of interest (ROI) from the image.
