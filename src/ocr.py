@@ -16,7 +16,8 @@ def load_templates() -> dict[int, np.ndarray]:
     for digit in range(10):
         grey_template = cv.imread(str(templates_dir / f"{digit}.png"), cv.IMREAD_GRAYSCALE)
         resized_template = cv.resize(grey_template, STANDARD_SIZE, interpolation=cv.INTER_CUBIC)
-        templates[digit] = resized_template
+        blurred_template = cv.GaussianBlur(resized_template, (5, 5), 0)
+        templates[digit] = blurred_template
     return templates
 
 def recognise_digit(roi_image: np.ndarray, templates: dict[int, np.ndarray]) -> int | None:

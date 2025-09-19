@@ -20,8 +20,8 @@ class App:
     def capture_and_recognise(self):
         '''Capture the screen and recognise the stats.
         '''
-        image_path = "C:\\Users\\kazik\\projects\\OCRtest\\source_images\\match_overview.png"
-        coords = (640, 430, 658, 454)
+        image_path = "C:\\Users\\kazik\\projects\\OCRtest\\source_images\\defending.png"
+        coords = (704, 105, 722, 128)
         templates = load_templates()
         roi_image = get_stat_roi(image_path, coords)
         recognised_digit = recognise_digit(roi_image, templates)

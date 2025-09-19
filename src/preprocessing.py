@@ -16,4 +16,5 @@ def get_stat_roi(image_path, coords) -> np.ndarray:
     source_image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
     x1, y1, x2, y2 = coords
     roi = source_image[y1:y2, x1:x2]
-    return cv.resize(roi, STANDARD_SIZE, interpolation=cv.INTER_CUBIC)
+    blurred_roi = cv.GaussianBlur(roi, (5, 5), 0)
+    return cv.resize(blurred_roi, STANDARD_SIZE, interpolation=cv.INTER_CUBIC)
