@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 
 STANDARD_SIZE = (30, 35)
+CONFIDENCE_THRESHOLD = 0.5
 
 def load_templates() -> dict[int, np.ndarray]:
     '''Load digit templates for recognition.
@@ -39,4 +40,4 @@ def recognise_digit(roi_image: np.ndarray, templates: dict[int, np.ndarray]) -> 
         if max_val > best_match_value:
             best_match_value = max_val
             best_match = digit
-    return best_match
+    return best_match if best_match_value >= CONFIDENCE_THRESHOLD else None
