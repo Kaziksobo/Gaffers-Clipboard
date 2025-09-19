@@ -3,7 +3,11 @@ from src.ocr import load_templates, recognise_digit
 from src.preprocessing import get_stat_roi
 
 class App:
+    '''Main application class for the gaffer's clipboard.
+    '''
     def __init__(self):
+        '''Initialize the application.
+        '''
         self.root = tk.Tk()
         self.root.title("The gaffer's clipboard")
         
@@ -14,6 +18,8 @@ class App:
         self.capture_button.pack()
     
     def capture_and_recognise(self):
+        '''Capture the screen and recognise the stats.
+        '''
         image_path = "C:\\Users\\kazik\\projects\\OCRtest\\source_images\\match_overview.png"
         coords = (640, 430, 658, 454)
         templates = load_templates()
