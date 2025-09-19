@@ -2,8 +2,6 @@ import cv2 as cv
 import numpy as np
 from pathlib import Path
 
-from preprocessing import get_stat_roi
-
 STANDARD_SIZE = (30, 35)
 
 def load_templates() -> dict[int, np.ndarray]:
