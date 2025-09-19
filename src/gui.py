@@ -1,6 +1,5 @@
 import tkinter as tk
-from src.ocr import load_templates, recognise_digit
-from src.preprocessing import get_stat_roi
+from src.ocr import load_templates, recognise_digit, get_stat_roi
 
 class App:
     '''Main application class for the gaffer's clipboard.
