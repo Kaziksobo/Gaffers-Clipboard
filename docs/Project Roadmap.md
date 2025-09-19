@@ -34,12 +34,12 @@ The goal of this phase is to build the basic application framework around the pr
     - [x] Move the template matching code into a reusable function within this file (e.g., `recognize_digit()`).
 - [ ] **Build the Basic GUI:**
     - [x] Create `src/gui.py`.
-    - [ ] Using Tkinter, create a simple window with a text label and a "Capture" button, based on the [initial mock-up](basic_mockup.png).
+    - [x] Using Tkinter, create a simple window with a text label and a "Capture" button, based on the [initial mock-up](basic_mockup.png).
 - [ ] **Create Main Entry Point:**
-    - [ ] Create `src/__main__.py`.
-    - [ ] Write the code to launch the GUI from this file.
-- [ ] **Integrate Logic:**
-    - [ ] Connect the "Capture" button to a function that:
+    - [x] Create `src/__main__.py`.
+    - [x] Write the code to launch the GUI from this file.
+- [x] **Integrate Logic:**
+    - [x] Connect the "Capture" button to a function that:
         1.  Loads the static screenshot (`fifa_screenshot.png`).
         2.  Crops to the pre-defined ROI for a single digit.
         3.  Passes the cropped image to the `recognize_digit()` function.
@@ -56,6 +56,8 @@ The goal of this phase is to build the basic application framework around the pr
 The goal of this phase is to expand the application to handle all the required stats from every screen and ensure the data is accurate before saving.
 
 ### To-Do List:
+- [ ] **Pre-processing to handle colour**
+	- [ ] Implement colour masking to handle text that isn't white (e.g., player attributes).
 - [ ] **Implement Live Screen Capture:**
     - [ ] Integrate the `mss` library to replace `cv2.imread()`.
     - [ ] Allow the application to capture a screen region in a loop.
