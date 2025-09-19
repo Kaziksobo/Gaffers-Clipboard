@@ -19,45 +19,48 @@ The primary goal of this phase was to prove that we can reliably identify a sing
 
 ## Phase 2: The Application Skeleton
 
-**Status: In Progress**
+**Status: Complete**
 
-The goal of this phase is to build the basic application framework around the proven OCR logic. This involves creating the project structure and a simple user interface.
+The goal of this phase was to build the basic application framework around the proven OCR logic. This involves creating the project structure and a simple user interface. This has been successfully completed, using Tkinter to create the basic GUI, and integrating the OCR logic to read a digit from a static image when a button is pressed.
 
-### To-Do List:
-- [x] Create the main project repository (`Gaffers-Clipboard`).
-- [x] Initialize Git (`git init`).
-- [x] Create the project file structure (`src`, `docs`, `assets`).
-- [x] Set up Obsidian vault in the `docs` folder.
-- [x] Create a virtual environment (`venv`) with system-site-packages.
-- [x] **Move OCR Logic:**
-    - [x] Create `src/ocr.py`.
-    - [x] Move the template matching code into a reusable function within this file (e.g., `recognize_digit()`).
-- [ ] **Build the Basic GUI:**
-    - [x] Create `src/gui.py`.
-    - [x] Using Tkinter, create a simple window with a text label and a "Capture" button, based on the [initial mock-up](basic_mockup.png).
-- [ ] **Create Main Entry Point:**
-    - [x] Create `src/__main__.py`.
-    - [x] Write the code to launch the GUI from this file.
-- [x] **Integrate Logic:**
-    - [x] Connect the "Capture" button to a function that:
-        1.  Loads the static screenshot (`fifa_screenshot.png`).
-        2.  Crops to the pre-defined ROI for a single digit.
-        3.  Passes the cropped image to the `recognize_digit()` function.
-        4.  Updates the GUI's text label with the returned digit.
-
-**🏁 End Goal for Phase 2:** A working desktop application with a button that can read a digit from a saved image and display the result in the window.
+### Key Achievements:
+- [x] A working Tkinter window with a button and label.
+- [x] Integrated OCR logic to read a digit from a static image.
+- [x] The label updates correctly when the button is pressed.
+- [x] GitHub repository and file structure created.
+- [x] Documentation for project planning written out.
 
 ---
 
-## Phase 3: Full Data Extraction & Validation
+## Phase 3: GUI development
+
+***Status: In Progress***
+
+The goal of this phase is to build out the GUI to guide the user through capturing all the required stats from each screen, validating the data, and saving it to a JSON file. 
+
+### To-Do List:
+- [ ] **Create the home screen**
+    - [ ] Use Tkinter to create a window like shown in [Home Screen Mockup](homescreen_mockup.png).
+    - [ ] Create buttons
+- [ ] **Create the stats capture screens**
+    - [ ] Use the following mockups as a reference for a overall match stats capture screen, and a player stats capture screen:
+        - [Overall Match Stats Capture Mockup](overall_stats_mockup.png)
+        - [Player Stats Capture Mockup](player_stats_mockup.png)
+    - [ ] Each stat should be a text field, auto-filled with the recognised value, but editable by the user.
+    - [ ] Any stats the OCR fails to read should be left blank for the user to fill in.
+- [ ] **Implement navigation between screens**
+    - [ ] Use Tkinter frames to switch between different screens.
+    - [ ] Use buttons to start the capture process, and then start by using timers to allow the user to switch to the correct screen in FIFA.
+
+**End Goal for Phase 3:** The interface is designed and implemented. The user can navigate between screens, and placeholders for the OCR results are in place inside the editable text fields.
+
+## Phase 4: Full Data Extraction & Screen Capture
 
 **Status: Not Started**
 
 The goal of this phase is to expand the application to handle all the required stats from every screen and ensure the data is accurate before saving.
 
 ### To-Do List:
-- [ ] **Pre-processing to handle colour**
-	- [ ] Implement colour masking to handle text that isn't white (e.g., player attributes).
 - [ ] **Implement Live Screen Capture:**
     - [ ] Integrate the `mss` library to replace `cv2.imread()`.
     - [ ] Allow the application to capture a screen region in a loop.
@@ -65,19 +68,18 @@ The goal of this phase is to expand the application to handle all the required s
     - [ ] For each stats screen (Team, Player, etc.), create a configuration file or dictionary that maps every stat to its pixel coordinates on the screen.
 - [ ] **Expand OCR Capabilities:**
     - [ ] Create datasets for letters and symbols.
-    - [ ] Implement colour masking to handle text that isn't white (e.g., player attributes).
-- [ ] **Build the Validator GUI:**
-    - [ ] Create a new window that appears after a screen is captured.
-    - [ ] Display all the extracted stats in editable text fields.
-    - [ ] Include "Confirm" and "Cancel" buttons.
+    - [ ] Ensure multiple digit numbers can be read.
+- [ ] **Connect the results to the GUI:**
+    - [ ] Update the GUI to display the extracted stats as placeholders in the editable text fields.
+    - [ ] Ensure the user can edit any incorrectly read stats.
 - [ ] **Save to JSON:**
     - [ ] Upon confirmation, save the validated data to a new JSON file, using the structure from `Templates.json`.
 
-**🏁 End Goal for Phase 3:** The core application is feature-complete. The user can be guided through each stats screen, capture the data, validate it, and save a complete match file.
+**End Goal for Phase 4:** The core application is feature-complete. The user can be guided through each stats screen, capture the data, validate it, and save a complete match file.
 
 ---
 
-## Phase 4: Analysis and Insights
+## Phase 5: Analysis and Insights
 
 **Status: Not Started**
 
