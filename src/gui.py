@@ -1,5 +1,6 @@
 import tkinter as tk
 from src.ocr import load_templates, recognise_digit, get_stat_roi
+from src.theme import THEME
 
 class App:
     '''Main application class for the gaffer's clipboard.
@@ -9,13 +10,47 @@ class App:
         '''
         self.root = tk.Tk()
         self.root.title("The gaffer's clipboard")
+        self.root.geometry("800x600")
         
-        self.info_label = tk.Label(self.root, text="Navigate to the Team Stats screen.")
-        self.capture_button = tk.Button(self.root, text="Capture stats", command=self.capture_and_recognise)
+        main_menu_frame = tk.Frame(self.root, bg=THEME["colors"]["background"])
+        main_menu_frame.pack(fill="both", expand=True)
+        
+        welcome_label = tk.Label(
+            main_menu_frame,
+            text="Welcome back, gaffer!",
+            font=THEME["fonts"]["title"],
+            fg=THEME["colors"]["primary_text"],
+            bg=THEME["colors"]["background"]
+        )
+        welcome_label.pack(pady=(50, 10))
 
-        self.info_label.pack()
-        self.capture_button.pack()
-    
+        sub_label = tk.Label(
+            main_menu_frame,
+            text="What would you like to do",
+            font=THEME["fonts"]["body"],
+            fg=THEME["colors"]["secondary_text"],
+            bg=THEME["colors"]["background"]
+        )
+        sub_label.pack(pady=(0, 50))
+        
+        add_match_button = tk.Button(
+            main_menu_frame,
+            text="Add Match",
+            font=THEME["fonts"]["button"],
+            fg=THEME["colors"]["primary_text"],
+            bg=THEME["colors"]["button_bg"],
+        )
+        add_match_button.pack(pady=10)
+        
+        update_attributes_button = tk.Button(
+            main_menu_frame,
+            text="Update Player Attributes",
+            font=THEME["fonts"]["button"],
+            fg=THEME["colors"]["primary_text"],
+            bg=THEME["colors"]["button_bg"],
+        )
+        update_attributes_button.pack(pady=10)
+
     def capture_and_recognise(self):
         '''Capture the screen and recognise the stats.
         '''
