@@ -4,19 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "067e8189da5a3421",
+        "id": "a621fd27bd413374",
         "type": "tabs",
         "children": [
           {
-            "id": "d8aae6305f9bf420",
+            "id": "11805da58fe51b3e",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "homescreen_mockup.png"
+                "file": "Project Roadmap.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "homescreen_mockup"
+              "icon": "lucide-file",
+              "title": "Project Roadmap"
             }
           }
         ]
@@ -167,11 +169,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "d8aae6305f9bf420",
+  "active": "11805da58fe51b3e",
   "lastOpenFiles": [
-    "basic_mockup.png",
     "homescreen_mockup.png",
     "Project Roadmap.md",
+    "basic_mockup.png",
     "image_f5cb08.png.md",
     "basic_mockup.md"
   ]

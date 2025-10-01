@@ -40,12 +40,12 @@ The goal of this phase is to build out the GUI to guide the user through capturi
 
 ### To-Do List:
 - [ ] **Create the home screen**
-    - [ ] Use Tkinter to create a window like shown in [Home Screen Mockup](homescreen_mockup.png).
+    - [ ] Use Tkinter to create a window like shown in [Home Screen Mock-up](homescreen_mockup.png).
     - [ ] Create buttons
 - [ ] **Create the stats capture screens**
-    - [ ] Use the following mockups as a reference for a overall match stats capture screen, and a player stats capture screen:
-        - [Overall Match Stats Capture Mockup](overall_stats_mockup.png)
-        - [Player Stats Capture Mockup](player_stats_mockup.png)
+    - [ ] Use the following mock-ups as a reference for a overall match stats capture screen, and a player stats capture screen:
+        - [Overall Match Stats Capture Mock-up](overall_stats_mockup.png)
+        - [Player Stats Capture Mock-up](player_stats_mockup.png)
     - [ ] Each stat should be a text field, auto-filled with the recognised value, but editable by the user.
     - [ ] Any stats the OCR fails to read should be left blank for the user to fill in.
 - [ ] **Implement navigation between screens**
