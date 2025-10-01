@@ -13,10 +13,10 @@
             "state": {
               "type": "image",
               "state": {
-                "file": "basic_mockup.png"
+                "file": "homescreen_mockup.png"
               },
               "icon": "lucide-image",
-              "title": "basic_mockup"
+              "title": "homescreen_mockup"
             }
           }
         ]
@@ -169,9 +169,9 @@
   },
   "active": "d8aae6305f9bf420",
   "lastOpenFiles": [
+    "basic_mockup.png",
     "homescreen_mockup.png",
     "Project Roadmap.md",
-    "basic_mockup.png",
     "image_f5cb08.png.md",
     "basic_mockup.md"
   ]
