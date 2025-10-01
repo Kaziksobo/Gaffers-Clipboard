@@ -40,8 +40,8 @@ The goal of this phase is to build out the GUI to guide the user through capturi
 
 ### To-Do List:
 - [ ] **Create the home screen**
-    - [ ] Use Tkinter to create a window like shown in [Home Screen Mock-up](homescreen_mockup.png).
-    - [ ] Create buttons
+    - [x] Use Tkinter to create a window like shown in [Home Screen Mock-up](homescreen_mockup.png).
+    - [x] Create buttons, function not required yet
 - [ ] **Create the stats capture screens**
     - [ ] Use the following mock-ups as a reference for a overall match stats capture screen, and a player stats capture screen:
         - [Overall Match Stats Capture Mock-up](overall_stats_mockup.png)
