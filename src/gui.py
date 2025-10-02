@@ -9,8 +9,25 @@ class App(ctk.CTk):
         self.title("Gaffer's Clipboard")
         self.geometry("800x600")
         self.minsize(600, 400)
-        # Show main menu frame
-        self.main_menu = MainMenuFrame(self, THEME)
+        
+        container = ctk.CTkFrame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+        
+        self.frames = {}
+        
+        for F in (MainMenuFrame,):
+            frame = F(container, THEME)
+            self.frames[F] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
+        
+        self.show_frame(MainMenuFrame)
+        
+    def show_frame(self, page_class):
+        frame = self.frames[page_class]
+        frame.tkraise()
+        
 
     # def capture_and_recognise(self):
     #     '''Capture the screen and recognise the stats.
