@@ -86,13 +86,41 @@ class PlayerStatsFrame(ctk.CTkFrame):
         for i, stat in enumerate(stat_names):
             self.create_stat_row(i+1, stat, theme)
         
-        # Direction label
+        # Direction subgrid
+        self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.direction_frame.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
+        self.direction_frame.grid_columnconfigure(0, weight=1)
+        self.direction_frame.grid_columnconfigure(1, weight=1)
+        self.direction_frame.grid_columnconfigure(2, weight=1)
+
         self.direction_label = ctk.CTkLabel(
-            self, text="Please navigate to the next player's stats",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            self.direction_frame,
+            text="Please navigate to the next player's stats",
+            fg_color=theme["colors"]["button_bg"],
+            text_color=theme["colors"]["secondary_text"],
+            font=theme["fonts"]["button"],
         )
-        self.direction_label.grid(row=4, column=1, pady=(0, 20))
+        self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
+        self.done_button = ctk.CTkButton(
+            self.direction_frame,
+            text="Done",
+            fg_color=theme["colors"]["button_bg"],
+            text_color=theme["colors"]["secondary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+        )
+        self.done_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
+
+        self.all_players_added_button = ctk.CTkButton(
+            self.direction_frame,
+            text="All Players Added",
+            fg_color=theme["colors"]["button_bg"],
+            text_color=theme["colors"]["secondary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
+        )
+        self.all_players_added_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
     
     def create_stat_row(self, row, stat_name, theme):
         self.user_stat_value = ctk.StringVar(value="0")

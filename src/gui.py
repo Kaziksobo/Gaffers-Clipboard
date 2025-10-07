@@ -5,6 +5,7 @@ from src.views.main_menu_frame import MainMenuFrame
 from src.views.add_match_frame import AddMatchFrame
 from src.views.match_stats_frame import MatchStatsFrame
 from src.views.player_stats_frame import PlayerStatsFrame
+from src.views.match_added_frame import MatchAddedFrame
 
 class App(ctk.CTk):
     def __init__(self):
@@ -20,7 +21,7 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame):
+        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -28,8 +29,15 @@ class App(ctk.CTk):
         self.show_frame(MainMenuFrame)
         
     def show_frame(self, page_class):
-        frame = self.frames[page_class]
+        frame = (self.frames[page_class])
         frame.tkraise()
+
+    def get_frame_class(self, name):
+        """Return the frame class object by its class name string."""
+        for cls in self.frames:
+            if cls.__name__ == name:
+                return cls
+        raise ValueError(f"No frame class named '{name}' found.")
         
 
     # def capture_and_recognise(self):
