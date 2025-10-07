@@ -1,11 +1,10 @@
 import customtkinter as ctk
+from src.views.add_match_frame import AddMatchFrame
 
 class MainMenuFrame(ctk.CTkFrame):
-    def __init__(self, parent, theme):
+    def __init__(self, parent, controller, theme):
         super().__init__(parent, fg_color=theme["colors"]["background"])
-
-        self.pack(expand=True, fill="both")
-        self.pack_propagate(False)
+        self.controller = controller
 
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
@@ -56,6 +55,7 @@ class MainMenuFrame(ctk.CTkFrame):
             bg_color=theme["colors"]["background"],
             font=theme["fonts"]["button"],
             text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"]
+            hover_color=theme["colors"]["accent"],
+            command=lambda: self.controller.show_frame(AddMatchFrame)
         )
         self.add_match_button.pack(side="right", padx=(10, 0), pady=10)
