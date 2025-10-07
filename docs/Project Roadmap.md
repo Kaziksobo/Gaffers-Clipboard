@@ -42,12 +42,12 @@ The goal of this phase is to build out the GUI to guide the user through capturi
 - [ ] **Create the home screen**
     - [x] Use Tkinter to create a window like shown in [Home Screen Mock-up](homescreen_mockup.png).
     - [x] Create buttons, function not required yet
-- [ ] **Create the stats capture screens**
-    - [ ] Use the following mock-ups as a reference for a overall match stats capture screen, and a player stats capture screen:
+- [x] **Create the stats capture screens**
+    - [x] Use the following mock-ups as a reference for a overall match stats capture screen, and a player stats capture screen:
         - [Overall Match Stats Capture Mock-up](overall_stats_mockup.png)
         - [Player Stats Capture Mock-up](player_stats_mockup.png)
-    - [ ] Each stat should be a text field, auto-filled with the recognised value, but editable by the user.
-    - [ ] Any stats the OCR fails to read should be left blank for the user to fill in.
+    - [x] Each stat should be a text field, auto-filled with the recognised value, but editable by the user.
+    - [x] Any stats the OCR fails to read should be left blank for the user to fill in.
 - [ ] **Implement navigation between screens**
     - [ ] Use Tkinter frames to switch between different screens.
     - [ ] Use buttons to start the capture process, and then start by using timers to allow the user to switch to the correct screen in FIFA.

@@ -11,12 +11,14 @@
             "id": "11805da58fe51b3e",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "overall_stats_mockup.png"
+                "file": "Project Roadmap.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "overall_stats_mockup"
+              "icon": "lucide-file",
+              "title": "Project Roadmap"
             }
           }
         ]
@@ -169,10 +171,10 @@
   },
   "active": "11805da58fe51b3e",
   "lastOpenFiles": [
+    "overall_stats_mockup.png",
     "homescreen_mockup.png",
     "basic_mockup.png",
     "Project Roadmap.md",
-    "overall_stats_mockup.png",
     "player_stats_mockup.png",
     "image_f5cb08.png.md",
     "basic_mockup.md"
