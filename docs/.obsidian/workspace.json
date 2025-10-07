@@ -13,10 +13,10 @@
             "state": {
               "type": "image",
               "state": {
-                "file": "homescreen_mockup.png"
+                "file": "overall_stats_mockup.png"
               },
               "icon": "lucide-image",
-              "title": "homescreen_mockup"
+              "title": "overall_stats_mockup"
             }
           }
         ]
@@ -169,11 +169,11 @@
   },
   "active": "11805da58fe51b3e",
   "lastOpenFiles": [
-    "overall_stats_mockup.png",
-    "player_stats_mockup.png",
     "homescreen_mockup.png",
     "basic_mockup.png",
     "Project Roadmap.md",
+    "overall_stats_mockup.png",
+    "player_stats_mockup.png",
     "image_f5cb08.png.md",
     "basic_mockup.md"
   ]

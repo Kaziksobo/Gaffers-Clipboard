@@ -2,6 +2,9 @@ from src.ocr import load_templates, recognise_digit, get_stat_roi
 from src.theme import THEME
 import customtkinter as ctk
 from src.views.main_menu_frame import MainMenuFrame
+from src.views.add_match_frame import AddMatchFrame
+from src.views.match_stats_frame import MatchStatsFrame
+from src.views.player_stats_frame import PlayerStatsFrame
 
 class App(ctk.CTk):
     def __init__(self):
@@ -17,8 +20,8 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (MainMenuFrame,):
-            frame = F(container, THEME)
+        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame):
+            frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
         
