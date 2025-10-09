@@ -1,11 +1,16 @@
+import customtkinter as ctk
+import time
+import pyautogui
+from pathlib import Path
 from src.ocr import load_templates, recognise_digit, get_stat_roi
 from src.theme import THEME
-import customtkinter as ctk
 from src.views.main_menu_frame import MainMenuFrame
 from src.views.add_match_frame import AddMatchFrame
 from src.views.match_stats_frame import MatchStatsFrame
 from src.views.player_stats_frame import PlayerStatsFrame
 from src.views.match_added_frame import MatchAddedFrame
+
+PROJECT_ROOT = Path(__file__).parent.parent
 
 class App(ctk.CTk):
     def __init__(self):
@@ -38,7 +43,19 @@ class App(ctk.CTk):
             if cls.__name__ == name:
                 return cls
         raise ValueError(f"No frame class named '{name}' found.")
+    
+    def capture_screenshot(self, is_it_player, delay=3):
+        global PROJECT_ROOT
+        print(f"Capturing screenshot in {delay} seconds...")
+        time.sleep(delay)
+        capture_folder = PROJECT_ROOT / "screenshots"
+        capture_folder.mkdir(parents=True, exist_ok=True)
+        filename = f"stats_capture_{int(time.time())}.png"
+        self.screenshot_path = capture_folder / filename
         
+        pyautogui.screenshot(self.screenshot_path)
+
+        print(f"Screenshot saved to {self.screenshot_path}")
 
     # def capture_and_recognise(self):
     #     '''Capture the screen and recognise the stats.

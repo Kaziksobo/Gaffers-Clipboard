@@ -20,6 +20,10 @@ class AddMatchFrame(ctk.CTkFrame):
             fg_color=theme["colors"]["button_bg"],
             text_color=theme["colors"]["secondary_text"],
             font=theme["fonts"]["button"],
-            command=lambda: self.controller.show_frame(self.controller.get_frame_class("MatchStatsFrame"))
+            command=lambda: self.on_done_button_press()
         )
         self.done_button.pack(pady=10)
+    
+    def on_done_button_press(self):
+        self.controller.capture_screenshot(is_it_player=False)
+        self.controller.show_frame(self.controller.get_frame_class("MatchStatsFrame"))

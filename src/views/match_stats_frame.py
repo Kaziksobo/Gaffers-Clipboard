@@ -106,7 +106,7 @@ class MatchStatsFrame(ctk.CTkFrame):
             fg_color=theme["colors"]["button_bg"],
             text_color=theme["colors"]["secondary_text"],
             font=theme["fonts"]["button"],
-            command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+            command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
     
@@ -134,3 +134,7 @@ class MatchStatsFrame(ctk.CTkFrame):
             text_color=theme["colors"]["secondary_text"]
         )
         self.opponent_stat_entry.grid(row=row, column=4, padx=5, pady=5)
+    
+    def on_done_button_press(self):
+        self.controller.capture_screenshot(is_it_player=True)
+        self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
