@@ -13,6 +13,9 @@ from src.views.match_added_frame import MatchAddedFrame
 PROJECT_ROOT = Path(__file__).parent.parent
 
 class App(ctk.CTk):
+    # Default screenshot delay (seconds) used when no explicit delay is provided
+    DEFAULT_SCREENSHOT_DELAY = 3
+
     def __init__(self) -> None:
         '''    
         Initialize the main application window, set up the frame container,
@@ -39,6 +42,8 @@ class App(ctk.CTk):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
+        
+        self.screenshot_delay = self.DEFAULT_SCREENSHOT_DELAY
         
         self.show_frame(MainMenuFrame)
 
@@ -68,13 +73,17 @@ class App(ctk.CTk):
                 return cls
         raise ValueError(f"No frame class named '{name}' found.")
 
-    def capture_screenshot(self, is_it_player: bool, delay: int = 3) -> None:
+    def capture_screenshot(self, is_it_player: bool, delay: int | None = None) -> None:
         '''Capture a screenshot after a delay.
 
         Args:
             is_it_player (bool): Whether the screenshot is for a player.
-            delay (int, optional): Delay before taking the screenshot. Defaults to 3.
+            delay (int | None, optional): Delay before taking the screenshot. If None,
+                uses the application's `screenshot_delay` (defaults to
+                `App.DEFAULT_SCREENSHOT_DELAY`).
         '''
+        if delay is None:
+            delay = self.screenshot_delay
         global PROJECT_ROOT
         print(f"Capturing screenshot in {delay} seconds...")
         time.sleep(delay)
