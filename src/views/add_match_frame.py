@@ -1,7 +1,15 @@
 import customtkinter as ctk
+from gui import App
 
 class AddMatchFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme):
+    def __init__(self, parent: ctk.CTk, controller: App, theme: dict) -> None:
+        '''Frame for adding a match. Basic layout with a label and a button, used to start the match capture process.
+
+        Args:
+            parent (CTk): The parent CTk window.
+            controller (App): The main application controller.
+            theme (dict): The theme dictionary containing colors and fonts.
+        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
 
@@ -24,6 +32,8 @@ class AddMatchFrame(ctk.CTkFrame):
         )
         self.done_button.pack(pady=10)
     
-    def on_done_button_press(self):
+    def on_done_button_press(self) -> None:
+        '''Handle the done button press event, initiating screenshot capture and navigating to MatchStatsFrame.
+        '''
         self.controller.capture_screenshot(is_it_player=False)
         self.controller.show_frame(self.controller.get_frame_class("MatchStatsFrame"))

@@ -1,7 +1,15 @@
 import customtkinter as ctk
+from gui import App
 
 class MainMenuFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme):
+    def __init__(self, parent: ctk.CTk, controller: App, theme: dict) -> None:
+        '''Main menu frame for the application.
+
+        Args:
+            parent (CTk): The parent CTk window.
+            controller (App): The main application controller.
+            theme (dict): The theme dictionary containing colors and fonts.
+        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
 

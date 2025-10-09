@@ -1,7 +1,15 @@
 import customtkinter as ctk
+from gui import App
 
 class PlayerStatsFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme):
+    def __init__(self, parent: ctk.CTk, controller: App, theme: dict) -> None:
+        '''Frame for displaying player statistics in editable text boxes.
+
+        Args:
+            parent (ctk.CTk): The parent CTk window.
+            controller (App): The main application controller.
+            theme (dict): The theme dictionary containing colors and fonts.
+        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -121,8 +129,15 @@ class PlayerStatsFrame(ctk.CTkFrame):
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
         )
         self.all_players_added_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
-    
-    def create_stat_row(self, row, stat_name, theme):
+
+    def create_stat_row(self, row: int, stat_name: str, theme: dict) -> None:
+        '''Create a row in the stats grid for a specific statistic.
+
+        Args:
+            row (int): The row number in the grid.
+            stat_name (str): The name of the statistic.
+            theme (dict): The theme dictionary containing colors and fonts.
+        '''
         self.user_stat_value = ctk.StringVar(value="0")
         self.user_stat_entry = ctk.CTkEntry(
             self.stats_grid,
@@ -146,7 +161,9 @@ class PlayerStatsFrame(ctk.CTkFrame):
             text_color=theme["colors"]["secondary_text"]
         )
         self.opponent_stat_entry.grid(row=row, column=4, padx=5, pady=5)
-    
-    def on_next_player_button_press(self):
+
+    def on_next_player_button_press(self) -> None:
+        '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
+        '''
         self.controller.capture_screenshot(is_it_player=True)
         self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))

@@ -13,7 +13,16 @@ from src.views.match_added_frame import MatchAddedFrame
 PROJECT_ROOT = Path(__file__).parent.parent
 
 class App(ctk.CTk):
-    def __init__(self):
+    def __init__(self) -> None:
+        '''    
+        Initialize the main application window, set up the frame container,
+        register all navigation frames, and display the main menu.
+
+        - Sets window title, size, and minimum size.
+        - Creates a container frame for all pages.
+        - Instantiates and registers each frame (MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded).
+        - Displays the main menu frame on startup.
+        '''
         super().__init__()
         self.title("Gaffer's Clipboard")
         self.geometry("800x600")
@@ -32,19 +41,40 @@ class App(ctk.CTk):
             frame.grid(row=0, column=0, sticky="nsew")
         
         self.show_frame(MainMenuFrame)
-        
-    def show_frame(self, page_class):
+
+    def show_frame(self, page_class: type) -> None:
+        '''Show a frame for the given page class.
+
+        Args:
+            page_class (type): The class of the page to show.
+        '''
         frame = (self.frames[page_class])
         frame.tkraise()
 
-    def get_frame_class(self, name):
-        """Return the frame class object by its class name string."""
+    def get_frame_class(self, name: str) -> type:
+        '''Get the frame class by its name.
+
+        Args:
+            name (str): The name of the frame class.
+
+        Raises:
+            ValueError: If no frame class with the given name is found.
+
+        Returns:
+            type: The frame class corresponding to the given name.
+        '''
         for cls in self.frames:
             if cls.__name__ == name:
                 return cls
         raise ValueError(f"No frame class named '{name}' found.")
-    
-    def capture_screenshot(self, is_it_player, delay=3):
+
+    def capture_screenshot(self, is_it_player: bool, delay: int = 3) -> None:
+        '''Capture a screenshot after a delay.
+
+        Args:
+            is_it_player (bool): Whether the screenshot is for a player.
+            delay (int, optional): Delay before taking the screenshot. Defaults to 3.
+        '''
         global PROJECT_ROOT
         print(f"Capturing screenshot in {delay} seconds...")
         time.sleep(delay)
