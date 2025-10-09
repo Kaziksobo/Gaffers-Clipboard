@@ -56,7 +56,7 @@ The goal of this phase is to expand the application to handle all the required s
 	- [x] Create generalised controller methods for taking screenshots after a delay
 	- [x] Connect the "done" buttons in all appropriate frames.
 - [ ] **Map All Coordinates:**
-	- [ ] Create a new configuration file for storing stat coordinates.
+	- [x] Create a new configuration file for storing stat coordinates.
     - [ ] For each stats screen (Team, Player, etc.), store the coordinates of all required stats in the config file.
 - [ ] **Integrate OCR with Screenshots**
 	- [ ] Create a main processing function in the controller.
