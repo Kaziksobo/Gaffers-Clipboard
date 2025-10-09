@@ -1,8 +1,7 @@
 import customtkinter as ctk
-from gui import App
 
 class MatchStatsFrame(ctk.CTkFrame):
-    def __init__(self, parent: ctk.CTk, controller: App, theme: dict) -> None:
+    def __init__(self, parent, controller, theme: dict) -> None:
         '''Frame for displaying match statistics in editable text boxes.
 
         Args:
