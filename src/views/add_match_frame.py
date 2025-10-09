@@ -1,8 +1,7 @@
 import customtkinter as ctk
-from gui import App
 
 class AddMatchFrame(ctk.CTkFrame):
-    def __init__(self, parent: ctk.CTk, controller: App, theme: dict) -> None:
+    def __init__(self, parent, controller, theme: dict) -> None:
         '''Frame for adding a match. Basic layout with a label and a button, used to start the match capture process.
 
         Args:
@@ -13,14 +12,29 @@ class AddMatchFrame(ctk.CTkFrame):
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
 
+        # Create a container frame to center the labels vertically and horizontally
+        self.container = ctk.CTkFrame(self, fg_color="transparent")
+        self.container.pack(expand=True)
+
         self.label = ctk.CTkLabel(
-            self, 
+            self.container, 
             text="Navigate to the match stats screen", 
             font=theme["fonts"]["title"],
             text_color=theme["colors"]["primary_text"],
             anchor="center",
         )
-        self.label.pack(expand=True)
+        self.label.pack()
+
+        # Use the controller's configured screenshot delay so the label is not hardcoded
+        delay_seconds = getattr(self.controller, "screenshot_delay", 3)
+        self.sub_label = ctk.CTkLabel(
+            self.container,
+            text=f"Once you click done, you have {delay_seconds} seconds to switch to the game and correct screen.",
+            font=theme["fonts"]["body"],
+            text_color=theme["colors"]["secondary_text"],
+            anchor="center",
+        )
+        self.sub_label.pack()
 
         self.done_button = ctk.CTkButton(
             self,
