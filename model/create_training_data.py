@@ -20,7 +20,7 @@ templates = ocr.load_templates()
 
 image_path = Path(input("Enter the path to the screenshot image: ").strip().strip('"'))
 def collect_data(x1, y1, x2, y2, y_increment, iterations):
-    for _ in range(iterations):
+    for i in range(iterations):
         recognized_number, debug_rois = ocr.recognise_multiple_digits_from_roi(
             full_screenshot=cv.imread(image_path),
             templates=templates,
@@ -58,13 +58,13 @@ def collect_data(x1, y1, x2, y2, y_increment, iterations):
             if digit_dir.is_dir():
                 saved_counts[digit_dir.name] = len(list(digit_dir.glob("*.png")))
 
-        print("\n--- Saved Contours Summary ---")
-        for digit, count in sorted(saved_counts.items()):
-            print(f"Digit '{digit}': {count} contours")
-
         y1 += y_increment
         y2 += y_increment
-
+    
+    print("\n--- Saved Contours Summary ---")
+    for digit, count in sorted(saved_counts.items()):
+        print(f"Digit '{digit}': {count} contours")
+        
 
 if image_path.name.startswith("match"):
     collect_data(890, 348, 950, 372, 66, 15)
