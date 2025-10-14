@@ -1,10 +1,13 @@
 from pathlib import Path
+import sys
+project_root = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_root))
 import time
 import cv2 as cv
 from src import ocr
 from collections import Counter
 
-training_data_path = Path("./assets/training_data")
+training_data_path = project_root / "model" / "training_data"
 training_data_path.mkdir(exist_ok=True)
 
 for i in range(10):
@@ -15,7 +18,7 @@ print("Training directories set up.")
 
 templates = ocr.load_templates()
 
-image_path = Path(input("Enter the path to the screenshot image: ").strip())
+image_path = Path(input("Enter the path to the screenshot image: ").strip().strip('"'))
 def collect_data(x1, y1, x2, y2, y_increment, iterations):
     for _ in range(iterations):
         recognized_number, debug_rois = ocr.recognise_multiple_digits_from_roi(
