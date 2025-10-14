@@ -63,8 +63,7 @@ def collect_data(x1, y1, x2, y2, y_increment, iterations):
         y2 += y_increment
 
 
-player_or_match = input("Collecting data for (p)layer or (m)atch stats? ").strip().lower()
-if player_or_match == 'm':
+if image_path.name.startswith("match"):
     collect_data(890, 348, 950, 372, 66, 15)
     collect_data(1610, 348, 1670, 372, 66, 15)
 else:
