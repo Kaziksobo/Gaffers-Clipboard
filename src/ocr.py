@@ -26,6 +26,7 @@ class NoDigitsFoundError(OCRError):
     '''Raised when no digit-like contours are found in the ROI.'''
     pass
 
+
 def load_ocr_model() -> cv.ml.KNearest:
     '''
     Loads the KNN OCR model from the model directory.
@@ -57,111 +58,145 @@ def load_ocr_model() -> cv.ml.KNearest:
     print("KNN OCR model loaded successfully.")
     return knn
 
-def recognise_number(full_screenshot: np.ndarray, roi: tuple[int, int, int, int], ocr_model: cv.ml.KNearest, debug: bool = False) -> int | tuple[int | None, dict]:
-    '''Recognises a number from a specified region of interest (ROI) in a screenshot using an OCR model.
-    This function processes the given ROI by resizing, converting to grayscale, applying blurring, 
-    thresholding, and contour detection to isolate digit-like regions. Each detected digit is then 
-    classified using the provided OCR model.
+def preprocess_roi(
+    full_screenshot: np.ndarray,
+    roi: tuple[int, int, int, int],
+    *,
+    scale: int = 4,
+    blur_kernel: tuple[int, int] = (5, 5),
+    erode_kernel: tuple[int, int] = (3, 3),
+    erode_iterations: int = 2,
+    min_h: int = 18,
+    min_w: int = 8) -> dict:
+    '''Preprocesses a region of interest (ROI) from a screenshot for digit recognition.
+    This function extracts, resizes, and processes the ROI to enhance digit-like features, 
+    returning intermediate images and candidate digit regions.
 
     Args:
-        full_screenshot (np.ndarray): The full screenshot image as a NumPy array. This should be 
-            inputted by cv.imread(str(path_to_image)). Keep it in colour, do not use the grayscale flag.
-        roi (tuple[int, int, int, int]): The region of interest in the format (x1, y1, x2, y2).
-        ocr_model (cv.ml.KNearest): The OCR model used for digit recognition, supporting the `findNearest` method.
-        debug (bool, optional): If True, returns additional debug data. Defaults to False.
+        full_screenshot (np.ndarray): The full screenshot image (BGR color) as returned by
+            ``cv.imread``. Do not pass a grayscale image.
+        roi (tuple[int, int, int, int]): ROI coordinates as (x1, y1, x2, y2).
+        scale (int, optional): Upscaling factor for the ROI. Defaults to 4.
+        blur_kernel (tuple[int, int], optional): Kernel size for Gaussian blur. Defaults to (5, 5).
+        erode_kernel (tuple[int, int], optional): Kernel size for erosion. Defaults to (3, 3).
+        erode_iterations (int, optional): Number of erosion iterations. Defaults to 2.
+        min_h (int, optional): Minimum height for candidate digits. Defaults to 18.
+        min_w (int, optional): Minimum width for candidate digits. Defaults to 8.
 
     Raises:
-        InvalidImageError: If the input image is invalid or cannot be processed.
-        ModelLoadError: If the OCR model fails to load or is invalid.
-        OCRError: If the OCR process fails for any reason.
-        NoDigitsFoundError: If no digit-like contours are found in the ROI.
+        InvalidImageError: If the input image is empty
+        InvalidImageError: If the ROI is out of bounds for the image
+        InvalidImageError: If the cropped ROI is empty
 
     Returns:
-        int | tuple[int | None, dict]: The recognized number, and optionally debug information if debug is True.
-            The debug information dict is in the following format:
-                {
-                    'threshold': thresh,
-                    'eroded': eroded_thresh,
-                    'digit_rois': list of digit ROI images (numpy arrays)
-                }
+        dict: A dictionary containing the processed images and candidate regions. The keys are:
+            - 'resized': np.ndarray (the resized ROI image)
+            - 'gray': np.ndarray (the grayscale image)
+            - 'blurred': np.ndarray (the blurred image)
+            - 'thresh': np.ndarray (the thresholded image)
+            - 'eroded': np.ndarray (the eroded image)
+            - 'contours': list (the contours found in the eroded image)
+            - 'candidates': list of tuples (each tuple contains (centre_x, x, y, w, h, roi_image) for each candidate digit)
     '''
     
-    
-    # """
-    # Recognises a number from a specified region of interest (ROI) in a screenshot using an OCR model.
+    if full_screenshot is None:
+        raise InvalidImageError("Input image is None")
 
-    # This function processes the given ROI by resizing, converting to grayscale, applying blurring, 
-    # thresholding, and contour detection to isolate digit-like regions. Each detected digit is then 
-    # classified using the provided OCR model.
+    x1, y1, x2, y2 = roi
+    h_img, w_img = full_screenshot.shape[:2]
+    if not (0 <= x1 < x2 <= w_img and 0 <= y1 < y2 <= h_img):
+        raise InvalidImageError(f"ROI {roi} out of bounds for image shape {(w_img, h_img)}")
 
-    # Args:
-    #     full_screenshot (np.ndarray): The full screenshot image as a NumPy array. This should be 
-    #         inputted by cv.imread(str(path_to_image)). Keep it in colour, do not use the grayscale flag.
-    #     roi (tuple[int, int, int, int]): The region of interest in the format (x1, y1, x2, y2).
-    #     ocr_model (cv.ml.KNearest): The OCR model used for digit recognition, supporting the `findNearest` method.
-    #     debug (bool, optional): If True, returns additional debug data. Defaults to False.
+    roi_image = full_screenshot[y1:y2, x1:x2]
+    if roi_image.size == 0 or roi_image.shape[0] == 0 or roi_image.shape[1] == 0:
+        raise InvalidImageError("Cropped ROI is empty")
 
-    # Returns:
-    #     int | tuple[int | None, dict]: 
-    #         If debug is False:
-    #             recognized_number (int | None): The final number the OCR model recognises.
-    #         If debug is True:
-    #             tuple[int | None, dict]: (recognized_number, debug_data)
-    #             where debug_data contains intermediate images for inspection:
-    #                 {
-    #                     'threshold': thresh,
-    #                     'eroded': eroded_thresh,
-    #                     'digit_rois': list of digit ROI images (numpy arrays)
-    #                 }
-    # Returns:
-    # """
+    new_width = max(1, int(roi_image.shape[1] * scale))
+    new_height = max(1, int(roi_image.shape[0] * scale))
+    resized = cv.resize(roi_image, (new_width, new_height), interpolation=cv.INTER_CUBIC)
+
+    gray = cv.cvtColor(resized, cv.COLOR_BGR2GRAY)
+    blurred = cv.GaussianBlur(gray, blur_kernel, 0)
+    _, thresh = cv.threshold(blurred, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+    kernel = np.ones(erode_kernel, np.uint8)
+    eroded = cv.erode(thresh, kernel, iterations=erode_iterations)
+
+    contours, _ = cv.findContours(eroded, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+
+    candidates: list[tuple[int, int, int, int, int, np.ndarray]] = []
+    for contour in contours:
+        x, y, w, h = cv.boundingRect(contour)
+        if h >= min_h and w >= min_w:
+            centre_x = x + w // 2
+            roi_img = blurred[y:y+h, x:x+w]
+            candidates.append((centre_x, x, y, w, h, roi_img))
+
+    return {
+        'resized': resized,
+        'gray': gray,
+        'blurred': blurred,
+        'thresh': thresh,
+        'eroded': eroded,
+        'contours': contours,
+        'candidates': candidates,
+    }
+
+def recognise_number(
+    full_screenshot: np.ndarray, 
+    roi: tuple[int, int, int, int], 
+    ocr_model: cv.ml.KNearest, 
+    debug: bool = False) -> int | tuple[int | None, dict]:
+    """
+    Recognise a number from a screenshot ROI using a KNN OCR model.
+
+    The image is cropped to the supplied ROI, upscaled, converted to grayscale, blurred,
+    thresholded and eroded, and contours are detected and filtered to find digit-like
+    regions. Each candidate digit is resized to the standard template size and
+    classified with the provided KNN model.
+
+    Args:
+        full_screenshot (np.ndarray): Full screenshot image (BGR color) as returned by
+            ``cv.imread``. Do not pass a grayscale image.
+        roi (tuple[int, int, int, int]): ROI coordinates as (x1, y1, x2, y2).
+        ocr_model (cv.ml.KNearest): A trained OpenCV KNearest model exposing ``findNearest``.
+        debug (bool, optional): When True, return debug artifacts (thresholded and eroded
+            images plus the digit ROIs) alongside the recognised value. Defaults to False.
+
+    Raises:
+        InvalidImageError: If the input image is None or ROI is invalid.
+        ModelLoadError: If the provided OCR model is not valid.
+        OCRError: If classification produces invalid results.
+        NoDigitsFoundError: If no digit-like contours were detected in the ROI (when not
+            running in debug mode).
+
+    Returns:
+        int: The recognised integer when ``debug`` is False.
+        tuple[int | None, dict]: When ``debug`` is True, returns a pair ``(value, debug_data)``
+            where ``value`` is the recognised integer (or ``None`` if no digits were found) and
+            ``debug_data`` is a dict with keys:
+                - 'threshold': numpy.ndarray (thresholded image)
+                - 'eroded': numpy.ndarray (eroded image)
+                - 'digit_rois': list[numpy.ndarray] (resized digit images sent to the model)
+    """
+    # Validate input image
     if full_screenshot is None:
         raise InvalidImageError("Input image is invalid or cannot be processed - check the image path, format and cv.imread result")
 
-    # Preprocessing Steps
-    # Step 1: Crop and Resize
-    try:
-        roi_image = full_screenshot[roi[1]:roi[3], roi[0]:roi[2]]
-    except:
-        raise InvalidImageError("ROI coordinates are out of bounds for the provided image.")
+    # Preprocess the ROI and get candidate digit ROIs
+    pre = preprocess_roi(full_screenshot, roi)
+    thresh = pre['thresh']
+    eroded_thresh = pre['eroded']
+    candidates = pre['candidates']
 
-    new_width = roi_image.shape[1] * 4
-    new_height = roi_image.shape[0] * 4
-    resized = cv.resize(roi_image, (new_width, new_height), interpolation=cv.INTER_CUBIC)
-
-    # Step 2: Grayscale
-    gray = cv.cvtColor(resized, cv.COLOR_BGR2GRAY)
-
-    # Step 3: Blur
-    blurred = cv.GaussianBlur(gray, (5, 5), 0)
-
-    # In the next two steps, I am saving debug images to help with tuning the preprocessing steps. This may be removed later.
-    # Step 4: Threshold
-    _thresh_val, thresh = cv.threshold(blurred, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
     if debug:
         save_debug_image("debug_threshold_image.png", thresh)
-    # Step 5: Erode to reduce noise
-    kernel = np.ones((3, 3), np.uint8)
-    eroded_thresh = cv.erode(thresh, kernel, iterations=2)
-    if debug:
         save_debug_image("debug_eroded_image.png", eroded_thresh)
-    # Step 6: Find contours
-    contours, _heirarchy = cv.findContours(eroded_thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
 
-    # Filter and sort contours
-    digit_contours = []
-    debug_rois = []
-    for contour in contours:
-        x, y, w, h = cv.boundingRect(contour)
-        # Filtering the contours based on size, using values slightly bigger than the font size of the digits in the game
-        # This may need to be adjusted, either to handle different resolutions, or different font sizes in different screens in the game
-        if h >= 18 and w >= 8:
-            centre_x = x + w // 2
-            roi = blurred[y:y+h, x:x+w]
-            digit_contours.append((centre_x, x, y, w, h, roi))
+    # Filter and sort candidates (already filtered in preprocess, but keep API clear)
+    digit_contours = sorted(candidates, key=lambda item: item[0])
 
-    digit_contours.sort(key=lambda item: item[0])
-
+    # debug-friendly output
+    # Note: avoid printing during library calls in production; callers can enable debug.
     print("Digit contours found:", len(digit_contours))
 
     # Basic validation: ensure the provided OCR model implements the expected API
@@ -170,6 +205,7 @@ def recognise_number(full_screenshot: np.ndarray, roi: tuple[int, int, int, int]
 
     # Recognise digits
     recognised_digits = []
+    debug_rois = []
     for _, x, y, w, h, roi in digit_contours:
         # Recognition Steps
         # Step 1: Resize
