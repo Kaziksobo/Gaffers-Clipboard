@@ -195,10 +195,6 @@ def recognise_number(
     # Filter and sort candidates (already filtered in preprocess, but keep API clear)
     digit_contours = sorted(candidates, key=lambda item: item[0])
 
-    # debug-friendly output
-    # Note: avoid printing during library calls in production; callers can enable debug.
-    print("Digit contours found:", len(digit_contours))
-
     # Basic validation: ensure the provided OCR model implements the expected API
     if not hasattr(ocr_model, "findNearest"):
         raise ModelLoadError("ocr_model does not implement findNearest(k) — pass a cv.ml.KNearest instance")
