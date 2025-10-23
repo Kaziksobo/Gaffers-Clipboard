@@ -49,5 +49,5 @@ class AddMatchFrame(ctk.CTkFrame):
     def on_done_button_press(self) -> None:
         '''Handle the done button press event, initiating screenshot capture and navigating to MatchStatsFrame.
         '''
-        self.controller.capture_screenshot(is_it_player=False)
+        self.controller.process_match_stats()
         self.controller.show_frame(self.controller.get_frame_class("MatchStatsFrame"))
