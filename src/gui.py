@@ -3,7 +3,7 @@ import time
 import pyautogui
 import json
 import cv2 as cv
-import ocr
+from src import ocr
 from pathlib import Path
 from src.theme import THEME
 from src.views.main_menu_frame import MainMenuFrame
@@ -140,6 +140,7 @@ class App(ctk.CTk):
         for screen_name, screen_data in coordinates.items():
             for team_name, team_data in screen_data.items():
                 results[team_name] = {}
+                print(f"Processing {team_name} stats...")
                 for stat_name, roi in team_data.items():
                     x1 = roi['x1']
                     y1 = roi['y1']
@@ -147,6 +148,7 @@ class App(ctk.CTk):
                     y2 = roi['y2']
                     stat_roi = (x1, y1, x2, y2)
 
+                    print(f"  Recognising {stat_name}...")
                     recognised_number = ocr.recognise_number(
                         full_screenshot=screenshot_image,
                         roi=stat_roi,
@@ -159,6 +161,7 @@ class App(ctk.CTk):
                             recognised_number = recognised_number[:-1] + '.' + recognised_number[-1]
                         recognised_number = float(recognised_number)
                     
+                    print(f"Recognised value: {recognised_number}")
                     results[team_name][stat_name] = recognised_number
         
         return results        
