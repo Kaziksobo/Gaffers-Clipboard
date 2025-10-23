@@ -12,6 +12,10 @@ class MatchStatsFrame(ctk.CTkFrame):
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
+        # Attributes to store stat variables
+        self.user_stats_vars = {}
+        self.opponent_stats_vars = {}
+
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -43,7 +47,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.stats_grid.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
 
-        stat_names = ['Possession', 'Shots', 'xG', 'Passes', 'Tackles', 'Interceptions', 'Saves', 'Fouls Committed', 'Offsides', 'Corners', 'Free Kicks', 'Penalty Kicks', 'Yellow Cards', 'Red Cards']
+        stat_names = ['Possession', 'Shots', 'xG', 'Passes', 'Tackles', 'Tackles_won', 'Interceptions', 'Saves', 'Fouls Committed', 'Offsides', 'Corners', 'Free Kicks', 'Penalty Kicks', 'Yellow Cards']
         # Configure subgrid
         for col in range(5):
             self.stats_grid.grid_columnconfigure(col, weight=1)
@@ -125,10 +129,11 @@ class MatchStatsFrame(ctk.CTkFrame):
             stat_name (str): The name of the statistic.
             theme (dict): The theme dictionary containing colors and fonts.
         '''
-        self.user_stat_value = ctk.StringVar(value="0")
+        user_stat_value = ctk.StringVar(value="")
+        self.user_stats_vars[stat_name] = user_stat_value
         self.user_stat_entry = ctk.CTkEntry(
             self.stats_grid,
-            textvariable=self.user_stat_value,
+            textvariable=user_stat_value,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
@@ -140,15 +145,47 @@ class MatchStatsFrame(ctk.CTkFrame):
             text_color=theme["colors"]["secondary_text"]
         )
         self.stat_label.grid(row=row, column=2, padx=5, pady=5)
-        self.opponent_stat_value = ctk.StringVar(value="0")
+        opponent_stat_value = ctk.StringVar(value="")
+        self.opponent_stats_vars[stat_name] = self.opponent_stat_value
         self.opponent_stat_entry = ctk.CTkEntry(
             self.stats_grid,
-            textvariable=self.opponent_stat_value,
+            textvariable=opponent_stat_value,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
         self.opponent_stat_entry.grid(row=row, column=4, padx=5, pady=5)
     
+    def populate_stats(self, stats_data: dict) -> None:
+        # Maps key from OCR to display name in the UI
+        key_to_display_name = {
+            'ossession': 'Possession',
+            'hots': 'Shots',
+            'xG': 'xG',
+            'passes': 'Passes',
+            'tackles': 'Tackles',
+            'tackles_won': 'Tackles won',
+            'interceptions': 'Interceptions',
+            'saves': 'Saves',
+            'fouls_committed': 'Fouls Committed',
+            'offsides': 'Offsides',
+            'corners': 'Corners',
+            'free_kicks': 'Free Kicks',
+            'penalty_kicks': 'Penalty Kicks',
+            'yellow_cards': 'Yellow Cards',
+        }
+        
+        home_stats = stats_data.get('home_team', {})
+        away_stats = stats_data.get('away_team', {})
+        
+        self.user_team_score.configure(text=str(home_stats.get('score', '0')))
+        self.opponent_team_score.configure(text=str(away_stats.get('score', '0')))
+
+        for key, display_name in key_to_display_name.items():
+            if display_name in self.user_stats_vars:
+                self.user_stats_vars[display_name].set(str(home_stats.get(key, '')))
+            if display_name in self.opponent_stats_vars:
+                self.opponent_stats_vars[display_name].set(str(away_stats.get(key, '')))
+
     def on_done_button_press(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
         '''

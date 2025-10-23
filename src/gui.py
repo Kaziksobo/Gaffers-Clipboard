@@ -1,8 +1,10 @@
 import customtkinter as ctk
 import time
 import pyautogui
+import json
+import cv2 as cv
+import ocr
 from pathlib import Path
-from src.ocr import load_templates, recognise_digit, get_stat_roi
 from src.theme import THEME
 from src.views.main_menu_frame import MainMenuFrame
 from src.views.add_match_frame import AddMatchFrame
@@ -72,12 +74,19 @@ class App(ctk.CTk):
             if cls.__name__ == name:
                 return cls
         raise ValueError(f"No frame class named '{name}' found.")
+    
+    def process_match_stats(self):
+        self.capture_screenshot(is_it_player=False)
+        stats = self.detect_stats(is_it_player=False)
+        
+        match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
+        match_stats_frame.populate_stats(stats)
 
     def capture_screenshot(self, is_it_player: bool, delay: int | None = None) -> None:
         '''Capture a screenshot after a delay.
 
         Args:
-            is_it_player (bool): Whether the screenshot is for a player.
+            is_it_player (bool): Whether the screenshot is a specific player's match stats or match overview
             delay (int | None, optional): Delay before taking the screenshot. If None,
                 uses the application's `screenshot_delay` (defaults to
                 `App.DEFAULT_SCREENSHOT_DELAY`).
@@ -95,13 +104,61 @@ class App(ctk.CTk):
         pyautogui.screenshot(self.screenshot_path)
 
         print(f"Screenshot saved to {self.screenshot_path}")
+        
+    
+    def get_latest_screenshot_path(self) -> Path:
+        global PROJECT_ROOT
+        screenshots_dir = PROJECT_ROOT / "screenshots"
+        if not screenshots_dir.exists():
+            raise FileNotFoundError("Screenshots directory does not exist.")
+        
+        screenshot_files = list(screenshots_dir.glob("stats_capture_*.png"))
+        if not screenshot_files:
+            raise FileNotFoundError("No screenshots found in the screenshots directory.")
+        
+        latest_screenshot = max(screenshot_files, key=lambda p: p.stat().st_mtime)
+        return latest_screenshot
+    
+    def detect_stats(self, is_it_player: bool) -> dict:
+        latest_screenshot_path = self.get_latest_screenshot_path()
+        
+        # load coordinates from JSON file
+        coordinates_path = PROJECT_ROOT / "config" / "coordinates.json"
+        with open(coordinates_path, 'r') as f:
+            coordinates = json.load(f)
+        
+        # import OCR model
+        ocr_model = ocr.load_ocr_model()
+        
+        # load the latest screenshot for processing
+        screenshot_image = cv.imread(str(latest_screenshot_path))
+        
+        decimal_stats = ['xG']
+        
+        results = {}
+        
+        for screen_name, screen_data in coordinates.items():
+            for team_name, team_data in screen_data.items():
+                results[team_name] = {}
+                for stat_name, roi in team_data.items():
+                    x1 = roi['x1']
+                    y1 = roi['y1']
+                    x2 = roi['x2']
+                    y2 = roi['y2']
+                    stat_roi = (x1, y1, x2, y2)
 
-    # def capture_and_recognise(self):
-    #     '''Capture the screen and recognise the stats.
-    #     '''
-    #     image_path = "C:\\Users\\kazik\\projects\\OCRtest\\source_images\\defending.png"
-    #     coords = (704, 105, 722, 128)
-    #     templates = load_templates()
-    #     roi_image = get_stat_roi(image_path, coords)
-    #     recognised_digit = recognise_digit(roi_image, templates)
-    #     self.info_label.config(text=f"Recognised Digit: {recognised_digit}")
+                    recognised_number = ocr.recognise_number(
+                        full_screenshot=screenshot_image,
+                        roi=stat_roi,
+                        ocr_model=ocr_model
+                    )
+                    
+                    if stat_name in decimal_stats:
+                        recognised_number = str(recognised_number)
+                        if len(recognised_number) > 1:
+                            recognised_number = recognised_number[:-1] + '.' + recognised_number[-1]
+                        recognised_number = float(recognised_number)
+                    
+                    results[team_name][stat_name] = recognised_number
+        
+        return results        
