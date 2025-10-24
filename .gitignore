@@ -3,4 +3,5 @@
 src/views/__pycache__
 /screenshots
 /testing/debug_images
+/testing/coordinates_test_output.png
 /model/training_data
