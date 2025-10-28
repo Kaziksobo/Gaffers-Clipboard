@@ -162,6 +162,8 @@ def recognise_number(
         ocr_model (cv.ml.KNearest): A trained OpenCV KNearest model exposing ``findNearest``.
         debug (bool, optional): When True, return debug artifacts (thresholded and eroded
             images plus the digit ROIs) alongside the recognised value. Defaults to False.
+        preprocess_args (dict, optional): Arguments to pass to ``preprocess_roi`` for
+            customising preprocessing. Defaults to None.
 
     Raises:
         InvalidImageError: If the input image is None or ROI is invalid.
@@ -219,7 +221,6 @@ def recognise_number(
             raise OCRError("KNN returned invalid result for a digit")
         # Step 4: Collect recognised digit
         recognised_digit = str(int(result[0][0]))
-        print(f"Recognised digit: {recognised_digit} at position x={x}, y={y}, w={w}, h={h}")
         recognised_digits.append(recognised_digit)
 
     if not recognised_digits:

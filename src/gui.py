@@ -143,7 +143,7 @@ class App(ctk.CTk):
         screenshot_image = cv.imread(str(latest_screenshot_path))
         
         decimal_stats = ['xG']
-        debug = True
+        debug = False
         
         results = {}
         
@@ -193,6 +193,8 @@ class App(ctk.CTk):
         
         screenshot_image = cv.imread(str(latest_screenshot_path))
         
+        debug = False
+        
         results = {}
         
         for screen_name, screen_data in coordinates.items():
@@ -211,8 +213,12 @@ class App(ctk.CTk):
                                 roi=stat_roi,
                                 ocr_model=ocr_model,
                                 preprocess_args={'erode_iterations': 1},
-                                debug=True
+                                debug=debug
                             )
-                            
+
+                            if debug:
+                                # if debug is true, recognised_number will output two variables not one, so separate them
+                                recognised_number, debug_image = recognised_number
+
                             results[stat_name] = recognised_number
         return results
