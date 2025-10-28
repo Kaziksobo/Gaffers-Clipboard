@@ -50,7 +50,8 @@ class MainMenuFrame(ctk.CTkFrame):
             bg_color=theme["colors"]["background"],
             font=theme["fonts"]["button"],
             text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"]
+            hover_color=theme["colors"]["accent"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         )
         self.player_update_button.pack(side="left", padx=(0, 10), pady=10)
 
@@ -62,6 +63,6 @@ class MainMenuFrame(ctk.CTkFrame):
             font=theme["fonts"]["button"],
             text_color=theme["colors"]["primary_text"],
             hover_color=theme["colors"]["accent"],
-            command=lambda: self.controller.show_frame(next(cls for cls in self.controller.frames if cls.__name__ == "AddMatchFrame"))
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddMatchFrame"))
         )
         self.add_match_button.pack(side="right", padx=(10, 0), pady=10)
