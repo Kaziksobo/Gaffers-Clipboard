@@ -11,12 +11,14 @@ from src.views.add_match_frame import AddMatchFrame
 from src.views.match_stats_frame import MatchStatsFrame
 from src.views.player_stats_frame import PlayerStatsFrame
 from src.views.match_added_frame import MatchAddedFrame
-
-PROJECT_ROOT = Path(__file__).parent.parent
+from src.views.player_library_frame import PlayerLibraryFrame
+from src.views.add_gk_frame import AddGKFrame
+from src.views.add_outfield_frame import AddOutfieldFrame
 
 class App(ctk.CTk):
     # Default screenshot delay (seconds) used when no explicit delay is provided
     DEFAULT_SCREENSHOT_DELAY = 3
+    PROJECT_ROOT = Path(__file__).parent.parent
 
     def __init__(self) -> None:
         '''    
@@ -40,12 +42,10 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame):
+        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
-        
-        self.screenshot_delay = self.DEFAULT_SCREENSHOT_DELAY
         
         self.show_frame(MainMenuFrame)
 
@@ -76,13 +76,24 @@ class App(ctk.CTk):
         raise ValueError(f"No frame class named '{name}' found.")
     
     def process_match_stats(self):
-        self.capture_screenshot(is_it_player=False)
+        self.capture_screenshot()
         stats = self.detect_stats(is_it_player=False)
         
         match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
         match_stats_frame.populate_stats(stats)
-
-    def capture_screenshot(self, is_it_player: bool, delay: int | None = None) -> None:
+        
+    def process_player_attributes(self, gk: bool, first: bool):
+        self.capture_screenshot()
+        stats = self.detect_player_attributes(gk=gk, first=first)
+        
+        if gk:
+            gk_attr_frame = self.frames[self.get_frame_class("AddGKFrame")]
+            gk_attr_frame.populate_stats(stats)
+        else:
+            outfield_attr_frame = self.frames[self.get_frame_class("AddOutfieldFrame")]
+            outfield_attr_frame.populate_stats(stats)
+    
+    def capture_screenshot(self, delay: int | None = None) -> None:
         '''Capture a screenshot after a delay.
 
         Args:
@@ -92,11 +103,10 @@ class App(ctk.CTk):
                 `App.DEFAULT_SCREENSHOT_DELAY`).
         '''
         if delay is None:
-            delay = self.screenshot_delay
-        global PROJECT_ROOT
+            delay = App.DEFAULT_SCREENSHOT_DELAY
         print(f"Capturing screenshot in {delay} seconds...")
         time.sleep(delay)
-        capture_folder = PROJECT_ROOT / "screenshots"
+        capture_folder = App.PROJECT_ROOT / "screenshots"
         capture_folder.mkdir(parents=True, exist_ok=True)
         filename = f"stats_capture_{int(time.time())}.png"
         self.screenshot_path = capture_folder / filename
@@ -107,8 +117,7 @@ class App(ctk.CTk):
         
     
     def get_latest_screenshot_path(self) -> Path:
-        global PROJECT_ROOT
-        screenshots_dir = PROJECT_ROOT / "screenshots"
+        screenshots_dir = App.PROJECT_ROOT / "screenshots"
         if not screenshots_dir.exists():
             raise FileNotFoundError("Screenshots directory does not exist.")
         
@@ -120,10 +129,10 @@ class App(ctk.CTk):
         return latest_screenshot
     
     def detect_stats(self, is_it_player: bool) -> dict:
-        latest_screenshot_path = self.get_latest_screenshot_path()
+        latest_screenshot_path = App.PROJECT_ROOT / "testing" / "fullscreen_screenshots" / "cropped" / "match_overview.png"
         
         # load coordinates from JSON file
-        coordinates_path = PROJECT_ROOT / "config" / "coordinates.json"
+        coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
         with open(coordinates_path, 'r') as f:
             coordinates = json.load(f)
         
@@ -134,34 +143,76 @@ class App(ctk.CTk):
         screenshot_image = cv.imread(str(latest_screenshot_path))
         
         decimal_stats = ['xG']
+        debug = True
         
         results = {}
         
         for screen_name, screen_data in coordinates.items():
-            for team_name, team_data in screen_data.items():
-                results[team_name] = {}
-                print(f"Processing {team_name} stats...")
-                for stat_name, roi in team_data.items():
-                    x1 = roi['x1']
-                    y1 = roi['y1']
-                    x2 = roi['x2']
-                    y2 = roi['y2']
-                    stat_roi = (x1, y1, x2, y2)
+            if screen_name == "match_overview" and not is_it_player:
+                for team_name, team_data in screen_data.items():
+                    results[team_name] = {}
+                    print(f"Processing {team_name} stats...")
+                    for stat_name, roi in team_data.items():
+                        x1 = roi['x1']
+                        y1 = roi['y1']
+                        x2 = roi['x2']
+                        y2 = roi['y2']
+                        stat_roi = (x1, y1, x2, y2)
 
-                    print(f"  Recognising {stat_name}...")
-                    recognised_number = ocr.recognise_number(
-                        full_screenshot=screenshot_image,
-                        roi=stat_roi,
-                        ocr_model=ocr_model
-                    )
-                    
-                    if stat_name in decimal_stats:
-                        recognised_number = str(recognised_number)
-                        if len(recognised_number) > 1:
-                            recognised_number = recognised_number[:-1] + '.' + recognised_number[-1]
-                        recognised_number = float(recognised_number)
-                    
-                    print(f"Recognised value: {recognised_number}")
-                    results[team_name][stat_name] = recognised_number
+                        print(f"  Recognising {stat_name}...")
+                        recognised_number = ocr.recognise_number(
+                            full_screenshot=screenshot_image,
+                            roi=stat_roi,
+                            ocr_model=ocr_model,
+                            debug=debug
+                        )
+                        if debug:
+                            # if debug is true, recognised_number will output two variables not one, so separate them
+                            recognised_number, debug_image = recognised_number
+                            
+                        if stat_name in decimal_stats:
+                            recognised_number = str(recognised_number)
+                            if len(recognised_number) > 1:
+                                recognised_number = recognised_number[:-1] + '.' + recognised_number[-1]
+                            recognised_number = float(recognised_number)
+                        
+                        print(f"Recognised value: {recognised_number}")
+                        results[team_name][stat_name] = recognised_number
         
-        return results        
+        return results    
+    
+    def detect_player_attributes(self, gk=False, first=True):
+        # latest_screenshot_path = self.get_latest_screenshot_path()
+        latest_screenshot_path = App.PROJECT_ROOT / "testing" / "fullscreen_screenshots" / "cropped" / "player_attributes_gk.png"
+
+        coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
+        with open(coordinates_path, 'r') as f:
+            coordinates = json.load(f)
+        
+        ocr_model = ocr.load_ocr_model()
+        
+        screenshot_image = cv.imread(str(latest_screenshot_path))
+        
+        results = {}
+        
+        for screen_name, screen_data in coordinates.items():
+            if screen_name == 'player_attributes':
+                for position, stats in coordinates['player_attributes'].items():
+                    if position == ("gk" if gk else 'outfield_1' if first else 'outfield_2'):
+                        for stat_name, roi in stats.items():
+                            x1 = roi['x1']
+                            y1 = roi['y1']
+                            x2 = roi['x2']
+                            y2 = roi['y2']
+                            stat_roi = (x1, y1, x2, y2)
+
+                            recognised_number = ocr.recognise_number(
+                                full_screenshot=screenshot_image,
+                                roi=stat_roi,
+                                ocr_model=ocr_model,
+                                preprocess_args={'erode_iterations': 1},
+                                debug=True
+                            )
+                            
+                            results[stat_name] = recognised_number
+        return results

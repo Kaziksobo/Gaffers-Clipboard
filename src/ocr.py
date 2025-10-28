@@ -128,7 +128,7 @@ def preprocess_roi(
         x, y, w, h = cv.boundingRect(contour)
         if h >= min_h and w >= min_w:
             centre_x = x + w // 2
-            roi_img = blurred[y:y+h, x:x+w]
+            roi_img = thresh[y:y+h, x:x+w]
             candidates.append((centre_x, x, y, w, h, roi_img))
 
     return {
@@ -145,7 +145,8 @@ def recognise_number(
     full_screenshot: np.ndarray, 
     roi: tuple[int, int, int, int], 
     ocr_model: cv.ml.KNearest, 
-    debug: bool = False) -> int | tuple[int | None, dict]:
+    debug: bool = False,
+    preprocess_args: dict | None = None) -> int | tuple[int | None, dict]:
     """
     Recognise a number from a screenshot ROI using a KNN OCR model.
 
@@ -183,7 +184,9 @@ def recognise_number(
         raise InvalidImageError("Input image is invalid or cannot be processed - check the image path, format and cv.imread result")
 
     # Preprocess the ROI and get candidate digit ROIs
-    pre = preprocess_roi(full_screenshot, roi)
+    if preprocess_args is None:
+        preprocess_args = {}
+    pre = preprocess_roi(full_screenshot, roi, **preprocess_args)
     thresh = pre['thresh']
     eroded_thresh = pre['eroded']
     candidates = pre['candidates']
@@ -216,6 +219,7 @@ def recognise_number(
             raise OCRError("KNN returned invalid result for a digit")
         # Step 4: Collect recognised digit
         recognised_digit = str(int(result[0][0]))
+        print(f"Recognised digit: {recognised_digit} at position x={x}, y={y}, w={w}, h={h}")
         recognised_digits.append(recognised_digit)
 
     if not recognised_digits:
