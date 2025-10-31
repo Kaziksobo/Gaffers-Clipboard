@@ -74,4 +74,5 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.controller.show_frame(self.controller.get_frame_class("AddGKFrame"))
 
     def on_add_outfield_button_press(self):
-        self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame"))
+        self.controller.process_player_attributes(gk=False, first=True)
+        self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame1"))
