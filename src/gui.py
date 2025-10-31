@@ -13,7 +13,8 @@ from src.views.player_stats_frame import PlayerStatsFrame
 from src.views.match_added_frame import MatchAddedFrame
 from src.views.player_library_frame import PlayerLibraryFrame
 from src.views.add_gk_frame import AddGKFrame
-from src.views.add_outfield_frame import AddOutfieldFrame
+from src.views.add_outfield_frame_1 import AddOutfieldFrame1
+from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 
 class App(ctk.CTk):
     # Default screenshot delay (seconds) used when no explicit delay is provided
@@ -42,7 +43,7 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame):
+        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -90,7 +91,7 @@ class App(ctk.CTk):
             gk_attr_frame = self.frames[self.get_frame_class("AddGKFrame")]
             gk_attr_frame.populate_stats(stats)
         else:
-            outfield_attr_frame = self.frames[self.get_frame_class("AddOutfieldFrame")]
+            outfield_attr_frame = self.frames[self.get_frame_class("AddOutfieldFrame1" if first else "AddOutfieldFrame2")]
             outfield_attr_frame.populate_stats(stats)
     
     def capture_screenshot(self, delay: int | None = None) -> None:
@@ -129,7 +130,7 @@ class App(ctk.CTk):
         return latest_screenshot
     
     def detect_stats(self, is_it_player: bool) -> dict:
-        latest_screenshot_path = App.PROJECT_ROOT / "testing" / "fullscreen_screenshots" / "cropped" / "match_overview.png"
+        latest_screenshot_path = self.get_latest_screenshot_path()
         
         # load coordinates from JSON file
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
@@ -182,8 +183,8 @@ class App(ctk.CTk):
         return results    
     
     def detect_player_attributes(self, gk=False, first=True):
-        # latest_screenshot_path = self.get_latest_screenshot_path()
-        latest_screenshot_path = App.PROJECT_ROOT / "testing" / "fullscreen_screenshots" / "cropped" / "player_attributes_gk.png"
+        latest_screenshot_path = self.get_latest_screenshot_path()
+        # latest_screenshot_path = App.PROJECT_ROOT / "testing" / "fullscreen_screenshots" / "cropped" / "player_attributes_gk.png"
 
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
         with open(coordinates_path, 'r') as f:
