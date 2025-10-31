@@ -1,0 +1,96 @@
+import customtkinter as ctk
+
+class AddOutfieldFrame2(ctk.CTkFrame):
+    def __init__(self, parent, controller, theme):
+        super().__init__(parent, fg_color=theme["colors"]["background"])
+        self.controller = controller
+        
+        self.attr_vars = {}
+        
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(2, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_rowconfigure(2, weight=0)
+        self.grid_rowconfigure(3, weight=0)
+        self.grid_rowconfigure(4, weight=5)
+        
+        self.title = ctk.CTkLabel(
+            self,
+            text="Page 2 - Technical Attributes",
+            font=theme["fonts"]["title"],
+            text_color=theme["colors"]["primary_text"]
+        )
+        self.title.grid(row=1, column=1, pady=(20, 10))
+        
+        self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
+        self.attributes_grid.grid(row=2, column=1, pady=(10, 20), sticky="nsew")
+        
+        attr_names = ["Ball Control", "Crossing", "Curve", "Def. Awareness", "Dribbling", "FK Accuracy", "Finishing", "Heading Acc.",
+                      "Long Pass", "Long Shots", "Penalties", "Short Pass", "Shot Power", "Slide Tackle", "Stand Tackle", "Volleys"]
+        
+        self.attributes_grid.grid_columnconfigure(0, weight=1)
+        self.attributes_grid.grid_columnconfigure(1, weight=0)
+        self.attributes_grid.grid_columnconfigure(2, weight=0)
+        self.attributes_grid.grid_columnconfigure(3, weight=0)
+        self.attributes_grid.grid_columnconfigure(4, weight=0)
+        self.attributes_grid.grid_columnconfigure(5, weight=1)
+        for i in range(len(attr_names)):
+            self.attributes_grid.grid_rowconfigure(i, weight=1)
+        
+        for i, attr in enumerate(attr_names):
+            self.create_stat_row(i, attr, theme)
+        
+        self.done_button = ctk.CTkButton(
+            self,
+            text="Done",
+            fg_color=theme["colors"]["button_bg"],
+            text_color=theme["colors"]["secondary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        )
+        self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
+    
+    def create_stat_row(self, index, attr_name, theme):
+        attr_label = ctk.CTkLabel(
+            self.attributes_grid,
+            text=attr_name,
+            font=theme["fonts"]["body"],
+            text_color=theme["colors"]["secondary_text"]
+        )
+        column = 1 if 0 <= index <= 7 else 3
+        attr_label.grid(row=index, column=column, padx=5, pady=5, sticky="w")
+        
+        attr_var = ctk.StringVar(value="")
+        self.attr_vars[attr_name] = attr_var
+        self.attr_entry = ctk.CTkEntry(
+            self.attributes_grid,
+            textvariable=attr_var,
+            font=theme["fonts"]["body"],
+            text_color=theme["colors"]["secondary_text"]
+        )
+        attr_entry_column = 2 if 0 <= index <= 7 else 4
+        self.attr_entry.grid(row=index, column=attr_entry_column, padx=5, pady=5, sticky="ew")
+    
+    def populate_stats(self, stats):
+        key_to_display_name = {
+            "ball_control": "Ball Control",
+            "crossing": "Crossing",
+            "curve": "Curve",
+            "defensive_awareness": "Def. Awareness",
+            "dribbling": "Dribbling",
+            "fk_accuracy": "FK Accuracy",
+            "finishing": "Finishing",
+            "heading_accuracy": "Heading Acc.",
+            "long_pass": "Long Pass",
+            "long_shots": "Long Shots",
+            "penalties": "Penalties",
+            "short_pass": "Short Pass",
+            "shot_power": "Shot Power",
+            "slide_tackle": "Slide Tackle",
+            "stand_tackle": "Stand Tackle",
+            "volleys": "Volleys"
+        }
+        for key, display_name in key_to_display_name.items():
+            self.attr_vars[display_name].set(str(stats.get(key, "")))
