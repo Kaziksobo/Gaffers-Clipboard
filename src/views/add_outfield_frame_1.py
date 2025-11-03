@@ -102,7 +102,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             text="Next Page",
             font=theme["fonts"]["button"],
             fg_color=theme["colors"]["button_bg"],
-            hover_color=theme["colors"]["button_hover"],
+            hover_color=theme["colors"]["accent"],
             text_color=theme["colors"]["secondary_text"],
             command=lambda: self.on_next_page()
         )
