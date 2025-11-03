@@ -36,7 +36,9 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         self.attributes_grid.grid_columnconfigure(3, weight=0)
         self.attributes_grid.grid_columnconfigure(4, weight=0)
         self.attributes_grid.grid_columnconfigure(5, weight=1)
-        for i in range(len(attr_names)):
+        # Use half the list height so the left and right columns share the same rows
+        half = len(attr_names) // 2
+        for i in range(half):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, attr in enumerate(attr_names):
@@ -53,25 +55,39 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
     
     def create_stat_row(self, index, attr_name, theme):
+        # place items in two columns but on the same row index (row = index % half)
+        half = 8  # number of rows per column (for a 16-item list)
+        row = index % half
+        left_column_label = 1
+        left_column_entry = 2
+        right_column_label = 3
+        right_column_entry = 4
+
+        # decide which side this attribute belongs to
+        if index < half:
+            label_col = left_column_label
+            entry_col = left_column_entry
+        else:
+            label_col = right_column_label
+            entry_col = right_column_entry
+
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
             text=attr_name,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
-        column = 1 if 0 <= index <= 7 else 3
-        attr_label.grid(row=index, column=column, padx=5, pady=5, sticky="w")
-        
+        attr_label.grid(row=row, column=label_col, padx=5, pady=5, sticky="w")
+
         attr_var = ctk.StringVar(value="")
         self.attr_vars[attr_name] = attr_var
-        self.attr_entry = ctk.CTkEntry(
+        attr_entry = ctk.CTkEntry(
             self.attributes_grid,
             textvariable=attr_var,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
-        attr_entry_column = 2 if 0 <= index <= 7 else 4
-        self.attr_entry.grid(row=index, column=attr_entry_column, padx=5, pady=5, sticky="ew")
+        attr_entry.grid(row=row, column=entry_col, padx=5, pady=5, sticky="ew")
     
     def populate_stats(self, stats):
         key_to_display_name = {
