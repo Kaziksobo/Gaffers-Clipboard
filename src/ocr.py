@@ -45,13 +45,16 @@ def load_ocr_model() -> cv.ml.KNearest:
         raise FileNotFoundError(f"OCR model file not found at {model_path}")
     
     knn = cv.ml.KNearest_create()
+    # Open the model file for reading using OpenCV's FileStorage
     fs = cv.FileStorage(str(model_path), cv.FILE_STORAGE_READ)
     if not fs.isOpened():
         raise ModelLoadError(f"FileStorage failed to open OCR model file at {model_path}")
+    # In OpenCV's YML format, the model data is a top-level node
     knn_node = fs.getFirstTopLevelNode()
     if knn_node.empty():
         fs.release()
         raise ModelLoadError("Model file appears to be empty or corrupted.")
+    # Read the model data from the node
     knn.read(knn_node)
     fs.release()
     
@@ -111,16 +114,27 @@ def preprocess_roi(
     if roi_image.size == 0 or roi_image.shape[0] == 0 or roi_image.shape[1] == 0:
         raise InvalidImageError("Cropped ROI is empty")
 
+    # Step 1: Upscale the image. This makes the digits larger and clearer,
+    # improving the accuracy of subsequent steps like contour detection.
     new_width = max(1, int(roi_image.shape[1] * scale))
     new_height = max(1, int(roi_image.shape[0] * scale))
     resized = cv.resize(roi_image, (new_width, new_height), interpolation=cv.INTER_CUBIC)
 
+    # Step 2: Convert to grayscale and apply a Gaussian blur to reduce noise.
+    # This helps prevent the thresholding step from creating false artifacts.
     gray = cv.cvtColor(resized, cv.COLOR_BGR2GRAY)
     blurred = cv.GaussianBlur(gray, blur_kernel, 0)
+    
+    # Step 3: Apply Otsu's thresholding to create a binary (black and white) image.
+    # This separates the digits (foreground) from the background.
     _, thresh = cv.threshold(blurred, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+    
+    # Step 4: Erode the image to remove small noise and help separate touching digits.
     kernel = np.ones(erode_kernel, np.uint8)
     eroded = cv.erode(thresh, kernel, iterations=erode_iterations)
 
+    # Step 5: Find the external contours of the shapes in the eroded image.
+    # These contours represent potential digits.
     contours, _ = cv.findContours(eroded, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
 
     candidates: list[tuple[int, int, int, int, int, np.ndarray]] = []
@@ -208,18 +222,21 @@ def recognise_number(
     recognised_digits = []
     debug_rois = []
     for _, x, y, w, h, roi in digit_contours:
-        # Recognition Steps
-        # Step 1: Resize
+        # Step 1: Resize the digit's ROI to the standard size the model was trained on.
         digit_resized = cv.resize(roi, (STANDARD_SIZE), interpolation=cv.INTER_CUBIC)
-        # Step 2: Prepare sample by flattening and converting to float32
+        
+        # Step 2: Prepare the sample. The KNN model expects a 1D array (feature vector)
+        # of type float32 for each sample.
         sample = np.array([digit_resized.flatten().astype(np.float32)])
         if debug:
             debug_rois.append(digit_resized.copy())
-        # Step 3: Classify using OCR model
+            
+        # Step 3: Classify the digit using the OCR model.
         _ret, result, _neighbours, _dist = ocr_model.findNearest(sample, k=5)
         if result is None or np.isnan(result).any():
             raise OCRError("KNN returned invalid result for a digit")
-        # Step 4: Collect recognised digit
+        
+        # Step 4: Convert the classification result (a float) to a string and collect it.
         recognised_digit = str(int(result[0][0]))
         recognised_digits.append(recognised_digit)
 
