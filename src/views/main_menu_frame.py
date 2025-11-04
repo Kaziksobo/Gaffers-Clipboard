@@ -5,8 +5,8 @@ class MainMenuFrame(ctk.CTkFrame):
         '''Main menu frame for the application.
 
         Args:
-            parent (CTk): The parent CTk window.
-            controller (App): The main application controller.
+            parent: The parent CTk window.
+            controller: The main application controller.
             theme (dict): The theme dictionary containing colors and fonts.
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])

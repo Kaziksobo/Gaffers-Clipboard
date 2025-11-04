@@ -1,7 +1,15 @@
 import customtkinter as ctk
 
 class PlayerLibraryFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme):
+    def __init__(self, parent, controller, theme: dict) -> None:
+        '''Initializes the player library frame for the application.
+        Sets up the layout and buttons for adding new players and returning to the main menu.
+
+        Args:
+            parent: The parent widget for this frame.
+            controller: The main application controller.
+            theme (dict): The theme dictionary containing color and font settings.
+        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -69,10 +77,16 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         )
         self.home_button.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
-    def on_add_gk_button_press(self):
+    def on_add_gk_button_press(self) -> None:
+        '''Handles the event when the "Add Goalkeeper" button is pressed.
+        Initiates the process for adding a goalkeeper and navigates to the AddGKFrame.
+        '''
         self.controller.process_player_attributes(gk=True, first=True)
         self.controller.show_frame(self.controller.get_frame_class("AddGKFrame"))
 
-    def on_add_outfield_button_press(self):
+    def on_add_outfield_button_press(self) -> None:
+        '''Handles the event when the "Add Outfield Player" button is pressed.
+        Initiates the process for adding an outfield player and navigates to the AddOutfieldFrame1.
+        '''
         self.controller.process_player_attributes(gk=False, first=True)
         self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame1"))

@@ -1,7 +1,15 @@
 import customtkinter as ctk
 
 class AddOutfieldFrame2(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme):
+    def __init__(self, parent, controller, theme: dict):
+        '''Initializes the outfield player attribute entry frame for the second page.
+        Sets up input fields for technical attributes and configures the layout.
+
+        Args:
+            parent: The parent widget for this frame.
+            controller: The main application controller.
+            theme (dict): The theme dictionary containing color and font settings.
+        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -53,22 +61,30 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         )
         self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
-    
-    def create_stat_row(self, index, attr_name, theme):
+
+    def create_stat_row(self, index: int, attr_name: str, theme: dict) -> None:
+        '''Creates a row in the attributes grid for a specific technical attribute.
+        Adds a label and entry field for the attribute to the grid layout, placing it in the correct column.
+
+        Args:
+            index (int): The index of the attribute in the list.
+            attr_name (str): The name of the attribute to display.
+            theme (dict): The theme dictionary containing color and font settings.
+        '''
         # place items in two columns but on the same row index (row = index % half)
         half = 8  # number of rows per column (for a 16-item list)
         row = index % half
-        left_column_label = 1
-        left_column_entry = 2
-        right_column_label = 3
-        right_column_entry = 4
-
         # decide which side this attribute belongs to
         if index < half:
+            left_column_label = 1
             label_col = left_column_label
+            left_column_entry = 2
             entry_col = left_column_entry
         else:
+            right_column_label = 3
             label_col = right_column_label
+            right_column_entry = 4
+
             entry_col = right_column_entry
 
         attr_label = ctk.CTkLabel(
@@ -89,7 +105,15 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         )
         attr_entry.grid(row=row, column=entry_col, padx=5, pady=5, sticky="ew")
     
-    def populate_stats(self, stats):
+    def populate_stats(self, stats: dict) -> None:
+        '''Populates the technical attribute entry fields with detected statistics.
+        Updates the input fields for each technical attribute using the provided stats dictionary.
+
+        Args:
+            stats (dict): A dictionary containing attribute names and their corresponding values.
+        '''
+        if not stats:
+            raise self.controller.UIPopulationError("Received no data to populate outfield player attributes.")
         key_to_display_name = {
             "ball_control": "Ball Control",
             "crossing": "Crossing",

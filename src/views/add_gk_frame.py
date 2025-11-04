@@ -1,7 +1,15 @@
 import customtkinter as ctk
 
 class AddGKFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme):
+    def __init__(self, parent, controller, theme: dict):
+        '''Initializes the goalkeeper attribute entry frame for the application.
+        Sets up input fields for player details and goalkeeper attributes, and configures the layout.
+
+        Args:
+            parent: The parent widget for this frame.
+            controller: The main application controller.
+            theme (dict): The theme dictionary containing color and font settings.
+        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -94,6 +102,14 @@ class AddGKFrame(ctk.CTkFrame):
         self.done_button.grid(row=4, column=1, pady=(0, 20), sticky="ew")
     
     def create_attribute_row(self, row: int, attr_name: str, theme: dict) -> None:
+        '''Creates a row in the attributes grid for a specific goalkeeper attribute.
+        Adds a label and entry field for the attribute to the grid layout.
+
+        Args:
+            row (int): The row index in the grid.
+            attr_name (str): The name of the attribute.
+            theme (dict): The theme dictionary containing color and font settings.
+        '''
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
             text=attr_name,
@@ -113,6 +129,14 @@ class AddGKFrame(ctk.CTkFrame):
         self.attr_entry.grid(row=row, column=2, padx=5, pady=5)
     
     def populate_stats(self, stats: dict) -> None:
+        ''' Populates the goalkeeper attribute entry fields with detected statistics.
+        Updates the input fields for each attribute using the provided stats dictionary.
+
+        Args:
+            stats (dict): A dictionary containing attribute names and their corresponding values.
+        '''
+        if not stats:
+            raise self.controller.UIPopulationError("Received no data to populate GK attributes.")
         key_to_display_name = {
             "diving": "Diving",
             "handling": "Handling",

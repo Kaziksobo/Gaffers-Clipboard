@@ -5,8 +5,8 @@ class MatchStatsFrame(ctk.CTkFrame):
         '''Frame for displaying match statistics in editable text boxes.
 
         Args:
-            parent (ctk.CTk): The parent CTk window.
-            controller (App): The main application controller.
+            parent: The parent CTk window.
+            controller: The main application controller.
             theme (dict): The theme dictionary containing colors and fonts.
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
@@ -156,6 +156,14 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.away_stat_entry.grid(row=row, column=4, padx=5, pady=5)
 
     def populate_stats(self, stats_data: dict) -> None:
+        '''Populates the match statistics entry fields with detected statistics.
+        Updates the input fields for each statistic using the provided stats_data dictionary.
+
+        Args:
+            stats_data (dict): A dictionary containing match statistics for home and away teams.
+        '''
+        if not stats_data:
+            raise self.controller.UIPopulationError("Received no data to populate match statistics.")
         # Maps key from OCR to display name in the UI
         key_to_display_name = {
             'possession': 'Possession (%)',
@@ -177,6 +185,9 @@ class MatchStatsFrame(ctk.CTkFrame):
         
         home_stats = stats_data.get('home_team', {})
         away_stats = stats_data.get('away_team', {})
+        
+        if home_stats is None or away_stats is None:
+            raise self.controller.UIPopulationError("Match stats data is missing 'home_team' or 'away_team' keys.")
 
         self.home_team_score.configure(text=str(home_stats.get('score', '0')))
         self.away_team_score.configure(text=str(away_stats.get('score', '0')))
