@@ -16,6 +16,22 @@ from src.views.add_gk_frame import AddGKFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 
+class GUIError(Exception):
+    '''Base class for GUI-related exceptions.'''
+    pass
+
+class ScreenshotError(GUIError):
+    '''Raised when a screenshot operation fails.'''
+    pass
+
+class FrameNotFoundError(GUIError):
+    '''Raised when a requested frame is not found.'''
+    pass
+
+class ConfigurationError(GUIError):
+    """Raised when a configuration file is missing or corrupt."""
+    pass
+
 class App(ctk.CTk):
     # Default screenshot delay (seconds) used when no explicit delay is provided
     DEFAULT_SCREENSHOT_DELAY = 3
@@ -28,7 +44,7 @@ class App(ctk.CTk):
 
         - Sets window title, size, and minimum size.
         - Creates a container frame for all pages.
-        - Instantiates and registers each frame (MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded).
+        - Instantiates and registers each frame (MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2).
         - Displays the main menu frame on startup.
         '''
         super().__init__()
@@ -55,8 +71,12 @@ class App(ctk.CTk):
 
         Args:
             page_class (type): The class of the page to show.
+        Raises:
+            FrameNotFoundError: If the frame for the given page class is not found.
         '''
-        frame = (self.frames[page_class])
+        if page_class not in self.frames:
+            raise FrameNotFoundError(f"No frame class named '{page_class.__name__}' found.")
+        frame = self.frames[page_class]
         frame.tkraise()
 
     def get_frame_class(self, name: str) -> type:
@@ -66,7 +86,7 @@ class App(ctk.CTk):
             name (str): The name of the frame class.
 
         Raises:
-            ValueError: If no frame class with the given name is found.
+            FrameNotFoundError: If no frame class with the given name is found.
 
         Returns:
             type: The frame class corresponding to the given name.
@@ -74,16 +94,26 @@ class App(ctk.CTk):
         for cls in self.frames:
             if cls.__name__ == name:
                 return cls
-        raise ValueError(f"No frame class named '{name}' found.")
+        raise FrameNotFoundError(f"No frame class named '{name}' found.")
     
-    def process_match_stats(self):
+    def process_match_stats(self) -> None:
+        '''Process match statistics by capturing a screenshot,
+        detecting statistics, and populating the MatchStatsFrame with the results.
+        '''
         self.capture_screenshot()
         stats = self.detect_stats(is_it_player=False)
         
         match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
         match_stats_frame.populate_stats(stats)
         
-    def process_player_attributes(self, gk: bool, first: bool):
+    def process_player_attributes(self, gk: bool, first: bool) -> None:
+        '''Process player attributes by capturing a screenshot,
+        detecting statistics, and populating the corresponding frame with the results
+
+        Args:
+            gk (bool): Identify if the player is a goalkeeper or not
+            first (bool): If the player is an outfield player, identify if it's the first or second page of attributes
+        '''
         self.capture_screenshot()
         stats = self.detect_player_attributes(gk=gk, first=first)
         
@@ -95,13 +125,13 @@ class App(ctk.CTk):
             outfield_attr_frame.populate_stats(stats)
     
     def capture_screenshot(self, delay: int | None = None) -> None:
-        '''Capture a screenshot after a delay.
+        '''Capture a screenshot after a set delay
 
         Args:
-            is_it_player (bool): Whether the screenshot is a specific player's match stats or match overview
-            delay (int | None, optional): Delay before taking the screenshot. If None,
-                uses the application's `screenshot_delay` (defaults to
-                `App.DEFAULT_SCREENSHOT_DELAY`).
+            delay (int | None, optional): The delay before taking a screenshot. Defaults to None, which uses DEFAULT_SCREENSHOT_DELAY.
+
+        Raises:
+            ScreenshotError: If the screenshot capture fails.
         '''
         if delay is None:
             delay = App.DEFAULT_SCREENSHOT_DELAY
@@ -111,32 +141,58 @@ class App(ctk.CTk):
         capture_folder.mkdir(parents=True, exist_ok=True)
         filename = f"stats_capture_{int(time.time())}.png"
         self.screenshot_path = capture_folder / filename
-        
-        pyautogui.screenshot(self.screenshot_path)
+        try:
+            pyautogui.screenshot(self.screenshot_path)
+            print(f"Screenshot saved to {self.screenshot_path}")
+        except Exception as e:
+            raise ScreenshotError(f"Failed to capture screenshot: {e}") from e
 
-        print(f"Screenshot saved to {self.screenshot_path}")
-        
-    
     def get_latest_screenshot_path(self) -> Path:
+        '''Gets the path of the latest screenshot taken by the application, based on the modification time.
+
+        Raises:
+            ScreenshotError: If the screenshots directory does not exist.
+            ScreenshotError: If no screenshots are found in the screenshots directory.
+
+        Returns:
+            Path: The path of the latest screenshot.
+        '''
         screenshots_dir = App.PROJECT_ROOT / "screenshots"
         if not screenshots_dir.exists():
-            raise FileNotFoundError("Screenshots directory does not exist.")
+            raise ScreenshotError("Screenshots directory does not exist.")
         
         screenshot_files = list(screenshots_dir.glob("stats_capture_*.png"))
         if not screenshot_files:
-            raise FileNotFoundError("No screenshots found in the screenshots directory.")
-        
+            raise ScreenshotError("No screenshots found in the screenshots directory.")
+
         latest_screenshot = max(screenshot_files, key=lambda p: p.stat().st_mtime)
         return latest_screenshot
     
     def detect_stats(self, is_it_player: bool) -> dict:
+        '''Detects and extracts match statistics from the latest screenshot using OCR.
+
+        Args:
+            is_it_player (bool): Under construction, method currently not setup to deal with individual player stats
+
+        Raises:
+            ConfigurationError: If coordinates file is missing
+            ConfigurationError: If coordinates file is corrupt
+
+        Returns:
+            dict: A dictionary containing the detected statistics.
+        '''
         latest_screenshot_path = self.get_latest_screenshot_path()
         
         # load coordinates from JSON file
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
-        with open(coordinates_path, 'r') as f:
-            coordinates = json.load(f)
-        
+        if not coordinates_path.exists():
+            raise ConfigurationError("Coordinates configuration file is missing.")
+        try:
+            with open(coordinates_path, 'r') as f:
+                coordinates = json.load(f)
+        except json.JSONDecodeError as e:
+            raise ConfigurationError("Coordinates configuration file is corrupt.") from e
+
         # import OCR model
         ocr_model = ocr.load_ocr_model()
         
@@ -182,14 +238,32 @@ class App(ctk.CTk):
         
         return results    
     
-    def detect_player_attributes(self, gk=False, first=True):
+    def detect_player_attributes(self, gk=False, first=True) -> dict:
+        '''Detects and extracts player attribute statistics from the latest screenshot using OCR.
+
+        Args:
+            gk (bool, optional): If True, processes goalkeeper attributes. Defaults to False.
+            first (bool, optional): If True, processes the first page of the outfield player's attributes, 
+            otherwise processes the second page of outfield player's attributes. Defaults to True.
+
+        Raises:
+            ConfigurationError: If coordinates file is missing.
+            ConfigurationError: If coordinates file is corrupt.
+
+        Returns:
+            dict: A dictionary containing the detected player attributes.
+        '''
         latest_screenshot_path = self.get_latest_screenshot_path()
-        # latest_screenshot_path = App.PROJECT_ROOT / "testing" / "fullscreen_screenshots" / "cropped" / "player_attributes_gk.png"
 
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
-        with open(coordinates_path, 'r') as f:
-            coordinates = json.load(f)
-        
+        if not coordinates_path.exists():
+            raise ConfigurationError("Coordinates configuration file is missing.")
+        try:
+            with open(coordinates_path, 'r') as f:
+                coordinates = json.load(f)
+        except json.JSONDecodeError as e:
+            raise ConfigurationError("Coordinates configuration file is corrupt.") from e
+
         ocr_model = ocr.load_ocr_model()
         
         screenshot_image = cv.imread(str(latest_screenshot_path))
