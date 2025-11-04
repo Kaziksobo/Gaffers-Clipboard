@@ -1,7 +1,15 @@
 import customtkinter as ctk
 
 class AddOutfieldFrame1(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme):
+    def __init__(self, parent, controller, theme: dict):
+        '''Initializes the outfield player attribute entry frame for the first page.
+        Sets up input fields for player details and physical/mental attributes, and configures the layout.
+
+        Args:
+            parent: The parent widget for this frame
+            controller: The main application controller.
+            theme (dict): The theme dictionary containing color and font settings.
+        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -107,8 +115,18 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             command=lambda: self.on_next_page()
         )
         self.next_page_button.grid(row=4, column=1, pady=(5, 10), sticky="ew")
-    
-    def create_stat_row(self, index, attr_name, theme, physical=True):
+
+    def create_stat_row(self, index: int, attr_name: str, theme: dict, physical: bool = True) -> None:
+        '''Creates a row in the attributes grid for a specific outfield player attribute.
+        Adds a label and entry field for the attribute to the grid layout.
+        Splits physical and mental attributes into separate columns.
+
+        Args:
+            index (int): The row index in the grid.
+            attr_name (str): The name of the attribute.
+            theme (dict): The theme dictionary containing color and font settings.
+            physical (bool, optional): Whether the attribute is physical or mental. Defaults to True.
+        '''
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
             text=attr_name,
@@ -127,7 +145,15 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         )
         self.attr_entry.grid(row=index, column=2 if physical else 4, padx=5, pady=5, sticky="ew")
     
-    def populate_stats(self, stats):
+    def populate_stats(self, stats: dict) -> None:
+        '''Populates the outfield player attribute entry fields with detected statistics.
+        Updates the input fields for each attribute using the provided stats dictionary.
+
+        Args:
+            stats (dict): A dictionary containing the detected statistics for the player.
+        '''
+        if not stats:
+            raise self.controller.UIPopulationError("Received no data to populate outfield player attributes.")
         key_to_display_name = {
             "acceleration": "Acceleration",
             "agility": "Agility",
@@ -145,7 +171,10 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         }
         for key, display_name in key_to_display_name.items():
             self.attr_vars[display_name].set(str(stats.get(key, "")))
-    
-    def on_next_page(self):
+
+    def on_next_page(self) -> None:
+        '''Handle the event when the next page button is pressed.
+        Processes the next page of player attributes and navigates to the next frame to display them.
+        '''
         self.controller.process_player_attributes(gk=False, first=False)
         self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))

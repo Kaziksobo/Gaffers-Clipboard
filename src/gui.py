@@ -32,6 +32,10 @@ class ConfigurationError(GUIError):
     """Raised when a configuration file is missing or corrupt."""
     pass
 
+class UIPopulationError(GUIError):
+    """Raised when a UI frame fails to populate with data."""
+    pass
+
 class App(ctk.CTk):
     # Default screenshot delay (seconds) used when no explicit delay is provided
     DEFAULT_SCREENSHOT_DELAY = 3
@@ -160,13 +164,11 @@ class App(ctk.CTk):
         screenshots_dir = App.PROJECT_ROOT / "screenshots"
         if not screenshots_dir.exists():
             raise ScreenshotError("Screenshots directory does not exist.")
-        
-        screenshot_files = list(screenshots_dir.glob("stats_capture_*.png"))
-        if not screenshot_files:
-            raise ScreenshotError("No screenshots found in the screenshots directory.")
 
-        latest_screenshot = max(screenshot_files, key=lambda p: p.stat().st_mtime)
-        return latest_screenshot
+        if screenshot_files := list(screenshots_dir.glob("stats_capture_*.png")):
+            return max(screenshot_files, key=lambda p: p.stat().st_mtime)
+        else:
+            raise ScreenshotError("No screenshots found in the screenshots directory.")
     
     def detect_stats(self, is_it_player: bool) -> dict:
         '''Detects and extracts match statistics from the latest screenshot using OCR.
@@ -182,7 +184,7 @@ class App(ctk.CTk):
             dict: A dictionary containing the detected statistics.
         '''
         latest_screenshot_path = self.get_latest_screenshot_path()
-        
+
         # load coordinates from JSON file
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
         if not coordinates_path.exists():
@@ -195,15 +197,15 @@ class App(ctk.CTk):
 
         # import OCR model
         ocr_model = ocr.load_ocr_model()
-        
+
         # load the latest screenshot for processing
         screenshot_image = cv.imread(str(latest_screenshot_path))
-        
+
         decimal_stats = ['xG']
         debug = False
-        
+
         results = {}
-        
+
         for screen_name, screen_data in coordinates.items():
             if screen_name == "match_overview" and not is_it_player:
                 for team_name, team_data in screen_data.items():
@@ -226,16 +228,16 @@ class App(ctk.CTk):
                         if debug:
                             # if debug is true, recognised_number will output two variables not one, so separate them
                             recognised_number, debug_image = recognised_number
-                            
+
                         if stat_name in decimal_stats:
                             recognised_number = str(recognised_number)
                             if len(recognised_number) > 1:
-                                recognised_number = recognised_number[:-1] + '.' + recognised_number[-1]
+                                recognised_number = f'{recognised_number[:-1]}.{recognised_number[-1]}'
                             recognised_number = float(recognised_number)
-                        
+
                         print(f"Recognised value: {recognised_number}")
                         results[team_name][stat_name] = recognised_number
-        
+
         return results    
     
     def detect_player_attributes(self, gk=False, first=True) -> dict:
