@@ -97,7 +97,7 @@ class AddGKFrame(ctk.CTkFrame):
             fg_color=theme["colors"]["button_bg"],
             hover_color=theme["colors"]["accent"],
             text_color=theme["colors"]["secondary_text"],
-            command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+            command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=4, column=1, pady=(0, 20), sticky="ew")
     
@@ -147,3 +147,15 @@ class AddGKFrame(ctk.CTkFrame):
         
         for key, display_name in key_to_display_name.items():
             self.attr_vars[display_name].set(str(stats.get(key, "")))
+    
+    def on_done_button_press(self) -> None:
+        ui_data = {name: var.get() for name, var in self.attr_vars.items()}
+        ui_data["name"] = self.name_entry.get()
+        ui_data["age"] = self.age_entry.get()
+        ui_data["height"] = self.height_entry.get()
+        ui_data["weight"] = self.weight_entry.get()
+        ui_data["country"] = self.country_entry.get()
+        
+        self.controller.data_manager.add_or_update_player(ui_data, position="GK")
+
+        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
