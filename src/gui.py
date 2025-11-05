@@ -15,6 +15,7 @@ from src.views.player_library_frame import PlayerLibraryFrame
 from src.views.add_gk_frame import AddGKFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
+from src.data_manager import DataManager
 
 class GUIError(Exception):
     '''Base class for GUI-related exceptions.'''
@@ -47,6 +48,7 @@ class App(ctk.CTk):
         register all navigation frames, and display the main menu.
 
         - Sets window title, size, and minimum size.
+        - Initializes the DataManager with the data directory.
         - Creates a container frame for all pages.
         - Instantiates and registers each frame (MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2).
         - Displays the main menu frame on startup.
@@ -56,6 +58,9 @@ class App(ctk.CTk):
         self.geometry("800x600")
         self.minsize(600, 400)
         
+        data_path = App.PROJECT_ROOT / "data"
+        self.data_manager = DataManager(data_path)
+
         container = ctk.CTkFrame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -69,6 +74,18 @@ class App(ctk.CTk):
             frame.grid(row=0, column=0, sticky="nsew")
         
         self.show_frame(MainMenuFrame)
+    
+    def get_all_player_names(self) -> list[str]:
+        """
+        Returns a sorted list of all player names from the data manager. 
+        If no players are found, returns a list containing a single message.
+
+        Returns:
+            list[str]: A sorted list of player names, or ["No players found"] if none exist.
+        """
+        if not self.data_manager.players:
+            return ["No players found"]
+        return sorted([player.get("name") for player in self.data_manager.players])
 
     def show_frame(self, page_class: type) -> None:
         '''Show a frame for the given page class.
