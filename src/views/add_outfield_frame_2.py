@@ -58,7 +58,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             fg_color=theme["colors"]["button_bg"],
             text_color=theme["colors"]["secondary_text"],
             font=theme["fonts"]["button"],
-            command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+            command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
 
@@ -134,3 +134,13 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         }
         for key, display_name in key_to_display_name.items():
             self.attr_vars[display_name].set(str(stats.get(key, "")))
+    
+    def on_done_button_press(self) -> None:
+        """
+        Handles the event when the 'Done' button is pressed on the technical attributes page.
+        Collects the entered attribute data, saves it through the controller, and navigates back to the player library frame.
+        """
+        data_page_2 = {name: var.get() for name, var in self.attr_vars.items()}
+        self.controller.save_outfield_player(data_page_2)
+        
+        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))

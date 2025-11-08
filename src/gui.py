@@ -60,6 +60,9 @@ class App(ctk.CTk):
         
         data_path = App.PROJECT_ROOT / "data"
         self.data_manager = DataManager(data_path)
+        
+        # Buffer to allow data to be collected by multiple frames before entering into data manager
+        self.outfield_player_buffer = {}
 
         container = ctk.CTkFrame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -86,6 +89,33 @@ class App(ctk.CTk):
         if not self.data_manager.players:
             return ["No players found"]
         return sorted([player.get("name") for player in self.data_manager.players])
+    
+    def buffer_outfield_data(self, data_page_1: dict) -> None:
+        '''Buffers outfield player data from the first attribute page.
+
+        Args:
+            data_page_1 (dict): The attribute data from the first page.
+        '''
+        self.outfield_player_buffer = data_page_1
+    
+    def save_outfield_player(self, data_page_2: dict) -> None:
+        """
+        Combines buffered and new outfield player data, then saves or updates the player in the data manager.
+        This method ensures all relevant player attributes are merged and stored for future reference.
+
+        Args:
+            data_page_2 (dict): The attribute data from the second page.
+        """
+        full_player_data = {**self.outfield_player_buffer, **data_page_2}
+
+        position = full_player_data.pop("position", "Unknown")
+        season = full_player_data.pop("season", "Unknown")
+        
+        self.data_manager.add_or_update_player(
+            player_ui_data=full_player_data,
+            position=position,
+            season=season
+        )
 
     def show_frame(self, page_class: type) -> None:
         '''Show a frame for the given page class.

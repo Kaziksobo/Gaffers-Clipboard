@@ -23,7 +23,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.grid_rowconfigure(2, weight=0)
         self.grid_rowconfigure(3, weight=0)
         self.grid_rowconfigure(4, weight=0)
-        self.grid_rowconfigure(5, weight=1)
+        self.grid_rowconfigure(5, weight=0)
+        self.grid_rowconfigure(6, weight=1)
         
         self.name_entry = ctk.CTkEntry(
             self,
@@ -33,8 +34,16 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
         
+        self.season_entry = ctk.CTkEntry(
+            self,
+            placeholder_text="Season (e.g., 25/26)",
+            font=theme["fonts"]["body"],
+            text_color=theme["colors"]["secondary_text"]
+        )
+        self.season_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
+
         self.base_attr_row = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
-        self.base_attr_row.grid(row=2, column=1, pady=(5, 10), sticky="nsew")
+        self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
         self.base_attr_row.grid_columnconfigure(0, weight=1)
         self.base_attr_row.grid_columnconfigure(1, weight=0)
         self.base_attr_row.grid_columnconfigure(2, weight=0)
@@ -85,7 +94,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.country_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
         self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
-        self.attributes_grid.grid(row=3, column=1, pady=(0, 10), sticky="nsew")
+        self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
         
         attr_names_physical = ["Acceleration", "Agility", "Balance", "Jumping", "Sprint Speed", "Stamina", "Strength"]
         attr_names_mental = ["Aggression", "Att. Position", "Composure", "Interceptions", "Reactions", "Vision"]
@@ -114,7 +123,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             text_color=theme["colors"]["secondary_text"],
             command=lambda: self.on_next_page()
         )
-        self.next_page_button.grid(row=4, column=1, pady=(5, 10), sticky="ew")
+        self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")
 
     def create_stat_row(self, index: int, attr_name: str, theme: dict, physical: bool = True) -> None:
         '''Creates a row in the attributes grid for a specific outfield player attribute.
@@ -173,8 +182,20 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.attr_vars[display_name].set(str(stats.get(key, "")))
 
     def on_next_page(self) -> None:
-        '''Handle the event when the next page button is pressed.
-        Processes the next page of player attributes and navigates to the next frame to display them.
-        '''
+        """
+        Handles the event when the 'Next Page' button is pressed on the first outfield attributes page.
+        Collects the entered player and attribute data, buffers it, processes the next set of attributes, and navigates to the second attributes page.
+        """
+        ui_data = {name: var.get() for name, var in self.attr_vars.items()}
+        ui_data["season"] = self.season_entry.get()
+        ui_data["name"] = self.name_entry.get()
+        ui_data["position"] = self.position_entry.get()
+        ui_data["age"] = self.age_entry.get()
+        ui_data["height"] = self.height_entry.get()
+        ui_data["weight"] = self.weight_entry.get()
+        ui_data["country"] = self.country_entry.get()
+        
+        self.controller.buffer_outfield_data(ui_data)
+        
         self.controller.process_player_attributes(gk=False, first=False)
         self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))
