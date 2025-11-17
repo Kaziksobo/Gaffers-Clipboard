@@ -61,8 +61,10 @@ class App(ctk.CTk):
         data_path = App.PROJECT_ROOT / "data"
         self.data_manager = DataManager(data_path)
         
-        # Buffer to allow data to be collected by multiple frames before entering into data manager
+        # Buffers to allow data to be collected by multiple frames before entering into data manager
         self.outfield_player_buffer = {}
+        self.match_overview_buffer = {}
+        self.player_performances_buffer = []
 
         container = ctk.CTkFrame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -346,3 +348,33 @@ class App(ctk.CTk):
 
                             results[stat_name] = recognised_number
         return results
+    
+    def buffer_match_overview(self, overview_data: dict) -> None:
+        '''Buffers match overview data.
+
+        Args:
+            overview_data (dict): The match overview data to buffer.
+        '''
+        self.match_overview_buffer = overview_data
+    
+    def buffer_player_performance(self, performance_data: dict) -> None:
+        '''Buffers a single player's performance data.
+
+        Args:
+            performance_data (dict): The player's performance data to buffer.
+        '''
+        self.player_performances_buffer.append(performance_data)
+    
+    def save_buffered_match(self) -> None:
+        '''
+        Saves the buffered match overview and player performances to the data manager as a new match entry.
+        Clears the buffers after saving.
+        '''
+        self.data_manager.add_match(
+            match_data=self.match_overview_buffer,
+            player_performances=self.player_performances_buffer
+        )
+        # Clear buffers after saving
+        self.match_overview_buffer = {}
+        self.player_performances_buffer = []
+    
