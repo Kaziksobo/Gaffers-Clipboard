@@ -201,5 +201,18 @@ class MatchStatsFrame(ctk.CTkFrame):
     def on_done_button_press(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
         '''
+        # Collect match overview
+        overview_data = {
+            "home_team_name": self.home_team_name.get(),
+            "away_team_name": self.away_team_name.get(),
+            "home_score": self.home_team_score.get(),
+            "away_score": self.away_team_score.get(),
+            "home_stats": {k: v.get() for k, v in self.home_stats_vars.items()},
+            "away_stats": {k: v.get() for k, v in self.away_stats_vars.items()}
+        }
+        
+        # Buffer match overview
+        self.controller.buffer_match_overview(overview_data)
+        
         self.controller.capture_screenshot(is_it_player=True)
         self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
