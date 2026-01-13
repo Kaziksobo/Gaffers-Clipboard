@@ -55,41 +55,44 @@ The goal of this phase is to expand the application to handle all the required s
 	- [x] integrate `pyautogui` and `time` into `gui.py`.
 	- [x] Create generalised controller methods for taking screenshots after a delay
 	- [x] Connect the "done" buttons in all appropriate frames.
-- [ ] **Map All Coordinates:**
+- [x] **Map All Coordinates:**
 	- [x] Create a new configuration file for storing stat coordinates.
-    - [ ] For each stats screen (Team, Player, etc.), store the coordinates of all required stats in the config file.
-- [ ] **Integrate OCR with Screenshots**
-	- [ ] Create a main processing function in the controller.
-	- [ ] This function should:
-		- [ ] Load the coordinates from the config file.
-		- [ ] For each stat, call the `ocr.get_stat_roi()` function with the correct coordinates to extract the digit region from the screenshot.
-		- [ ] Pass the extracted RIO to `ocr.recognise_digit()` to get the value.
-		- [ ] Store all recognised stats in a temporary dictionary.
-- [ ] **Connect OCR Results to the GUI**
-	- [ ] Pass the dictionary of recognized stats from the controller to the appropriate view (`MatchStatsFrame` or `PlayerStatsFrame`).
-	- [ ] In the view, create a method to update the `StringVar` for each stat entry box with the values from the dictionary. This will auto-fill the UI.
+    - [x] For each stats screen (Team, Player, etc.), store the coordinates of all required stats in the config file.
+- [x] **Multi-digit OCR**
+	- [x] transition from pure template matching to a contouring based method to split multi-digit numbers into their separate digits
+	- [x] Ensure the algorithm works robustly on all necessary digits, including the coloured digits on the player attribute screens
+- [x] **Integrate OCR with Screenshots**
+	- [x] Create a main processing function in the controller.
+	- [x] This function should:
+		- [x] Load the coordinates from the config file.
+		- [x] For each stat, call the `ocr.get_stat_roi()` function with the correct coordinates to extract the digit region from the screenshot.
+		- [x] Pass the extracted RIO to `ocr.recognise_digit()` to get the value.
+		- [x] Store all recognised stats in a temporary dictionary.
+- [x] **Connect OCR Results to the GUI**
+	- [x] Pass the dictionary of recognized stats from the controller to the appropriate view (`MatchStatsFrame` or `PlayerStatsFrame`).
+	- [x] In the view, create a method to update the `StringVar` for each stat entry box with the values from the dictionary. This will auto-fill the UI.
 
 **End Goal for Phase 4:** The user can click through the entire "Add Match" workflow. The application successfully takes screenshots, runs OCR on all defined coordinates, and populates the `MatchStatsFrame` and `PlayerStatsFrame` with the recognized (or placeholder) data, ready for user validation.
 
 ---
 
-## Phase 5:
+## Phase 5: Data Persistence
 
-**Status: Not Started**
+**Status: Next Up (Not Started)**
 
-The goal of this phase is to handle multi-digit numbers, save the final validated data to a JSON file, and refine the OCR process.
+The goal of this phase is to finish end-to-end capture: Complete match/player performance saving, and schema-aligned output files.
 
-### To Do List:
-- [ ] **Expand OCR for Multi-Digit Numbers**
-	- [ ] Modify `ocr.py` to include logic that can scan a wider ROI containing multiple digits. This will likely involve finding contours for each digit, cropping them individually, and then combining the results into a single number.
-- [ ] **Implement Data Persistence**
-	- [ ] In the controller, create a method to gather the final, user-validated stats from the `StringVars` in each frame.
-	- [ ] Structure this data to match the format of the `Templates.json` file.
-	- [ ] When the user clicks "All Players Added," save the complete, structured data to a new JSON file.
-- [ ] **Expand OCR Capabilities**
-	- [ ] Begin creating template datasets for letters and symbols (like the possession symbol '%') to allow for non-numeric data extraction.
+### To-Do List:
+- [ ] **Player Performance Capture Flow**
+	- [ ] Add player selection (dropdown) in `PlayerStatsFrame`, populated from saved players with IDs.
+	- [ ] Wire OCR for `player_performance` ROIs to prefill per-player stats; allow manual edits before saving.
+	- [ ] Buffer multiple player performances and associate them with `player_id` on save.
+- [ ] **Match Save Pipeline**
+	- [ ] Gather validated match overview + player performances and call `DataManager.add_match` to write `matches.json`.
+	- [ ] Align field names between UI and `coordinates.json` (e.g., `fouls_comitted` vs. `fouls_committed`, `def_aware` → `defensive_awareness`).
+	- [ ] Structure saved data to match the planned template (home/away stats, linked player performances).
 
-**End Goal for Phase 5:** The application is feature-complete. The user can capture, validate, and save a complete and accurate match file in the correct JSON format.
+**End Goal for Phase 5:** The user can capture match overview and player performances, review/edit them, and save a complete match record (with linked player IDs) to JSON with reliable OCR
 
 ---
 
