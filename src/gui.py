@@ -6,6 +6,7 @@ import cv2 as cv
 from src import ocr
 from pathlib import Path
 from src.theme import THEME
+from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError
 from src.views.main_menu_frame import MainMenuFrame
 from src.views.add_match_frame import AddMatchFrame
 from src.views.match_stats_frame import MatchStatsFrame
@@ -16,26 +17,6 @@ from src.views.add_gk_frame import AddGKFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 from src.data_manager import DataManager
-
-class GUIError(Exception):
-    '''Base class for GUI-related exceptions.'''
-    pass
-
-class ScreenshotError(GUIError):
-    '''Raised when a screenshot operation fails.'''
-    pass
-
-class FrameNotFoundError(GUIError):
-    '''Raised when a requested frame is not found.'''
-    pass
-
-class ConfigurationError(GUIError):
-    """Raised when a configuration file is missing or corrupt."""
-    pass
-
-class UIPopulationError(GUIError):
-    """Raised when a UI frame fails to populate with data."""
-    pass
 
 class App(ctk.CTk):
     # Default screenshot delay (seconds) used when no explicit delay is provided
@@ -158,6 +139,16 @@ class App(ctk.CTk):
         
         match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
         match_stats_frame.populate_stats(stats)
+    
+    def process_player_stats(self) -> None:
+        '''Process player statistics by capturing a screenshot,
+        detecting statistics, and populating the PlayerStatsFrame with the results.
+        '''
+        self.capture_screenshot()
+        stats = self.detect_stats(is_it_player=True)
+        
+        player_stats_frame = self.frames[self.get_frame_class("PlayerStatsFrame")]
+        player_stats_frame.populate_stats(stats)
         
     def process_player_attributes(self, gk: bool, first: bool) -> None:
         '''Process player attributes by capturing a screenshot,
@@ -250,7 +241,7 @@ class App(ctk.CTk):
         # load the latest screenshot for processing
         screenshot_image = cv.imread(str(latest_screenshot_path))
 
-        decimal_stats = ['xG']
+        decimal_stats = ['xG', 'distance_covered', 'distance_sprinted']
         debug = False
 
         results = {}
@@ -286,6 +277,34 @@ class App(ctk.CTk):
 
                         print(f"Recognised value: {recognised_number}")
                         results[team_name][stat_name] = recognised_number
+            if screen_name == "player_performance" and is_it_player:
+                print("Processing player stats...")
+                for stat_name, roi in screen_data.items():
+                    x1 = roi['x1']
+                    y1 = roi['y1']
+                    x2 = roi['x2']
+                    y2 = roi['y2']
+                    stat_roi = (x1, y1, x2, y2)
+
+                    print(f"  Recognising {stat_name}...")
+                    recognised_number = ocr.recognise_number(
+                        full_screenshot=screenshot_image,
+                        roi=stat_roi,
+                        ocr_model=ocr_model,
+                        debug=debug
+                    )
+                    if debug:
+                        # if debug is true, recognised_number will output two variables not one, so separate them
+                        recognised_number, debug_image = recognised_number
+
+                    if stat_name in decimal_stats:
+                        recognised_number = str(recognised_number)
+                        if len(recognised_number) > 1:
+                            recognised_number = f'{recognised_number[:-1]}.{recognised_number[-1]}'
+                        recognised_number = float(recognised_number)
+
+                    print(f"Recognised value: {recognised_number}")
+                    results[stat_name] = recognised_number
 
         return results    
     

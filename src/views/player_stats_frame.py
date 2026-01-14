@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from src.exceptions import UIPopulationError
 
 class PlayerStatsFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -11,6 +12,9 @@ class PlayerStatsFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        # Attributes to store stat variables
+        self.stats_vars = {}
         
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
@@ -43,55 +47,16 @@ class PlayerStatsFrame(ctk.CTkFrame):
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.stats_grid.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
 
-        stat_names = ['Goals', 'Assists', 'Shots', 'Shots on target', 'xG', 'Passes', 'Passes completed', 'Key passes', 'Dribbles', 'Dribbles completed', 'Tackles completed', 'Fouls committed', 'Possession won', 'Possession lost', 'Minutes played', 'Distance covered']
+        stat_names = ['Goals', 'Assists', 'Shots', 'Shot Accuracy (%)', 'Passes', 'Pass Accuracy (%)', 'Dribbles', 'Dribbles Success Rate (%)', 'Tackles', 'Tackles Success Rate (%)', 'Fouls Committed', 'Possession Won', 'Possession Lost', 'Minutes Played', 'Distance Covered (km)', 'Distance Sprinted (km)']
         # Configure subgrid
-        for col in range(5):
-            self.stats_grid.grid_columnconfigure(col, weight=1)
+        self.stats_grid.grid_columnconfigure(0, weight=1)
+        self.stats_grid.grid_columnconfigure(1, weight=1)
         for row in range(len(stat_names)):
             self.stats_grid.grid_rowconfigure(row, weight=1)
 
-        # Populate subgrid with placeholder labels
-        self.user_team_name = ctk.CTkLabel(
-            self.stats_grid,
-            text="User Team",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
-        )
-        self.user_team_name.grid(row=0, column=0, padx=5, pady=5)
-        
-        self.user_team_score = ctk.CTkLabel(
-            self.stats_grid,
-            text="0",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
-        )
-        self.user_team_score.grid(row=0, column=1, padx=5, pady=5)
-
-        self.score_dash = ctk.CTkLabel(
-            self.stats_grid,
-            text="-",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
-        )
-        self.score_dash.grid(row=0, column=2, padx=5, pady=5)
-        self.opponent_team_score = ctk.CTkLabel(
-            self.stats_grid,
-            text="0",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
-        )
-        self.opponent_team_score.grid(row=0, column=3, padx=5, pady=5)
-        
-        self.opponent_team_name = ctk.CTkLabel(
-            self.stats_grid,
-            text="Opponent Team",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
-        )
-        self.opponent_team_name.grid(row=0, column=4, padx=5, pady=5)
-        
+        # Populate stats grid
         for i, stat in enumerate(stat_names):
-            self.create_stat_row(i+1, stat, theme)
+            self.create_stat_row(i, stat, theme)
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
@@ -125,7 +90,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
             fg_color=theme["colors"]["button_bg"],
             text_color=theme["colors"]["secondary_text"],
             font=theme["fonts"]["button"],
-            command=lambda: self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
+            command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
 
@@ -137,32 +102,72 @@ class PlayerStatsFrame(ctk.CTkFrame):
             stat_name (str): The name of the statistic.
             theme (dict): The theme dictionary containing colors and fonts.
         '''
-        self.user_stat_value = ctk.StringVar(value="0")
-        self.user_stat_entry = ctk.CTkEntry(
-            self.stats_grid,
-            textvariable=self.user_stat_value,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
-        )
-        self.user_stat_entry.grid(row=row, column=0, padx=5, pady=5)
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
             text=stat_name,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
-        self.stat_label.grid(row=row, column=2, padx=5, pady=5)
-        self.opponent_stat_value = ctk.StringVar(value="0")
-        self.opponent_stat_entry = ctk.CTkEntry(
+        self.stat_label.grid(row=row, column=0, padx=5, pady=5, sticky="w")
+        
+        stat_value = ctk.StringVar(value="0")
+        self.stats_vars[stat_name] = stat_value
+        stat_entry = ctk.CTkEntry(
             self.stats_grid,
-            textvariable=self.opponent_stat_value,
+            textvariable=stat_value,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
-        self.opponent_stat_entry.grid(row=row, column=4, padx=5, pady=5)
+        stat_entry.grid(row=row, column=1, padx=5, pady=5, sticky="ew")
+    
+    def populate_stats(self, stats_data: dict) -> None:
+        '''Populates player statistics entry fields with detected statistics
+        Updates input fields for each statistic using the provided stats_data dictionary
+
+        Args:
+            stats_data (dict): A dictionary containing player statistics for the current match
+        '''
+        if not stats_data:
+            raise UIPopulationError("Received no data to populate player statistics.")
+        key_to_display_name = {
+            'goals': 'Goals',
+            'assists': 'Assists',
+            'shots': 'Shots',
+            'shot_accuracy': 'Shot Accuracy (%)',
+            'passes': 'Passes',
+            'pass_accuracy': 'Pass Accuracy (%)',
+            'dribbles': 'Dribbles',
+            'dribbles_success_rate': 'Dribbles Success Rate (%)',
+            'tackles': 'Tackles',
+            'tackles_success_rate': 'Tackles Success Rate (%)',
+            'fouls_committed': 'Fouls Committed',
+            'possession_won': 'Possession Won',
+            'possession_lost': 'Possession Lost',
+            'minutes_played': 'Minutes Played',
+            'distance_covered': 'Distance Covered (km)',
+            'distance_sprinted': 'Distance Sprinted (km)'
+        }
+        
+        for key, display_name in key_to_display_name.items():
+            self.stats_vars[display_name].set(str(stats_data.get(key, "0")))
+
+    def collect_data(self) -> dict:
+        '''Collects the player statistics data from the entry fields.
+
+        Returns:
+            dict: A dictionary containing the collected player statistics.
+        '''
+        data = {stat_name: var.get() for stat_name, var in self.stats_vars.items()}
+        self.controller.buffer_player_performance(data)
 
     def on_next_player_button_press(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
         '''
-        self.controller.capture_screenshot(is_it_player=True)
+        self.collect_data()
+        self.controller.process_player_stats()
         self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+    
+    def on_done_button_press(self):
+        self.collect_data()
+        self.controller.save_buffered_match()
+        self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))

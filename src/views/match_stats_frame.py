@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from src.exceptions import UIPopulationError
 
 class MatchStatsFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -15,6 +16,12 @@ class MatchStatsFrame(ctk.CTkFrame):
         # Attributes to store stat variables
         self.home_stats_vars = {}
         self.away_stats_vars = {}
+        
+        # Variables for team names and scores
+        self.home_team_name_var = ctk.StringVar(value="Home Team")
+        self.away_team_name_var = ctk.StringVar(value="Away Team")
+        self.home_team_score_var = ctk.StringVar(value="0")
+        self.away_team_score_var = ctk.StringVar(value="0")
 
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
@@ -54,20 +61,20 @@ class MatchStatsFrame(ctk.CTkFrame):
         for row in range(len(stat_names)):
             self.stats_grid.grid_rowconfigure(row, weight=1)
 
-        # Populate subgrid with placeholder labels
-        self.home_team_name = ctk.CTkLabel(
+        # Populate subgrid with entry fields
+        self.home_team_name = ctk.CTkEntry(
             self.stats_grid,
-            text="Home Team",
+            textvariable=self.home_team_name_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            text_color=theme["colors"]["secondary_text"]
         )
         self.home_team_name.grid(row=0, column=0, padx=5, pady=5)
 
-        self.home_team_score = ctk.CTkLabel(
+        self.home_team_score = ctk.CTkEntry(
             self.stats_grid,
-            text="0",
+            textvariable=self.home_team_score_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            text_color=theme["colors"]["secondary_text"]
         )
         self.home_team_score.grid(row=0, column=1, padx=5, pady=5)
 
@@ -78,19 +85,19 @@ class MatchStatsFrame(ctk.CTkFrame):
             text_color=theme["colors"]["primary_text"]
         )
         self.score_dash.grid(row=0, column=2, padx=5, pady=5)
-        self.away_team_score = ctk.CTkLabel(
+        self.away_team_score = ctk.CTkEntry(
             self.stats_grid,
-            text="0",
+            textvariable=self.away_team_score_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            text_color=theme["colors"]["secondary_text"]
         )
         self.away_team_score.grid(row=0, column=3, padx=5, pady=5)
 
-        self.away_team_name = ctk.CTkLabel(
+        self.away_team_name = ctk.CTkEntry(
             self.stats_grid,
-            text="Away Team",
+            textvariable=self.away_team_name_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            text_color=theme["colors"]["secondary_text"]
         )
         self.away_team_name.grid(row=0, column=4, padx=5, pady=5)
 
@@ -163,7 +170,7 @@ class MatchStatsFrame(ctk.CTkFrame):
             stats_data (dict): A dictionary containing match statistics for home and away teams.
         '''
         if not stats_data:
-            raise self.controller.UIPopulationError("Received no data to populate match statistics.")
+            raise UIPopulationError("Received no data to populate match statistics.")
         # Maps key from OCR to display name in the UI
         key_to_display_name = {
             'possession': 'Possession (%)',
@@ -187,10 +194,10 @@ class MatchStatsFrame(ctk.CTkFrame):
         away_stats = stats_data.get('away_team', {})
         
         if home_stats is None or away_stats is None:
-            raise self.controller.UIPopulationError("Match stats data is missing 'home_team' or 'away_team' keys.")
+            raise UIPopulationError("Match stats data is missing 'home_team' or 'away_team' keys.")
 
-        self.home_team_score.configure(text=str(home_stats.get('score', '0')))
-        self.away_team_score.configure(text=str(away_stats.get('score', '0')))
+        self.home_team_score_var.set(str(home_stats.get('score', '0')))
+        self.away_team_score_var.set(str(away_stats.get('score', '0')))
 
         for key, display_name in key_to_display_name.items():
             if display_name in self.home_stats_vars:
@@ -203,10 +210,10 @@ class MatchStatsFrame(ctk.CTkFrame):
         '''
         # Collect match overview
         overview_data = {
-            "home_team_name": self.home_team_name.get(),
-            "away_team_name": self.away_team_name.get(),
-            "home_score": self.home_team_score.get(),
-            "away_score": self.away_team_score.get(),
+            "home_team_name": self.home_team_name_var.get(),
+            "away_team_name": self.away_team_name_var.get(),
+            "home_score": self.home_team_score_var.get(),
+            "away_score": self.away_team_score_var.get(),
             "home_stats": {k: v.get() for k, v in self.home_stats_vars.items()},
             "away_stats": {k: v.get() for k, v in self.away_stats_vars.items()}
         }
@@ -214,5 +221,5 @@ class MatchStatsFrame(ctk.CTkFrame):
         # Buffer match overview
         self.controller.buffer_match_overview(overview_data)
         
-        self.controller.capture_screenshot(is_it_player=True)
+        self.controller.process_player_stats()
         self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
