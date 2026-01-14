@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from src.exceptions import UIPopulationError
 
 class AddGKFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict):
@@ -145,7 +146,7 @@ class AddGKFrame(ctk.CTkFrame):
             stats (dict): A dictionary containing attribute names and their corresponding values.
         '''
         if not stats:
-            raise self.controller.UIPopulationError("Received no data to populate GK attributes.")
+            raise UIPopulationError("Received no data to populate GK attributes.")
         key_to_display_name = {
             "diving": "Diving",
             "handling": "Handling",

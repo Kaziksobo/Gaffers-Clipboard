@@ -2,29 +2,13 @@ import cv2 as cv
 import numpy as np
 from pathlib import Path
 import sys
+from src.exceptions import OCRError, ModelLoadError, InvalidImageError, NoDigitsFoundError
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.append(str(PROJECT_ROOT))
 
 STANDARD_SIZE = (30, 35)
 CONFIDENCE_THRESHOLD = 0.5
-
-# Error handling timeee
-class OCRError(Exception):
-    '''Base class for OCR-related errors.'''
-    pass
-
-class ModelLoadError(OCRError):
-    '''Raised when the OCR model fails to load.'''
-    pass
-
-class InvalidImageError(OCRError):
-    '''Raised when the input image is invalid or cannot be processed.'''
-    pass
-
-class NoDigitsFoundError(OCRError):
-    '''Raised when no digit-like contours are found in the ROI.'''
-    pass
 
 
 def load_ocr_model() -> cv.ml.KNearest:
