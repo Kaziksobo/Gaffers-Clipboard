@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from src.exceptions import UIPopulationError
 
 class AddOutfieldFrame2(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict):
@@ -113,7 +114,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             stats (dict): A dictionary containing attribute names and their corresponding values.
         '''
         if not stats:
-            raise self.controller.UIPopulationError("Received no data to populate outfield player attributes.")
+            raise UIPopulationError("Received no data to populate outfield player attributes.")
         key_to_display_name = {
             "ball_control": "Ball Control",
             "crossing": "Crossing",
