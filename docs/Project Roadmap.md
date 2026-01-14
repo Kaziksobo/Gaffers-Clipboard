@@ -46,7 +46,7 @@ The goal of this phase was to build out the GUI to guide the user through captur
 ---
 ## Phase 4: Full Data Extraction & Screen Capture
 
-***Status: In progress***
+**Status: Complete**
 
 The goal of this phase is to expand the application to handle all the required stats from every screen and ensure the data is accurate before saving.
 
@@ -78,25 +78,48 @@ The goal of this phase is to expand the application to handle all the required s
 
 ## Phase 5: Data Persistence
 
-**Status: Next Up (Not Started)**
+***In Progress***
 
 The goal of this phase is to finish end-to-end capture: Complete match/player performance saving, and schema-aligned output files.
 
 ### To-Do List:
 - [ ] **Player Performance Capture Flow**
 	- [ ] Add player selection (dropdown) in `PlayerStatsFrame`, populated from saved players with IDs.
-	- [ ] Wire OCR for `player_performance` ROIs to prefill per-player stats; allow manual edits before saving.
+	- [x] Wire OCR for `player_performance` ROIs to prefill per-player stats; allow manual edits before saving.
 	- [ ] Buffer multiple player performances and associate them with `player_id` on save.
 - [ ] **Match Save Pipeline**
-	- [ ] Gather validated match overview + player performances and call `DataManager.add_match` to write `matches.json`.
+	- [x] Gather validated match overview + player performances and call `DataManager.add_match` to write `matches.json`.
 	- [ ] Align field names between UI and `coordinates.json` (e.g., `fouls_comitted` vs. `fouls_committed`, `def_aware` → `defensive_awareness`).
 	- [ ] Structure saved data to match the planned template (home/away stats, linked player performances).
 
 **End Goal for Phase 5:** The user can capture match overview and player performances, review/edit them, and save a complete match record (with linked player IDs) to JSON with reliable OCR
 
 ---
+## Phase 6: Multi-Career Support & Data Architecture
 
-## Phase 6: 
+**Status: Not Started**
+
+The goal of this phase is to refactor the application's architecture to support "Multi-Tenancy." This allows the user to manage multiple simultaneous FIFA careers (e.g., one for "Arsenal", one for "Wrexham") without mixing up their stats and player records.
+
+### To-Do List:
+- [ ] **Implement career gate**
+	- [ ] Create a new `CareerSelectFrame` to be the first screen shown on application launch.
+	- [ ] Build UI to list existing careers found in the `data/careers/` directory.
+	- [ ] Add a "Create New Career" form (Career Name, Team Name, Manager Name).
+- [ ] **Refactor Data Management Architecture**
+	- [ ] Modify `App` class to delay `DataManager` initialization until a career is selected.
+	- [ ] Update `DataManager` to accept a dynamic `career_path` argument instead of using a hardcoded global path.
+	- [ ] Ensure all subsequent reads/writes (Players, Matches) are scoped to `data/careers/<career_id>/`.
+- [ ] **Career Metadata & Persistence**
+	- [ ] Define a `meta.json` schema for each career folder (storing career-specific settings like difficulty, match length, or current season).
+	- [ ] Implement directory creation logic: when a new career is added, generate the folder structure and empty `players.json` and `matches.json` files automatically.
+- [ ] **Session Context**
+	- [ ] Update the main GUI controller to hold the "Current Career Context" and display the active career name in the sidebar or title bar.
+
+**End Goal for Phase 6:** When the user launches the app, they are prompted to select or create a career. Once selected, all subsequent data entry, OCR lookups, and file saving occur strictly within that specific career's folder, ensuring complete data isolation between different save files.
+
+---
+## Phase 7: 
 
 **Status: Not Started**
 
