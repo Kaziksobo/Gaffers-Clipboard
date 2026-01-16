@@ -84,7 +84,7 @@ The goal of this phase is to finish end-to-end capture: Complete match/player pe
 
 ### To-Do List:
 - [ ] **Player Performance Capture Flow**
-	- [ ] Add player selection (dropdown) in `PlayerStatsFrame`, populated from saved players with IDs.
+	- [x] Add player selection (dropdown) in `PlayerStatsFrame`, populated from saved players with IDs.
 	- [x] Wire OCR for `player_performance` ROIs to prefill per-player stats; allow manual edits before saving.
 	- [ ] Buffer multiple player performances and associate them with `player_id` on save.
 - [ ] **Match Save Pipeline**

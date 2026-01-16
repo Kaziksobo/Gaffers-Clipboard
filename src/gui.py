@@ -69,6 +69,7 @@ class App(ctk.CTk):
         Returns:
             list[str]: A sorted list of player names, or ["No players found"] if none exist.
         """
+        self.data_manager.refresh_players()
         if not self.data_manager.players:
             return ["No players found"]
         return sorted([player.get("name") for player in self.data_manager.players])
@@ -112,6 +113,8 @@ class App(ctk.CTk):
             raise FrameNotFoundError(f"No frame class named '{page_class.__name__}' found.")
         frame = self.frames[page_class]
         frame.tkraise()
+        if hasattr(frame, "on_show"):
+            frame.on_show()
 
     def get_frame_class(self, name: str) -> type:
         '''Get the frame class by its name.
