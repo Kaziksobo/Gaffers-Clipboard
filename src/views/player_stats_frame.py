@@ -23,8 +23,9 @@ class PlayerStatsFrame(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
         self.grid_rowconfigure(2, weight=0)
-        self.grid_rowconfigure(3, weight=1)
-        self.grid_rowconfigure(4, weight=1)
+        self.grid_rowconfigure(3, weight=0)
+        self.grid_rowconfigure(4, weight=0)
+        self.grid_rowconfigure(5, weight=1)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -35,18 +36,31 @@ class PlayerStatsFrame(ctk.CTkFrame):
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         
+        # Player dropdown
+        self.player_list_var = ctk.StringVar(value="Select Player")
+        self.player_dropdown = ctk.CTkOptionMenu(
+            self,
+            variable=self.player_list_var,
+            values=self.controller.get_all_player_names(),
+            font=theme["fonts"]["body"],
+            fg_color=theme["colors"]["button_bg"],
+            text_color=theme["colors"]["secondary_text"],
+            button_color=theme["colors"]["button_bg"],
+            command=lambda choice: self.controller.set_current_player_by_name(choice)
+        )
+        self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
+        
         # Info Label
         self.info_label = ctk.CTkLabel(
             self, text="Empty stats couldn't be recognised and require manual entry.\n Please review and update player attributes as necessary.",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
-        self.info_label.grid(row=2, column=1, pady=(0, 20))
+        self.info_label.grid(row=3, column=1, pady=(0, 20))
         
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
-        self.stats_grid.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
-
+        self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
         stat_names = ['Goals', 'Assists', 'Shots', 'Shot Accuracy (%)', 'Passes', 'Pass Accuracy (%)', 'Dribbles', 'Dribbles Success Rate (%)', 'Tackles', 'Tackles Success Rate (%)', 'Fouls Committed', 'Possession Won', 'Possession Lost', 'Minutes Played', 'Distance Covered (km)', 'Distance Sprinted (km)']
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
@@ -60,7 +74,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
-        self.direction_frame.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
+        self.direction_frame.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
         self.direction_frame.grid_columnconfigure(2, weight=1)
@@ -151,6 +165,19 @@ class PlayerStatsFrame(ctk.CTkFrame):
         for key, display_name in key_to_display_name.items():
             self.stats_vars[display_name].set(str(stats_data.get(key, "0")))
 
+    def refresh_player_dropdown(self) -> None:
+        """Reload player names and update the dropdown."""
+        names = self.controller.get_all_player_names()
+        self.player_dropdown.configure(values=names)
+        # Keep previous selection if valid; otherwise select first or placeholder
+        prev = self.player_list_var.get()
+        if prev not in names:
+            self.player_list_var.set(names[0] if names and names[0] != "No players found" else "Select Player")
+
+    def on_show(self) -> None:
+        """Hook called when this frame is raised."""
+        self.refresh_player_dropdown()
+    
     def collect_data(self) -> dict:
         '''Collects the player statistics data from the entry fields.
 
@@ -158,6 +185,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
             dict: A dictionary containing the collected player statistics.
         '''
         data = {stat_name: var.get() for stat_name, var in self.stats_vars.items()}
+        data['player_name'] = self.player_list_var.get()
         self.controller.buffer_player_performance(data)
 
     def on_next_player_button_press(self) -> None:

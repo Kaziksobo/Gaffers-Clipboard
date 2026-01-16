@@ -32,10 +32,14 @@ class DataManager:
         Returns:
             The loaded JSON data, or the default value if loading fails.
         """
+        if not path.exists():
+            print(f"Warning: {path} does not exist")
+            return default
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Error loading JSON from {path}: {e}")
             return default
     
     def _save_json(self, path: Path, data):
@@ -49,6 +53,12 @@ class DataManager:
         """
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
+    
+    def refresh_players(self) -> None:
+        self.players = self._load_json(self.players_path, default=[])
+
+    def refresh_matches(self) -> None:
+        self.matches = self._load_json(self.matches_path, default=[])
     
     def add_or_update_player(self, player_ui_data: dict, position: str, season: str):
         """
@@ -89,6 +99,8 @@ class DataManager:
             }
             self.players.append(new_player)
         self._save_json(self.players_path, self.players)
+        # Reload players to ensure consistency
+        self.players = self._load_json(self.players_path, default=[])
     
     def _generate_id(self, collection: list) -> int:
         """
@@ -144,3 +156,5 @@ class DataManager:
         }
         self.matches.append(new_match)
         self._save_json(self.matches_path, self.matches)
+        # Reload matches to ensure consistency
+        self.matches = self._load_json(self.matches_path, default=[])
