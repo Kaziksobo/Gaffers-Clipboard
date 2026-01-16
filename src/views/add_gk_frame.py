@@ -169,7 +169,8 @@ class AddGKFrame(ctk.CTkFrame):
         ui_data["height"] = self.height_entry.get()
         ui_data["weight"] = self.weight_entry.get()
         ui_data["country"] = self.country_entry.get()
+        ui_data["season"] = self.season_entry.get()
         
-        self.controller.data_manager.add_or_update_player(ui_data, position="GK")
+        self.controller.data_manager.add_or_update_player(ui_data, position="GK", season=ui_data["season"])
 
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
