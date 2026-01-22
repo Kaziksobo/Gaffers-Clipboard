@@ -41,7 +41,7 @@ class AddGKFrame(ctk.CTkFrame):
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
-        self.season_entry.grid(row=2, column=2, pady=(10, 5), sticky="ew")
+        self.season_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
 
         self.base_attr_row = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
         self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")

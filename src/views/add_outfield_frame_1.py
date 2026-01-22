@@ -92,7 +92,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["secondary_text"]
         )
-        self.country_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
+        self.country_entry.grid(row=0, column=5, padx=5, pady=5, sticky="ew")
         
         self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
