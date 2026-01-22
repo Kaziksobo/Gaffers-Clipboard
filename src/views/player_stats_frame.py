@@ -61,7 +61,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
-        stat_names = ['Goals', 'Assists', 'Shots', 'Shot Accuracy (%)', 'Passes', 'Pass Accuracy (%)', 'Dribbles', 'Dribbles Success Rate (%)', 'Tackles', 'Tackles Success Rate (%)', 'Fouls Committed', 'Possession Won', 'Possession Lost', 'Minutes Played', 'Distance Covered (km)', 'Distance Sprinted (km)']
+        stat_names = ['Goals', 'Assists', 'Shots', 'Shot Accuracy (%)', 'Passes', 'Pass Accuracy (%)', 'Dribbles', 'Dribbles Success Rate (%)', 'Tackles', 'Tackles Success Rate (%)', 'Offsides', 'Fouls Committed', 'Possession Won', 'Possession Lost', 'Minutes Played', 'Distance Covered (km)', 'Distance Sprinted (km)']
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
         self.stats_grid.grid_columnconfigure(1, weight=1)
@@ -154,6 +154,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
             'dribbles_success_rate': 'Dribbles Success Rate (%)',
             'tackles': 'Tackles',
             'tackles_success_rate': 'Tackles Success Rate (%)',
+            'offsides': 'Offsides',
             'fouls_committed': 'Fouls Committed',
             'possession_won': 'Possession Won',
             'possession_lost': 'Possession Lost',
