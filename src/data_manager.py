@@ -145,7 +145,8 @@ class DataManager:
         normalised_performances = []
         for perf in player_performances:
             perf_copy = perf.copy()
-            perf_copy["player_id"] = self._find_player_id_by_name(perf_copy.get("name", ""))
+            perf_copy["player_id"] = self._find_player_id_by_name(perf_copy.get("player_name", ""))
+            perf_copy.pop("player_name", None)  # Remove name after finding ID
             normalised_performances.append(perf_copy)
         
         new_match = {

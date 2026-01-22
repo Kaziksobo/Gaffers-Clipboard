@@ -83,14 +83,14 @@ The goal of this phase is to expand the application to handle all the required s
 The goal of this phase is to finish end-to-end capture: Complete match/player performance saving, and schema-aligned output files.
 
 ### To-Do List:
-- [ ] **Player Performance Capture Flow**
+- [x] **Player Performance Capture Flow**
 	- [x] Add player selection (dropdown) in `PlayerStatsFrame`, populated from saved players with IDs.
 	- [x] Wire OCR for `player_performance` ROIs to prefill per-player stats; allow manual edits before saving.
-	- [ ] Buffer multiple player performances and associate them with `player_id` on save.
+	- [x] Buffer multiple player performances and associate them with `player_id` on save.
 - [ ] **Match Save Pipeline**
 	- [x] Gather validated match overview + player performances and call `DataManager.add_match` to write `matches.json`.
 	- [ ] Align field names between UI and `coordinates.json` (e.g., `fouls_comitted` vs. `fouls_committed`, `def_aware` → `defensive_awareness`).
-	- [ ] Structure saved data to match the planned template (home/away stats, linked player performances).
+	- [x] Structure saved data to match the planned template (home/away stats, linked player performances).
 
 **End Goal for Phase 5:** The user can capture match overview and player performances, review/edit them, and save a complete match record (with linked player IDs) to JSON with reliable OCR
 
