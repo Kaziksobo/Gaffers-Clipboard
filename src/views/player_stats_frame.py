@@ -41,7 +41,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
         self.player_dropdown = ctk.CTkOptionMenu(
             self,
             variable=self.player_list_var,
-            values=self.controller.get_all_player_names(),
+            values=["Loading..."],
             font=theme["fonts"]["body"],
             fg_color=theme["colors"]["button_bg"],
             text_color=theme["colors"]["secondary_text"],
