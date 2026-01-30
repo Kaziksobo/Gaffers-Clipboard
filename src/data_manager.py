@@ -14,24 +14,29 @@ class DataManager:
         self.data_folder = data_folder
         self.data_folder.mkdir(exist_ok=True)
         
-        self.players_path = self.data_folder / "players.json"
-        self.matches_path = self.data_folder / "matches.json"
+        self.current_career = None
+        self.careers_details_path = self.data_folder / "careers_details.json"
         
-        self.players = self._load_json(self.players_path, default=[])
-        self.matches = self._load_json(self.matches_path, default=[])
+        self.players_path = None
+        self.matches_path = None
+        
+        self.players = []
+        self.matches = []
     
-    def _load_json(self, path: Path, default):
+    def _load_json(self, path: Path, default=None):
         """
         Loads JSON data from the specified file path. 
         Returns the default value if the file does not exist or is invalid.
 
         Args:
             path (Path): The path to the JSON file.
-            default: The value to return if loading fails.
+            default: The value to return if loading fails, defaults to an empty list.
 
         Returns:
             The loaded JSON data, or the default value if loading fails.
         """
+        if default is None:
+            default = []
         if not path.exists():
             print(f"Warning: {path} does not exist")
             return default
@@ -42,23 +47,131 @@ class DataManager:
             print(f"Error loading JSON from {path}: {e}")
             return default
     
-    def _save_json(self, path: Path, data):
+    def _save_json(self, path: Path, data=None):
         """
         Saves the provided data as JSON to the specified file path.
         Overwrites the file if it already exists.
 
         Args:
             path (Path): The path to the JSON file.
-            data: The data to be saved as JSON.
+            data: The data to be saved as JSON, defaults to an empty list.
         """
+        if data is None:
+            data = []
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
     
+    def create_new_career(self, club_name: str, manager_name: str, starting_season: str, match_length: str, difficulty: str) -> None:
+        """
+        Creates a new career for the given club and starting season. 
+        Sets up the career's storage structure and records its configuration and metadata.
+
+        Args:
+            club_name (str): The display name of the club associated with the new career.
+            manager_name (str): The name of the manager for the new career.
+            starting_season (str): The season identifier marking when the career begins.
+            match_length (str): The configured length of matches for this career.
+            difficulty (str): The difficulty level associated with this career.
+        """
+        career_folder_name = club_name.replace(" ", "_")
+        self.current_career = career_folder_name
+        career_path = self.data_folder / career_folder_name
+        career_path.mkdir(exist_ok=True)
+        self.players_path = self.data_folder / career_folder_name / "players.json"
+        self.matches_path = self.data_folder / career_folder_name / "matches.json"
+        
+        # Update careers_details.json
+        careers_details = self._load_json(self.careers_details_path)
+        career_id = self._generate_id(careers_details)
+        
+        career_detail = {
+            "id": career_id,
+            "club_name": club_name,
+            "folder_name": career_folder_name,
+        }
+        
+        careers_details.append(career_detail)
+        self._save_json(self.careers_details_path, careers_details)
+        
+        # Create a metadata file for the career
+        career_metadata = {
+            "career_id": career_id,
+            "club_name": club_name,
+            "folder_name": career_folder_name,
+            "manager_name": manager_name,
+            "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "starting_season": starting_season,
+            "match_length": match_length,
+            "difficulty": difficulty
+        }
+        self._save_json(career_path / "metadata.json", career_metadata)
+        
+
+        # Initialize empty players and matches files
+        self._save_json(self.players_path)
+        self._save_json(self.matches_path)
+    
+    def get_all_career_names(self) -> list[str]:
+        """
+        Retrieves the names of all stored careers. 
+        Returns a list containing only the display names for each known career.
+
+        Returns:
+            list[str]: A list of career names loaded from the careers details store.
+        """
+        careers_details = self._load_json(self.careers_details_path)
+        return [career.get("club_name") for career in careers_details]
+    
+    def get_career_details(self, career_name: str) -> dict | None:
+        """
+        Retrieves the stored details for a specific career by name. 
+        Searches the careers data and returns the matching career record if it exists.
+
+        Args:
+            career_name (str): The display name of the career to look up.
+
+        Returns:
+            dict | None: The career details dictionary if found, otherwise None.
+        """
+        careers_details = self._load_json(self.careers_details_path)
+        career_folder_path = next(
+            (
+                career.get("folder_name")
+                for career in careers_details
+                if career.get("club_name") == career_name
+            ),
+            None,
+        )
+        if not career_folder_path:
+            return None
+        metadata_path = self.data_folder / career_folder_path / "metadata.json"
+        return self._load_json(metadata_path)
+    
+    def load_career(self, career_name: str) -> None:
+        """
+        Loads an existing career and prepares it for further data operations.
+        Updates the current career context and loads associated players and matches into memory.
+
+        Args:
+            career_name (str): The display name of the career to load.
+        """
+        career_details = self.get_career_details(career_name)
+        if not career_details:
+            print(f"Career '{career_name}' not found.")
+            return
+        career_folder_name = career_details.get("folder_name")
+        self.current_career = career_folder_name
+        self.players_path = self.data_folder / career_folder_name / "players.json"
+        self.matches_path = self.data_folder / career_folder_name / "matches.json"
+        
+        self.players = self._load_json(self.players_path)
+        self.matches = self._load_json(self.matches_path)
+
     def refresh_players(self) -> None:
-        self.players = self._load_json(self.players_path, default=[])
+        self.players = self._load_json(self.players_path)
 
     def refresh_matches(self) -> None:
-        self.matches = self._load_json(self.matches_path, default=[])
+        self.matches = self._load_json(self.matches_path)
     
     def add_or_update_player(self, player_ui_data: dict, position: str, season: str):
         """
@@ -100,7 +213,7 @@ class DataManager:
             self.players.append(new_player)
         self._save_json(self.players_path, self.players)
         # Reload players to ensure consistency
-        self.players = self._load_json(self.players_path, default=[])
+        self.players = self._load_json(self.players_path)
     
     def _generate_id(self, collection: list) -> int:
         """
@@ -158,4 +271,4 @@ class DataManager:
         self.matches.append(new_match)
         self._save_json(self.matches_path, self.matches)
         # Reload matches to ensure consistency
-        self.matches = self._load_json(self.matches_path, default=[])
+        self.matches = self._load_json(self.matches_path)

@@ -22,7 +22,7 @@ class MainMenuFrame(ctk.CTkFrame):
         # Main Heading
         self.main_heading = ctk.CTkLabel(
             self,
-            text="Welcome to Gaffer's Clipboard!",
+            text=self.get_career_welcome_text(),
             font=theme["fonts"]["title"],
             text_color=theme["colors"]["primary_text"]
         )
@@ -66,3 +66,22 @@ class MainMenuFrame(ctk.CTkFrame):
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddMatchFrame"))
         )
         self.add_match_button.pack(side="right", padx=(10, 0), pady=10)
+    
+    def get_career_welcome_text(self) -> str:
+        """Generates the welcome text shown on the main menu. Adapts the message based on the currently loaded career details.
+
+        Returns:
+            str: A formatted welcome message including club and manager names when available, otherwise a generic welcome message.
+        """
+        current_career = self.controller.get_current_career_details()
+        if current_career:
+            club_name = current_career["club_name"] or "your club"
+            manager_name = current_career["manager_name"] or "Gaffer"
+            return f"Welcome back to {club_name}, {manager_name}!"
+        else:
+            return "Welcome to Gaffer's Clipboard!"
+    
+    def on_show(self) -> None:
+        """Called when the frame is shown. Refreshes the welcome text."""
+        welcome_text = self.get_career_welcome_text()
+        self.main_heading.configure(text=welcome_text)

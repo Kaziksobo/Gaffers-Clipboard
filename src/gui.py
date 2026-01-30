@@ -7,6 +7,8 @@ from src import ocr
 from pathlib import Path
 from src.theme import THEME
 from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError
+from src.views.career_select_frame import CareerSelectFrame
+from src.views.create_career_frame import CreateCareerFrame
 from src.views.main_menu_frame import MainMenuFrame
 from src.views.add_match_frame import AddMatchFrame
 from src.views.match_stats_frame import MatchStatsFrame
@@ -26,13 +28,13 @@ class App(ctk.CTk):
     def __init__(self) -> None:
         '''    
         Initialize the main application window, set up the frame container,
-        register all navigation frames, and display the main menu.
+        register all navigation frames, and display the career select frame.
 
         - Sets window title, size, and minimum size.
         - Initializes the DataManager with the data directory.
         - Creates a container frame for all pages.
-        - Instantiates and registers each frame (MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2).
-        - Displays the main menu frame on startup.
+        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2).
+        - Displays the career select frame on startup.
         '''
         super().__init__()
         self.title("Gaffer's Clipboard")
@@ -41,6 +43,8 @@ class App(ctk.CTk):
         
         data_path = App.PROJECT_ROOT / "data"
         self.data_manager = DataManager(data_path)
+        
+        self.current_career = None
         
         # Buffers to allow data to be collected by multiple frames before entering into data manager
         self.outfield_player_buffer = {}
@@ -54,12 +58,56 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2):
+        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
         
-        self.show_frame(MainMenuFrame)
+        self.show_frame(CareerSelectFrame)
+        
+    def get_frame_class(self, name: str) -> type:
+        '''Get the frame class by its name.
+
+        Args:
+            name (str): The name of the frame class.
+
+        Raises:
+            FrameNotFoundError: If no frame class with the given name is found.
+
+        Returns:
+            type: The frame class corresponding to the given name.
+        '''
+        for cls in self.frames:
+            if cls.__name__ == name:
+                return cls
+        raise FrameNotFoundError(f"No frame class named '{name}' found.")
+    
+    def show_frame(self, page_class: type) -> None:
+        '''Show a frame for the given page class.
+
+        Args:
+            page_class (type): The class of the page to show.
+        Raises:
+            FrameNotFoundError: If the frame for the given page class is not found.
+        '''
+        if page_class not in self.frames:
+            raise FrameNotFoundError(f"No frame class named '{page_class.__name__}' found.")
+        frame = self.frames[page_class]
+        frame.tkraise()
+        if hasattr(frame, "on_show"):
+            frame.on_show()
+
+    def set_current_career_by_name(self, career_name: str) -> None:
+        self.data_manager.load_career(career_name)
+        self.data_manager.refresh_players()
+        self.current_career = career_name
+    
+    def save_new_career(self, club_name: str, manager_name: str, starting_season: str, half_length: int, match_difficulty: str) -> None:
+        self.data_manager.create_new_career(club_name, manager_name, starting_season, half_length, match_difficulty)
+        self.set_current_career_by_name(club_name)
+    
+    def get_current_career_details(self) -> dict | None:
+        return self.data_manager.get_career_details(self.current_career)
     
     def get_all_player_names(self) -> list[str]:
         """
@@ -101,38 +149,6 @@ class App(ctk.CTk):
             season=season
         )
 
-    def show_frame(self, page_class: type) -> None:
-        '''Show a frame for the given page class.
-
-        Args:
-            page_class (type): The class of the page to show.
-        Raises:
-            FrameNotFoundError: If the frame for the given page class is not found.
-        '''
-        if page_class not in self.frames:
-            raise FrameNotFoundError(f"No frame class named '{page_class.__name__}' found.")
-        frame = self.frames[page_class]
-        frame.tkraise()
-        if hasattr(frame, "on_show"):
-            frame.on_show()
-
-    def get_frame_class(self, name: str) -> type:
-        '''Get the frame class by its name.
-
-        Args:
-            name (str): The name of the frame class.
-
-        Raises:
-            FrameNotFoundError: If no frame class with the given name is found.
-
-        Returns:
-            type: The frame class corresponding to the given name.
-        '''
-        for cls in self.frames:
-            if cls.__name__ == name:
-                return cls
-        raise FrameNotFoundError(f"No frame class named '{name}' found.")
-    
     def process_match_stats(self) -> None:
         '''Process match statistics by capturing a screenshot,
         detecting statistics, and populating the MatchStatsFrame with the results.
