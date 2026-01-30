@@ -17,7 +17,7 @@ The primary goal of this phase was to prove that we can reliably identify a sing
 
 ---
 
-## Phase 2: The Application Skeleton
+## Phase 2: The Application Skeleton ✔️
 
 **Status: Complete**
 
@@ -32,7 +32,7 @@ The goal of this phase was to build the basic application framework around the p
 
 ---
 
-## Phase 3: GUI development
+## Phase 3: GUI development ✔️
 
 **Status: Complete**
 
@@ -44,7 +44,7 @@ The goal of this phase was to build out the GUI to guide the user through captur
 - [x] Buttons to switch between frames work, allowing the user to navigate thru the application.
 
 ---
-## Phase 4: Full Data Extraction & Screen Capture
+## Phase 4: Full Data Extraction & Screen Capture ✔️
 
 **Status: Complete**
 
@@ -76,7 +76,7 @@ The goal of this phase is to expand the application to handle all the required s
 
 ---
 
-## Phase 5: Data Persistence
+## Phase 5: Data Persistence ✔️
 
 **Status: Complete**
 
@@ -95,7 +95,7 @@ The goal of this phase is to finish end-to-end capture: Complete match/player pe
 **End Goal for Phase 5:** The user can capture match overview and player performances, review/edit them, and save a complete match record (with linked player IDs) to JSON with reliable OCR
 
 ---
-## Phase 6: Multi-Career Support & Data Architecture
+## Phase 6: Multi-Career Support & Data Architecture ✔️
 
 **Status: Complete**
 
@@ -119,26 +119,48 @@ The goal of this phase is to refactor the application's architecture to support 
 **End Goal for Phase 6:** When the user launches the app, they are prompted to select or create a career. Once selected, all subsequent data entry, OCR lookups, and file saving occur strictly within that specific career's folder, ensuring complete data isolation between different save files.
 
 ---
-## Phase 7: 
+## Phase 7: Refactoring, Usability & Robustness 
+
+**Status: Not Started** 
+
+The goal of this phase is to "harden" the application—improving stability, cleaning up the codebase, and adding essential Quality of Life features for the end user before diving into advanced analytics. 
+### To-Do List: 
+- [ ] **Codebase Refactoring**
+	- [ ] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
+	- [ ] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
+- [ ] **Error Handling & Feedback** 
+	- [ ] Implement robust `try/except` blocks across the entire program (especially OCR and file I/O).
+	- [ ] Use `tkinter.messagebox` to display friendly error popups to the user instead of silent console failures.
+- [ ] **Resolution Independence** 
+	- [ ] Move from hardcoded pixel coordinates to relative scale factors in `coordinates.json`.
+	- [ ] Implement logic to detect screen resolution and scale OCR regions dynamically (supporting 1080p, 4k, etc.).
+- [ ] **Feature Expansions**
+	- [ ] **GK Performance Frame:** Create a dedicated UI for entering/OCR-ing Goalkeeper match performance stats.
+	- [ ] **Optional Player Stats:** Add a toggle or logic to allow saving a match result *without* needing to enter individual player performances.
+- [ ] **User Experience & Documentation**
+	- [ ] Add an "Instructions" or "Help" tab/modal within the app explaining how to capture data. 
+	- [ ] Write a comprehensive `README.md` for the GitHub repository detailing installation and usage. 
+
+**End Goal for Phase 7:** The application is stable, resolution-independent, self-cleaning, and user-friendly enough for someone other than the developer to use without crashing. 
+
+----
+## Phase 8: Analytics & Distribution 
 
 **Status: Not Started**
 
 The goal of this phase is to integrate the OCR tool with the existing analysis scripts and build out the machine learning features.
 
-### To-Do List:
-- [ ] **Implement Error messages:**
-	- [ ] Fully add raises and exceptions across the entire program
-	- [ ] Use Tkinter error messages to display any exceptions to the user in plain text and let them re-enter details to fix the error if possible
-- [ ] **Update coordinates to handle other resolutions**
-	- [ ] Move from hardcoded coordinates for the OCR to scale factors, allowing the program to handle resolutions other than 1440p
+### To-Do List: 
 - [ ] **Integrate with Analysis Notebook:**
-    - [ ] Point the `analysis.ipynb` to the folder where the OCR tool saves its output.
+	- [ ] Point the `analysis.ipynb` to the folder where the OCR tool saves its output.
 - [ ] **Implement ML Insights:**
-    - [ ] Develop the custom "Form Score" calculation.
-    - [ ] Use clustering to identify player roles automatically.
-    - [ ] Build the performance vs. potential tracking system.
+	- [ ] Develop the custom "Form Score" calculation.
+	- [ ] Use clustering to identify player roles automatically.
+	- [ ] Build the performance vs. potential tracking system.
 - [ ] **Build Dashboards:**
-    - [ ] Create the Player Comparison view.
-    - [ ] Design the in-depth, automated Match Reports.
-- [ ] **Package for Distribution:**
-    - [ ] Use PyInstaller to create a standalone `.exe` file.
+	- [ ] Create the Player Comparison view.
+	- [ ] Design the in-depth, automated Match Reports.
+- [ ] **Package for Distribution:** 
+	- [ ] Use `PyInstaller` to create a standalone `.exe` file.
+
+**End Goal for Phase 8:** The application is a distributable, standalone desktop program. Beyond data entry, it serves as a complete "Assistant Manager," automatically generating visual reports, uncovering hidden player trends via Machine Learning, and helping the user make data-driven transfer and tactical decisions without ever touching a line of code.
