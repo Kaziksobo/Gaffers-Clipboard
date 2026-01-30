@@ -207,6 +207,7 @@ class App(ctk.CTk):
         try:
             pyautogui.screenshot(self.screenshot_path)
             print(f"Screenshot saved to {self.screenshot_path}")
+            self._cleanup_screenshots()
         except Exception as e:
             raise ScreenshotError(f"Failed to capture screenshot: {e}") from e
 
@@ -228,6 +229,30 @@ class App(ctk.CTk):
             return max(screenshot_files, key=lambda p: p.stat().st_mtime)
         else:
             raise ScreenshotError("No screenshots found in the screenshots directory.")
+    
+    def _cleanup_screenshots(self, max_files: int = 5) -> None:
+        screenshots_dir = App.PROJECT_ROOT / "screenshots"
+        if not screenshots_dir.exists():
+            return
+        
+        # Get all screenshot files
+        screenshot_files = list(screenshots_dir.glob("*.png"))
+        
+        # Sort files by modification time (newest first)
+        screenshot_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
+        
+        # Identify files to delete (everything after the first max_files)
+        files_to_delete = screenshot_files[max_files:]
+        
+        if not files_to_delete:
+            return
+        
+        for file_path in files_to_delete:
+            try:
+                file_path.unlink()
+                print(f"Deleted old screenshot: {file_path}")
+            except Exception as e:
+                print(f"Failed to delete screenshot {file_path}: {e}")
     
     def detect_stats(self, is_it_player: bool) -> dict:
         '''Detects and extracts match statistics from the latest screenshot using OCR.
