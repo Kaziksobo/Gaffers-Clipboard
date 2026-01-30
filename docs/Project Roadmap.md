@@ -128,6 +128,8 @@ The goal of this phase is to "harden" the application—improving stability, cle
 - [ ] **Codebase Refactoring**
 	- [ ] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
 	- [ ] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
+- [ ] **Implement Logging**
+	- [ ] Replace all `print()` statements with the Python `logging` module to generate well-formatted, timestamped log files for easier debugging.
 - [ ] **Error Handling & Feedback** 
 	- [ ] Implement robust `try/except` blocks across the entire program (especially OCR and file I/O).
 	- [ ] Use `tkinter.messagebox` to display friendly error popups to the user instead of silent console failures.
