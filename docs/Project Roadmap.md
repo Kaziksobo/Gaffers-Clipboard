@@ -97,24 +97,24 @@ The goal of this phase is to finish end-to-end capture: Complete match/player pe
 ---
 ## Phase 6: Multi-Career Support & Data Architecture
 
-**Status: Not Started**
+**Status: Complete**
 
 The goal of this phase is to refactor the application's architecture to support "Multi-Tenancy." This allows the user to manage multiple simultaneous FIFA careers (e.g., one for "Arsenal", one for "Wrexham") without mixing up their stats and player records.
 
 ### To-Do List:
-- [ ] **Implement career gate**
-	- [ ] Create a new `CareerSelectFrame` to be the first screen shown on application launch.
-	- [ ] Build UI to list existing careers found in the `data/careers/` directory.
-	- [ ] Add a "Create New Career" form (Career Name, Team Name, Manager Name).
-- [ ] **Refactor Data Management Architecture**
-	- [ ] Modify `App` class to delay `DataManager` initialization until a career is selected.
-	- [ ] Update `DataManager` to accept a dynamic `career_path` argument instead of using a hardcoded global path.
-	- [ ] Ensure all subsequent reads/writes (Players, Matches) are scoped to `data/careers/<career_id>/`.
-- [ ] **Career Metadata & Persistence**
-	- [ ] Define a `meta.json` schema for each career folder (storing career-specific settings like difficulty, match length, or current season).
-	- [ ] Implement directory creation logic: when a new career is added, generate the folder structure and empty `players.json` and `matches.json` files automatically.
-- [ ] **Session Context**
-	- [ ] Update the main GUI controller to hold the "Current Career Context" and display the active career name in the sidebar or title bar.
+- [x] **Implement career gate**
+	- [x] Create a new `CareerSelectFrame` to be the first screen shown on application launch.
+	- [x] Build UI to list existing careers found in the `data/careers/` directory.
+	- [x] Add a "Create New Career" form (Career Name, Team Name, Manager Name).
+- [x] **Refactor Data Management Architecture**
+	- [x] Modify `App` class to delay `DataManager` initialization until a career is selected.
+	- [x] Update `DataManager` to accept a dynamic `career_path` argument instead of using a hardcoded global path.
+	- [x] Ensure all subsequent reads/writes (Players, Matches) are scoped to `data/careers/<career_id>/`.
+- [x] **Career Metadata & Persistence**
+	- [x] Define a `meta.json` schema for each career folder (storing career-specific settings like difficulty, match length, or current season).
+	- [x] Implement directory creation logic: when a new career is added, generate the folder structure and empty `players.json` and `matches.json` files automatically.
+- [x] **Session Context**
+	- [x] Update the main GUI controller to hold the "Current Career Context" and display the active career name in the sidebar or title bar.
 
 **End Goal for Phase 6:** When the user launches the app, they are prompted to select or create a career. Once selected, all subsequent data entry, OCR lookups, and file saving occur strictly within that specific career's folder, ensuring complete data isolation between different save files.
 
@@ -126,6 +126,11 @@ The goal of this phase is to refactor the application's architecture to support 
 The goal of this phase is to integrate the OCR tool with the existing analysis scripts and build out the machine learning features.
 
 ### To-Do List:
+- [ ] **Implement Error messages:**
+	- [ ] Fully add raises and exceptions across the entire program
+	- [ ] Use Tkinter error messages to display any exceptions to the user in plain text and let them re-enter details to fix the error if possible
+- [ ] **Update coordinates to handle other resolutions**
+	- [ ] Move from hardcoded coordinates for the OCR to scale factors, allowing the program to handle resolutions other than 1440p
 - [ ] **Integrate with Analysis Notebook:**
     - [ ] Point the `analysis.ipynb` to the folder where the OCR tool saves its output.
 - [ ] **Implement ML Insights:**
