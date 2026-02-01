@@ -38,7 +38,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         
         self.season_entry = ctk.CTkEntry(
             self,
-            placeholder_text="Season (e.g., 25/26)",
+            placeholder_text="Season (e.g. 25/26)",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
             fg_color=theme["colors"]["entry_fg"]
@@ -61,7 +61,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             placeholder_text="Position",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=650
         )
         self.position_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         
@@ -70,25 +71,28 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             placeholder_text="Age",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.age_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
         
         self.height_entry = ctk.CTkEntry(
             self.base_attr_row,
-            placeholder_text="Height (cm)",
+            placeholder_text="Height (ft'in\")",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.height_entry.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
         
         self.weight_entry = ctk.CTkEntry(
             self.base_attr_row,
-            placeholder_text="Weight (kg)",
+            placeholder_text="Weight (lbs)",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.weight_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
@@ -97,7 +101,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             placeholder_text="Country",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.country_entry.grid(row=0, column=5, padx=5, pady=5, sticky="ew")
         

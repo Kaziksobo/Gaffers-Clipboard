@@ -38,7 +38,7 @@ class AddGKFrame(ctk.CTkFrame):
         
         self.season_entry = ctk.CTkEntry(
             self,
-            placeholder_text="Season (e.g., 25/26)",
+            placeholder_text="Season (e.g. 25/26)",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
             fg_color=theme["colors"]["entry_fg"]
@@ -60,25 +60,28 @@ class AddGKFrame(ctk.CTkFrame):
             placeholder_text="Age",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.age_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         
         self.height_entry = ctk.CTkEntry(
             self.base_attr_row,
-            placeholder_text="Height (cm)",
+            placeholder_text="Height (ft'in\")",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.height_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
         
         self.weight_entry = ctk.CTkEntry(
             self.base_attr_row,
-            placeholder_text="Weight (kg)",
+            placeholder_text="Weight (lbs)",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.weight_entry.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
         
@@ -87,7 +90,8 @@ class AddGKFrame(ctk.CTkFrame):
             placeholder_text="Country",
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            fg_color=theme["colors"]["entry_fg"],
+            width=160
         )
         self.country_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
@@ -195,17 +199,14 @@ class AddGKFrame(ctk.CTkFrame):
         self.name_entry.delete(0, 'end')
         self.name_entry.configure(placeholder_text="Enter name here")
         
-        self.position_entry.delete(0, 'end')
-        self.position_entry.configure(placeholder_text="Position")
-        
         self.age_entry.delete(0, 'end')
         self.age_entry.configure(placeholder_text="Age")
         
         self.height_entry.delete(0, 'end')
-        self.height_entry.configure(placeholder_text="Height (cm)")
+        self.height_entry.configure(placeholder_text="Height (ft'in\")")
         
         self.weight_entry.delete(0, 'end')
-        self.weight_entry.configure(placeholder_text="Weight (kg)")
+        self.weight_entry.configure(placeholder_text="Weight (lbs)")
         
         self.country_entry.delete(0, 'end')
         self.country_entry.configure(placeholder_text="Country")
