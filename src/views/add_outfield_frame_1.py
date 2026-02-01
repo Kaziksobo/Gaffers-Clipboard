@@ -196,7 +196,39 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         ui_data["weight"] = self.weight_entry.get()
         ui_data["country"] = self.country_entry.get()
         
-        self.controller.buffer_outfield_data(ui_data)
+        self.controller.buffer_data(ui_data, gk=False, first=True)
         
         self.controller.process_player_attributes(gk=False, first=False)
         self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))
+    
+    def on_show(self) -> None:
+        """
+        Clears the following input fields when the frame is shown:
+        - Name
+        - Position
+        - Age
+        - Height
+        - Weight
+        - Country\n
+        Also resets the scrollbar to the top of the attributes grid.
+        """
+        self.name_entry.delete(0, 'end')
+        self.name_entry.configure(placeholder_text="Enter name here")
+        
+        self.position_entry.delete(0, 'end')
+        self.position_entry.configure(placeholder_text="Position")
+        
+        self.age_entry.delete(0, 'end')
+        self.age_entry.configure(placeholder_text="Age")
+        
+        self.height_entry.delete(0, 'end')
+        self.height_entry.configure(placeholder_text="Height (cm)")
+        
+        self.weight_entry.delete(0, 'end')
+        self.weight_entry.configure(placeholder_text="Weight (kg)")
+        
+        self.country_entry.delete(0, 'end')
+        self.country_entry.configure(placeholder_text="Country")
+        
+        # Reset scrollbar to top
+        self.attributes_grid._parent_canvas.yview_moveto(0)
