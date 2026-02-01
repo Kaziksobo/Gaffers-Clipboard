@@ -3,6 +3,7 @@ import time
 import pyautogui
 import json
 import cv2 as cv
+import logging
 from src import ocr
 from pathlib import Path
 from src.theme import THEME
@@ -19,6 +20,8 @@ from src.views.add_gk_frame import AddGKFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 from src.data_manager import DataManager
+
+logger = logging.getLogger(__name__)
 
 class App(ctk.CTk):
     # Default screenshot delay (seconds) used when no explicit delay is provided
