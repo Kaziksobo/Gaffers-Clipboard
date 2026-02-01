@@ -199,6 +199,12 @@ class DataManager:
         
         if existing_player:
             existing_player["attribute_history"].append(attributes_snapshot)
+            # If age is different, update it
+            if existing_player.get("age") != player_ui_data.get("age").strip():
+                existing_player["age"] = player_ui_data.get("age").strip()
+            # If position is new, add it
+            if position not in existing_player.get("positions", []):
+                existing_player["positions"].append(position)
         else:
             new_player = {
                 "id": self._generate_id(self.players),
@@ -207,7 +213,7 @@ class DataManager:
                 "age": player_ui_data.get("age").strip(),
                 "height": player_ui_data.get("height").strip(),
                 "weight": player_ui_data.get("weight").strip(),
-                "position": position,
+                "positions": [position],
                 "attribute_history": [attributes_snapshot],
                 "financial_history": []
             }
