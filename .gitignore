@@ -7,3 +7,4 @@ src/views/__pycache__
 /model/training_data
 /data
 /.VSCodeCounter
+/logs
