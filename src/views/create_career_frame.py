@@ -127,7 +127,7 @@ class CreateCareerFrame(ctk.CTkFrame):
             font=theme["fonts"]["body"],
             fg_color=theme["colors"]["dropdown_fg"],
             text_color=theme["colors"]["primary_text"],
-            button_color=theme["colors"]["button_bg"],
+            button_color=theme["colors"]["button_fg"],
             dropdown_fg_color=theme["colors"]["dropdown_fg"],
             dropdown_text_color=theme["colors"]["primary_text"]
         )
