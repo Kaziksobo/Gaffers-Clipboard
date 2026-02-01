@@ -139,9 +139,11 @@ class AddOutfieldFrame2(ctk.CTkFrame):
     def on_done_button_press(self) -> None:
         """
         Handles the event when the 'Done' button is pressed on the technical attributes page.
-        Collects the entered attribute data, saves it through the controller, and navigates back to the player library frame.
+        Collects the entered attribute data, saves it through the controller, and navigates back to the player library view.
         """
         data_page_2 = {name: var.get() for name, var in self.attr_vars.items()}
-        self.controller.save_outfield_player(data_page_2)
+        self.controller.buffer_data(data_page_2, gk=False, first=False)
+        
+        self.controller.save_player()
         
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))

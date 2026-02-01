@@ -19,6 +19,7 @@ from src.views.player_library_frame import PlayerLibraryFrame
 from src.views.add_gk_frame import AddGKFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
+from src.views.add_financial_frame import AddFinancialFrame
 from src.data_manager import DataManager
 
 logger = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ class App(ctk.CTk):
         - Sets window title, size, and minimum size.
         - Initializes the DataManager with the data directory.
         - Creates a container frame for all pages.
-        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2).
+        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2, AddFinancial).
         - Displays the career select frame on startup.
         '''
         super().__init__()
@@ -50,7 +51,7 @@ class App(ctk.CTk):
         self.current_career = None
         
         # Buffers to allow data to be collected by multiple frames before entering into data manager
-        self.outfield_player_buffer = {}
+        self.player_attributes_buffer = {}
         self.match_overview_buffer = {}
         self.player_performances_buffer = []
 
@@ -61,7 +62,7 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2):
+        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -101,11 +102,27 @@ class App(ctk.CTk):
             frame.on_show()
 
     def set_current_career_by_name(self, career_name: str) -> None:
+        """Loads the specified career and refreshes related player data to establish it as the active context. 
+        This method coordinates the data manager to ensure downstream operations interact with the chosen career state.
+
+        Args:
+            career_name (str): The name of the career to activate.
+        """
         self.data_manager.load_career(career_name)
         self.data_manager.refresh_players()
         self.current_career = career_name
     
     def save_new_career(self, club_name: str, manager_name: str, starting_season: str, half_length: int, match_difficulty: str) -> None:
+        """Creates a brand-new career profile and immediately activates it within the application. 
+        This method orchestrates persistence of the initial settings and routes the UI to operate on the added career.
+
+        Args:
+            club_name (str): The club associated with the new career.
+            manager_name (str): The manager controlling the career.
+            starting_season (str): The season in which the career begins.
+            half_length (int): The duration of each half in minutes.
+            match_difficulty (str): The difficulty level applied to matches.
+        """
         self.data_manager.create_new_career(club_name, manager_name, starting_season, half_length, match_difficulty)
         self.set_current_career_by_name(club_name)
     
@@ -125,33 +142,59 @@ class App(ctk.CTk):
             return ["No players found"]
         return sorted([player.get("name") for player in self.data_manager.players])
     
-    def buffer_outfield_data(self, data_page_1: dict) -> None:
-        '''Buffers outfield player data from the first attribute page.
+    def buffer_data(self, data: dict, gk: bool, first: bool = True) -> None:
+        """Stores captured player attribute data so multi-step entry flows can assemble a complete record. 
+        This method routes goalkeeper and outfield pages into their respective buffer slots to await persistence.
 
         Args:
-            data_page_1 (dict): The attribute data from the first page.
-        '''
-        self.outfield_player_buffer = data_page_1
+            data (dict): The attribute values collected from the UI or OCR process.
+            gk (bool): Indicates whether the data belongs to a goalkeeper.
+            first (bool, optional): Distinguishes between the first and second outfield attribute pages. Defaults to True.
+        """
+        if gk:
+            self.player_attributes_buffer['gk_attr'] = data
+        elif first:
+            self.player_attributes_buffer['outfield_attr_1'] = data
+        else:
+            self.player_attributes_buffer['outfield_attr_2'] = data
     
-    def save_outfield_player(self, data_page_2: dict) -> None:
+    def save_player(self) -> None:
+        """Commits the buffered attribute data to persistent storage as a complete player record. 
+        This method reconciles goalkeeper and outfield inputs, determines context fields, and clears the buffer post-save.
         """
-        Combines buffered and new outfield player data, then saves or updates the player in the data manager.
-        This method ensures all relevant player attributes are merged and stored for future reference.
-
-        Args:
-            data_page_2 (dict): The attribute data from the second page.
-        """
-        full_player_data = {**self.outfield_player_buffer, **data_page_2}
-
-        position = full_player_data.pop("position", "Unknown")
-        season = full_player_data.pop("season", "Unknown")
+        # If gk, then only gk_attr will be present
+        # If outfield first, then outfield_attr_1 and outfield_attr_2 will be present
+        # If gk, position is 'GK' and season is taken from season key in gk_attr
+        # If outfield, position and season are taken from outfield_attr_1
+        if 'gk_attr' in self.player_attributes_buffer:
+            position = 'GK'
+            season = self.player_attributes_buffer['gk_attr'].get('season', '').strip()
+            attributes = self.player_attributes_buffer['gk_attr']
+        else:
+            position = self.player_attributes_buffer['outfield_attr_1'].get('position', '').strip()
+            season = self.player_attributes_buffer['outfield_attr_1'].get('season', '').strip()
+            attributes = {**self.player_attributes_buffer['outfield_attr_1'], **self.player_attributes_buffer['outfield_attr_2']}
         
         self.data_manager.add_or_update_player(
-            player_ui_data=full_player_data,
+            player_ui_data=attributes,
             position=position,
-            season=season
+            season=season,
         )
 
+        # Reset buffer after saving
+        self.player_attributes_buffer = {}
+    
+    def save_financial_data(self, player_name: str, financial_data: dict, season: str) -> None:
+        """Commits the financial data for a specific player to persistent storage. 
+        This method updates the player's monetary details based on user input.
+
+        Args:
+            player_name (str): The name of the player whose financial data is being saved.
+            financial_data (dict): The wage, market value, contract, and related details supplied by the user.
+            season (str): The season associated with the financial data.
+        """
+        self.data_manager.add_financial_data(player_name, financial_data, season)
+            
     def process_match_stats(self) -> None:
         '''Process match statistics by capturing a screenshot,
         detecting statistics, and populating the MatchStatsFrame with the results.

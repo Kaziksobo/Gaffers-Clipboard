@@ -171,6 +171,24 @@ class AddGKFrame(ctk.CTkFrame):
         ui_data["country"] = self.country_entry.get()
         ui_data["season"] = self.season_entry.get()
         
-        self.controller.data_manager.add_or_update_player(ui_data, position="GK", season=ui_data["season"])
+        self.controller.buffer_data(ui_data, gk=True)
+        self.controller.save_player()
 
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+    
+    def on_show(self) -> None:
+        """
+        Clears the following input fields when the frame is shown:
+        - Name
+        - Position
+        - Age
+        - Height
+        - Weight
+        - Country
+        """
+        self.name_entry.delete(0, 'end')
+        self.position_entry.delete(0, 'end')
+        self.age_entry.delete(0, 'end')
+        self.height_entry.delete(0, 'end')
+        self.weight_entry.delete(0, 'end')
+        self.country_entry.delete(0, 'end')

@@ -173,7 +173,7 @@ class DataManager:
     def refresh_matches(self) -> None:
         self.matches = self._load_json(self.matches_path)
     
-    def add_or_update_player(self, player_ui_data: dict, position: str, season: str):
+    def add_or_update_player(self, player_ui_data: dict, position: str, season: str) -> None:
         """
         Adds a new player or updates an existing player's attribute history.
         Uses the player's name to determine if the player already exists and appends new attribute data if so.
@@ -208,9 +208,42 @@ class DataManager:
                 "height": player_ui_data.get("height").strip(),
                 "weight": player_ui_data.get("weight").strip(),
                 "position": position,
-                "attribute_history": [attributes_snapshot]
+                "attribute_history": [attributes_snapshot],
+                "financial_history": []
             }
             self.players.append(new_player)
+        self._save_json(self.players_path, self.players)
+        # Reload players to ensure consistency
+        self.players = self._load_json(self.players_path)
+    
+    def add_financial_data(self, player_name: str, financial_data: dict, season: str) -> None:
+        """
+        Adds a financial data snapshot to the specified player's financial history.
+
+        Args:
+            player_name (str): The name of the player to update.
+            financial_data (dict): A dictionary containing financial details to be added.
+            season (str): The season associated with the financial snapshot.
+        """
+        full_name = player_name.strip().lower()
+        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
+        
+        if not existing_player:
+            print(f"Player '{player_name}' not found. Cannot add financial data.")
+            return
+        
+        # Remove any commas from numeric fields
+        for key, value in financial_data.items():
+            if isinstance(value, str):
+                financial_data[key] = value.replace(",", "")
+        
+        financial_snapshot = {
+            "datetime": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "season": season,
+            **financial_data
+        }
+        
+        existing_player["financial_history"].append(financial_snapshot)
         self._save_json(self.players_path, self.players)
         # Reload players to ensure consistency
         self.players = self._load_json(self.players_path)

@@ -45,6 +45,7 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.buttons_grid.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
         self.buttons_grid.grid_columnconfigure(0, weight=1)
         self.buttons_grid.grid_columnconfigure(1, weight=1)
+        self.buttons_grid.grid_columnconfigure(2, weight=1)
         self.buttons_grid.grid_rowconfigure(0, weight=1)
         
         self.add_gk_button = ctk.CTkButton(
@@ -66,6 +67,16 @@ class PlayerLibraryFrame(ctk.CTkFrame):
             command=lambda: self.on_add_outfield_button_press()
         )
         self.add_outfield_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        
+        self.add_financial_button = ctk.CTkButton(
+            self.buttons_grid,
+            text="Add Player Financial Data",
+            fg_color=theme["colors"]["button_bg"],
+            text_color=theme["colors"]["secondary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddFinancialFrame"))
+        )
+        self.add_financial_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
         
         self.home_button = ctk.CTkButton(
             self,
