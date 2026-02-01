@@ -176,7 +176,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
             self.player_list_var.set(names[0] if names and names[0] != "No players found" else "Select Player")
 
     def on_show(self) -> None:
-        """Hook called when this frame is raised."""
+        """Refreshes the player dropdown when the frame is shown."""
         self.refresh_player_dropdown()
     
     def collect_data(self) -> dict:
