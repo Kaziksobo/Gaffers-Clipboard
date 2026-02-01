@@ -46,6 +46,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
             fg_color=theme["colors"]["dropdown_fg"],
             text_color=theme["colors"]["primary_text"],
             button_color=theme["colors"]["button_fg"],
+            dropdown_fg_color=theme["colors"]["dropdown_fg"],
+            dropdown_text_color=theme["colors"]["primary_text"],
             # command=lambda choice: self.controller.set_current_player_by_name(choice)  # Commented out as it may not be necessary
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))

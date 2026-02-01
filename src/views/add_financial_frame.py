@@ -40,11 +40,12 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.player_dropdown = ctk.CTkOptionMenu(
             self.selection_frame,
             variable=self.player_list_var,
-            values=["Loading..."],
             font=theme["fonts"]["body"],
             fg_color=theme["colors"]["dropdown_fg"],
             text_color=theme["colors"]["primary_text"],
             button_color=theme["colors"]["button_fg"],
+            dropdown_fg_color=theme["colors"]["dropdown_fg"],
+            dropdown_text_color=theme["colors"]["primary_text"],
             # command=lambda choice: self.controller.set_current_player_by_name(choice)  # Commented out as it may not be necessary
         )
         self.player_dropdown.grid(row=1, column=1, pady=(0, 20), padx=(0, 20))
