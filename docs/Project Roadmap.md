@@ -125,9 +125,9 @@ The goal of this phase is to refactor the application's architecture to support 
 
 The goal of this phase is to "harden" the application—improving stability, cleaning up the codebase, and adding essential Quality of Life features for the end user before diving into advanced analytics. 
 ### To-Do List: 
-- [ ] **Codebase Refactoring**
+- [x] **Codebase Refactoring**
 	- [x] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
-	- [ ] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
+	- [x] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
 - [ ] **Implement Logging**
 	- [ ] Replace all `print()` statements with the Python `logging` module to generate well-formatted, timestamped log files for easier debugging.
 - [ ] **Error Handling & Feedback** 
