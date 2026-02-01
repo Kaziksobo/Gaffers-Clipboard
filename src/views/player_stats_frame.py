@@ -43,9 +43,9 @@ class PlayerStatsFrame(ctk.CTkFrame):
             variable=self.player_list_var,
             values=["Loading..."],
             font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
-            button_color=theme["colors"]["button_bg"],
+            fg_color=theme["colors"]["dropdown_fg"],
+            text_color=theme["colors"]["primary_text"],
+            button_color=theme["colors"]["button_fg"],
             # command=lambda choice: self.controller.set_current_player_by_name(choice)  # Commented out as it may not be necessary
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
@@ -82,17 +82,16 @@ class PlayerStatsFrame(ctk.CTkFrame):
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
             text="Please navigate to the next player's stats",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
-            font=theme["fonts"]["button"],
+            text_color=theme["colors"]["primary_text"],
+            font=theme["fonts"]["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
             text="Next Player",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_next_player_button_press()
         )
@@ -101,8 +100,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
             text="All Players Added",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
@@ -120,7 +119,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             text=stat_name,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"]
         )
         self.stat_label.grid(row=row, column=0, padx=5, pady=5, sticky="w")
         
@@ -130,7 +129,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             textvariable=stat_value,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         stat_entry.grid(row=row, column=1, padx=5, pady=5, sticky="ew")
     

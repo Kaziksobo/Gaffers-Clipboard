@@ -31,7 +31,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self,
             placeholder_text="Enter name here",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
         
@@ -39,7 +40,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self,
             placeholder_text="Season (e.g., 25/26)",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.season_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
 
@@ -58,7 +60,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Position",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.position_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         
@@ -66,7 +69,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Age",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.age_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
         
@@ -74,7 +78,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Height (cm)",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.height_entry.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
         
@@ -82,7 +87,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Weight (kg)",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.weight_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
@@ -90,7 +96,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Country",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.country_entry.grid(row=0, column=5, padx=5, pady=5, sticky="ew")
         
@@ -119,9 +126,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self,
             text="Next Page",
             font=theme["fonts"]["button"],
-            fg_color=theme["colors"]["button_bg"],
-            hover_color=theme["colors"]["accent"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             command=lambda: self.on_next_page()
         )
         self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")
@@ -141,7 +147,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.attributes_grid,
             text=attr_name,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"]
         )
         attr_label.grid(row=index, column=1 if physical else 3, padx=5, pady=5, sticky="w")
         
@@ -151,7 +157,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.attributes_grid,
             textvariable=attr_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.attr_entry.grid(row=index, column=2 if physical else 4, padx=5, pady=5, sticky="ew")
     

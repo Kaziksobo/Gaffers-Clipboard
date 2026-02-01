@@ -39,7 +39,7 @@ class AddMatchFrame(ctk.CTkFrame):
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=theme["colors"]["button_bg"],
+            fg_color=theme["colors"]["button_fg"],
             text_color=theme["colors"]["secondary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()

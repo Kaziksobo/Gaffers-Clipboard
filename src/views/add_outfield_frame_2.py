@@ -56,8 +56,8 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
@@ -92,7 +92,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             self.attributes_grid,
             text=attr_name,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"]
         )
         attr_label.grid(row=row, column=label_col, padx=5, pady=5, sticky="w")
 
@@ -102,7 +102,8 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             self.attributes_grid,
             textvariable=attr_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         attr_entry.grid(row=row, column=entry_col, padx=5, pady=5, sticky="ew")
     

@@ -66,7 +66,8 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             textvariable=self.home_team_name_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.home_team_name.grid(row=0, column=0, padx=5, pady=5)
 
@@ -74,7 +75,8 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             textvariable=self.home_team_score_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.home_team_score.grid(row=0, column=1, padx=5, pady=5)
 
@@ -89,7 +91,8 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             textvariable=self.away_team_score_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.away_team_score.grid(row=0, column=3, padx=5, pady=5)
 
@@ -97,7 +100,8 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             textvariable=self.away_team_name_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.away_team_name.grid(row=0, column=4, padx=5, pady=5)
 
@@ -121,8 +125,8 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.done_button = ctk.CTkButton(
             self.direction_frame,
             text="Done",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
@@ -142,14 +146,15 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             textvariable=home_stat_value,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.home_stat_entry.grid(row=row, column=0, padx=5, pady=5)
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
             text=stat_name,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"]
         )
         self.stat_label.grid(row=row, column=2, padx=5, pady=5)
         away_stat_value = ctk.StringVar(value="")
@@ -158,7 +163,8 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.stats_grid,
             textvariable=away_stat_value,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.away_stat_entry.grid(row=row, column=4, padx=5, pady=5)
 

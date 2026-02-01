@@ -30,8 +30,8 @@ class AddFinancialFrame(ctk.CTkFrame):
         
         # Player and season selection mini-frame
         self.selection_frame = ctk.CTkFrame(
-                self,
-                fg_color=theme["colors"]["background"]
+            self,
+            fg_color=theme["colors"]["background"]
         )
         self.selection_frame.grid(row=2, column=1, pady=(0, 20))
         
@@ -42,21 +42,23 @@ class AddFinancialFrame(ctk.CTkFrame):
             variable=self.player_list_var,
             values=["Loading..."],
             font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
-            button_color=theme["colors"]["button_bg"],
+            fg_color=theme["colors"]["dropdown_fg"],
+            text_color=theme["colors"]["primary_text"],
+            button_color=theme["colors"]["button_fg"],
             # command=lambda choice: self.controller.set_current_player_by_name(choice)  # Commented out as it may not be necessary
         )
-        self.player_dropdown.grid(row=1, column=1, pady=(0, 20))
+        self.player_dropdown.grid(row=1, column=1, pady=(0, 20), padx=(0, 20))
         
         # Season entry
         self.season_entry = ctk.CTkEntry(
             self.selection_frame,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["entry_fg"],
+            text_color=theme["colors"]["primary_text"],
+            width=250,
             placeholder_text="Season (e.g., 24/25)"
         )
-        self.season_entry.grid(row=1, column=2, pady=(0, 20))
+        self.season_entry.grid(row=1, column=2, pady=(0, 20), padx=(20, 0))
         
         # On loan label and checkbox
         self.on_loan_var = ctk.BooleanVar(value=False)
@@ -66,7 +68,7 @@ class AddFinancialFrame(ctk.CTkFrame):
             variable=self.on_loan_var,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["button_bg"],
+            fg_color=theme["colors"]["button_fg"],
         )
         self.on_loan_checkbox.grid(row=3, column=1, pady=(0, 20))
         
@@ -94,8 +96,8 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=self.on_done_button_press
         )
@@ -106,7 +108,7 @@ class AddFinancialFrame(ctk.CTkFrame):
             self.financial_frame,
             text=data_name,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"]
         )
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
@@ -116,7 +118,8 @@ class AddFinancialFrame(ctk.CTkFrame):
             self.financial_frame,
             textvariable=data_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         data_entry.grid(row=index, column=2, padx=5, pady=5, sticky="ew")
     

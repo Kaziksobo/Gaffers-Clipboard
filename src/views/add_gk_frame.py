@@ -31,7 +31,8 @@ class AddGKFrame(ctk.CTkFrame):
             self,
             placeholder_text="Enter name here",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
         
@@ -39,7 +40,8 @@ class AddGKFrame(ctk.CTkFrame):
             self,
             placeholder_text="Season (e.g., 25/26)",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.season_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
 
@@ -57,7 +59,8 @@ class AddGKFrame(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Age",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.age_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         
@@ -65,7 +68,8 @@ class AddGKFrame(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Height (cm)",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.height_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
         
@@ -73,7 +77,8 @@ class AddGKFrame(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Weight (kg)",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.weight_entry.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
         
@@ -81,7 +86,8 @@ class AddGKFrame(ctk.CTkFrame):
             self.base_attr_row,
             placeholder_text="Country",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.country_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
@@ -104,9 +110,8 @@ class AddGKFrame(ctk.CTkFrame):
             self,
             text="Done",
             font=theme["fonts"]["button"],
-            fg_color=theme["colors"]["button_bg"],
-            hover_color=theme["colors"]["accent"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=5, column=1, pady=(0, 20), sticky="ew")
@@ -124,7 +129,7 @@ class AddGKFrame(ctk.CTkFrame):
             self.attributes_grid,
             text=attr_name,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"]
         )
         attr_label.grid(row=row, column=1, padx=5, pady=5)
         
@@ -134,7 +139,8 @@ class AddGKFrame(ctk.CTkFrame):
             self.attributes_grid,
             textvariable=attr_var,
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"],
+            fg_color=theme["colors"]["entry_fg"]
         )
         self.attr_entry.grid(row=row, column=2, padx=5, pady=5)
     
@@ -187,8 +193,19 @@ class AddGKFrame(ctk.CTkFrame):
         - Country
         """
         self.name_entry.delete(0, 'end')
+        self.name_entry.configure(placeholder_text="Enter name here")
+        
         self.position_entry.delete(0, 'end')
+        self.position_entry.configure(placeholder_text="Position")
+        
         self.age_entry.delete(0, 'end')
+        self.age_entry.configure(placeholder_text="Age")
+        
         self.height_entry.delete(0, 'end')
+        self.height_entry.configure(placeholder_text="Height (cm)")
+        
         self.weight_entry.delete(0, 'end')
+        self.weight_entry.configure(placeholder_text="Weight (kg)")
+        
         self.country_entry.delete(0, 'end')
+        self.country_entry.configure(placeholder_text="Country")

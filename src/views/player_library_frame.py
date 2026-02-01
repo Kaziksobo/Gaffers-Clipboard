@@ -51,8 +51,8 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.add_gk_button = ctk.CTkButton(
             self.buttons_grid,
             text="Add Goalkeeper",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_add_gk_button_press()
         )
@@ -61,8 +61,8 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.add_outfield_button = ctk.CTkButton(
             self.buttons_grid,
             text="Add Outfield Player",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_add_outfield_button_press()
         )
@@ -71,8 +71,8 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.add_financial_button = ctk.CTkButton(
             self.buttons_grid,
             text="Add Player Financial Data",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddFinancialFrame"))
         )
@@ -81,8 +81,8 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.home_button = ctk.CTkButton(
             self,
             text="Return to Main Menu",
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
         )

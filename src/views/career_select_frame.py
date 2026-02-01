@@ -53,9 +53,9 @@ class CareerSelectFrame(ctk.CTkFrame):
             variable=self.careers_list_var,
             values=self.controller.data_manager.get_all_career_names(),
             font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["button_bg"],
-            text_color=theme["colors"]["secondary_text"],
-            button_color=theme["colors"]["button_bg"],
+            fg_color=theme["colors"]["dropdown_fg"],
+            text_color=theme["colors"]["primary_text"],
+            button_color=theme["colors"]["button_fg"],
             # command=lambda choice: self.controller.set_current_career_by_name(choice)
         )
         self.careers_dropdown.grid(row=0, column=0, pady=10)
@@ -64,7 +64,7 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.select_career_button = ctk.CTkButton(
             self.career_select_frame,
             text="Select Career",
-            fg_color=theme["colors"]["button_bg"],
+            fg_color=theme["colors"]["button_fg"],
             bg_color=theme["colors"]["background"],
             font=theme["fonts"]["button"],
             text_color=theme["colors"]["primary_text"],
@@ -78,7 +78,7 @@ class CareerSelectFrame(ctk.CTkFrame):
             self,
             text="-- OR --",
             font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            text_color=theme["colors"]["primary_text"]
         )
         self.or_label.grid(row=4, column=1, pady=10)
         
@@ -86,7 +86,7 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.new_career_button = ctk.CTkButton(
             self,
             text="Start New Career",
-            fg_color=theme["colors"]["button_bg"],
+            fg_color=theme["colors"]["button_fg"],
             bg_color=theme["colors"]["background"],
             font=theme["fonts"]["button"],
             text_color=theme["colors"]["primary_text"],

@@ -46,8 +46,8 @@ class MainMenuFrame(ctk.CTkFrame):
         self.player_update_button = ctk.CTkButton(
             self.button_frame,
             text="Update player attributes",
-            fg_color=theme["colors"]["button_bg"],
-            bg_color=theme["colors"]["background"],
+            fg_color=theme["colors"]["button_fg"],
+            bg_color=theme["colors"]["button_bg"],
             font=theme["fonts"]["button"],
             text_color=theme["colors"]["primary_text"],
             hover_color=theme["colors"]["accent"],
@@ -58,8 +58,8 @@ class MainMenuFrame(ctk.CTkFrame):
         # Add Match Button
         self.add_match_button = ctk.CTkButton(
             self.button_frame, text="Add new match",
-            fg_color=theme["colors"]["button_bg"],
-            bg_color=theme["colors"]["background"],
+            fg_color=theme["colors"]["button_fg"],
+            bg_color=theme["colors"]["button_bg"],
             font=theme["fonts"]["button"],
             text_color=theme["colors"]["primary_text"],
             hover_color=theme["colors"]["accent"],
