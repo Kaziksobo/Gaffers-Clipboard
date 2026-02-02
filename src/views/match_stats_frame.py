@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from src.exceptions import UIPopulationError
+from views.widgets.scrollable_dropdown import ScrollableDropdown
 
 class MatchStatsFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -30,8 +31,10 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
         self.grid_rowconfigure(2, weight=0)
-        self.grid_rowconfigure(3, weight=1)
-        self.grid_rowconfigure(4, weight=1)
+        self.grid_rowconfigure(3, weight=0)
+        self.grid_rowconfigure(4, weight=0)
+        self.grid_rowconfigure(5, weight=0)
+        self.grid_rowconfigure(6, weight=1)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -50,9 +53,22 @@ class MatchStatsFrame(ctk.CTkFrame):
         )
         self.info_label.grid(row=2, column=1, pady=(0, 20))
         
+        # Competition dropdown
+        self.competition_var = ctk.StringVar(value="Select Competition")
+        self.competition_dropdown = ScrollableDropdown(
+            self,
+            theme=theme,
+            variable=self.competition_var,
+            values=self.controller.full_competitions_list,
+            width=350,
+            dropdown_height=200,
+            placeholder="Select Competition"
+        )
+        self.competition_dropdown.grid(row=3, column=1, pady=(0, 20))
+        
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
-        self.stats_grid.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
+        self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
 
         stat_names = ['Possession (%)', 'Ball Recovery Time (seconds)', 'Shots', 'xG', 'Passes', 'Tackles', 'Tackles Won', 'Interceptions', 'Saves', 'Fouls Committed', 'Offsides', 'Corners', 'Free Kicks', 'Penalty Kicks', 'Yellow Cards']
         # Configure subgrid
@@ -110,7 +126,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
-        self.direction_frame.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
+        self.direction_frame.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
         self.direction_frame.grid_columnconfigure(2, weight=1)
@@ -238,6 +254,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         '''
         # Collect match overview
         overview_data = {
+            "competition": self.competition_var.get(),
             "home_team_name": self.home_team_name_var.get(),
             "away_team_name": self.away_team_name_var.get(),
             "home_score": self.home_team_score_var.get(),
@@ -267,3 +284,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.collect_data()
         self.controller.save_buffered_match()
         self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
+    
+    def on_show(self) -> None:
+        self.competition_var.set("Select Competition")
+        self.competition_dropdown.set_value("Select Competition")

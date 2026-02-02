@@ -56,6 +56,13 @@ class App(ctk.CTk):
         self.player_attributes_buffer = {}
         self.match_overview_buffer = {}
         self.player_performances_buffer = []
+        
+        self.full_competitions_list = ["Premier League", "FA Cup", "EFL Cup", "Community Shield",
+                                       "Ligue 1", "Coupe de France", "Trophée des Champions",
+                                       "La Liga", "Copa del Rey", "Supercopa de España",
+                                       "Bundesliga", "DFB-Pokal", "DFL-Supercup",
+                                       "Serie A", "Coppa Italia", "Supercoppa Italiana",
+                                       "UEFA Champions League", "UEFA Europa League", "UEFA Europa Conference League"]
 
         container = ctk.CTkFrame(self)
         container.pack(side="top", fill="both", expand=True)
