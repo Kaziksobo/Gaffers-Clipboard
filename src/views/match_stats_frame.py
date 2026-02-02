@@ -113,24 +113,46 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.direction_frame.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
-
+        self.direction_frame.grid_columnconfigure(2, weight=1)
+        self.direction_frame.grid_columnconfigure(3, weight=1)
+        
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
-            text="Please navigate to the first player's stats",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            text="You can navigate to the first player's stats",
+            text_color=theme["colors"]["primary_text"],
+            font=theme["fonts"]["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
-        self.done_button = ctk.CTkButton(
+        self.next_player_button = ctk.CTkButton(
             self.direction_frame,
-            text="Done",
+            text="Add Outfield Player",
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.on_next_outfield_player_button_press()
+        )
+        self.next_player_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
+
+        self.next_goalkeeper_button = ctk.CTkButton(
+            self.direction_frame,
+            text="Add Goalkeeper",
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.on_next_goalkeeper_button_press()
+        )
+        self.next_goalkeeper_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
+        
+        self.all_players_added_button = ctk.CTkButton(
+            self.direction_frame,
+            text="Skip Player Stats",
             fg_color=theme["colors"]["button_fg"],
             text_color=theme["colors"]["primary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
-        self.done_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
+        self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
     def create_stat_row(self, row: int, stat_name: str, theme: dict) -> None:
         '''Create a row in the stats grid for a specific statistic.
@@ -211,7 +233,7 @@ class MatchStatsFrame(ctk.CTkFrame):
             if display_name in self.away_stats_vars:
                 self.away_stats_vars[display_name].set(str(away_stats.get(key, '')))
 
-    def on_done_button_press(self) -> None:
+    def collect_data(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
         '''
         # Collect match overview
@@ -226,6 +248,22 @@ class MatchStatsFrame(ctk.CTkFrame):
         
         # Buffer match overview
         self.controller.buffer_match_overview(overview_data)
-        
+    
+    def on_next_outfield_player_button_press(self) -> None:
+        '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
+        '''
+        self.collect_data()
         self.controller.process_player_stats()
         self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+    
+    def on_next_goalkeeper_button_press(self) -> None:
+        '''Handle the button pressing event, initiating screenshot capture and navigating to GKStatsFrame.
+        '''
+        self.collect_data()
+        self.controller.process_player_stats(gk=True)
+        self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
+    
+    def on_done_button_press(self):
+        self.collect_data()
+        self.controller.save_buffered_match()
+        self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))

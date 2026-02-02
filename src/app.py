@@ -21,6 +21,7 @@ from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 from src.views.add_financial_frame import AddFinancialFrame
 from src.views.left_player_frame import LeftPlayerFrame
+from src.views.gk_stats_frame import GKStatsFrame
 from src.data_manager import DataManager
 
 logger = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ class App(ctk.CTk):
         - Sets window title, size, and minimum size.
         - Initializes the DataManager with the data directory.
         - Creates a container frame for all pages.
-        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2, AddFinancial, LeftPlayer).
+        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2, AddFinancial, LeftPlayer, GKStats).
         - Displays the career select frame on startup.
         '''
         super().__init__()
@@ -63,7 +64,7 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, LeftPlayerFrame):
+        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, LeftPlayerFrame, GKStatsFrame):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -241,15 +242,19 @@ class App(ctk.CTk):
         match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
         match_stats_frame.populate_stats(stats)
     
-    def process_player_stats(self) -> None:
+    def process_player_stats(self, gk: bool = False) -> None:
         '''Process player statistics by capturing a screenshot,
         detecting statistics, and populating the PlayerStatsFrame with the results.
         '''
         self.capture_screenshot()
-        stats = self.detect_stats(is_it_player=True)
+        stats = self.detect_stats(is_it_player=True, gk=gk)
         
-        player_stats_frame = self.frames[self.get_frame_class("PlayerStatsFrame")]
-        player_stats_frame.populate_stats(stats)
+        if gk:
+            gk_stats_frame = self.frames[self.get_frame_class("GKStatsFrame")]
+            gk_stats_frame.populate_stats(stats)
+        else:
+            player_stats_frame = self.frames[self.get_frame_class("PlayerStatsFrame")]
+            player_stats_frame.populate_stats(stats)
         
     def process_player_attributes(self, gk: bool, first: bool) -> None:
         '''Process player attributes by capturing a screenshot,
@@ -336,7 +341,7 @@ class App(ctk.CTk):
             except Exception as e:
                 print(f"Failed to delete screenshot {file_path}: {e}")
     
-    def detect_stats(self, is_it_player: bool) -> dict:
+    def detect_stats(self, is_it_player: bool, gk: bool = False) -> dict:
         '''Detects and extracts match statistics from the latest screenshot using OCR.
 
         Args:
@@ -373,7 +378,7 @@ class App(ctk.CTk):
         results = {}
 
         for screen_name, screen_data in coordinates.items():
-            if screen_name == "match_overview" and not is_it_player:
+            if screen_name == "match_overview" and not is_it_player and not gk:
                 for team_name, team_data in screen_data.items():
                     results[team_name] = {}
                     print(f"Processing {team_name} stats...")
@@ -403,8 +408,36 @@ class App(ctk.CTk):
 
                         print(f"Recognised value: {recognised_number}")
                         results[team_name][stat_name] = recognised_number
-            if screen_name == "player_performance" and is_it_player:
+            if screen_name == "player_performance" and is_it_player and not gk:
                 print("Processing player stats...")
+                for stat_name, roi in screen_data.items():
+                    x1 = roi['x1']
+                    y1 = roi['y1']
+                    x2 = roi['x2']
+                    y2 = roi['y2']
+                    stat_roi = (x1, y1, x2, y2)
+
+                    print(f"  Recognising {stat_name}...")
+                    recognised_number = ocr.recognise_number(
+                        full_screenshot=screenshot_image,
+                        roi=stat_roi,
+                        ocr_model=ocr_model,
+                        debug=debug
+                    )
+                    if debug:
+                        # if debug is true, recognised_number will output two variables not one, so separate them
+                        recognised_number, debug_image = recognised_number
+
+                    if stat_name in decimal_stats:
+                        recognised_number = str(recognised_number)
+                        if len(recognised_number) > 1:
+                            recognised_number = f'{recognised_number[:-1]}.{recognised_number[-1]}'
+                        recognised_number = float(recognised_number)
+
+                    print(f"Recognised value: {recognised_number}")
+                    results[stat_name] = recognised_number
+            if screen_name == "gk_performance" and is_it_player and gk:
+                print("Processing goalkeeper stats...")
                 for stat_name, roi in screen_data.items():
                     x1 = roi['x1']
                     y1 = roi['y1']

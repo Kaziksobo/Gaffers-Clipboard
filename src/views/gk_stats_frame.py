@@ -2,22 +2,13 @@ import customtkinter as ctk
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
-class PlayerStatsFrame(ctk.CTkFrame):
+class GKStatsFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
-        '''Frame for displaying player statistics in editable text boxes.
-
-        Args:
-            parent: The parent CTk window.
-            controller: The main application controller.
-            theme (dict): The theme dictionary containing colors and fonts.
-        '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
-        # Attributes to store stat variables
         self.stats_vars = {}
         
-        # Setting up grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
@@ -31,7 +22,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
         # Main Heading
         self.main_heading = ctk.CTkLabel(
             self,
-            text="Player Statistics collected",
+            text="Goalkeeper Statistics collected",
             font=theme["fonts"]["title"],
             text_color=theme["colors"]["primary_text"]
         )
@@ -60,13 +51,13 @@ class PlayerStatsFrame(ctk.CTkFrame):
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
-        stat_names = ['Goals', 'Assists', 'Shots', 'Shot Accuracy (%)', 'Passes', 'Pass Accuracy (%)', 'Dribbles', 'Dribbles Success Rate (%)', 'Tackles', 'Tackles Success Rate (%)', 'Offsides', 'Fouls Committed', 'Possession Won', 'Possession Lost', 'Minutes Played', 'Distance Covered (km)', 'Distance Sprinted (km)']
+        stat_names = ["Shots Against", "Shots On Target", "Saves", "Goals Conceded", "Save Success Rate (%)", "Punch Saves", "Rush Saves", "Penalty Saves", "Penalty Goals Conceded", "Shoot-out Saves", "Shoot-out Goals Conceded"]
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
         self.stats_grid.grid_columnconfigure(1, weight=1)
         for row in range(len(stat_names)):
             self.stats_grid.grid_rowconfigure(row, weight=1)
-
+        
         # Populate stats grid
         for i, stat in enumerate(stat_names):
             self.create_stat_row(i, stat, theme)
@@ -77,7 +68,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
         self.direction_frame.grid_columnconfigure(2, weight=1)
-
+        self.direction_frame.grid_columnconfigure(3, weight=1)
+        
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
             text="Please navigate to the next player's stats",
@@ -115,7 +107,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
-
+    
     def create_stat_row(self, row: int, stat_name: str, theme: dict) -> None:
         '''Create a row in the stats grid for a specific statistic.
 
@@ -153,28 +145,22 @@ class PlayerStatsFrame(ctk.CTkFrame):
         if not stats_data:
             raise UIPopulationError("Received no data to populate player statistics.")
         key_to_display_name = {
-            'goals': 'Goals',
-            'assists': 'Assists',
-            'shots': 'Shots',
-            'shot_accuracy': 'Shot Accuracy (%)',
-            'passes': 'Passes',
-            'pass_accuracy': 'Pass Accuracy (%)',
-            'dribbles': 'Dribbles',
-            'dribbles_success_rate': 'Dribbles Success Rate (%)',
-            'tackles': 'Tackles',
-            'tackles_success_rate': 'Tackles Success Rate (%)',
-            'offsides': 'Offsides',
-            'fouls_committed': 'Fouls Committed',
-            'possession_won': 'Possession Won',
-            'possession_lost': 'Possession Lost',
-            'minutes_played': 'Minutes Played',
-            'distance_covered': 'Distance Covered (km)',
-            'distance_sprinted': 'Distance Sprinted (km)'
+            'shots_against': 'Shots Against',
+            'shots_on_target': 'Shots On Target',
+            'saves': 'Saves',
+            'goals_conceded': 'Goals Conceded',
+            'save_success_rate': 'Save Success Rate (%)',
+            'punch_saves': 'Punch Saves',
+            'rush_saves': 'Rush Saves',
+            'penalty_saves': 'Penalty Saves',
+            'penalty_goals_conceded': 'Penalty Goals Conceded',
+            'shoot-out_saves': 'Shoot-out Saves',
+            'shoot-out_goals_conceded': 'Shoot-out Goals Conceded'
         }
         
         for key, display_name in key_to_display_name.items():
             self.stats_vars[display_name].set(str(stats_data.get(key, "0")))
-
+    
     def refresh_player_dropdown(self) -> None:
         names = self.controller.get_all_player_names()
         self.player_dropdown.set_values(names or ["No players found"])
