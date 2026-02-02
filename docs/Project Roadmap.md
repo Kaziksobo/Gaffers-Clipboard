@@ -141,8 +141,8 @@ The goal of this phase is to "harden" the application—improving stability, cle
 	- [ ] **Injuries:** Create a new frame for inputting player injury data, allowing the user to attach it to a player in the library.
 	- [ ] **Separate Injuries and Financial Data:** Keep these two separate from the player attributes, so they can be directly accessed from the player library frame.
 	- [x] **Sales and Loans:** Add functionality to mark players as sold or loaned out
-	- [ ] **GK Performance Frame:** Create a dedicated UI for entering/OCR-ing Goalkeeper match performance stats.
-	- [ ] **Optional Player Stats:** Add a toggle or logic to allow saving a match result *without* needing to enter individual player performances.
+	- [x] **GK Performance Frame:** Create a dedicated UI for entering/OCR-ing Goalkeeper match performance stats.
+	- [x] **Optional Player Stats:** Add a toggle or logic to allow saving a match result *without* needing to enter individual player performances.
 - [ ] **User Experience & Documentation**
 	- [ ] Add an "Instructions" or "Help" tab/modal within the app explaining how to capture data. 
 	- [ ] Write a comprehensive `README.md` for the GitHub repository detailing installation and usage. 
