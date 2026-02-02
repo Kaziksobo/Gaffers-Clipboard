@@ -43,6 +43,8 @@ class App(ctk.CTk):
         - Displays the career select frame on startup.
         '''
         super().__init__()
+        logger.info(f"Application starting up. Project root: {App.PROJECT_ROOT}")
+        
         self.title("Gaffer's Clipboard")
         self.geometry("800x600")
         self.minsize(600, 400)
@@ -76,6 +78,7 @@ class App(ctk.CTk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
         
+        logger.info("Application initialized. Showing CareerSelectFrame.")
         self.show_frame(CareerSelectFrame)
         
     def get_frame_class(self, name: str) -> type:
@@ -103,6 +106,7 @@ class App(ctk.CTk):
         Raises:
             FrameNotFoundError: If the frame for the given page class is not found.
         '''
+        logger.info(f"Navigating to frame: {page_class.__name__}")
         if page_class not in self.frames:
             raise FrameNotFoundError(f"No frame class named '{page_class.__name__}' found.")
         frame = self.frames[page_class]
@@ -117,6 +121,7 @@ class App(ctk.CTk):
         Args:
             career_name (str): The name of the career to activate.
         """
+        logger.info(f"Setting current career to: {career_name}")
         self.data_manager.load_career(career_name)
         self.data_manager.refresh_players()
         self.current_career = career_name
@@ -177,6 +182,7 @@ class App(ctk.CTk):
             gk (bool): Indicates whether the data belongs to a goalkeeper.
             first (bool, optional): Distinguishes between the first and second outfield attribute pages. Defaults to True.
         """
+        logger.info(f"Buffering player data. GK: {gk}, First Page: {first}")
         if gk:
             self.player_attributes_buffer['gk_attr'] = data
         elif first:
@@ -192,15 +198,19 @@ class App(ctk.CTk):
         # If outfield first, then outfield_attr_1 and outfield_attr_2 will be present
         # If gk, position is 'GK' and season is taken from season key in gk_attr
         # If outfield, position and season are taken from outfield_attr_1
+        player_name = ""
         if 'gk_attr' in self.player_attributes_buffer:
+            player_name = self.player_attributes_buffer['gk_attr'].get('name', '').strip()
             position = 'GK'
             season = self.player_attributes_buffer['gk_attr'].get('season', '').strip()
             attributes = self.player_attributes_buffer['gk_attr']
         else:
+            player_name = self.player_attributes_buffer['outfield_attr_1'].get('name', '').strip()
             position = self.player_attributes_buffer['outfield_attr_1'].get('position', '').strip()
             season = self.player_attributes_buffer['outfield_attr_1'].get('season', '').strip()
             attributes = {**self.player_attributes_buffer['outfield_attr_1'], **self.player_attributes_buffer['outfield_attr_2']}
         
+        logger.info(f"Saving player {player_name} at position {position}")
         self.data_manager.add_or_update_player(
             player_ui_data=attributes,
             position=position,
@@ -219,6 +229,7 @@ class App(ctk.CTk):
             financial_data (dict): The wage, market value, contract, and related details supplied by the user.
             season (str): The season associated with the financial data.
         """
+        logger.info(f"Saving financial data for player {player_name} for season {season}")
         self.data_manager.add_financial_data(player_name, financial_data, season)
     
     def sell_player(self, player_name: str) -> None:
@@ -249,25 +260,36 @@ class App(ctk.CTk):
         '''Process match statistics by capturing a screenshot,
         detecting statistics, and populating the MatchStatsFrame with the results.
         '''
-        self.capture_screenshot()
-        stats = self.detect_stats(is_it_player=False)
-        
-        match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
-        match_stats_frame.populate_stats(stats)
+        try:
+            self.capture_screenshot()
+            stats = self.detect_stats(is_it_player=False)
+            
+            match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
+            logger.info("Populating MatchStatsFrame with detected stats.")
+            match_stats_frame.populate_stats(stats)
+            
+        except Exception as e:
+            logger.error(f"Error processing match stats: {e}", exc_info=True)
     
     def process_player_stats(self, gk: bool = False) -> None:
         '''Process player statistics by capturing a screenshot,
         detecting statistics, and populating the PlayerStatsFrame with the results.
         '''
-        self.capture_screenshot()
-        stats = self.detect_stats(is_it_player=True, gk=gk)
+        try:
+            self.capture_screenshot()
+            stats = self.detect_stats(is_it_player=True, gk=gk)
+            
+            if gk:
+                logger.info("Populating GKStatsFrame with detected stats.")
+                gk_stats_frame = self.frames[self.get_frame_class("GKStatsFrame")]
+                gk_stats_frame.populate_stats(stats)
+            else:
+                logger.info("Populating PlayerStatsFrame with detected stats.")
+                player_stats_frame = self.frames[self.get_frame_class("PlayerStatsFrame")]
+                player_stats_frame.populate_stats(stats)
         
-        if gk:
-            gk_stats_frame = self.frames[self.get_frame_class("GKStatsFrame")]
-            gk_stats_frame.populate_stats(stats)
-        else:
-            player_stats_frame = self.frames[self.get_frame_class("PlayerStatsFrame")]
-            player_stats_frame.populate_stats(stats)
+        except Exception as e:
+            logger.error(f"Error processing player stats: {e}", exc_info=True)
         
     def process_player_attributes(self, gk: bool, first: bool) -> None:
         '''Process player attributes by capturing a screenshot,
@@ -277,15 +299,21 @@ class App(ctk.CTk):
             gk (bool): Identify if the player is a goalkeeper or not
             first (bool): If the player is an outfield player, identify if it's the first or second page of attributes
         '''
-        self.capture_screenshot()
-        stats = self.detect_player_attributes(gk=gk, first=first)
+        try:
+            self.capture_screenshot()
+            stats = self.detect_player_attributes(gk=gk, first=first)
+            
+            if gk:
+                logger.info("Populating AddGKFrame with detected attributes.")
+                gk_attr_frame = self.frames[self.get_frame_class("AddGKFrame")]
+                gk_attr_frame.populate_stats(stats)
+            else:
+                logger.info(f"Populating {'AddOutfieldFrame1' if first else 'AddOutfieldFrame2'} with detected attributes.")
+                outfield_attr_frame = self.frames[self.get_frame_class("AddOutfieldFrame1" if first else "AddOutfieldFrame2")]
+                outfield_attr_frame.populate_stats(stats)
         
-        if gk:
-            gk_attr_frame = self.frames[self.get_frame_class("AddGKFrame")]
-            gk_attr_frame.populate_stats(stats)
-        else:
-            outfield_attr_frame = self.frames[self.get_frame_class("AddOutfieldFrame1" if first else "AddOutfieldFrame2")]
-            outfield_attr_frame.populate_stats(stats)
+        except Exception as e:
+            logger.error(f"Error processing player attributes: {e}", exc_info=True)
     
     def capture_screenshot(self, delay: int | None = None) -> None:
         '''Capture a screenshot after a set delay
@@ -298,15 +326,18 @@ class App(ctk.CTk):
         '''
         if delay is None:
             delay = App.DEFAULT_SCREENSHOT_DELAY
-        print(f"Capturing screenshot in {delay} seconds...")
+        
+        logger.info(f"Initiating screenshot (delay: {delay}s)")
         time.sleep(delay)
+        
         capture_folder = App.PROJECT_ROOT / "screenshots"
         capture_folder.mkdir(parents=True, exist_ok=True)
         filename = f"stats_capture_{int(time.time())}.png"
         self.screenshot_path = capture_folder / filename
+        
         try:
             pyautogui.screenshot(self.screenshot_path)
-            print(f"Screenshot saved to {self.screenshot_path}")
+            logger.info(f"Screenshot saved: {self.screenshot_path}")
             self._cleanup_screenshots()
         except Exception as e:
             raise ScreenshotError(f"Failed to capture screenshot: {e}") from e
@@ -323,12 +354,13 @@ class App(ctk.CTk):
         '''
         screenshots_dir = App.PROJECT_ROOT / "screenshots"
         if not screenshots_dir.exists():
+            logger.error("Screenshots directory does not exist.")
             raise ScreenshotError("Screenshots directory does not exist.")
 
         if screenshot_files := list(screenshots_dir.glob("stats_capture_*.png")):
             return max(screenshot_files, key=lambda p: p.stat().st_mtime)
-        else:
-            raise ScreenshotError("No screenshots found in the screenshots directory.")
+        
+        raise ScreenshotError("No screenshots found in the screenshots directory.")
     
     def _cleanup_screenshots(self, max_files: int = 5) -> None:
         screenshots_dir = App.PROJECT_ROOT / "screenshots"
@@ -347,12 +379,13 @@ class App(ctk.CTk):
         if not files_to_delete:
             return
         
+        logger.info(f"Cleanup: Deleting {len(files_to_delete)} old screenshots.")
         for file_path in files_to_delete:
             try:
                 file_path.unlink()
-                print(f"Deleted old screenshot: {file_path}")
+                logger.debug(f"Deleted old screenshot: {file_path}")
             except Exception as e:
-                print(f"Failed to delete screenshot {file_path}: {e}")
+                logger.warning(f"Failed to delete screenshot {file_path}: {e}")
     
     def detect_stats(self, is_it_player: bool, gk: bool = False) -> dict:
         '''Detects and extracts match statistics from the latest screenshot using OCR.
@@ -367,6 +400,7 @@ class App(ctk.CTk):
         Returns:
             dict: A dictionary containing the detected statistics.
         '''
+        logger.info(f"Starting OCR (player mode: {is_it_player})")
         latest_screenshot_path = self.get_latest_screenshot_path()
 
         # load coordinates from JSON file
@@ -394,7 +428,7 @@ class App(ctk.CTk):
             if screen_name == "match_overview" and not is_it_player and not gk:
                 for team_name, team_data in screen_data.items():
                     results[team_name] = {}
-                    print(f"Processing {team_name} stats...")
+                    logger.debug(f"Processing team: {team_name}")
                     for stat_name, roi in team_data.items():
                         x1 = roi['x1']
                         y1 = roi['y1']
@@ -402,7 +436,7 @@ class App(ctk.CTk):
                         y2 = roi['y2']
                         stat_roi = (x1, y1, x2, y2)
 
-                        print(f"  Recognising {stat_name}...")
+                        logger.debug(f"OCRing {stat_name} at {stat_roi}")
                         recognised_number = ocr.recognise_number(
                             full_screenshot=screenshot_image,
                             roi=stat_roi,
@@ -419,10 +453,10 @@ class App(ctk.CTk):
                                 recognised_number = f'{recognised_number[:-1]}.{recognised_number[-1]}'
                             recognised_number = float(recognised_number)
 
-                        print(f"Recognised value: {recognised_number}")
+                        logger.debug(f"Recognised value: {recognised_number}")
                         results[team_name][stat_name] = recognised_number
             if screen_name == "player_performance" and is_it_player and not gk:
-                print("Processing player stats...")
+                logger.debug("Processing player performance")
                 for stat_name, roi in screen_data.items():
                     x1 = roi['x1']
                     y1 = roi['y1']
@@ -430,7 +464,7 @@ class App(ctk.CTk):
                     y2 = roi['y2']
                     stat_roi = (x1, y1, x2, y2)
 
-                    print(f"  Recognising {stat_name}...")
+                    logger.debug(f"OCRing {stat_name} at {stat_roi}")
                     recognised_number = ocr.recognise_number(
                         full_screenshot=screenshot_image,
                         roi=stat_roi,
@@ -447,10 +481,10 @@ class App(ctk.CTk):
                             recognised_number = f'{recognised_number[:-1]}.{recognised_number[-1]}'
                         recognised_number = float(recognised_number)
 
-                    print(f"Recognised value: {recognised_number}")
+                    logger.debug(f"Recognised value: {recognised_number}")
                     results[stat_name] = recognised_number
             if screen_name == "gk_performance" and is_it_player and gk:
-                print("Processing goalkeeper stats...")
+                logger.debug("Processing goalkeeper stats...")
                 for stat_name, roi in screen_data.items():
                     x1 = roi['x1']
                     y1 = roi['y1']
@@ -458,7 +492,7 @@ class App(ctk.CTk):
                     y2 = roi['y2']
                     stat_roi = (x1, y1, x2, y2)
 
-                    print(f"  Recognising {stat_name}...")
+                    logger.debug(f"OCRing {stat_name} at {stat_roi}")
                     recognised_number = ocr.recognise_number(
                         full_screenshot=screenshot_image,
                         roi=stat_roi,
@@ -475,7 +509,7 @@ class App(ctk.CTk):
                             recognised_number = f'{recognised_number[:-1]}.{recognised_number[-1]}'
                         recognised_number = float(recognised_number)
 
-                    print(f"Recognised value: {recognised_number}")
+                    logger.debug(f"Recognised value: {recognised_number}")
                     results[stat_name] = recognised_number
 
         return results    
@@ -495,6 +529,7 @@ class App(ctk.CTk):
         Returns:
             dict: A dictionary containing the detected player attributes.
         '''
+        logger.info(f"Starting Attribute OCR (GK: {gk}, First Page: {first})")
         latest_screenshot_path = self.get_latest_screenshot_path()
 
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
@@ -525,6 +560,8 @@ class App(ctk.CTk):
                             y2 = roi['y2']
                             stat_roi = (x1, y1, x2, y2)
 
+                            logger.debug(f"OCRing {stat_name} at {stat_roi}")
+
                             recognised_number = ocr.recognise_number(
                                 full_screenshot=screenshot_image,
                                 roi=stat_roi,
@@ -536,7 +573,8 @@ class App(ctk.CTk):
                             if debug:
                                 # if debug is true, recognised_number will output two variables not one, so separate them
                                 recognised_number, debug_image = recognised_number
-
+                            
+                            logger.debug(f"Recognised value: {recognised_number}")
                             results[stat_name] = recognised_number
         return results
     
@@ -546,6 +584,7 @@ class App(ctk.CTk):
         Args:
             overview_data (dict): The match overview data to buffer.
         '''
+        logger.info("Buffering match overview data.")
         self.match_overview_buffer = overview_data
     
     def buffer_player_performance(self, performance_data: dict) -> None:
@@ -554,6 +593,7 @@ class App(ctk.CTk):
         Args:
             performance_data (dict): The player's performance data to buffer.
         '''
+        logger.info("Buffering player performance data.")
         self.player_performances_buffer.append(performance_data)
     
     def save_buffered_match(self) -> None:
@@ -561,6 +601,7 @@ class App(ctk.CTk):
         Saves the buffered match overview and player performances to the data manager as a new match entry.
         Clears the buffers after saving.
         '''
+        logger.info("Saving buffered match data to data manager.")
         self.data_manager.add_match(
             match_data=self.match_overview_buffer,
             player_performances=self.player_performances_buffer

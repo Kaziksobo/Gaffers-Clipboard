@@ -1,8 +1,11 @@
 import cv2 as cv
 import numpy as np
+import logging
 from pathlib import Path
 import sys
 from src.exceptions import OCRError, ModelLoadError, InvalidImageError, NoDigitsFoundError
+
+logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.append(str(PROJECT_ROOT))
@@ -42,7 +45,7 @@ def load_ocr_model() -> cv.ml.KNearest:
     knn.read(knn_node)
     fs.release()
     
-    print("KNN OCR model loaded successfully.")
+    logger.debug("KNN OCR model loaded successfully.")
     return knn
 
 def preprocess_roi(
@@ -92,6 +95,7 @@ def preprocess_roi(
     x1, y1, x2, y2 = roi
     h_img, w_img = full_screenshot.shape[:2]
     if not (0 <= x1 < x2 <= w_img and 0 <= y1 < y2 <= h_img):
+        logger.warning(f"ROI {roi} out of bounds for image {w_img}x{h_img}")
         raise InvalidImageError(f"ROI {roi} out of bounds for image shape {(w_img, h_img)}")
 
     roi_image = full_screenshot[y1:y2, x1:x2]
@@ -223,6 +227,8 @@ def recognise_number(
         # Step 4: Convert the classification result (a float) to a string and collect it.
         recognised_digit = str(int(result[0][0]))
         recognised_digits.append(recognised_digit)
+        
+        logger.debug(f"Recognised digit component: {recognised_digit} (ROI: {roi})")
 
     if not recognised_digits:
         if debug:
@@ -230,6 +236,9 @@ def recognise_number(
         raise NoDigitsFoundError("No digit-like contours were found in the ROI.")
 
     recognized_value = int(''.join(recognised_digits))
+    
+    logger.debug(f"Final recognised value for ROI {roi}: {recognized_value}")
+    
     if debug:
         return recognized_value, {'threshold': thresh, 'eroded': eroded_thresh, 'digit_rois': debug_rois}
     return recognized_value
@@ -246,3 +255,4 @@ def save_debug_image(filename: str, image: np.ndarray) -> None:
     result = PROJECT_ROOT / "testing" / "debug_images" / filename
     result.parent.mkdir(parents=True, exist_ok=True)
     cv.imwrite(str(result), image)
+    logger.debug(f"Saved debug image: {result}")

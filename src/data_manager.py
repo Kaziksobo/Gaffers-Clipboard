@@ -1,6 +1,9 @@
 from pathlib import Path
 import json
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 class DataManager:
     def __init__(self, data_folder: Path):
@@ -38,13 +41,13 @@ class DataManager:
         if default is None:
             default = []
         if not path.exists():
-            print(f"Warning: {path} does not exist")
+            logger.warning(f"File not found at {path}. Returning default value.")
             return default
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except (json.JSONDecodeError, IOError) as e:
-            print(f"Error loading JSON from {path}: {e}")
+            logger.error(f"Error loading JSON from {path}: {e}", exc_info=True)
             return default
     
     def _save_json(self, path: Path, data=None):
@@ -58,8 +61,11 @@ class DataManager:
         """
         if data is None:
             data = []
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
+        try:
+            with open(path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4)
+        except IOError as e:
+            logger.error(f"Failed to save JSON to {path}: {e}", exc_info=True)
     
     def create_new_career(self, club_name: str, manager_name: str, starting_season: str, match_length: str, difficulty: str) -> None:
         """
@@ -73,6 +79,8 @@ class DataManager:
             match_length (str): The configured length of matches for this career.
             difficulty (str): The difficulty level associated with this career.
         """
+        logger.info(f"Creating new career: {club_name} (Manager: {manager_name})")
+        
         career_folder_name = club_name.replace(" ", "_")
         self.current_career = career_folder_name
         career_path = self.data_folder / career_folder_name
@@ -155,9 +163,10 @@ class DataManager:
         Args:
             career_name (str): The display name of the career to load.
         """
+        logger.info(f"Loading career context: {career_name}")
         career_details = self.get_career_details(career_name)
         if not career_details:
-            print(f"Career '{career_name}' not found.")
+            logger.warning(f"Career '{career_name}' not found.")
             return
         career_folder_name = career_details.get("folder_name")
         self.current_career = career_folder_name
@@ -166,6 +175,7 @@ class DataManager:
         
         self.players = self._load_json(self.players_path)
         self.matches = self._load_json(self.matches_path)
+        logger.info(f"Career {career_name} loaded with {len(self.players)} players and {len(self.matches)} matches.")
 
     def refresh_players(self) -> None:
         self.players = self._load_json(self.players_path)
@@ -198,6 +208,7 @@ class DataManager:
         }
         
         if existing_player:
+            logger.info(f"Updating player: {full_name}")
             existing_player["attribute_history"].append(attributes_snapshot)
             # If age, height or weight are different, update it
             if existing_player.get("age") != player_ui_data.get("age").strip():
@@ -210,6 +221,7 @@ class DataManager:
             if position not in existing_player.get("positions", []):
                 existing_player["positions"].append(position)
         else:
+            logger.info(f"Adding new player: {full_name}")
             new_player = {
                 "id": self._generate_id(self.players),
                 "name": full_name,
@@ -241,8 +253,10 @@ class DataManager:
         existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
         
         if not existing_player:
-            print(f"Player '{player_name}' not found. Cannot add financial data.")
+            logger.warning(f"Player '{player_name}' not found. Cannot add financial data.")
             return
+        
+        logger.info(f"Saving financial snapshot for {player_name} (Season: {season})")
         
         # Remove any commas from numeric fields
         for key, value in financial_data.items():
@@ -261,59 +275,28 @@ class DataManager:
         self.players = self._load_json(self.players_path)
     
     def sell_player(self, player_name: str) -> None:
-        """
-        Marks the specified player as sold in the player records.
-
-        Args:
-            player_name (str): The name of the player to mark as sold.
-        """
-        full_name = player_name.strip().lower()
-        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
-        
-        if not existing_player:
-            print(f"Player '{player_name}' not found. Cannot mark as sold.")
-            return
-        
-        existing_player["sold"] = True
-        self._save_json(self.players_path, self.players)
-        # Reload players to ensure consistency
-        self.players = self._load_json(self.players_path)
+        logger.info(f"Action: Selling player {player_name}")
+        self._update_player_status(player_name, "sold", True)
     
     def loan_out_player(self, player_name: str) -> None:
-        """
-        Marks the specified player as loaned out in the player records.
-
-        Args:
-            player_name (str): The name of the player to mark as loaned out.
-        """
-        full_name = player_name.strip().lower()
-        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
-        
-        if not existing_player:
-            print(f"Player '{player_name}' not found. Cannot mark as loaned out.")
-            return
-        
-        existing_player["loaned"] = True
-        self._save_json(self.players_path, self.players)
-        # Reload players to ensure consistency
-        self.players = self._load_json(self.players_path)
+        logger.info(f"Action: Loaning out player {player_name}")
+        self._update_player_status(player_name, "loaned", True)
     
     def return_loan_player(self, player_name: str) -> None:
-        """
-        Marks the specified player as returned from loan in the player records.
-
-        Args:
-            player_name (str): The name of the player to mark as returned from loan.
-        """
+        logger.info(f"Action: Returning player {player_name} from loan")
+        self._update_player_status(player_name, "loaned", False)
+        
+    def _update_player_status(self, player_name: str, status_key: str, status_value: bool):
         full_name = player_name.strip().lower()
         existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
         
         if not existing_player:
-            print(f"Player '{player_name}' not found. Cannot mark as returned from loan.")
+            logger.warning(f"Player '{player_name}' not found. Cannot update status '{status_key}'.")
             return
-        
-        existing_player["loaned"] = False
+            
+        existing_player[status_key] = status_value
         self._save_json(self.players_path, self.players)
+        
         # Reload players to ensure consistency
         self.players = self._load_json(self.players_path)
     
@@ -356,6 +339,8 @@ class DataManager:
     def add_match(self, match_data: dict, player_performances: list[dict]):
         match_id = self._generate_id(self.matches)
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        
+        logger.info(f"Adding match {match_id} with {len(player_performances)} player performances.")
         
         normalised_performances = []
         for perf in player_performances:
