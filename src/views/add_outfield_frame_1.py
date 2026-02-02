@@ -62,7 +62,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
             fg_color=theme["colors"]["entry_fg"],
-            width=650
+            width=160
         )
         self.position_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         
