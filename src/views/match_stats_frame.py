@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from src.exceptions import UIPopulationError
-from views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 class MatchStatsFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
