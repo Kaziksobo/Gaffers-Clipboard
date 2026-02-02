@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from src.exceptions import UIPopulationError
+from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 class AddFinancialFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict):
@@ -7,6 +8,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.controller = controller
         
         self.data_vars = {}
+        self.player_names = []
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -35,17 +37,14 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.selection_frame.grid(row=2, column=1, pady=(0, 20))
         
         # Dropdown to select player
-        self.player_list_var = ctk.StringVar(value="Select Player")
-        self.player_dropdown = ctk.CTkOptionMenu(
+        self.player_list_var = ctk.StringVar(value="Click here to select player")
+        self.player_dropdown = ScrollableDropdown(
             self.selection_frame,
+            theme=theme,
             variable=self.player_list_var,
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["dropdown_fg"],
-            text_color=theme["colors"]["primary_text"],
-            button_color=theme["colors"]["button_fg"],
-            dropdown_fg_color=theme["colors"]["dropdown_fg"],
-            dropdown_text_color=theme["colors"]["primary_text"],
-            # command=lambda choice: self.controller.set_current_player_by_name(choice)  # Commented out as it may not be necessary
+            width=350,
+            dropdown_height=200,
+            placeholder="Click here to select player"
         )
         self.player_dropdown.grid(row=1, column=1, pady=(0, 20), padx=(0, 20))
         
@@ -125,14 +124,10 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
     
     def refresh_player_dropdown(self) -> None:
-        """Reload player names and update the dropdown."""
         names = self.controller.get_all_player_names()
-        self.player_dropdown.configure(values=names)
-        # Keep previous selection if valid; otherwise select first or placeholder
-        prev = self.player_list_var.get()
-        if prev not in names:
-            self.player_list_var.set(names[0] if names and names[0] != "No players found" else "Select Player")
-    
+        self.player_names = names or ["No players found"]
+        self.player_dropdown.set_values(self.player_names)
+            
     def on_show(self) -> None:
         """Resets all input fields and refreshes the player dropdown."""
         for var in self.data_vars.values():
@@ -140,3 +135,4 @@ class AddFinancialFrame(ctk.CTkFrame):
         
         # Refresh player dropdown
         self.refresh_player_dropdown()
+        self.player_dropdown.set_value("Click here to select player")

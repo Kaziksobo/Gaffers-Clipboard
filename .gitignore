@@ -1,6 +1,7 @@
 /venv
 /src/__pycache__
 src/views/__pycache__
+/src/views/widgets/__pycache__
 /screenshots
 /testing/debug_images
 /testing/coordinates_test_output.png
