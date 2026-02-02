@@ -16,8 +16,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.grid_rowconfigure(2, weight=0)
         self.grid_rowconfigure(3, weight=0)
         self.grid_rowconfigure(4, weight=0)
-        self.grid_rowconfigure(5, weight=0)
-        self.grid_rowconfigure(6, weight=1)
+        self.grid_rowconfigure(5, weight=1)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -61,24 +60,12 @@ class AddFinancialFrame(ctk.CTkFrame):
         )
         self.season_entry.grid(row=1, column=2, pady=(0, 20), padx=(20, 0))
         
-        # On loan label and checkbox
-        self.on_loan_var = ctk.BooleanVar(value=False)
-        self.on_loan_checkbox = ctk.CTkCheckBox(
-            self,
-            text="Is the player on loan?",
-            variable=self.on_loan_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["button_fg"],
-        )
-        self.on_loan_checkbox.grid(row=3, column=1, pady=(0, 20))
-        
         # financial data subgrid
         self.financial_frame = ctk.CTkFrame(
             self,
             fg_color=theme["colors"]["background"]
         )
-        self.financial_frame.grid(row=4, column=1, pady=(0, 20))
+        self.financial_frame.grid(row=3, column=1, pady=(0, 20))
         
         data_names = ["Wage", "Market Value", "Contract Length (years)", "Release Clause", "Sell On Clause (%)"]
         
@@ -102,7 +89,7 @@ class AddFinancialFrame(ctk.CTkFrame):
             font=theme["fonts"]["button"],
             command=self.on_done_button_press
         )
-        self.done_button.grid(row=5, column=1)
+        self.done_button.grid(row=4, column=1)
     
     def create_data_row(self, index: int, data_name: str, theme: dict) -> None:
         data_label = ctk.CTkLabel(
@@ -129,8 +116,6 @@ class AddFinancialFrame(ctk.CTkFrame):
         This method finalizes the financial data entry workflow and navigates back to the player library view.
         """
         financial_data = {name: var.get() for name, var in self.data_vars.items()}
-        # add on loan to financial data
-        financial_data["On Loan"] = self.on_loan_var.get()
         
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
@@ -152,9 +137,6 @@ class AddFinancialFrame(ctk.CTkFrame):
         """Resets all input fields and refreshes the player dropdown."""
         for var in self.data_vars.values():
             var.set("")
-        
-        # Reset checkbox
-        self.on_loan_var.set(False)
         
         # Refresh player dropdown
         self.refresh_player_dropdown()

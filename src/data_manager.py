@@ -199,9 +199,13 @@ class DataManager:
         
         if existing_player:
             existing_player["attribute_history"].append(attributes_snapshot)
-            # If age is different, update it
+            # If age, height or weight are different, update it
             if existing_player.get("age") != player_ui_data.get("age").strip():
                 existing_player["age"] = player_ui_data.get("age").strip()
+            if existing_player.get("height") != player_ui_data.get("height").strip():
+                existing_player["height"] = player_ui_data.get("height").strip()
+            if existing_player.get("weight") != player_ui_data.get("weight").strip():
+                existing_player["weight"] = player_ui_data.get("weight").strip()
             # If position is new, add it
             if position not in existing_player.get("positions", []):
                 existing_player["positions"].append(position)
@@ -216,7 +220,8 @@ class DataManager:
                 "positions": [position],
                 "attribute_history": [attributes_snapshot],
                 "financial_history": [],
-                "sold": False
+                "sold": False,
+                "loaned": False
             }
             self.players.append(new_player)
         self._save_json(self.players_path, self.players)
@@ -270,6 +275,25 @@ class DataManager:
             return
         
         existing_player["sold"] = True
+        self._save_json(self.players_path, self.players)
+        # Reload players to ensure consistency
+        self.players = self._load_json(self.players_path)
+    
+    def loan_player(self, player_name: str) -> None:
+        """
+        Marks the specified player as loaned in the player records.
+
+        Args:
+            player_name (str): The name of the player to mark as loaned.
+        """
+        full_name = player_name.strip().lower()
+        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
+        
+        if not existing_player:
+            print(f"Player '{player_name}' not found. Cannot mark as loaned.")
+            return
+        
+        existing_player["loaned"] = True
         self._save_json(self.players_path, self.players)
         # Reload players to ensure consistency
         self.players = self._load_json(self.players_path)

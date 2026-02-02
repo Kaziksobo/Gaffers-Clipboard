@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-class SellPlayerFrame(ctk.CTkFrame):
+class LeftPlayerFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
@@ -38,9 +38,16 @@ class SellPlayerFrame(ctk.CTkFrame):
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
         
+        # Sell/loan mini frame
+        self.sell_loan_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.sell_loan_frame.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
+        self.sell_loan_frame.grid_columnconfigure(0, weight=1)
+        self.sell_loan_frame.grid_columnconfigure(1, weight=1)
+        self.sell_loan_frame.grid_rowconfigure(0, weight=1)
+        
         # Sell button
         self.sell_button = ctk.CTkButton(
-            self,
+            self.sell_loan_frame,
             text="Sell Player",
             fg_color=theme["colors"]["button_fg"],
             bg_color=theme["colors"]["background"],
@@ -49,11 +56,40 @@ class SellPlayerFrame(ctk.CTkFrame):
             hover_color=theme["colors"]["accent"],
             command=self.sell_player
         )
-        self.sell_button.grid(row=3, column=1)
+        self.sell_button.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
+        
+        # Loan button
+        self.loan_button = ctk.CTkButton(
+            self.sell_loan_frame,
+            text="Loan Player",
+            fg_color=theme["colors"]["button_fg"],
+            bg_color=theme["colors"]["background"],
+            font=theme["fonts"]["button"],
+            text_color=theme["colors"]["primary_text"],
+            hover_color=theme["colors"]["accent"],
+            command=self.loan_player
+        )
+        self.loan_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
     
     def sell_player(self) -> None:
+        """
+        Sell the currently selected player and navigate back to the player library.
+
+        This retrieves the chosen player from the dropdown, triggers the controller's
+        sell logic, then switches the view to the player library frame.
+        """
         player_name = self.player_list_var.get()
         self.controller.sell_player(player_name)
+        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+    
+    def loan_player(self) -> None:
+        """Loan the currently selected player and return to the player library view.
+
+        This uses the selected player from the dropdown, calls the controller loan
+        action, and then switches the active frame back to the player library.
+        """
+        player_name = self.player_list_var.get()
+        self.controller.loan_player(player_name)
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
     
     def refresh_player_dropdown(self) -> None:

@@ -20,7 +20,7 @@ from src.views.add_gk_frame import AddGKFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 from src.views.add_financial_frame import AddFinancialFrame
-from src.views.sell_player_frame import SellPlayerFrame
+from views.left_player_frame import LeftPlayerFrame
 from src.data_manager import DataManager
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class App(ctk.CTk):
         - Sets window title, size, and minimum size.
         - Initializes the DataManager with the data directory.
         - Creates a container frame for all pages.
-        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2, AddFinancial, SellPlayer).
+        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2, AddFinancial, LeftPlayer).
         - Displays the career select frame on startup.
         '''
         super().__init__()
@@ -63,7 +63,7 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, SellPlayerFrame):
+        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, LeftPlayerFrame):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -203,6 +203,14 @@ class App(ctk.CTk):
             player_name (str): The name of the player to mark as sold.
         """
         self.data_manager.sell_player(player_name)
+    
+    def loan_player(self, player_name: str) -> None:
+        """Marks a player as loaned in the data manager.
+
+        Args:
+            player_name (str): The name of the player to mark as loaned.
+        """
+        self.data_manager.loan_player(player_name)
             
     def process_match_stats(self) -> None:
         '''Process match statistics by capturing a screenshot,
