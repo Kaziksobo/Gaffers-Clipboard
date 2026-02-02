@@ -156,9 +156,9 @@ class App(ctk.CTk):
         ]
 
         if only_outfield:
-            active_players = [player for player in active_players if player.get("position") != "GK"]
+            active_players = [player for player in active_players if "GK" not in player.get("positions")]
         elif only_gk:
-            active_players = [player for player in active_players if player.get("position") == "GK"]
+            active_players = [player for player in active_players if "GK" in player.get("positions")]
 
         if active_players:
             return sorted(
