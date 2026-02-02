@@ -20,7 +20,7 @@ from src.views.add_gk_frame import AddGKFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 from src.views.add_financial_frame import AddFinancialFrame
-from views.left_player_frame import LeftPlayerFrame
+from src.views.left_player_frame import LeftPlayerFrame
 from src.data_manager import DataManager
 
 logger = logging.getLogger(__name__)
