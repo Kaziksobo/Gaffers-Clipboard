@@ -141,7 +141,7 @@ class App(ctk.CTk):
         self.data_manager.refresh_players()
         if not self.data_manager.players:
             return ["No players found"]
-        return sorted([player.get("name").title() for player in self.data_manager.players])
+        return sorted([player.get("name").title() for player in self.data_manager.players], key=lambda name: name.split()[-1])
     
     def buffer_data(self, data: dict, gk: bool, first: bool = True) -> None:
         """Stores captured player attribute data so multi-step entry flows can assemble a complete record. 
