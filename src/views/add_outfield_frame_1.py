@@ -234,10 +234,10 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.age_entry.configure(placeholder_text="Age")
         
         self.height_entry.delete(0, 'end')
-        self.height_entry.configure(placeholder_text="Height (cm)")
+        self.height_entry.configure(placeholder_text="Height (ft'in\")")
         
         self.weight_entry.delete(0, 'end')
-        self.weight_entry.configure(placeholder_text="Weight (kg)")
+        self.weight_entry.configure(placeholder_text="Weight (lbs)")
         
         self.country_entry.delete(0, 'end')
         self.country_entry.configure(placeholder_text="Country")
