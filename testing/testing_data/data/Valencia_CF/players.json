@@ -1,0 +1,3188 @@
+[
+    {
+        "id": 1,
+        "name": "kepa",
+        "nationality": "Spain",
+        "age": "34",
+        "height": "6'2\"",
+        "weight": "196",
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:19:08",
+                "season": "29/30",
+                "Diving": "78",
+                "Handling": "78",
+                "Kicking": "82",
+                "Reflexes": "81",
+                "Positioning": "76"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 03:50:56",
+                "season": "29/30",
+                "Wage": "25000",
+                "Market Value": "3000000",
+                "Contract Length (years)": "1",
+                "Release Clause": "6100000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 2,
+        "name": "jonas urbig",
+        "nationality": "Germany",
+        "age": "25",
+        "height": "6'2\"",
+        "weight": "182",
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:20:00",
+                "season": "29/30",
+                "Diving": "90",
+                "Handling": "79",
+                "Kicking": "89",
+                "Reflexes": "93",
+                "Positioning": "82"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 03:51:41",
+                "season": "29/30",
+                "Wage": "50000",
+                "Market Value": "65000000",
+                "Contract Length (years)": "5",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "8"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 3,
+        "name": "miguel moreira",
+        "nationality": "Brazil",
+        "age": "18",
+        "height": "6'3\"",
+        "weight": "171",
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:20:39",
+                "season": "29/30",
+                "Diving": "71",
+                "Handling": "52",
+                "Kicking": "72",
+                "Reflexes": "84",
+                "Positioning": "80"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 03:55:06",
+                "season": "29/30",
+                "Wage": "6700",
+                "Market Value": "2900000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 4,
+        "name": "jose gaya",
+        "nationality": "Spain",
+        "age": "34",
+        "height": "5'8\"",
+        "weight": "145",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:24:29",
+                "season": "29/30",
+                "Acceleration": "89",
+                "Agility": "80",
+                "Balance": "80",
+                "Jumping": "69",
+                "Sprint Speed": "82",
+                "Stamina": "84",
+                "Strength": "74",
+                "Aggression": "80",
+                "Att. Position": "71",
+                "Composure": "72",
+                "Interceptions": "90",
+                "Reactions": "79",
+                "Vision": "73",
+                "position": "LB",
+                "Ball Control": "77",
+                "Crossing": "81",
+                "Curve": "77",
+                "Def. Awareness": "86",
+                "Dribbling": "75",
+                "FK Accuracy": "43",
+                "Finishing": "56",
+                "Heading Acc.": "71",
+                "Long Pass": "74",
+                "Long Shots": "54",
+                "Penalties": "55",
+                "Short Pass": "76",
+                "Shot Power": "57",
+                "Slide Tackle": "86",
+                "Stand Tackle": "89",
+                "Volleys": "53"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:00:23",
+                "season": "29/30",
+                "Wage": "70000",
+                "Market Value": "44000000",
+                "Contract Length (years)": "1",
+                "Release Clause": "100000000",
+                "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-02 06:14:49",
+                "season": "29/30",
+                "Wage": "80000",
+                "Market Value": "44000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "100000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 5,
+        "name": "colin degura",
+        "nationality": "Gibraltar",
+        "age": "20",
+        "height": "5'7\"",
+        "weight": "145",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:25:14",
+                "season": "29/30",
+                "Acceleration": "81",
+                "Agility": "68",
+                "Balance": "70",
+                "Jumping": "57",
+                "Sprint Speed": "77",
+                "Stamina": "82",
+                "Strength": "62",
+                "Aggression": "59",
+                "Att. Position": "47",
+                "Composure": "47",
+                "Interceptions": "74",
+                "Reactions": "60",
+                "Vision": "56",
+                "position": "LB",
+                "Ball Control": "72",
+                "Crossing": "67",
+                "Curve": "57",
+                "Def. Awareness": "61",
+                "Dribbling": "61",
+                "FK Accuracy": "38",
+                "Finishing": "47",
+                "Heading Acc.": "70",
+                "Long Pass": "51",
+                "Long Shots": "41",
+                "Penalties": "42",
+                "Short Pass": "67",
+                "Shot Power": "52",
+                "Slide Tackle": "59",
+                "Stand Tackle": "74",
+                "Volleys": "42"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:02:13",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "2400000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 6,
+        "name": "gori vella",
+        "nationality": "Gibraltar",
+        "age": "19",
+        "height": "5'6\"",
+        "weight": "154",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:26:10",
+                "season": "29/30",
+                "Acceleration": "83",
+                "Agility": "70",
+                "Balance": "70",
+                "Jumping": "57",
+                "Sprint Speed": "83",
+                "Stamina": "80",
+                "Strength": "63",
+                "Aggression": "62",
+                "Att. Position": "52",
+                "Composure": "46",
+                "Interceptions": "78",
+                "Reactions": "52",
+                "Vision": "46",
+                "position": "LB",
+                "Ball Control": "62",
+                "Crossing": "65",
+                "Curve": "50",
+                "Def. Awareness": "59",
+                "Dribbling": "58",
+                "FK Accuracy": "36",
+                "Finishing": "41",
+                "Heading Acc.": "69",
+                "Long Pass": "57",
+                "Long Shots": "43",
+                "Penalties": "38",
+                "Short Pass": "63",
+                "Shot Power": "48",
+                "Slide Tackle": "67",
+                "Stand Tackle": "75",
+                "Volleys": "31"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:03:10",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "3900000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 7,
+        "name": "frederick ford",
+        "nationality": "Gibraltar",
+        "age": "19",
+        "height": "5'7\"",
+        "weight": "143",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:27:58",
+                "season": "29/30",
+                "Acceleration": "91",
+                "Agility": "75",
+                "Balance": "81",
+                "Jumping": "66",
+                "Sprint Speed": "83",
+                "Stamina": "84",
+                "Strength": "65",
+                "Aggression": "62",
+                "Att. Position": "49",
+                "Composure": "49",
+                "Interceptions": "79",
+                "Reactions": "61",
+                "Vision": "46",
+                "position": "LB",
+                "Ball Control": "71",
+                "Crossing": "69",
+                "Curve": "48",
+                "Def. Awareness": "69",
+                "Dribbling": "65",
+                "FK Accuracy": "44",
+                "Finishing": "41",
+                "Heading Acc.": "63",
+                "Long Pass": "51",
+                "Long Shots": "44",
+                "Penalties": "44",
+                "Short Pass": "70",
+                "Shot Power": "50",
+                "Slide Tackle": "63",
+                "Stand Tackle": "74",
+                "Volleys": "43"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:03:30",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "7000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": true,
+        "loaned": false
+    },
+    {
+        "id": 8,
+        "name": "giovanni eradi",
+        "nationality": "Gibraltar",
+        "age": "18",
+        "height": "5'6\"",
+        "weight": "141",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:28:45",
+                "season": "29/30",
+                "Acceleration": "89",
+                "Agility": "75",
+                "Balance": "73",
+                "Jumping": "65",
+                "Sprint Speed": "80",
+                "Stamina": "78",
+                "Strength": "67",
+                "Aggression": "72",
+                "Att. Position": "46",
+                "Composure": "49",
+                "Interceptions": "74",
+                "Reactions": "61",
+                "Vision": "39",
+                "position": "LB",
+                "Ball Control": "62",
+                "Crossing": "58",
+                "Curve": "46",
+                "Def. Awareness": "62",
+                "Dribbling": "63",
+                "FK Accuracy": "39",
+                "Finishing": "36",
+                "Heading Acc.": "57",
+                "Long Pass": "46",
+                "Long Shots": "41",
+                "Penalties": "44",
+                "Short Pass": "56",
+                "Shot Power": "52",
+                "Slide Tackle": "69",
+                "Stand Tackle": "72",
+                "Volleys": "39"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:03:49",
+                "season": "29/30",
+                "Wage": "15000",
+                "Market Value": "3100000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 9,
+        "name": "giovanni borg",
+        "nationality": "Gibraltar",
+        "age": "18",
+        "height": "5'8\"",
+        "weight": "152",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:31:33",
+                "season": "29/30",
+                "Acceleration": "84",
+                "Agility": "75",
+                "Balance": "69",
+                "Jumping": "61",
+                "Sprint Speed": "80",
+                "Stamina": "78",
+                "Strength": "65",
+                "Aggression": "69",
+                "Att. Position": "52",
+                "Composure": "53",
+                "Interceptions": "69",
+                "Reactions": "57",
+                "Vision": "44",
+                "position": "LB",
+                "Ball Control": "56",
+                "Crossing": "60",
+                "Curve": "50",
+                "Def. Awareness": "65",
+                "Dribbling": "60",
+                "FK Accuracy": "37",
+                "Finishing": "36",
+                "Heading Acc.": "66",
+                "Long Pass": "52",
+                "Long Shots": "41",
+                "Penalties": "39",
+                "Short Pass": "60",
+                "Shot Power": "46",
+                "Slide Tackle": "65",
+                "Stand Tackle": "65",
+                "Volleys": "37"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:08:20",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "1400000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 10,
+        "name": "sepp van den berg",
+        "nationality": "Netherlands",
+        "age": "27",
+        "height": "6'4\"",
+        "weight": "191",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:35:58",
+                "season": "29/30",
+                "Acceleration": "75",
+                "Agility": "68",
+                "Balance": "59",
+                "Jumping": "89",
+                "Sprint Speed": "89",
+                "Stamina": "71",
+                "Strength": "80",
+                "Aggression": "84",
+                "Att. Position": "56",
+                "Composure": "77",
+                "Interceptions": "81",
+                "Reactions": "87",
+                "Vision": "66",
+                "position": "CB",
+                "Ball Control": "77",
+                "Crossing": "61",
+                "Curve": "40",
+                "Def. Awareness": "85",
+                "Dribbling": "65",
+                "FK Accuracy": "28",
+                "Finishing": "32",
+                "Heading Acc.": "92",
+                "Long Pass": "68",
+                "Long Shots": "33",
+                "Penalties": "44",
+                "Short Pass": "80",
+                "Shot Power": "55",
+                "Slide Tackle": "75",
+                "Stand Tackle": "86",
+                "Volleys": "34"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:08:49",
+                "season": "29/30",
+                "Wage": "55000",
+                "Market Value": "39000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": true,
+        "loaned": false
+    },
+    {
+        "id": 11,
+        "name": "ladislav krejci",
+        "nationality": "Czech Republic",
+        "age": "30",
+        "height": "6'3\"",
+        "weight": "191",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:37:22",
+                "season": "29/30",
+                "Acceleration": "72",
+                "Agility": "63",
+                "Balance": "67",
+                "Jumping": "91",
+                "Sprint Speed": "86",
+                "Stamina": "82",
+                "Strength": "90",
+                "Aggression": "91",
+                "Att. Position": "73",
+                "Composure": "79",
+                "Interceptions": "83",
+                "Reactions": "83",
+                "Vision": "83",
+                "position": "CB",
+                "Ball Control": "77",
+                "Crossing": "72",
+                "Curve": "57",
+                "Def. Awareness": "80",
+                "Dribbling": "73",
+                "FK Accuracy": "58",
+                "Finishing": "65",
+                "Heading Acc.": "88",
+                "Long Pass": "87",
+                "Long Shots": "71",
+                "Penalties": "80",
+                "Short Pass": "84",
+                "Shot Power": "78",
+                "Slide Tackle": "85",
+                "Stand Tackle": "81",
+                "Volleys": "70"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 04:09:24",
+                "season": "29/30",
+                "Wage": "55000",
+                "Market Value": "43500000",
+                "Contract Length (years)": "2",
+                "Release Clause": "85000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 12,
+        "name": "valentin gomez",
+        "nationality": "Argentina",
+        "age": "26",
+        "height": "5'11\"",
+        "weight": "165",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:38:27",
+                "season": "29/30",
+                "Acceleration": "82",
+                "Agility": "76",
+                "Balance": "78",
+                "Jumping": "84",
+                "Sprint Speed": "87",
+                "Stamina": "80",
+                "Strength": "76",
+                "Aggression": "88",
+                "Att. Position": "28",
+                "Composure": "84",
+                "Interceptions": "84",
+                "Reactions": "82",
+                "Vision": "61",
+                "position": "CB",
+                "Ball Control": "81",
+                "Crossing": "36",
+                "Curve": "26",
+                "Def. Awareness": "80",
+                "Dribbling": "74",
+                "FK Accuracy": "25",
+                "Finishing": "21",
+                "Heading Acc.": "72",
+                "Long Pass": "74",
+                "Long Shots": "25",
+                "Penalties": "34",
+                "Short Pass": "82",
+                "Shot Power": "48",
+                "Slide Tackle": "85",
+                "Stand Tackle": "84",
+                "Volleys": "28"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:19:45",
+                "season": "29/30",
+                "Wage": "34000",
+                "Market Value": "29000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "12"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 13,
+        "name": "renato veiga",
+        "nationality": "Portugal",
+        "age": "25",
+        "height": "6'3\"",
+        "weight": "194",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:39:06",
+                "season": "29/30",
+                "Acceleration": "74",
+                "Agility": "78",
+                "Balance": "73",
+                "Jumping": "83",
+                "Sprint Speed": "91",
+                "Stamina": "74",
+                "Strength": "87",
+                "Aggression": "92",
+                "Att. Position": "66",
+                "Composure": "81",
+                "Interceptions": "83",
+                "Reactions": "84",
+                "Vision": "70",
+                "position": "CB",
+                "Ball Control": "86",
+                "Crossing": "70",
+                "Curve": "73",
+                "Def. Awareness": "79",
+                "Dribbling": "80",
+                "FK Accuracy": "77",
+                "Finishing": "51",
+                "Heading Acc.": "76",
+                "Long Pass": "83",
+                "Long Shots": "71",
+                "Penalties": "62",
+                "Short Pass": "86",
+                "Shot Power": "76",
+                "Slide Tackle": "82",
+                "Stand Tackle": "85",
+                "Volleys": "72"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:28:59",
+                "season": "29/30",
+                "Wage": "50000",
+                "Market Value": "35000000",
+                "Contract Length (years)": "4",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 14,
+        "name": "abdukodir khusanov",
+        "nationality": "Uzbekistan",
+        "age": "25",
+        "height": "6'1\"",
+        "weight": "185",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:40:01",
+                "season": "29/30",
+                "Acceleration": "85",
+                "Agility": "64",
+                "Balance": "72",
+                "Jumping": "90",
+                "Sprint Speed": "92",
+                "Stamina": "68",
+                "Strength": "97",
+                "Aggression": "94",
+                "Att. Position": "50",
+                "Composure": "81",
+                "Interceptions": "88",
+                "Reactions": "89",
+                "Vision": "63",
+                "position": "CB",
+                "Ball Control": "81",
+                "Crossing": "54",
+                "Curve": "54",
+                "Def. Awareness": "91",
+                "Dribbling": "69",
+                "FK Accuracy": "46",
+                "Finishing": "41",
+                "Heading Acc.": "80",
+                "Long Pass": "76",
+                "Long Shots": "43",
+                "Penalties": "52",
+                "Short Pass": "79",
+                "Shot Power": "67",
+                "Slide Tackle": "82",
+                "Stand Tackle": "94",
+                "Volleys": "43"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:39:21",
+                "season": "29/30",
+                "Wage": "50000",
+                "Market Value": "108000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "12"
+            },
+            {
+                "datetime": "2026-02-02 06:17:18",
+                "season": "29/30",
+                "Wage": "85000",
+                "Market Value": "108000000",
+                "Contract Length (years)": "5",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "12"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 15,
+        "name": "borja varela",
+        "nationality": "Spain",
+        "age": "19",
+        "height": "6'3\"",
+        "weight": "169",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:41:03",
+                "season": "29/30",
+                "Acceleration": "65",
+                "Agility": "42",
+                "Balance": "66",
+                "Jumping": "78",
+                "Sprint Speed": "63",
+                "Stamina": "58",
+                "Strength": "88",
+                "Aggression": "83",
+                "Att. Position": "29",
+                "Composure": "49",
+                "Interceptions": "62",
+                "Reactions": "70",
+                "Vision": "40",
+                "position": "CB",
+                "Ball Control": "47",
+                "Crossing": "35",
+                "Curve": "31",
+                "Def. Awareness": "77",
+                "Dribbling": "36",
+                "FK Accuracy": "23",
+                "Finishing": "24",
+                "Heading Acc.": "63",
+                "Long Pass": "46",
+                "Long Shots": "23",
+                "Penalties": "28",
+                "Short Pass": "51",
+                "Shot Power": "54",
+                "Slide Tackle": "60",
+                "Stand Tackle": "71",
+                "Volleys": "29"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:39:48",
+                "season": "29/30",
+                "Wage": "15500",
+                "Market Value": "2900000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 16,
+        "name": "ander morales",
+        "nationality": "Spain",
+        "age": "19",
+        "height": "6'0\"",
+        "weight": "171",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:41:43",
+                "season": "29/30",
+                "Acceleration": "62",
+                "Agility": "64",
+                "Balance": "61",
+                "Jumping": "80",
+                "Sprint Speed": "65",
+                "Stamina": "69",
+                "Strength": "81",
+                "Aggression": "69",
+                "Att. Position": "38",
+                "Composure": "55",
+                "Interceptions": "70",
+                "Reactions": "64",
+                "Vision": "37",
+                "position": "CB",
+                "Ball Control": "66",
+                "Crossing": "41",
+                "Curve": "44",
+                "Def. Awareness": "76",
+                "Dribbling": "52",
+                "FK Accuracy": "34",
+                "Finishing": "43",
+                "Heading Acc.": "66",
+                "Long Pass": "49",
+                "Long Shots": "37",
+                "Penalties": "48",
+                "Short Pass": "77",
+                "Shot Power": "53",
+                "Slide Tackle": "68",
+                "Stand Tackle": "81",
+                "Volleys": "31"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:40:14",
+                "season": "29/30",
+                "Wage": "11000",
+                "Market Value": "5500000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 17,
+        "name": "fabio cardenas",
+        "nationality": "Portugal",
+        "age": "19",
+        "height": "6'2\"",
+        "weight": "167",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:42:52",
+                "season": "29/30",
+                "Acceleration": "67",
+                "Agility": "51",
+                "Balance": "60",
+                "Jumping": "72",
+                "Sprint Speed": "64",
+                "Stamina": "68",
+                "Strength": "79",
+                "Aggression": "71",
+                "Att. Position": "35",
+                "Composure": "51",
+                "Interceptions": "66",
+                "Reactions": "69",
+                "Vision": "42",
+                "position": "CB",
+                "Ball Control": "51",
+                "Crossing": "35",
+                "Curve": "35",
+                "Def. Awareness": "78",
+                "Dribbling": "38",
+                "FK Accuracy": "25",
+                "Finishing": "30",
+                "Heading Acc.": "61",
+                "Long Pass": "43",
+                "Long Shots": "31",
+                "Penalties": "32",
+                "Short Pass": "45",
+                "Shot Power": "53",
+                "Slide Tackle": "62",
+                "Stand Tackle": "70",
+                "Volleys": "26"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:40:32",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "1600000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 18,
+        "name": "fabrice diabate",
+        "nationality": "Ivory Coast",
+        "age": "18",
+        "height": "6'1\"",
+        "weight": "167",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:43:28",
+                "season": "29/30",
+                "Acceleration": "72",
+                "Agility": "65",
+                "Balance": "70",
+                "Jumping": "76",
+                "Sprint Speed": "79",
+                "Stamina": "79",
+                "Strength": "85",
+                "Aggression": "71",
+                "Att. Position": "38",
+                "Composure": "63",
+                "Interceptions": "68",
+                "Reactions": "71",
+                "Vision": "52",
+                "position": "CB",
+                "Ball Control": "59",
+                "Crossing": "49",
+                "Curve": "38",
+                "Def. Awareness": "75",
+                "Dribbling": "50",
+                "FK Accuracy": "35",
+                "Finishing": "34",
+                "Heading Acc.": "68",
+                "Long Pass": "58",
+                "Long Shots": "41",
+                "Penalties": "47",
+                "Short Pass": "73",
+                "Shot Power": "52",
+                "Slide Tackle": "81",
+                "Stand Tackle": "76",
+                "Volleys": "33"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:41:00",
+                "season": "29/30",
+                "Wage": "15000",
+                "Market Value": "8500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 19,
+        "name": "alex hopkins",
+        "nationality": "Gibraltar",
+        "age": "18",
+        "height": "5'11\"",
+        "weight": "174",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 00:44:01",
+                "season": "29/30",
+                "Acceleration": "58",
+                "Agility": "55",
+                "Balance": "54",
+                "Jumping": "64",
+                "Sprint Speed": "65",
+                "Stamina": "63",
+                "Strength": "75",
+                "Aggression": "64",
+                "Att. Position": "37",
+                "Composure": "55",
+                "Interceptions": "75",
+                "Reactions": "70",
+                "Vision": "37",
+                "position": "CB",
+                "Ball Control": "63",
+                "Crossing": "35",
+                "Curve": "32",
+                "Def. Awareness": "71",
+                "Dribbling": "47",
+                "FK Accuracy": "33",
+                "Finishing": "33",
+                "Heading Acc.": "60",
+                "Long Pass": "60",
+                "Long Shots": "34",
+                "Penalties": "39",
+                "Short Pass": "65",
+                "Shot Power": "49",
+                "Slide Tackle": "59",
+                "Stand Tackle": "68",
+                "Volleys": "29"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:41:25",
+                "season": "29/30",
+                "Wage": "11500",
+                "Market Value": "1800000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 20,
+        "name": "marcos llorente",
+        "nationality": "Spain",
+        "age": "34",
+        "height": "6'0\"",
+        "weight": "163",
+        "positions": [
+            "RB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:23:25",
+                "season": "29/30",
+                "Acceleration": "89",
+                "Agility": "78",
+                "Balance": "70",
+                "Jumping": "79",
+                "Sprint Speed": "89",
+                "Stamina": "86",
+                "Strength": "73",
+                "Aggression": "77",
+                "Att. Position": "74",
+                "Composure": "74",
+                "Interceptions": "81",
+                "Reactions": "82",
+                "Vision": "81",
+                "position": "RB",
+                "Ball Control": "81",
+                "Crossing": "78",
+                "Curve": "74",
+                "Def. Awareness": "74",
+                "Dribbling": "81",
+                "FK Accuracy": "57",
+                "Finishing": "76",
+                "Heading Acc.": "63",
+                "Long Pass": "76",
+                "Long Shots": "75",
+                "Penalties": "59",
+                "Short Pass": "83",
+                "Shot Power": "80",
+                "Slide Tackle": "71",
+                "Stand Tackle": "79",
+                "Volleys": "60"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:41:54",
+                "season": "29/30",
+                "Wage": "65000",
+                "Market Value": "24000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 21,
+        "name": "andres garcia",
+        "nationality": "Spain",
+        "age": "26",
+        "height": "6'0\"",
+        "weight": "180",
+        "positions": [
+            "RB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:24:38",
+                "season": "29/30",
+                "Acceleration": "88",
+                "Agility": "77",
+                "Balance": "65",
+                "Jumping": "69",
+                "Sprint Speed": "88",
+                "Stamina": "83",
+                "Strength": "68",
+                "Aggression": "67",
+                "Att. Position": "79",
+                "Composure": "73",
+                "Interceptions": "81",
+                "Reactions": "79",
+                "Vision": "77",
+                "position": "RB",
+                "Ball Control": "83",
+                "Crossing": "80",
+                "Curve": "72",
+                "Def. Awareness": "74",
+                "Dribbling": "83",
+                "FK Accuracy": "55",
+                "Finishing": "66",
+                "Heading Acc.": "51",
+                "Long Pass": "66",
+                "Long Shots": "68",
+                "Penalties": "62",
+                "Short Pass": "85",
+                "Shot Power": "72",
+                "Slide Tackle": "70",
+                "Stand Tackle": "76",
+                "Volleys": "66"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:42:22",
+                "season": "29/30",
+                "Wage": "38000",
+                "Market Value": "21000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "58000000",
+                "Sell On Clause (%)": "10"
+            }
+        ],
+        "sold": true,
+        "loaned": false
+    },
+    {
+        "id": 22,
+        "name": "pepelu",
+        "nationality": "Spain",
+        "age": "30",
+        "height": "6'1\"",
+        "weight": "160",
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:25:50",
+                "season": "29/30",
+                "Acceleration": "64",
+                "Agility": "71",
+                "Balance": "73",
+                "Jumping": "73",
+                "Sprint Speed": "67",
+                "Stamina": "87",
+                "Strength": "76",
+                "Aggression": "75",
+                "Att. Position": "72",
+                "Composure": "79",
+                "Interceptions": "83",
+                "Reactions": "84",
+                "Vision": "89",
+                "position": "CDM",
+                "Ball Control": "80",
+                "Crossing": "72",
+                "Curve": "76",
+                "Def. Awareness": "87",
+                "Dribbling": "72",
+                "FK Accuracy": "75",
+                "Finishing": "73",
+                "Heading Acc.": "64",
+                "Long Pass": "91",
+                "Long Shots": "75",
+                "Penalties": "80",
+                "Short Pass": "93",
+                "Shot Power": "73",
+                "Slide Tackle": "74",
+                "Stand Tackle": "85",
+                "Volleys": "61"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:42:53",
+                "season": "29/30",
+                "Wage": "55000",
+                "Market Value": "53000000",
+                "Contract Length (years)": "1",
+                "Release Clause": "105000000",
+                "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-02 06:06:30",
+                "season": "29/30",
+                "Wage": "70000",
+                "Market Value": "53000000",
+                "Contract Length (years)": "4",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 23,
+        "name": "rocco reitz",
+        "nationality": "Germany",
+        "age": "27",
+        "height": "5'9\"",
+        "weight": "158",
+        "positions": [
+            "CM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:26:32",
+                "season": "29/30",
+                "Acceleration": "76",
+                "Agility": "82",
+                "Balance": "78",
+                "Jumping": "68",
+                "Sprint Speed": "79",
+                "Stamina": "88",
+                "Strength": "60",
+                "Aggression": "83",
+                "Att. Position": "77",
+                "Composure": "79",
+                "Interceptions": "87",
+                "Reactions": "81",
+                "Vision": "80",
+                "position": "CM",
+                "Ball Control": "86",
+                "Crossing": "74",
+                "Curve": "79",
+                "Def. Awareness": "81",
+                "Dribbling": "77",
+                "FK Accuracy": "54",
+                "Finishing": "83",
+                "Heading Acc.": "71",
+                "Long Pass": "87",
+                "Long Shots": "86",
+                "Penalties": "61",
+                "Short Pass": "84",
+                "Shot Power": "72",
+                "Slide Tackle": "77",
+                "Stand Tackle": "88",
+                "Volleys": "58"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:43:26",
+                "season": "29/30",
+                "Wage": "40000",
+                "Market Value": "45500000",
+                "Contract Length (years)": "1",
+                "Release Clause": "90000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 24,
+        "name": "javi guerra",
+        "nationality": "Spain",
+        "age": "26",
+        "height": "6'2\"",
+        "weight": "169",
+        "positions": [
+            "CM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:27:15",
+                "season": "29/30",
+                "Acceleration": "88",
+                "Agility": "92",
+                "Balance": "69",
+                "Jumping": "74",
+                "Sprint Speed": "79",
+                "Stamina": "79",
+                "Strength": "72",
+                "Aggression": "84",
+                "Att. Position": "94",
+                "Composure": "79",
+                "Interceptions": "92",
+                "Reactions": "97",
+                "Vision": "91",
+                "position": "CM",
+                "Ball Control": "95",
+                "Crossing": "74",
+                "Curve": "55",
+                "Def. Awareness": "86",
+                "Dribbling": "78",
+                "FK Accuracy": "60",
+                "Finishing": "90",
+                "Heading Acc.": "66",
+                "Long Pass": "93",
+                "Long Shots": "92",
+                "Penalties": "61",
+                "Short Pass": "90",
+                "Shot Power": "88",
+                "Slide Tackle": "68",
+                "Stand Tackle": "82",
+                "Volleys": "67"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:43:53",
+                "season": "29/30",
+                "Wage": "60000",
+                "Market Value": "166000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 25,
+        "name": "esteban gomez",
+        "nationality": "Spain",
+        "age": "19",
+        "height": "6'3\"",
+        "weight": "169",
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:28:42",
+                "season": "29/30",
+                "Acceleration": "64",
+                "Agility": "65",
+                "Balance": "66",
+                "Jumping": "64",
+                "Sprint Speed": "59",
+                "Stamina": "77",
+                "Strength": "64",
+                "Aggression": "65",
+                "Att. Position": "44",
+                "Composure": "59",
+                "Interceptions": "71",
+                "Reactions": "72",
+                "Vision": "54",
+                "position": "CDM",
+                "Ball Control": "63",
+                "Crossing": "44",
+                "Curve": "44",
+                "Def. Awareness": "72",
+                "Dribbling": "52",
+                "FK Accuracy": "38",
+                "Finishing": "43",
+                "Heading Acc.": "47",
+                "Long Pass": "62",
+                "Long Shots": "43",
+                "Penalties": "48",
+                "Short Pass": "67",
+                "Shot Power": "57",
+                "Slide Tackle": "62",
+                "Stand Tackle": "77",
+                "Volleys": "36"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:44:16",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "1200000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": true,
+        "loaned": false
+    },
+    {
+        "id": 26,
+        "name": "dean grech",
+        "nationality": "Gibraltar",
+        "age": "20",
+        "height": "6'3\"",
+        "weight": "187",
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:29:17",
+                "season": "29/30",
+                "Acceleration": "68",
+                "Agility": "67",
+                "Balance": "69",
+                "Jumping": "64",
+                "Sprint Speed": "57",
+                "Stamina": "73",
+                "Strength": "67",
+                "Aggression": "67",
+                "Att. Position": "47",
+                "Composure": "61",
+                "Interceptions": "72",
+                "Reactions": "79",
+                "Vision": "71",
+                "position": "CDM",
+                "Ball Control": "75",
+                "Crossing": "59",
+                "Curve": "46",
+                "Def. Awareness": "73",
+                "Dribbling": "56",
+                "FK Accuracy": "40",
+                "Finishing": "46",
+                "Heading Acc.": "41",
+                "Long Pass": "62",
+                "Long Shots": "56",
+                "Penalties": "45",
+                "Short Pass": "76",
+                "Shot Power": "55",
+                "Slide Tackle": "62",
+                "Stand Tackle": "69",
+                "Volleys": "47"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:44:42",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "3300000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 27,
+        "name": "carter gale",
+        "nationality": "Gibraltar",
+        "age": "19",
+        "height": "6'1\"",
+        "weight": "167",
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:30:05",
+                "season": "29/30",
+                "Acceleration": "67",
+                "Agility": "66",
+                "Balance": "65",
+                "Jumping": "64",
+                "Sprint Speed": "63",
+                "Stamina": "82",
+                "Strength": "66",
+                "Aggression": "62",
+                "Att. Position": "50",
+                "Composure": "57",
+                "Interceptions": "72",
+                "Reactions": "73",
+                "Vision": "65",
+                "position": "CDM",
+                "Ball Control": "71",
+                "Crossing": "45",
+                "Curve": "44",
+                "Def. Awareness": "61",
+                "Dribbling": "55",
+                "FK Accuracy": "42",
+                "Finishing": "42",
+                "Heading Acc.": "43",
+                "Long Pass": "60",
+                "Long Shots": "48",
+                "Penalties": "44",
+                "Short Pass": "76",
+                "Shot Power": "54",
+                "Slide Tackle": "60",
+                "Stand Tackle": "68",
+                "Volleys": "44"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:45:04",
+                "season": "29/30",
+                "Wage": "12000",
+                "Market Value": "2000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 28,
+        "name": "diego lopes",
+        "nationality": "Portugal",
+        "age": "22",
+        "height": "6'6\"",
+        "weight": "182",
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:30:54",
+                "season": "29/30",
+                "Acceleration": "81",
+                "Agility": "78",
+                "Balance": "79",
+                "Jumping": "77",
+                "Sprint Speed": "80",
+                "Stamina": "79",
+                "Strength": "82",
+                "Aggression": "78",
+                "Att. Position": "53",
+                "Composure": "74",
+                "Interceptions": "74",
+                "Reactions": "78",
+                "Vision": "72",
+                "position": "CDM",
+                "Ball Control": "77",
+                "Crossing": "75",
+                "Curve": "59",
+                "Def. Awareness": "83",
+                "Dribbling": "63",
+                "FK Accuracy": "51",
+                "Finishing": "51",
+                "Heading Acc.": "72",
+                "Long Pass": "82",
+                "Long Shots": "64",
+                "Penalties": "56",
+                "Short Pass": "85",
+                "Shot Power": "72",
+                "Slide Tackle": "74",
+                "Stand Tackle": "83",
+                "Volleys": "48"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:45:30",
+                "season": "29/30",
+                "Wage": "18000",
+                "Market Value": "27000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "9"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 29,
+        "name": "gabriel rogers",
+        "nationality": "Gibraltar",
+        "age": "20",
+        "height": "5'9\"",
+        "weight": "163",
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:32:15",
+                "season": "29/30",
+                "Acceleration": "84",
+                "Agility": "72",
+                "Balance": "70",
+                "Jumping": "53",
+                "Sprint Speed": "82",
+                "Stamina": "67",
+                "Strength": "49",
+                "Aggression": "40",
+                "Att. Position": "78",
+                "Composure": "53",
+                "Interceptions": "40",
+                "Reactions": "73",
+                "Vision": "58",
+                "position": "LW",
+                "Ball Control": "81",
+                "Crossing": "62",
+                "Curve": "54",
+                "Def. Awareness": "35",
+                "Dribbling": "77",
+                "FK Accuracy": "48",
+                "Finishing": "72",
+                "Heading Acc.": "66",
+                "Long Pass": "62",
+                "Long Shots": "72",
+                "Penalties": "51",
+                "Short Pass": "61",
+                "Shot Power": "59",
+                "Slide Tackle": "39",
+                "Stand Tackle": "39",
+                "Volleys": "64"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:46:16",
+                "season": "29/30",
+                "Wage": "15500",
+                "Market Value": "6000000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 30,
+        "name": "michael ratcliffe",
+        "nationality": "Gibraltar",
+        "age": "18",
+        "height": "5'9\"",
+        "weight": "149",
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:33:06",
+                "season": "29/30",
+                "Acceleration": "89",
+                "Agility": "75",
+                "Balance": "72",
+                "Jumping": "55",
+                "Sprint Speed": "86",
+                "Stamina": "71",
+                "Strength": "58",
+                "Aggression": "41",
+                "Att. Position": "71",
+                "Composure": "46",
+                "Interceptions": "42",
+                "Reactions": "69",
+                "Vision": "60",
+                "position": "LW",
+                "Ball Control": "82",
+                "Crossing": "56",
+                "Curve": "54",
+                "Def. Awareness": "45",
+                "Dribbling": "82",
+                "FK Accuracy": "48",
+                "Finishing": "67",
+                "Heading Acc.": "62",
+                "Long Pass": "64",
+                "Long Shots": "61",
+                "Penalties": "57",
+                "Short Pass": "55",
+                "Shot Power": "51",
+                "Slide Tackle": "40",
+                "Stand Tackle": "40",
+                "Volleys": "63"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:46:58",
+                "season": "29/30",
+                "Wage": "15500",
+                "Market Value": "4900000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 31,
+        "name": "thiago almada",
+        "nationality": "Argentina",
+        "age": "28",
+        "height": "5'7\"",
+        "weight": "136",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:33:56",
+                "season": "29/30",
+                "Acceleration": "89",
+                "Agility": "90",
+                "Balance": "94",
+                "Jumping": "50",
+                "Sprint Speed": "86",
+                "Stamina": "75",
+                "Strength": "47",
+                "Aggression": "62",
+                "Att. Position": "92",
+                "Composure": "88",
+                "Interceptions": "60",
+                "Reactions": "92",
+                "Vision": "92",
+                "position": "CAM",
+                "Ball Control": "98",
+                "Crossing": "75",
+                "Curve": "83",
+                "Def. Awareness": "41",
+                "Dribbling": "87",
+                "FK Accuracy": "82",
+                "Finishing": "88",
+                "Heading Acc.": "68",
+                "Long Pass": "85",
+                "Long Shots": "83",
+                "Penalties": "73",
+                "Short Pass": "90",
+                "Shot Power": "86",
+                "Slide Tackle": "48",
+                "Stand Tackle": "59",
+                "Volleys": "90"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:47:18",
+                "season": "29/30",
+                "Wage": "80000",
+                "Market Value": "132000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "15"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 32,
+        "name": "can uzun",
+        "nationality": "Turkey",
+        "age": "23",
+        "height": "6'1\"",
+        "weight": "154",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:34:35",
+                "season": "29/30",
+                "Acceleration": "86",
+                "Agility": "89",
+                "Balance": "83",
+                "Jumping": "81",
+                "Sprint Speed": "74",
+                "Stamina": "82",
+                "Strength": "76",
+                "Aggression": "44",
+                "Att. Position": "90",
+                "Composure": "74",
+                "Interceptions": "29",
+                "Reactions": "83",
+                "Vision": "78",
+                "position": "CAM",
+                "Ball Control": "91",
+                "Crossing": "57",
+                "Curve": "82",
+                "Def. Awareness": "27",
+                "Dribbling": "86",
+                "FK Accuracy": "63",
+                "Finishing": "89",
+                "Heading Acc.": "69",
+                "Long Pass": "84",
+                "Long Shots": "86",
+                "Penalties": "70",
+                "Short Pass": "94",
+                "Shot Power": "82",
+                "Slide Tackle": "28",
+                "Stand Tackle": "26",
+                "Volleys": "79"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:47:40",
+                "season": "29/30",
+                "Wage": "35000",
+                "Market Value": "109000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "11"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 33,
+        "name": "santiago simo",
+        "nationality": "Spain",
+        "age": "21",
+        "height": "5'8\"",
+        "weight": "147",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:35:12",
+                "season": "29/30",
+                "Acceleration": "82",
+                "Agility": "86",
+                "Balance": "73",
+                "Jumping": "48",
+                "Sprint Speed": "83",
+                "Stamina": "67",
+                "Strength": "49",
+                "Aggression": "41",
+                "Att. Position": "79",
+                "Composure": "68",
+                "Interceptions": "45",
+                "Reactions": "71",
+                "Vision": "75",
+                "position": "CAM",
+                "Ball Control": "81",
+                "Crossing": "69",
+                "Curve": "45",
+                "Def. Awareness": "31",
+                "Dribbling": "81",
+                "FK Accuracy": "39",
+                "Finishing": "72",
+                "Heading Acc.": "53",
+                "Long Pass": "77",
+                "Long Shots": "79",
+                "Penalties": "51",
+                "Short Pass": "74",
+                "Shot Power": "59",
+                "Slide Tackle": "24",
+                "Stand Tackle": "41",
+                "Volleys": "63"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:48:13",
+                "season": "29/30",
+                "Wage": "28000",
+                "Market Value": "25000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 34,
+        "name": "pablo aurelio",
+        "nationality": "Spain",
+        "age": "21",
+        "height": "5'11\"",
+        "weight": "149",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:35:49",
+                "season": "29/30",
+                "Acceleration": "92",
+                "Agility": "83",
+                "Balance": "75",
+                "Jumping": "55",
+                "Sprint Speed": "77",
+                "Stamina": "66",
+                "Strength": "53",
+                "Aggression": "56",
+                "Att. Position": "70",
+                "Composure": "52",
+                "Interceptions": "35",
+                "Reactions": "64",
+                "Vision": "69",
+                "position": "CAM",
+                "Ball Control": "86",
+                "Crossing": "68",
+                "Curve": "57",
+                "Def. Awareness": "49",
+                "Dribbling": "79",
+                "FK Accuracy": "62",
+                "Finishing": "71",
+                "Heading Acc.": "55",
+                "Long Pass": "80",
+                "Long Shots": "62",
+                "Penalties": "56",
+                "Short Pass": "82",
+                "Shot Power": "67",
+                "Slide Tackle": "39",
+                "Stand Tackle": "42",
+                "Volleys": "57"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:48:47",
+                "season": "29/30",
+                "Wage": "25000",
+                "Market Value": "23500000",
+                "Contract Length (years)": "3",
+                "Release Clause": "42500000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 35,
+        "name": "samuel dixon",
+        "nationality": "Gibraltar",
+        "age": "18",
+        "height": "5'8\"",
+        "weight": "143",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:37:22",
+                "season": "29/30",
+                "Acceleration": "63",
+                "Agility": "73",
+                "Balance": "81",
+                "Jumping": "45",
+                "Sprint Speed": "87",
+                "Stamina": "57",
+                "Strength": "49",
+                "Aggression": "43",
+                "Att. Position": "48",
+                "Composure": "74",
+                "Interceptions": "34",
+                "Reactions": "53",
+                "Vision": "80",
+                "position": "CAM",
+                "Ball Control": "60",
+                "Crossing": "48",
+                "Curve": "47",
+                "Def. Awareness": "31",
+                "Dribbling": "81",
+                "FK Accuracy": "38",
+                "Finishing": "54",
+                "Heading Acc.": "41",
+                "Long Pass": "77",
+                "Long Shots": "76",
+                "Penalties": "44",
+                "Short Pass": "82",
+                "Shot Power": "74",
+                "Slide Tackle": "27",
+                "Stand Tackle": "29",
+                "Volleys": "45"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:49:06",
+                "season": "29/30",
+                "Wage": "16500",
+                "Market Value": "4000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 36,
+        "name": "giovanni vella",
+        "nationality": "Malta",
+        "age": "19",
+        "height": "5'8\"",
+        "weight": "138",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:38:15",
+                "season": "29/30",
+                "Acceleration": "72",
+                "Agility": "78",
+                "Balance": "75",
+                "Jumping": "53",
+                "Sprint Speed": "79",
+                "Stamina": "66",
+                "Strength": "54",
+                "Aggression": "50",
+                "Att. Position": "64",
+                "Composure": "63",
+                "Interceptions": "36",
+                "Reactions": "69",
+                "Vision": "77",
+                "position": "CAM",
+                "Ball Control": "75",
+                "Crossing": "53",
+                "Curve": "56",
+                "Def. Awareness": "39",
+                "Dribbling": "71",
+                "FK Accuracy": "55",
+                "Finishing": "58",
+                "Heading Acc.": "44",
+                "Long Pass": "77",
+                "Long Shots": "67",
+                "Penalties": "51",
+                "Short Pass": "78",
+                "Shot Power": "61",
+                "Slide Tackle": "44",
+                "Stand Tackle": "41",
+                "Volleys": "53"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:49:44",
+                "season": "29/30",
+                "Wage": "17500",
+                "Market Value": "2800000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 37,
+        "name": "gregorio vazquez",
+        "nationality": "Spain",
+        "age": "18",
+        "height": "6'1\"",
+        "weight": "176",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:39:06",
+                "season": "29/30",
+                "Acceleration": "69",
+                "Agility": "73",
+                "Balance": "74",
+                "Jumping": "47",
+                "Sprint Speed": "79",
+                "Stamina": "60",
+                "Strength": "52",
+                "Aggression": "52",
+                "Att. Position": "60",
+                "Composure": "62",
+                "Interceptions": "29",
+                "Reactions": "53",
+                "Vision": "78",
+                "position": "CAM",
+                "Ball Control": "64",
+                "Crossing": "58",
+                "Curve": "48",
+                "Def. Awareness": "35",
+                "Dribbling": "79",
+                "FK Accuracy": "46",
+                "Finishing": "53",
+                "Heading Acc.": "44",
+                "Long Pass": "70",
+                "Long Shots": "65",
+                "Penalties": "53",
+                "Short Pass": "80",
+                "Shot Power": "69",
+                "Slide Tackle": "36",
+                "Stand Tackle": "34",
+                "Volleys": "52"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:50:14",
+                "season": "29/30",
+                "Wage": "17500",
+                "Market Value": "3400000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 38,
+        "name": "julen tavero",
+        "nationality": "Spain",
+        "age": "19",
+        "height": "5'7\"",
+        "weight": "160",
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:41:06",
+                "season": "29/30",
+                "Acceleration": "77",
+                "Agility": "83",
+                "Balance": "76",
+                "Jumping": "54",
+                "Sprint Speed": "76",
+                "Stamina": "72",
+                "Strength": "52",
+                "Aggression": "50",
+                "Att. Position": "58",
+                "Composure": "63",
+                "Interceptions": "38",
+                "Reactions": "70",
+                "Vision": "74",
+                "position": "CAM",
+                "Ball Control": "73",
+                "Crossing": "55",
+                "Curve": "57",
+                "Def. Awareness": "34",
+                "Dribbling": "72",
+                "FK Accuracy": "54",
+                "Finishing": "63",
+                "Heading Acc.": "47",
+                "Long Pass": "72",
+                "Long Shots": "59",
+                "Penalties": "57",
+                "Short Pass": "75",
+                "Shot Power": "60",
+                "Slide Tackle": "46",
+                "Stand Tackle": "38",
+                "Volleys": "47"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:50:39",
+                "season": "29/30",
+                "Wage": "16500",
+                "Market Value": "5000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 39,
+        "name": "dominic mercer",
+        "nationality": "Gibraltar",
+        "age": "21",
+        "height": "5'5\"",
+        "weight": "134",
+        "positions": [
+            "RW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:41:46",
+                "season": "29/30",
+                "Acceleration": "88",
+                "Agility": "85",
+                "Balance": "74",
+                "Jumping": "67",
+                "Sprint Speed": "88",
+                "Stamina": "83",
+                "Strength": "64",
+                "Aggression": "54",
+                "Att. Position": "79",
+                "Composure": "49",
+                "Interceptions": "42",
+                "Reactions": "71",
+                "Vision": "59",
+                "position": "RW",
+                "Ball Control": "85",
+                "Crossing": "64",
+                "Curve": "59",
+                "Def. Awareness": "49",
+                "Dribbling": "90",
+                "FK Accuracy": "52",
+                "Finishing": "85",
+                "Heading Acc.": "60",
+                "Long Pass": "73",
+                "Long Shots": "63",
+                "Penalties": "55",
+                "Short Pass": "72",
+                "Shot Power": "66",
+                "Slide Tackle": "36",
+                "Stand Tackle": "48",
+                "Volleys": "70"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:51:12",
+                "season": "29/30",
+                "Wage": "22000",
+                "Market Value": "35500000",
+                "Contract Length (years)": "3",
+                "Release Clause": "29000000",
+                "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-02 06:12:55",
+                "season": "29/30",
+                "Wage": "30000",
+                "Market Value": "35500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "115000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 40,
+        "name": "alex baena",
+        "nationality": "Spain",
+        "age": "27",
+        "height": "5'9\"",
+        "weight": "154",
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:42:29",
+                "season": "29/30",
+                "Acceleration": "85",
+                "Agility": "82",
+                "Balance": "73",
+                "Jumping": "77",
+                "Sprint Speed": "86",
+                "Stamina": "78",
+                "Strength": "63",
+                "Aggression": "80",
+                "Att. Position": "82",
+                "Composure": "83",
+                "Interceptions": "70",
+                "Reactions": "84",
+                "Vision": "92",
+                "position": "LW",
+                "Ball Control": "91",
+                "Crossing": "84",
+                "Curve": "78",
+                "Def. Awareness": "75",
+                "Dribbling": "90",
+                "FK Accuracy": "80",
+                "Finishing": "81",
+                "Heading Acc.": "61",
+                "Long Pass": "88",
+                "Long Shots": "79",
+                "Penalties": "73",
+                "Short Pass": "91",
+                "Shot Power": "82",
+                "Slide Tackle": "67",
+                "Stand Tackle": "72",
+                "Volleys": "74"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:51:40",
+                "season": "29/30",
+                "Wage": "110000",
+                "Market Value": "105500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "250000000",
+                "Sell On Clause (%)": "6"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 41,
+        "name": "williot swedburg",
+        "nationality": "Sweden",
+        "age": "25",
+        "height": "6'2\"",
+        "weight": "165",
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:43:31",
+                "season": "29/30",
+                "Acceleration": "85",
+                "Agility": "92",
+                "Balance": "69",
+                "Jumping": "71",
+                "Sprint Speed": "81",
+                "Stamina": "81",
+                "Strength": "59",
+                "Aggression": "59",
+                "Att. Position": "86",
+                "Composure": "81",
+                "Interceptions": "68",
+                "Reactions": "77",
+                "Vision": "86",
+                "position": "LW",
+                "Ball Control": "84",
+                "Crossing": "75",
+                "Curve": "66",
+                "Def. Awareness": "60",
+                "Dribbling": "83",
+                "FK Accuracy": "53",
+                "Finishing": "87",
+                "Heading Acc.": "63",
+                "Long Pass": "79",
+                "Long Shots": "85",
+                "Penalties": "62",
+                "Short Pass": "83",
+                "Shot Power": "74",
+                "Slide Tackle": "50",
+                "Stand Tackle": "74",
+                "Volleys": "68"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:52:04",
+                "season": "29/30",
+                "Wage": "55000",
+                "Market Value": "43500000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "8"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 42,
+        "name": "mikal camillieri",
+        "nationality": "Malta",
+        "age": "19",
+        "height": "5'10\"",
+        "weight": "160",
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:44:13",
+                "season": "29/30",
+                "Acceleration": "84",
+                "Agility": "85",
+                "Balance": "72",
+                "Jumping": "58",
+                "Sprint Speed": "79",
+                "Stamina": "67",
+                "Strength": "58",
+                "Aggression": "52",
+                "Att. Position": "67",
+                "Composure": "59",
+                "Interceptions": "39",
+                "Reactions": "67",
+                "Vision": "59",
+                "position": "LW",
+                "Ball Control": "77",
+                "Crossing": "65",
+                "Curve": "50",
+                "Def. Awareness": "33",
+                "Dribbling": "73",
+                "FK Accuracy": "52",
+                "Finishing": "63",
+                "Heading Acc.": "42",
+                "Long Pass": "57",
+                "Long Shots": "66",
+                "Penalties": "56",
+                "Short Pass": "73",
+                "Shot Power": "64",
+                "Slide Tackle": "29",
+                "Stand Tackle": "39",
+                "Volleys": "61"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:52:42",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "4600000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 43,
+        "name": "dominic walsh",
+        "nationality": "Gibraltar",
+        "age": "20",
+        "height": "5'9\"",
+        "weight": "154",
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:44:57",
+                "season": "29/30",
+                "Acceleration": "88",
+                "Agility": "84",
+                "Balance": "71",
+                "Jumping": "65",
+                "Sprint Speed": "84",
+                "Stamina": "72",
+                "Strength": "64",
+                "Aggression": "47",
+                "Att. Position": "70",
+                "Composure": "51",
+                "Interceptions": "40",
+                "Reactions": "70",
+                "Vision": "63",
+                "position": "LW",
+                "Ball Control": "74",
+                "Crossing": "71",
+                "Curve": "55",
+                "Def. Awareness": "31",
+                "Dribbling": "69",
+                "FK Accuracy": "47",
+                "Finishing": "80",
+                "Heading Acc.": "54",
+                "Long Pass": "66",
+                "Long Shots": "75",
+                "Penalties": "54",
+                "Short Pass": "64",
+                "Shot Power": "60",
+                "Slide Tackle": "40",
+                "Stand Tackle": "39",
+                "Volleys": "64"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:55:19",
+                "season": "29/30",
+                "Wage": "17000",
+                "Market Value": "7000000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 44,
+        "name": "david mella",
+        "nationality": "Spain",
+        "age": "24",
+        "height": "5'7\"",
+        "weight": "143",
+        "positions": [
+            "RW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:46:06",
+                "season": "29/30",
+                "Acceleration": "89",
+                "Agility": "95",
+                "Balance": "73",
+                "Jumping": "63",
+                "Sprint Speed": "90",
+                "Stamina": "70",
+                "Strength": "48",
+                "Aggression": "27",
+                "Att. Position": "92",
+                "Composure": "70",
+                "Interceptions": "17",
+                "Reactions": "78",
+                "Vision": "87",
+                "position": "RW",
+                "Ball Control": "87",
+                "Crossing": "67",
+                "Curve": "70",
+                "Def. Awareness": "18",
+                "Dribbling": "92",
+                "FK Accuracy": "44",
+                "Finishing": "93",
+                "Heading Acc.": "59",
+                "Long Pass": "62",
+                "Long Shots": "87",
+                "Penalties": "47",
+                "Short Pass": "66",
+                "Shot Power": "83",
+                "Slide Tackle": "21",
+                "Stand Tackle": "21",
+                "Volleys": "83"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:55:38",
+                "season": "29/30",
+                "Wage": "28000",
+                "Market Value": "93000000",
+                "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "11"
+            },
+            {
+                "datetime": "2026-02-02 06:16:13",
+                "season": "29/30",
+                "Wage": "60000",
+                "Market Value": "93000000",
+                "Contract Length (years)": "5",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "11"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 45,
+        "name": "theodore whittaker",
+        "nationality": "Gibraltar",
+        "age": "20",
+        "height": "5'7\"",
+        "weight": "145",
+        "positions": [
+            "RW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:48:07",
+                "season": "29/30",
+                "Acceleration": "99",
+                "Agility": "87",
+                "Balance": "79",
+                "Jumping": "58",
+                "Sprint Speed": "96",
+                "Stamina": "81",
+                "Strength": "53",
+                "Aggression": "46",
+                "Att. Position": "89",
+                "Composure": "46",
+                "Interceptions": "39",
+                "Reactions": "82",
+                "Vision": "67",
+                "position": "RW",
+                "Ball Control": "91",
+                "Crossing": "71",
+                "Curve": "66",
+                "Def. Awareness": "45",
+                "Dribbling": "94",
+                "FK Accuracy": "48",
+                "Finishing": "96",
+                "Heading Acc.": "74",
+                "Long Pass": "71",
+                "Long Shots": "87",
+                "Penalties": "59",
+                "Short Pass": "67",
+                "Shot Power": "73",
+                "Slide Tackle": "43",
+                "Stand Tackle": "49",
+                "Volleys": "79"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:55:56",
+                "season": "29/30",
+                "Wage": "15500",
+                "Market Value": "124000000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-02 06:08:09",
+                "season": "29/30",
+                "Wage": "75000",
+                "Market Value": "124000000",
+                "Contract Length (years)": "6",
+                "Release Clause": "300000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 46,
+        "name": "joseph lane",
+        "nationality": "Gibraltar",
+        "age": "20",
+        "height": "5'7\"",
+        "weight": "143",
+        "positions": [
+            "RW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:48:42",
+                "season": "29/30",
+                "Acceleration": "84",
+                "Agility": "85",
+                "Balance": "77",
+                "Jumping": "65",
+                "Sprint Speed": "87",
+                "Stamina": "66",
+                "Strength": "57",
+                "Aggression": "49",
+                "Att. Position": "80",
+                "Composure": "54",
+                "Interceptions": "38",
+                "Reactions": "77",
+                "Vision": "56",
+                "position": "RW",
+                "Ball Control": "82",
+                "Crossing": "59",
+                "Curve": "53",
+                "Def. Awareness": "43",
+                "Dribbling": "81",
+                "FK Accuracy": "49",
+                "Finishing": "83",
+                "Heading Acc.": "61",
+                "Long Pass": "66",
+                "Long Shots": "78",
+                "Penalties": "53",
+                "Short Pass": "66",
+                "Shot Power": "63",
+                "Slide Tackle": "34",
+                "Stand Tackle": "40",
+                "Volleys": "61"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:56:39",
+                "season": "29/30",
+                "Wage": "16000",
+                "Market Value": "16000000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-02 06:11:16",
+                "season": "29/30",
+                "Wage": "25000",
+                "Market Value": "16000000",
+                "Contract Length (years)": "4",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": true,
+        "loaned": false
+    },
+    {
+        "id": 47,
+        "name": "larson flores",
+        "nationality": "Malta",
+        "age": "18",
+        "height": "5'9\"",
+        "weight": "!45",
+        "positions": [
+            "RW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:49:23",
+                "season": "29/30",
+                "Acceleration": "79",
+                "Agility": "88",
+                "Balance": "72",
+                "Jumping": "53",
+                "Sprint Speed": "86",
+                "Stamina": "64",
+                "Strength": "57",
+                "Aggression": "50",
+                "Att. Position": "67",
+                "Composure": "53",
+                "Interceptions": "42",
+                "Reactions": "60",
+                "Vision": "64",
+                "position": "RW",
+                "Ball Control": "71",
+                "Crossing": "57",
+                "Curve": "51",
+                "Def. Awareness": "40",
+                "Dribbling": "75",
+                "FK Accuracy": "49",
+                "Finishing": "69",
+                "Heading Acc.": "40",
+                "Long Pass": "56",
+                "Long Shots": "67",
+                "Penalties": "55",
+                "Short Pass": "59",
+                "Shot Power": "61",
+                "Slide Tackle": "35",
+                "Stand Tackle": "38",
+                "Volleys": "59"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:57:00",
+                "season": "29/30",
+                "Wage": "18500",
+                "Market Value": "2800000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 48,
+        "name": "conrad harder",
+        "nationality": "Denmark",
+        "age": "24",
+        "height": "6'1\"",
+        "weight": "185",
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:50:05",
+                "season": "29/30",
+                "Acceleration": "90",
+                "Agility": "79",
+                "Balance": "87",
+                "Jumping": "86",
+                "Sprint Speed": "88",
+                "Stamina": "71",
+                "Strength": "87",
+                "Aggression": "78",
+                "Att. Position": "99",
+                "Composure": "77",
+                "Interceptions": "33",
+                "Reactions": "76",
+                "Vision": "78",
+                "position": "ST",
+                "Ball Control": "92",
+                "Crossing": "47",
+                "Curve": "46",
+                "Def. Awareness": "29",
+                "Dribbling": "84",
+                "FK Accuracy": "52",
+                "Finishing": "90",
+                "Heading Acc.": "78",
+                "Long Pass": "59",
+                "Long Shots": "86",
+                "Penalties": "62",
+                "Short Pass": "88",
+                "Shot Power": "93",
+                "Slide Tackle": "20",
+                "Stand Tackle": "19",
+                "Volleys": "79"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:57:24",
+                "season": "29/30",
+                "Wage": "50000",
+                "Market Value": "185000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "300000000",
+                "Sell On Clause (%)": "13"
+            },
+            {
+                "datetime": "2026-02-02 06:19:01",
+                "season": "29/30",
+                "Wage": "80000",
+                "Market Value": "185000000",
+                "Contract Length (years)": "6",
+                "Release Clause": "600000000",
+                "Sell On Clause (%)": "13"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 49,
+        "name": "jasper hicks",
+        "nationality": "Gibraltar",
+        "age": "20",
+        "height": "5'9\"",
+        "weight": "149",
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 01:50:50",
+                "season": "29/30",
+                "Acceleration": "94",
+                "Agility": "93",
+                "Balance": "71",
+                "Jumping": "57",
+                "Sprint Speed": "86",
+                "Stamina": "62",
+                "Strength": "61",
+                "Aggression": "64",
+                "Att. Position": "83",
+                "Composure": "50",
+                "Interceptions": "58",
+                "Reactions": "83",
+                "Vision": "56",
+                "position": "ST",
+                "Ball Control": "73",
+                "Crossing": "62",
+                "Curve": "55",
+                "Def. Awareness": "38",
+                "Dribbling": "72",
+                "FK Accuracy": "49",
+                "Finishing": "86",
+                "Heading Acc.": "53",
+                "Long Pass": "55",
+                "Long Shots": "65",
+                "Penalties": "56",
+                "Short Pass": "65",
+                "Shot Power": "88",
+                "Slide Tackle": "47",
+                "Stand Tackle": "33",
+                "Volleys": "89"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 05:57:44",
+                "season": "29/30",
+                "Wage": "18000",
+                "Market Value": "25500000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-02 06:09:48",
+                "season": "29/30",
+                "Wage": "30000",
+                "Market Value": "25500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "75000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 50,
+        "name": "marcos barbosa",
+        "nationality": "Portugal",
+        "age": "16",
+        "height": "5'7\"",
+        "weight": "149",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 06:26:58",
+                "season": "29/30",
+                "Acceleration": "87",
+                "Agility": "79",
+                "Balance": "81",
+                "Jumping": "74",
+                "Sprint Speed": "80",
+                "Stamina": "80",
+                "Strength": "73",
+                "Aggression": "72",
+                "Att. Position": "55",
+                "Composure": "60",
+                "Interceptions": "70",
+                "Reactions": "65",
+                "Vision": "50",
+                "position": "LB",
+                "Ball Control": "64",
+                "Crossing": "67",
+                "Curve": "52",
+                "Def. Awareness": "75",
+                "Dribbling": "75",
+                "FK Accuracy": "44",
+                "Finishing": "44",
+                "Heading Acc.": "56",
+                "Long Pass": "57",
+                "Long Shots": "46",
+                "Penalties": "53",
+                "Short Pass": "63",
+                "Shot Power": "55",
+                "Slide Tackle": "73",
+                "Stand Tackle": "73",
+                "Volleys": "35"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 06:27:25",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "5500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "27500000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 51,
+        "name": "joachim lehmann",
+        "nationality": "Switzerland",
+        "age": "19",
+        "height": "6'1\"",
+        "weight": "169",
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 06:30:19",
+                "season": "29/30",
+                "Acceleration": "77",
+                "Agility": "83",
+                "Balance": "87",
+                "Jumping": "79",
+                "Sprint Speed": "78",
+                "Stamina": "84",
+                "Strength": "82",
+                "Aggression": "77",
+                "Att. Position": "63",
+                "Composure": "71",
+                "Interceptions": "75",
+                "Reactions": "80",
+                "Vision": "74",
+                "position": "CDM",
+                "Ball Control": "78",
+                "Crossing": "72",
+                "Curve": "56",
+                "Def. Awareness": "74",
+                "Dribbling": "73",
+                "FK Accuracy": "59",
+                "Finishing": "51",
+                "Heading Acc.": "72",
+                "Long Pass": "72",
+                "Long Shots": "64",
+                "Penalties": "53",
+                "Short Pass": "82",
+                "Shot Power": "72",
+                "Slide Tackle": "72",
+                "Stand Tackle": "73",
+                "Volleys": "56"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 06:30:47",
+                "season": "29/30",
+                "Wage": "29000",
+                "Market Value": "24500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 52,
+        "name": "rik de vries",
+        "nationality": "Netherlands",
+        "age": "17",
+        "height": "5'8\"",
+        "weight": "143",
+        "positions": [
+            "RB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 07:58:33",
+                "season": "29/30",
+                "Acceleration": "98",
+                "Agility": "82",
+                "Balance": "87",
+                "Jumping": "79",
+                "Sprint Speed": "91",
+                "Stamina": "90",
+                "Strength": "75",
+                "Aggression": "73",
+                "Att. Position": "63",
+                "Composure": "70",
+                "Interceptions": "75",
+                "Reactions": "73",
+                "Vision": "55",
+                "position": "RB",
+                "Ball Control": "77",
+                "Crossing": "77",
+                "Curve": "56",
+                "Def. Awareness": "80",
+                "Dribbling": "81",
+                "FK Accuracy": "48",
+                "Finishing": "40",
+                "Heading Acc.": "64",
+                "Long Pass": "66",
+                "Long Shots": "50",
+                "Penalties": "58",
+                "Short Pass": "65",
+                "Shot Power": "61",
+                "Slide Tackle": "79",
+                "Stand Tackle": "80",
+                "Volleys": "41"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 07:58:56",
+                "season": "29/30",
+                "Wage": "40000",
+                "Market Value": "50500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "12"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 53,
+        "name": "jaroslav novak",
+        "nationality": "Serbia",
+        "age": "21",
+        "height": "6'0\"",
+        "weight": "167",
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-02 08:04:12",
+                "season": "29/30",
+                "Acceleration": "75",
+                "Agility": "71",
+                "Balance": "75",
+                "Jumping": "88",
+                "Sprint Speed": "90",
+                "Stamina": "82",
+                "Strength": "90",
+                "Aggression": "78",
+                "Att. Position": "43",
+                "Composure": "76",
+                "Interceptions": "85",
+                "Reactions": "81",
+                "Vision": "50",
+                "position": "CB",
+                "Ball Control": "73",
+                "Crossing": "54",
+                "Curve": "50",
+                "Def. Awareness": "75",
+                "Dribbling": "58",
+                "FK Accuracy": "37",
+                "Finishing": "33",
+                "Heading Acc.": "81",
+                "Long Pass": "56",
+                "Long Shots": "48",
+                "Penalties": "46",
+                "Short Pass": "74",
+                "Shot Power": "60",
+                "Slide Tackle": "78",
+                "Stand Tackle": "81",
+                "Volleys": "36"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-02 08:04:49",
+                "season": "29/30",
+                "Wage": "38000",
+                "Market Value": "37500000",
+                "Contract Length (years)": "4",
+                "Release Clause": "100000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    }
+]
