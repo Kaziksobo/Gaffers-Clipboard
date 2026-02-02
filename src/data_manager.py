@@ -279,21 +279,40 @@ class DataManager:
         # Reload players to ensure consistency
         self.players = self._load_json(self.players_path)
     
-    def loan_player(self, player_name: str) -> None:
+    def loan_out_player(self, player_name: str) -> None:
         """
-        Marks the specified player as loaned in the player records.
+        Marks the specified player as loaned out in the player records.
 
         Args:
-            player_name (str): The name of the player to mark as loaned.
+            player_name (str): The name of the player to mark as loaned out.
         """
         full_name = player_name.strip().lower()
         existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
         
         if not existing_player:
-            print(f"Player '{player_name}' not found. Cannot mark as loaned.")
+            print(f"Player '{player_name}' not found. Cannot mark as loaned out.")
             return
         
         existing_player["loaned"] = True
+        self._save_json(self.players_path, self.players)
+        # Reload players to ensure consistency
+        self.players = self._load_json(self.players_path)
+    
+    def return_loan_player(self, player_name: str) -> None:
+        """
+        Marks the specified player as returned from loan in the player records.
+
+        Args:
+            player_name (str): The name of the player to mark as returned from loan.
+        """
+        full_name = player_name.strip().lower()
+        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
+        
+        if not existing_player:
+            print(f"Player '{player_name}' not found. Cannot mark as returned from loan.")
+            return
+        
+        existing_player["loaned"] = False
         self._save_json(self.players_path, self.players)
         # Reload players to ensure consistency
         self.players = self._load_json(self.players_path)

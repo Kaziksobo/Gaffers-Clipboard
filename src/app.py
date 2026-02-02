@@ -204,13 +204,21 @@ class App(ctk.CTk):
         """
         self.data_manager.sell_player(player_name)
     
-    def loan_player(self, player_name: str) -> None:
-        """Marks a player as loaned in the data manager.
+    def loan_out_player(self, player_name: str) -> None:
+        """Marks a player as loaned out in the data manager.
 
         Args:
-            player_name (str): The name of the player to mark as loaned.
+            player_name (str): The name of the player to mark as loaned out.
         """
-        self.data_manager.loan_player(player_name)
+        self.data_manager.loan_out_player(player_name)
+    
+    def return_loan_player(self, player_name: str) -> None:
+        """Marks a player as returned from loan in the data manager.
+
+        Args:
+            player_name (str): The name of the player to mark as returned from loan.
+        """
+        self.data_manager.return_loan_player(player_name)
             
     def process_match_stats(self) -> None:
         '''Process match statistics by capturing a screenshot,
