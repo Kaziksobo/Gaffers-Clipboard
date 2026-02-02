@@ -132,7 +132,7 @@ class App(ctk.CTk):
     
     def get_all_player_names(self) -> list[str]:
         """
-        Returns a sorted list of all player names from the data manager. 
+        Returns a sorted list of all player names from the data manager, excluding sold players.
         If no players are found, returns a list containing a single message.
 
         Returns:
@@ -141,7 +141,18 @@ class App(ctk.CTk):
         self.data_manager.refresh_players()
         if not self.data_manager.players:
             return ["No players found"]
-        return sorted([player.get("name").title() for player in self.data_manager.players], key=lambda name: name.split()[-1])
+
+        if active_players := [
+            player
+            for player in self.data_manager.players
+            if not player.get("sold", False)
+        ]:
+            return sorted(
+                [player.get("name").title() for player in active_players], 
+                key=lambda name: name.split()[-1]
+            )
+        else:
+            return ["No players found"]
     
     def buffer_data(self, data: dict, gk: bool, first: bool = True) -> None:
         """Stores captured player attribute data so multi-step entry flows can assemble a complete record. 
