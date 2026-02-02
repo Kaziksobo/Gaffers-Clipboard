@@ -215,7 +215,8 @@ class DataManager:
                 "weight": player_ui_data.get("weight").strip(),
                 "positions": [position],
                 "attribute_history": [attributes_snapshot],
-                "financial_history": []
+                "financial_history": [],
+                "sold": False
             }
             self.players.append(new_player)
         self._save_json(self.players_path, self.players)
@@ -250,6 +251,25 @@ class DataManager:
         }
         
         existing_player["financial_history"].append(financial_snapshot)
+        self._save_json(self.players_path, self.players)
+        # Reload players to ensure consistency
+        self.players = self._load_json(self.players_path)
+    
+    def sell_player(self, player_name: str) -> None:
+        """
+        Marks the specified player as sold in the player records.
+
+        Args:
+            player_name (str): The name of the player to mark as sold.
+        """
+        full_name = player_name.strip().lower()
+        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
+        
+        if not existing_player:
+            print(f"Player '{player_name}' not found. Cannot mark as sold.")
+            return
+        
+        existing_player["sold"] = True
         self._save_json(self.players_path, self.players)
         # Reload players to ensure consistency
         self.players = self._load_json(self.players_path)

@@ -46,6 +46,7 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.buttons_grid.grid_columnconfigure(0, weight=1)
         self.buttons_grid.grid_columnconfigure(1, weight=1)
         self.buttons_grid.grid_columnconfigure(2, weight=1)
+        self.buttons_grid.grid_columnconfigure(3, weight=1)
         self.buttons_grid.grid_rowconfigure(0, weight=1)
         
         self.add_gk_button = ctk.CTkButton(
@@ -77,6 +78,16 @@ class PlayerLibraryFrame(ctk.CTkFrame):
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddFinancialFrame"))
         )
         self.add_financial_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
+        
+        self.sell_button = ctk.CTkButton(
+            self.buttons_grid,
+            text="Sell Player",
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("SellPlayerFrame"))
+        )
+        self.sell_button.grid(row=0, column=3, padx=10, pady=5, sticky="ew")
         
         self.home_button = ctk.CTkButton(
             self,
