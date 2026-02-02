@@ -176,7 +176,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
             self.stats_vars[display_name].set(str(stats_data.get(key, "0")))
 
     def refresh_player_dropdown(self) -> None:
-        names = self.controller.get_all_player_names()
+        names = self.controller.get_all_player_names(only_outfield=True)
         self.player_dropdown.set_values(names or ["No players found"])
 
     def on_show(self) -> None:

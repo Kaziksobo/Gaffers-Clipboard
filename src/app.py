@@ -138,7 +138,7 @@ class App(ctk.CTk):
     def get_current_career_details(self) -> dict | None:
         return self.data_manager.get_career_details(self.current_career)
     
-    def get_all_player_names(self) -> list[str]:
+    def get_all_player_names(self, only_outfield: bool = False, only_gk: bool = False) -> list[str]:
         """
         Returns a sorted list of all player names from the data manager, excluding sold players.
         If no players are found, returns a list containing a single message.
@@ -150,11 +150,17 @@ class App(ctk.CTk):
         if not self.data_manager.players:
             return ["No players found"]
 
-        if active_players := [
-            player
-            for player in self.data_manager.players
-            if not player.get("sold", False)
-        ]:
+        active_players = [
+        player for player in self.data_manager.players
+        if not player.get("sold", False)
+        ]
+
+        if only_outfield:
+            active_players = [player for player in active_players if player.get("position") != "GK"]
+        elif only_gk:
+            active_players = [player for player in active_players if player.get("position") == "GK"]
+
+        if active_players:
             return sorted(
                 [player.get("name").title() for player in active_players], 
                 key=lambda name: name.split()[-1]
