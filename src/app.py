@@ -62,7 +62,7 @@ class App(ctk.CTk):
                                        "La Liga", "Copa del Rey", "Supercopa de España",
                                        "Bundesliga", "DFB-Pokal", "DFL-Supercup",
                                        "Serie A", "Coppa Italia", "Supercoppa Italiana",
-                                       "UEFA Champions League", "UEFA Europa League", "UEFA Europa Conference League"]
+                                       "UEFA Champions League", "UEFA Europa League", "UEFA Europa Conference League", "Uefa Super Cup"]
 
         container = ctk.CTkFrame(self)
         container.pack(side="top", fill="both", expand=True)
