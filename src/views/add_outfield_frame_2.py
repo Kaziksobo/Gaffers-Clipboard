@@ -1,5 +1,8 @@
 import customtkinter as ctk
+import logging
 from src.exceptions import UIPopulationError
+
+logger = logging.getLogger(__name__)
 
 class AddOutfieldFrame2(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict):
@@ -13,6 +16,8 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing AddOutfieldFrame2")
         
         self.attr_vars = {}
         
@@ -114,6 +119,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         Args:
             stats (dict): A dictionary containing attribute names and their corresponding values.
         '''
+        logger.debug(f"Populating AddOutfieldFrame2 with stats: {stats.keys()}")
         if not stats:
             raise UIPopulationError("Received no data to populate outfield player attributes.")
         key_to_display_name = {
@@ -136,14 +142,23 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         }
         for key, display_name in key_to_display_name.items():
             self.attr_vars[display_name].set(str(stats.get(key, "")))
+        
+        logger.debug("AddOutfieldFrame2 population complete.")
     
     def on_done_button_press(self) -> None:
         """
         Handles the event when the 'Done' button is pressed on the technical attributes page.
         Collects the entered attribute data, saves it through the controller, and navigates back to the player library view.
         """
-        data_page_2 = {name: var.get() for name, var in self.attr_vars.items()}
-        self.controller.buffer_data(data_page_2, gk=False, first=False)
+        ui_data = {name: var.get() for name, var in self.attr_vars.items()}
+        
+        if missing_fields := [
+            key for key, value in ui_data.items() if value.strip() == ""
+        ]:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            return
+        
+        self.controller.buffer_data(ui_data, gk=False, first=False)
         
         self.controller.save_player()
         

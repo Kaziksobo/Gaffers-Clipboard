@@ -1,6 +1,9 @@
 import customtkinter as ctk
+import logging
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+
+logger = logging.getLogger(__name__)
 
 class PlayerStatsFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -13,6 +16,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing PlayerStatsFrame")
         
         # Attributes to store stat variables
         self.stats_vars = {}
@@ -150,6 +155,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
         Args:
             stats_data (dict): A dictionary containing player statistics for the current match
         '''
+        logger.debug(f"Populating PlayerStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
             raise UIPopulationError("Received no data to populate player statistics.")
         key_to_display_name = {
@@ -174,6 +180,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
         
         for key, display_name in key_to_display_name.items():
             self.stats_vars[display_name].set(str(stats_data.get(key, "0")))
+        
+        logger.debug("PlayerStatsFrame population complete.")
 
     def refresh_player_dropdown(self) -> None:
         names = self.controller.get_all_player_names(only_outfield=True)
@@ -189,9 +197,21 @@ class PlayerStatsFrame(ctk.CTkFrame):
         Returns:
             dict: A dictionary containing the collected player statistics.
         '''
-        data = {stat_name: var.get() for stat_name, var in self.stats_vars.items()}
-        data['player_name'] = self.player_list_var.get()
-        self.controller.buffer_player_performance(data)
+        ui_data = {stat_name: var.get() for stat_name, var in self.stats_vars.items()}
+        
+        if missing_fields := [
+            key for key, value in ui_data.items() if value.strip() == ""
+        ]:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            return
+        
+        ui_data['player_name'] = self.player_list_var.get()
+        
+        if ui_data['player_name'] == "Click here to select player" or ui_data['player_name'] == "No players found" or not ui_data['player_name']:
+            logger.warning("Validation failed: Missing fields - Player")
+            return
+        
+        self.controller.buffer_player_performance(ui_data)
 
     def on_next_outfield_player_button_press(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.

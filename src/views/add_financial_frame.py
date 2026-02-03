@@ -1,11 +1,15 @@
 import customtkinter as ctk
+import logging
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+
+logger = logging.getLogger(__name__)
 
 class AddFinancialFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict):
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        logger.info("Initializing AddFinancialFrame")
         
         self.data_vars = {}
         self.player_names = []
@@ -118,6 +122,29 @@ class AddFinancialFrame(ctk.CTkFrame):
         
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
+        
+        # Handling missing fields.
+        # If player or season aren't provided, this is a serious error
+        # If wage or market value aren't provided, this is also an error
+        # Handle both of the above with a logger warning and return for now, specifiying the field that was left empty
+        # If contract length, release clause, or sell on clause are missing, we can default them to zero
+        for key in ["Contract Length (years)", "Release Clause", "Sell On Clause (%)"]:
+            if financial_data[key] == "":
+                financial_data[key] = "0"
+        
+        missing_fields = []
+        if player == "Click here to select player" or player == "No players found" or not player:
+            missing_fields.append("Player")
+        if not season:
+            missing_fields.append("Season")
+        if not financial_data["Wage"]:
+            missing_fields.append("Wage")
+        if not financial_data["Market Value"]:
+            missing_fields.append("Market Value")
+        
+        if missing_fields:
+            logger.warning(f"Validation Failed: Missing fields - {', '.join(missing_fields)}")
+            return
         
         self.controller.save_financial_data(player, financial_data, season)
 

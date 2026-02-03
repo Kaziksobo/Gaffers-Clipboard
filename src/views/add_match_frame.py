@@ -1,4 +1,7 @@
 import customtkinter as ctk
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AddMatchFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -11,6 +14,8 @@ class AddMatchFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing AddMatchFrame")
 
         # Create a container frame to center the labels vertically and horizontally
         self.container = ctk.CTkFrame(self, fg_color="transparent")

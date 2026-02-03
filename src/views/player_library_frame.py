@@ -1,4 +1,7 @@
 import customtkinter as ctk
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PlayerLibraryFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -12,6 +15,8 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing PlayerLibraryFrame")
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)

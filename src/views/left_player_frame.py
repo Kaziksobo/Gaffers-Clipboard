@@ -1,10 +1,15 @@
 import customtkinter as ctk
+import logging
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+
+logger = logging.getLogger(__name__)
 
 class LeftPlayerFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing LeftPlayerFrame")
         
         # Basic UI, with a player dropdown and a sell button
         self.grid_columnconfigure(0, weight=1)
@@ -82,6 +87,18 @@ class LeftPlayerFrame(ctk.CTkFrame):
         )
         self.return_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
         
+    def get_player_name(self) -> str:
+        """Get the currently selected player's name from the dropdown.
+
+        Returns:
+            str: The name of the selected player.
+        """
+        player_name = self.player_list_var.get()
+
+        if player_name == "Click here to select player" or player_name == "No players found" or not player_name:
+            logger.warning("Validation Failed: No player selected.")
+            return ""
+        return player_name
     
     def sell_player(self) -> None:
         """
@@ -90,7 +107,9 @@ class LeftPlayerFrame(ctk.CTkFrame):
         This retrieves the chosen player from the dropdown, triggers the controller's
         sell logic, then switches the view to the player library frame.
         """
-        player_name = self.player_list_var.get()
+        player_name = self.get_player_name()
+        if not player_name:
+            return
         self.controller.sell_player(player_name)
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
     
@@ -100,7 +119,9 @@ class LeftPlayerFrame(ctk.CTkFrame):
         This uses the selected player from the dropdown, calls the controller loan
         action, and then switches the active frame back to the player library.
         """
-        player_name = self.player_list_var.get()
+        player_name = self.get_player_name()
+        if not player_name:
+            return
         self.controller.loan_out_player(player_name)
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
     
@@ -110,7 +131,9 @@ class LeftPlayerFrame(ctk.CTkFrame):
         This gets the selected player from the dropdown, invokes the controller's
         return from loan method, and navigates back to the player library frame.
         """
-        player_name = self.player_list_var.get()
+        player_name = self.get_player_name()
+        if not player_name:
+            return
         self.controller.return_loan_player(player_name)
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
     

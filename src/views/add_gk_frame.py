@@ -1,5 +1,8 @@
 import customtkinter as ctk
+import logging
 from src.exceptions import UIPopulationError
+
+logger = logging.getLogger(__name__)
 
 class AddGKFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict):
@@ -13,6 +16,8 @@ class AddGKFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing AddGKFrame")
         
         self.attr_vars = {}
         
@@ -155,6 +160,7 @@ class AddGKFrame(ctk.CTkFrame):
         Args:
             stats (dict): A dictionary containing attribute names and their corresponding values.
         '''
+        logger.debug(f"Populating AddGKFrame with stats: {stats.keys()}")
         if not stats:
             raise UIPopulationError("Received no data to populate GK attributes.")
         key_to_display_name = {
@@ -167,6 +173,8 @@ class AddGKFrame(ctk.CTkFrame):
         
         for key, display_name in key_to_display_name.items():
             self.attr_vars[display_name].set(str(stats.get(key, "")))
+        
+        logger.debug("AddGKFrame population complete.")
     
     def on_done_button_press(self) -> None:
         """
@@ -180,6 +188,12 @@ class AddGKFrame(ctk.CTkFrame):
         ui_data["weight"] = self.weight_entry.get()
         ui_data["country"] = self.country_entry.get()
         ui_data["season"] = self.season_entry.get()
+
+        if missing_fields := [
+            key for key, value in ui_data.items() if value.strip() == ""
+        ]:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            return
         
         self.controller.buffer_data(ui_data, gk=True)
         self.controller.save_player()

@@ -1,4 +1,7 @@
 import customtkinter as ctk
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MatchAddedFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -11,6 +14,8 @@ class MatchAddedFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing MatchAddedFrame")
 
         self.label = ctk.CTkLabel(
             self, 

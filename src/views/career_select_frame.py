@@ -1,9 +1,14 @@
 import customtkinter as ctk
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CareerSelectFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing CareerSelectFrame")
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)

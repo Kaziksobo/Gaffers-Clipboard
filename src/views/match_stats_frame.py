@@ -1,6 +1,9 @@
 import customtkinter as ctk
+import logging
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+
+logger = logging.getLogger(__name__)
 
 class MatchStatsFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -13,6 +16,8 @@ class MatchStatsFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing MatchStatsFrame")
         
         # Attributes to store stat variables
         self.home_stats_vars = {}
@@ -213,6 +218,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         Args:
             stats_data (dict): A dictionary containing match statistics for home and away teams.
         '''
+        logger.debug(f"Populating MatchStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
             raise UIPopulationError("Received no data to populate match statistics.")
         # Maps key from OCR to display name in the UI
@@ -248,12 +254,14 @@ class MatchStatsFrame(ctk.CTkFrame):
                 self.home_stats_vars[display_name].set(str(home_stats.get(key, '')))
             if display_name in self.away_stats_vars:
                 self.away_stats_vars[display_name].set(str(away_stats.get(key, '')))
+        
+        logger.debug("MatchStatsFrame populated successfully.")
 
     def collect_data(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
         '''
         # Collect match overview
-        overview_data = {
+        ui_data = {
             "competition": self.competition_var.get(),
             "home_team_name": self.home_team_name_var.get(),
             "away_team_name": self.away_team_name_var.get(),
@@ -263,8 +271,14 @@ class MatchStatsFrame(ctk.CTkFrame):
             "away_stats": {k: v.get() for k, v in self.away_stats_vars.items()}
         }
         
+        if missing_fields := [
+            key for key, value in ui_data.items() if value.strip() == ""
+        ]:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            return
+        
         # Buffer match overview
-        self.controller.buffer_match_overview(overview_data)
+        self.controller.buffer_match_overview(ui_data)
     
     def on_next_outfield_player_button_press(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.

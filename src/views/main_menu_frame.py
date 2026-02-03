@@ -1,4 +1,7 @@
 import customtkinter as ctk
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MainMenuFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
@@ -11,6 +14,8 @@ class MainMenuFrame(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing MainMenuFrame")
 
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)

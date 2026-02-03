@@ -1,10 +1,15 @@
 import customtkinter as ctk
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CreateCareerFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict) -> None:
         ## Entries for club name, manager name, starting year, half length, match difficulty
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing CreateCareerFrame")
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -151,6 +156,21 @@ class CreateCareerFrame(ctk.CTkFrame):
         starting_season = self.starting_season_entry.get().strip()
         half_length = self.half_length_entry.get().strip()
         match_difficulty = self.match_difficulty_var.get().strip()
-        
+
+        # Define validation rules: (value, field_name, condition)
+        fields_to_validate = [
+            (club_name, "Club Name", bool(club_name)),
+            (manager_name, "Manager Name", bool(manager_name)),
+            (starting_season, "Starting Season", bool(starting_season)),
+            (half_length, "Half Length", bool(half_length)),
+            (match_difficulty, "Match Difficulty", match_difficulty and match_difficulty != "Select Difficulty"),
+        ]
+
+        if missing_fields := [
+            name for _, name, is_valid in fields_to_validate if not is_valid
+        ]:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            return
+
         self.controller.save_new_career(club_name, manager_name, starting_season, int(half_length), match_difficulty)
         self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))

@@ -1,5 +1,8 @@
 import customtkinter as ctk
+import logging
 from src.exceptions import UIPopulationError
+
+logger = logging.getLogger(__name__)
 
 class AddOutfieldFrame1(ctk.CTkFrame):
     def __init__(self, parent, controller, theme: dict):
@@ -13,6 +16,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         '''
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
+        logger.info("Initializing AddOutfieldFrame1")
         
         self.attr_vars = {}
         
@@ -174,6 +179,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         Args:
             stats (dict): A dictionary containing the detected statistics for the player.
         '''
+        logger.debug(f"Populating AddOutfieldFrame1 with stats: {stats.keys()}")
         if not stats:
             raise UIPopulationError("Received no data to populate outfield player attributes.")
         key_to_display_name = {
@@ -193,6 +199,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         }
         for key, display_name in key_to_display_name.items():
             self.attr_vars[display_name].set(str(stats.get(key, "")))
+        
+        logger.debug("AddOutfieldFrame1 population complete.")
 
     def on_next_page(self) -> None:
         """
@@ -207,6 +215,12 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         ui_data["height"] = self.height_entry.get()
         ui_data["weight"] = self.weight_entry.get()
         ui_data["country"] = self.country_entry.get()
+        
+        if missing_fields := [
+            key for key, value in ui_data.items() if value.strip() == ""
+        ]:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            return
         
         self.controller.buffer_data(ui_data, gk=False, first=True)
         
