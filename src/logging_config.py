@@ -8,45 +8,42 @@ def setup_logging():
     log_dir = project_root / 'logs'
     log_dir.mkdir(exist_ok=True)
     log_file = log_dir / "gaffers_clipboard.log"
-    debug_log_file = log_dir / "gaffers_clipboard_debug.log"  # New debug log file
+    debug_log_file = log_dir / "gaffers_clipboard_debug.log"
     
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"
     
-    handlers = [
-        logging.handlers.RotatingFileHandler(
-            filename=log_file,
-            maxBytes=5 * 1024 * 1024,
-            backupCount=3,
-            encoding='utf-8'
-        ),
-        logging.StreamHandler(sys.stdout),
-        logging.handlers.RotatingFileHandler(  # New handler for debug logs
-            filename=debug_log_file,
-            maxBytes=5 * 1024 * 1024,
-            backupCount=3,
-            encoding='utf-8'
-        )
-    ]
-    
-    logging.basicConfig(
-        level=logging.INFO,  # Main log level
-        format=log_format,
-        datefmt=date_format,
-        handlers=handlers
+    # Main log handler (INFO and above)
+    main_handler = logging.handlers.RotatingFileHandler(
+        filename=log_file,
+        maxBytes=5 * 1024 * 1024,
+        backupCount=3,
+        encoding='utf-8'
     )
+    main_handler.setLevel(logging.INFO)
+    main_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
     
-    # Create a separate logger for debug logs
-    debug_logger = logging.getLogger()
-    debug_logger.setLevel(logging.DEBUG)  # Set to DEBUG level for the debug log file
+    # Debug log handler (DEBUG and above)
     debug_handler = logging.handlers.RotatingFileHandler(
         filename=debug_log_file,
         maxBytes=5 * 1024 * 1024,
         backupCount=3,
         encoding='utf-8'
     )
+    debug_handler.setLevel(logging.DEBUG)
     debug_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
-    debug_logger.addHandler(debug_handler)
+    
+    # Console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
+    
+    # Configure root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    root_logger.addHandler(main_handler)
+    root_logger.addHandler(debug_handler)
+    root_logger.addHandler(console_handler)
 
     logging.info("==========================================")
     logging.info("   Gaffer's Clipboard - Started")

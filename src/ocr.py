@@ -228,7 +228,7 @@ def recognise_number(
         recognised_digit = str(int(result[0][0]))
         recognised_digits.append(recognised_digit)
         
-        logger.debug(f"Recognised digit component: {recognised_digit} (ROI: {roi})")
+        logger.debug(f"Recognised digit component: {recognised_digit}")
 
     if not recognised_digits:
         if debug:

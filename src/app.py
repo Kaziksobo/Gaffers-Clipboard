@@ -272,6 +272,7 @@ class App(ctk.CTk):
             logger.error(f"Error processing match stats: {e}", exc_info=True)
     
     def process_player_stats(self, gk: bool = False) -> None:
+        # sourcery skip: extract-duplicate-method
         '''Process player statistics by capturing a screenshot,
         detecting statistics, and populating the PlayerStatsFrame with the results.
         '''
