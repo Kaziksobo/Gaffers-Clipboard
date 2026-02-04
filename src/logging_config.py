@@ -16,6 +16,7 @@ def setup_logging():
     # Main log handler (INFO and above)
     main_handler = logging.handlers.RotatingFileHandler(
         filename=log_file,
+        level=logging.INFO,
         maxBytes=5 * 1024 * 1024,
         backupCount=3,
         encoding='utf-8'
@@ -26,6 +27,7 @@ def setup_logging():
     # Debug log handler (DEBUG and above)
     debug_handler = logging.handlers.RotatingFileHandler(
         filename=debug_log_file,
+        level=logging.DEBUG,
         maxBytes=5 * 1024 * 1024,
         backupCount=3,
         encoding='utf-8'
