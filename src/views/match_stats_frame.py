@@ -270,13 +270,21 @@ class MatchStatsFrame(ctk.CTkFrame):
             "home_stats": {k: v.get() for k, v in self.home_stats_vars.items()},
             "away_stats": {k: v.get() for k, v in self.away_stats_vars.items()}
         }
-        
-        if missing_fields := [
-            key for key, value in ui_data.items() if value.strip() == ""
-        ]:
+
+        missing_fields = []
+        for key, value in ui_data.items():
+            if isinstance(value, str) and not value.strip():
+                missing_fields.append(key)
+            elif isinstance(value, dict):
+                missing_fields.extend(
+                    f"{key}.{stat_key}"
+                    for stat_key, stat_value in value.items()
+                    if not stat_value.strip()
+                )
+        if missing_fields:
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
             return
-        
+
         # Buffer match overview
         self.controller.buffer_match_overview(ui_data)
     
@@ -302,3 +310,7 @@ class MatchStatsFrame(ctk.CTkFrame):
     def on_show(self) -> None:
         self.competition_var.set("Select Competition")
         self.competition_dropdown.set_value("Select Competition")
+                
+        # Reset team names
+        self.home_team_name_var.set("Home Team")
+        self.away_team_name_var.set("Away Team")
