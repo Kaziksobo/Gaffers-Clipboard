@@ -16,7 +16,6 @@ def setup_logging():
     # Main log handler (INFO and above)
     main_handler = logging.handlers.RotatingFileHandler(
         filename=log_file,
-        level=logging.INFO,
         maxBytes=5 * 1024 * 1024,
         backupCount=3,
         encoding='utf-8'
@@ -24,15 +23,15 @@ def setup_logging():
     main_handler.setLevel(logging.INFO)
     main_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
     
-    # Debug log handler (DEBUG and above)
+    # Debug log handler (DEBUG, WARNING, ERROR, CRITICAL - no INFO)
     debug_handler = logging.handlers.RotatingFileHandler(
         filename=debug_log_file,
-        level=logging.DEBUG,
         maxBytes=5 * 1024 * 1024,
         backupCount=3,
         encoding='utf-8'
     )
     debug_handler.setLevel(logging.DEBUG)
+    debug_handler.addFilter(lambda record: record.levelno != logging.INFO)
     debug_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
     
     # Console handler

@@ -237,7 +237,7 @@ def recognise_number(
 
     recognized_value = int(''.join(recognised_digits))
     
-    logger.debug(f"Final recognised value for ROI {roi}: {recognized_value}")
+    logger.debug(f"Final recognised value: {recognized_value}")
     
     if debug:
         return recognized_value, {'threshold': thresh, 'eroded': eroded_thresh, 'digit_rois': debug_rois}
