@@ -23,6 +23,24 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.home_stats_vars = {}
         self.away_stats_vars = {}
         
+        self.stat_definitions = [
+            ("possession", "Possession (%)"),
+            ("ball_recovery", "Ball Recovery Time (seconds)"),
+            ("shots", "Shots"),
+            ("xG", "xG"),
+            ("passes", "Passes"),
+            ("tackles", "Tackles"),
+            ("tackles_won", "Tackles Won"),
+            ("interceptions", "Interceptions"),
+            ("saves", "Saves"),
+            ("fouls_committed", "Fouls Committed"),
+            ("offsides", "Offsides"),
+            ("corners", "Corners"),
+            ("free_kicks", "Free Kicks"),
+            ("penalty_kicks", "Penalty Kicks"),
+            ("yellow_cards", "Yellow Cards"),
+        ]
+        
         # Variables for team names and scores
         self.home_team_name_var = ctk.StringVar(value="Home Team")
         self.away_team_name_var = ctk.StringVar(value="Away Team")
@@ -75,11 +93,10 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
 
-        stat_names = ['Possession (%)', 'Ball Recovery Time (seconds)', 'Shots', 'xG', 'Passes', 'Tackles', 'Tackles Won', 'Interceptions', 'Saves', 'Fouls Committed', 'Offsides', 'Corners', 'Free Kicks', 'Penalty Kicks', 'Yellow Cards']
         # Configure subgrid
         for col in range(5):
             self.stats_grid.grid_columnconfigure(col, weight=1)
-        for row in range(len(stat_names)):
+        for row in range(len(self.stat_definitions)):
             self.stats_grid.grid_rowconfigure(row, weight=1)
 
         # Populate subgrid with entry fields
@@ -126,8 +143,8 @@ class MatchStatsFrame(ctk.CTkFrame):
         )
         self.away_team_name.grid(row=0, column=4, padx=5, pady=5)
 
-        for i, stat in enumerate(stat_names):
-            self.create_stat_row(i+1, stat, theme)
+        for i, (stat_key, stat_label) in enumerate(self.stat_definitions):
+            self.create_stat_row(i + 1, stat_key, stat_label, theme)
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
@@ -175,7 +192,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
-    def create_stat_row(self, row: int, stat_name: str, theme: dict) -> None:
+    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: dict) -> None:
         '''Create a row in the stats grid for a specific statistic.
 
         Args:
@@ -184,7 +201,7 @@ class MatchStatsFrame(ctk.CTkFrame):
             theme (dict): The theme dictionary containing colors and fonts.
         '''
         home_stat_value = ctk.StringVar(value="")
-        self.home_stats_vars[stat_name] = home_stat_value
+        self.home_stats_vars[stat_key] = home_stat_value
         self.home_stat_entry = ctk.CTkEntry(
             self.stats_grid,
             textvariable=home_stat_value,
@@ -195,13 +212,13 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.home_stat_entry.grid(row=row, column=0, padx=5, pady=5)
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
-            text=stat_name,
+            text=stat_label,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"]
         )
         self.stat_label.grid(row=row, column=2, padx=5, pady=5)
         away_stat_value = ctk.StringVar(value="")
-        self.away_stats_vars[stat_name] = away_stat_value
+        self.away_stats_vars[stat_key] = away_stat_value
         self.away_stat_entry = ctk.CTkEntry(
             self.stats_grid,
             textvariable=away_stat_value,
@@ -221,24 +238,6 @@ class MatchStatsFrame(ctk.CTkFrame):
         logger.debug(f"Populating MatchStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
             raise UIPopulationError("Received no data to populate match statistics.")
-        # Maps key from OCR to display name in the UI
-        key_to_display_name = {
-            'possession': 'Possession (%)',
-            'ball_recovery': 'Ball Recovery Time (seconds)',
-            'shots': 'Shots',
-            'xG': 'xG',
-            'passes': 'Passes',
-            'tackles': 'Tackles',
-            'tackles_won': 'Tackles Won',
-            'interceptions': 'Interceptions',
-            'saves': 'Saves',
-            'fouls_committed': 'Fouls Committed',
-            'offsides': 'Offsides',
-            'corners': 'Corners',
-            'free_kicks': 'Free Kicks',
-            'penalty_kicks': 'Penalty Kicks',
-            'yellow_cards': 'Yellow Cards',
-        }
         
         home_stats = stats_data.get('home_team', {})
         away_stats = stats_data.get('away_team', {})
@@ -249,11 +248,9 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.home_team_score_var.set(str(home_stats.get('score', '0')))
         self.away_team_score_var.set(str(away_stats.get('score', '0')))
 
-        for key, display_name in key_to_display_name.items():
-            if display_name in self.home_stats_vars:
-                self.home_stats_vars[display_name].set(str(home_stats.get(key, '')))
-            if display_name in self.away_stats_vars:
-                self.away_stats_vars[display_name].set(str(away_stats.get(key, '')))
+        for stat_key, _ in self.stat_definitions:
+            self.home_stats_vars[stat_key].set(str(home_stats.get(stat_key, "")))
+            self.away_stats_vars[stat_key].set(str(away_stats.get(stat_key, "")))
         
         logger.debug("MatchStatsFrame populated successfully.")
 
@@ -268,21 +265,30 @@ class MatchStatsFrame(ctk.CTkFrame):
             "home_score": self.home_team_score_var.get(),
             "away_score": self.away_team_score_var.get(),
             "home_stats": {k: v.get() for k, v in self.home_stats_vars.items()},
-            "away_stats": {k: v.get() for k, v in self.away_stats_vars.items()}
+            "away_stats": {k: v.get() for k, v in self.away_stats_vars.items()},
         }
 
-        missing_fields = []
-        for key, value in ui_data.items():
-            if isinstance(value, str) and not value.strip():
-                missing_fields.append(key)
-            elif isinstance(value, dict):
-                missing_fields.extend(
-                    f"{key}.{stat_key}"
-                    for stat_key, stat_value in value.items()
-                    if not stat_value.strip()
-                )
-        if missing_fields:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+        # Validate home stats
+        if missing_keys := [
+            key for key, value in ui_data["home_stats"].items() if value.strip() == ""
+        ]:
+            key_to_label = dict(self.stat_definitions)
+            missing_labels = [key_to_label[key] for key in missing_keys]
+            logger.warning(f"Validation failed: Home team missing fields - {', '.join(missing_labels)}")
+            return
+
+        # Validate away stats
+        if missing_keys := [
+            key for key, value in ui_data["away_stats"].items() if value.strip() == ""
+        ]:
+            key_to_label = dict(self.stat_definitions)
+            missing_labels = [key_to_label[key] for key in missing_keys]
+            logger.warning(f"Validation failed: Away team missing fields - {', '.join(missing_labels)}")
+            return
+
+        # Validate other fields
+        if ui_data["competition"] == "Select Competition":
+            logger.warning("Validation failed: Missing fields - Competition")
             return
 
         # Buffer match overview

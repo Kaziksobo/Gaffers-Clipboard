@@ -20,6 +20,24 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         logger.info("Initializing AddOutfieldFrame2")
         
         self.attr_vars = {}
+        self.attr_definitions = [
+            ("ball_control", "Ball Control"),
+            ("crossing", "Crossing"),
+            ("curve", "Curve"),
+            ("defensive_awareness", "Def. Awareness"),
+            ("dribbling", "Dribbling"),
+            ("fk_accuracy", "FK Accuracy"),
+            ("finishing", "Finishing"),
+            ("heading_accuracy", "Heading Acc."),
+            ("long_pass", "Long Pass"),
+            ("long_shots", "Long Shots"),
+            ("penalties", "Penalties"),
+            ("short_pass", "Short Pass"),
+            ("shot_power", "Shot Power"),
+            ("slide_tackle", "Slide Tackle"),
+            ("stand_tackle", "Stand Tackle"),
+            ("volleys", "Volleys"),
+        ]
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -40,10 +58,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         
         self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.attributes_grid.grid(row=2, column=1, pady=(10, 20), sticky="nsew")
-        
-        attr_names = ["Ball Control", "Crossing", "Curve", "Def. Awareness", "Dribbling", "FK Accuracy", "Finishing", "Heading Acc.",
-                      "Long Pass", "Long Shots", "Penalties", "Short Pass", "Shot Power", "Slide Tackle", "Stand Tackle", "Volleys"]
-        
+
         self.attributes_grid.grid_columnconfigure(0, weight=1)
         self.attributes_grid.grid_columnconfigure(1, weight=0)
         self.attributes_grid.grid_columnconfigure(2, weight=0)
@@ -51,12 +66,12 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         self.attributes_grid.grid_columnconfigure(4, weight=0)
         self.attributes_grid.grid_columnconfigure(5, weight=1)
         # Use half the list height so the left and right columns share the same rows
-        half = len(attr_names) // 2
+        half = len(self.attr_definitions) // 2
         for i in range(half):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
-        for i, attr in enumerate(attr_names):
-            self.create_stat_row(i, attr, theme)
+        for i, (key, label) in enumerate(self.attr_definitions):
+            self.create_stat_row(i, key, label, theme)
         
         self.done_button = ctk.CTkButton(
             self,
@@ -68,7 +83,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         )
         self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
 
-    def create_stat_row(self, index: int, attr_name: str, theme: dict) -> None:
+    def create_stat_row(self, index: int, attr_key: str, attr_label: str, theme: dict) -> None:
         '''Creates a row in the attributes grid for a specific technical attribute.
         Adds a label and entry field for the attribute to the grid layout, placing it in the correct column.
 
@@ -95,14 +110,14 @@ class AddOutfieldFrame2(ctk.CTkFrame):
 
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
-            text=attr_name,
+            text=attr_label,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"]
         )
         attr_label.grid(row=row, column=label_col, padx=5, pady=5, sticky="w")
 
         attr_var = ctk.StringVar(value="")
-        self.attr_vars[attr_name] = attr_var
+        self.attr_vars[attr_key] = attr_var
         attr_entry = ctk.CTkEntry(
             self.attributes_grid,
             textvariable=attr_var,
@@ -122,26 +137,9 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         logger.debug(f"Populating AddOutfieldFrame2 with stats: {stats.keys()}")
         if not stats:
             raise UIPopulationError("Received no data to populate outfield player attributes.")
-        key_to_display_name = {
-            "ball_control": "Ball Control",
-            "crossing": "Crossing",
-            "curve": "Curve",
-            "defensive_awareness": "Def. Awareness",
-            "dribbling": "Dribbling",
-            "fk_accuracy": "FK Accuracy",
-            "finishing": "Finishing",
-            "heading_accuracy": "Heading Acc.",
-            "long_pass": "Long Pass",
-            "long_shots": "Long Shots",
-            "penalties": "Penalties",
-            "short_pass": "Short Pass",
-            "shot_power": "Shot Power",
-            "slide_tackle": "Slide Tackle",
-            "stand_tackle": "Stand Tackle",
-            "volleys": "Volleys"
-        }
-        for key, display_name in key_to_display_name.items():
-            self.attr_vars[display_name].set(str(stats.get(key, "")))
+        
+        for key in self.attr_vars:
+            self.attr_vars[key].set(str(stats.get(key, "")))
         
         logger.debug("AddOutfieldFrame2 population complete.")
     
@@ -150,16 +148,16 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         Handles the event when the 'Done' button is pressed on the technical attributes page.
         Collects the entered attribute data, saves it through the controller, and navigates back to the player library view.
         """
-        ui_data = {name: var.get() for name, var in self.attr_vars.items()}
-        
-        if missing_fields := [
-            key for key, value in ui_data.items() if value.strip() == ""
-        ]:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+        ui_data = {key: var.get() for key, var in self.attr_vars.items()}
+
+        if missing_keys := [key for key, value in ui_data.items() if value.strip() == ""]:
+            key_to_label = dict(self.attr_definitions)
+            missing_labels = [key_to_label[key] for key in missing_keys]
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
             return
-        
+
         self.controller.buffer_data(ui_data, gk=False, first=False)
-        
+
         self.controller.save_player()
-        
+
         self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))

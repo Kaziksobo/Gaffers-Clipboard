@@ -22,6 +22,26 @@ class PlayerStatsFrame(ctk.CTkFrame):
         # Attributes to store stat variables
         self.stats_vars = {}
         
+        self.stat_definitions = [
+            ("goals", "Goals"),
+            ("assists", "Assists"),
+            ("shots", "Shots"),
+            ("shot_accuracy", "Shot Accuracy (%)"),
+            ("passes", "Passes"),
+            ("pass_accuracy", "Pass Accuracy (%)"),
+            ("dribbles", "Dribbles"),
+            ("dribbles_success_rate", "Dribbles Success Rate (%)"),
+            ("tackles", "Tackles"),
+            ("tackles_success_rate", "Tackles Success Rate (%)"),
+            ("offsides", "Offsides"),
+            ("fouls_committed", "Fouls Committed"),
+            ("possession_won", "Possession Won"),
+            ("possession_lost", "Possession Lost"),
+            ("minutes_played", "Minutes Played"),
+            ("distance_covered", "Distance Covered (km)"),
+            ("distance_sprinted", "Distance Sprinted (km)")
+        ]
+        
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -65,16 +85,15 @@ class PlayerStatsFrame(ctk.CTkFrame):
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
-        stat_names = ['Goals', 'Assists', 'Shots', 'Shot Accuracy (%)', 'Passes', 'Pass Accuracy (%)', 'Dribbles', 'Dribbles Success Rate (%)', 'Tackles', 'Tackles Success Rate (%)', 'Offsides', 'Fouls Committed', 'Possession Won', 'Possession Lost', 'Minutes Played', 'Distance Covered (km)', 'Distance Sprinted (km)']
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
         self.stats_grid.grid_columnconfigure(1, weight=1)
-        for row in range(len(stat_names)):
+        for row in range(len(self.stat_definitions)):
             self.stats_grid.grid_rowconfigure(row, weight=1)
 
         # Populate stats grid
-        for i, stat in enumerate(stat_names):
-            self.create_stat_row(i, stat, theme)
+        for i, (stat_key, stat_label) in enumerate(self.stat_definitions):
+            self.create_stat_row(i, stat_key, stat_label, theme)
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
@@ -121,24 +140,25 @@ class PlayerStatsFrame(ctk.CTkFrame):
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
-    def create_stat_row(self, row: int, stat_name: str, theme: dict) -> None:
+    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: dict) -> None:
         '''Create a row in the stats grid for a specific statistic.
 
         Args:
             row (int): The row number in the grid.
-            stat_name (str): The name of the statistic.
+            stat_key (str): The key of the statistic.
+            stat_label (str): The label of the statistic.
             theme (dict): The theme dictionary containing colors and fonts.
         '''
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
-            text=stat_name,
+            text=stat_label,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"]
         )
         self.stat_label.grid(row=row, column=0, padx=5, pady=5, sticky="w")
         
         stat_value = ctk.StringVar(value="0")
-        self.stats_vars[stat_name] = stat_value
+        self.stats_vars[stat_key] = stat_value
         stat_entry = ctk.CTkEntry(
             self.stats_grid,
             textvariable=stat_value,
@@ -158,28 +178,9 @@ class PlayerStatsFrame(ctk.CTkFrame):
         logger.debug(f"Populating PlayerStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
             raise UIPopulationError("Received no data to populate player statistics.")
-        key_to_display_name = {
-            'goals': 'Goals',
-            'assists': 'Assists',
-            'shots': 'Shots',
-            'shot_accuracy': 'Shot Accuracy (%)',
-            'passes': 'Passes',
-            'pass_accuracy': 'Pass Accuracy (%)',
-            'dribbles': 'Dribbles',
-            'dribbles_success_rate': 'Dribbles Success Rate (%)',
-            'tackles': 'Tackles',
-            'tackles_success_rate': 'Tackles Success Rate (%)',
-            'offsides': 'Offsides',
-            'fouls_committed': 'Fouls Committed',
-            'possession_won': 'Possession Won',
-            'possession_lost': 'Possession Lost',
-            'minutes_played': 'Minutes Played',
-            'distance_covered': 'Distance Covered (km)',
-            'distance_sprinted': 'Distance Sprinted (km)'
-        }
         
-        for key, display_name in key_to_display_name.items():
-            self.stats_vars[display_name].set(str(stats_data.get(key, "0")))
+        for stat_key, _ in self.stat_definitions.items():
+            self.stats_vars[stat_key].set(str(stats_data.get(stat_key, "0")))
         
         logger.debug("PlayerStatsFrame population complete.")
 
@@ -197,20 +198,22 @@ class PlayerStatsFrame(ctk.CTkFrame):
         Returns:
             dict: A dictionary containing the collected player statistics.
         '''
-        ui_data = {stat_name: var.get() for stat_name, var in self.stats_vars.items()}
-        
+        ui_data = {stat_key: var.get() for stat_key, var in self.stats_vars.items()}
+
         if missing_fields := [
             key for key, value in ui_data.items() if value.strip() == ""
         ]:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            key_to_label = dict(self.stat_definitions)
+            missing_labels = [key_to_label[key] for key in missing_fields]
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
             return
-        
+
         ui_data['player_name'] = self.player_list_var.get()
-        
+
         if ui_data['player_name'] == "Click here to select player" or ui_data['player_name'] == "No players found" or not ui_data['player_name']:
             logger.warning("Validation failed: Missing fields - Player")
             return
-        
+
         self.controller.buffer_player_performance(ui_data)
 
     def on_next_outfield_player_button_press(self) -> None:

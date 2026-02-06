@@ -20,6 +20,13 @@ class AddGKFrame(ctk.CTkFrame):
         logger.info("Initializing AddGKFrame")
         
         self.attr_vars = {}
+        self.attr_definitions = [
+            ("diving", "Diving"),
+            ("handling", "Handling"),
+            ("kicking", "Kicking"),
+            ("reflexes", "Reflexes"),
+            ("positioning", "Positioning"),
+        ]
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -102,18 +109,16 @@ class AddGKFrame(ctk.CTkFrame):
         
         self.attributes_grid = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
         self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
-
-        attr_names = ["Diving", "Handling", "Kicking", "Reflexes", "Positioning"]
         
         self.attributes_grid.grid_columnconfigure(0, weight=1)
         self.attributes_grid.grid_columnconfigure(1, weight=0)
         self.attributes_grid.grid_columnconfigure(2, weight=0)
         self.attributes_grid.grid_columnconfigure(3, weight=1)
-        for i in range(len(attr_names)):
+        for i in range(len(self.attr_definitions)):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
-        for i, attr in enumerate(attr_names):
-            self.create_attribute_row(i, attr, theme)
+        for i, (key, label) in enumerate(self.attr_definitions):
+            self.create_attribute_row(i, key, label, theme)
         
         self.done_button = ctk.CTkButton(
             self,
@@ -125,7 +130,7 @@ class AddGKFrame(ctk.CTkFrame):
         )
         self.done_button.grid(row=5, column=1, pady=(0, 20), sticky="ew")
     
-    def create_attribute_row(self, row: int, attr_name: str, theme: dict) -> None:
+    def create_attribute_row(self, row: int, attr_key: str, attr_label: str, theme: dict) -> None:
         '''Creates a row in the attributes grid for a specific goalkeeper attribute.
         Adds a label and entry field for the attribute to the grid layout.
 
@@ -136,14 +141,14 @@ class AddGKFrame(ctk.CTkFrame):
         '''
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
-            text=attr_name,
+            text=attr_label,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"]
         )
         attr_label.grid(row=row, column=1, padx=5, pady=5)
         
         attr_var = ctk.StringVar(value="")  
-        self.attr_vars[attr_name] = attr_var      
+        self.attr_vars[attr_key] = attr_var      
         self.attr_entry = ctk.CTkEntry(
             self.attributes_grid,
             textvariable=attr_var,
@@ -163,16 +168,9 @@ class AddGKFrame(ctk.CTkFrame):
         logger.debug(f"Populating AddGKFrame with stats: {stats.keys()}")
         if not stats:
             raise UIPopulationError("Received no data to populate GK attributes.")
-        key_to_display_name = {
-            "diving": "Diving",
-            "handling": "Handling",
-            "kicking": "Kicking",
-            "reflexes": "Reflexes",
-            "positioning": "Positioning"
-        }
         
-        for key, display_name in key_to_display_name.items():
-            self.attr_vars[display_name].set(str(stats.get(key, "")))
+        for key in self.attr_vars:
+            self.attr_vars[key].set(str(stats.get(key, "")))
         
         logger.debug("AddGKFrame population complete.")
     
@@ -181,7 +179,7 @@ class AddGKFrame(ctk.CTkFrame):
         Handles the event when the 'Done' button is pressed on the goalkeeper attributes page.
         Collects the entered attribute and player data, saves it through the controller, and navigates back to the player library frame.
         """
-        ui_data = {name: var.get() for name, var in self.attr_vars.items()}
+        ui_data = {key: var.get() for key, var in self.attr_vars.items()}
         ui_data["name"] = self.name_entry.get()
         ui_data["age"] = self.age_entry.get()
         ui_data["height"] = self.height_entry.get()
@@ -189,12 +187,12 @@ class AddGKFrame(ctk.CTkFrame):
         ui_data["country"] = self.country_entry.get()
         ui_data["season"] = self.season_entry.get()
 
-        if missing_fields := [
-            key for key, value in ui_data.items() if value.strip() == ""
-        ]:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+        if missing_keys := [key for key, value in ui_data.items() if value.strip() == ""]:
+            key_to_label = dict(self.attr_definitions)
+            missing_labels = [key_to_label[key] for key in missing_keys]
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
             return
-        
+
         self.controller.buffer_data(ui_data, gk=True)
         self.controller.save_player()
 
