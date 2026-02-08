@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import logging
 from src.exceptions import UIPopulationError
+from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -179,18 +180,37 @@ class AddGKFrame(ctk.CTkFrame):
         Handles the event when the 'Done' button is pressed on the goalkeeper attributes page.
         Collects the entered attribute and player data, saves it through the controller, and navigates back to the player library frame.
         """
-        ui_data = {key: var.get() for key, var in self.attr_vars.items()}
-        ui_data["name"] = self.name_entry.get()
-        ui_data["age"] = self.age_entry.get()
-        ui_data["height"] = self.height_entry.get()
-        ui_data["weight"] = self.weight_entry.get()
-        ui_data["country"] = self.country_entry.get()
-        ui_data["season"] = self.season_entry.get()
+        # Convert attributes to integers using helper
+        ui_data = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
-        if missing_keys := [key for key, value in ui_data.items() if value.strip() == ""]:
-            key_to_label = dict(self.attr_definitions)
-            missing_labels = [key_to_label[key] for key in missing_keys]
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
+        # Handle Text fields
+        # usage of "or None" ensures empty strings become None for consistent validation
+        ui_data["name"] = self.name_entry.get().strip() or None
+        ui_data["country"] = self.country_entry.get().strip() or None
+        ui_data["season"] = self.season_entry.get().strip() or None
+        ui_data["height"] = self.height_entry.get().strip() or None
+
+        # Handle Numeric bio fields (Age/Weight) - Convert to int standardizes them
+        ui_data["age"] = safe_int_conversion(self.age_entry.get())
+        ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
+
+        # Check dynamic attributes
+        key_to_label = dict(self.attr_definitions)
+        missing_fields = [
+            key_to_label.get(key, key)
+            for key in self.attr_vars.keys()
+            if ui_data[key] is None
+        ]
+        # Check static fields
+        if ui_data["name"] is None: missing_fields.append("Name")
+        if ui_data["season"] is None: missing_fields.append("Season")
+        if ui_data["age"] is None: missing_fields.append("Age")
+        if ui_data["height"] is None: missing_fields.append("Height")
+        if ui_data["weight"] is None: missing_fields.append("Weight")
+        if ui_data["country"] is None: missing_fields.append("Country")
+
+        if missing_fields:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
             return
 
         self.controller.buffer_data(ui_data, gk=True)

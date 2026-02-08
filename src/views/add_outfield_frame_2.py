@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import logging
 from src.exceptions import UIPopulationError
+from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -148,9 +149,11 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         Handles the event when the 'Done' button is pressed on the technical attributes page.
         Collects the entered attribute data, saves it through the controller, and navigates back to the player library view.
         """
-        ui_data = {key: var.get() for key, var in self.attr_vars.items()}
+        # Convert all technical attributes to integers
+        ui_data = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
-        if missing_keys := [key for key, value in ui_data.items() if value.strip() == ""]:
+        # Validate that no fields are None (missing)
+        if missing_keys := [key for key, value in ui_data.items() if value is None]:
             key_to_label = dict(self.attr_definitions)
             missing_labels = [key_to_label[key] for key in missing_keys]
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")

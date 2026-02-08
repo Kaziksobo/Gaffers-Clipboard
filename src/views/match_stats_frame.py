@@ -2,6 +2,7 @@ import customtkinter as ctk
 import logging
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.utils import safe_int_conversion, safe_float_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -257,38 +258,44 @@ class MatchStatsFrame(ctk.CTkFrame):
     def collect_data(self) -> None:
         '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
         '''
-        # Collect match overview
+        # Helper to convert stat based on key (xG is float, others are int)
+        def convert_stat(key: str, value: str):
+            if key == "xG":
+                return safe_float_conversion(value)
+            return safe_int_conversion(value)
+
+        # Collect match overview with type conversion
         ui_data = {
             "competition": self.competition_var.get(),
-            "home_team_name": self.home_team_name_var.get(),
-            "away_team_name": self.away_team_name_var.get(),
-            "home_score": self.home_team_score_var.get(),
-            "away_score": self.away_team_score_var.get(),
-            "home_stats": {k: v.get() for k, v in self.home_stats_vars.items()},
-            "away_stats": {k: v.get() for k, v in self.away_stats_vars.items()},
+            "home_team_name": self.home_team_name_var.get().strip() or None,
+            "away_team_name": self.away_team_name_var.get().strip() or None,
+            "home_score": safe_int_conversion(self.home_team_score_var.get()),
+            "away_score": safe_int_conversion(self.away_team_score_var.get()),
+            "home_stats": {k: convert_stat(k, v.get()) for k, v in self.home_stats_vars.items()},
+            "away_stats": {k: convert_stat(k, v.get()) for k, v in self.away_stats_vars.items()},
         }
 
+        missing_fields = []
+
+        # Validate basic fields
+        if ui_data["competition"] == "Select Competition": missing_fields.append("Competition")
+        if ui_data["home_team_name"] is None: missing_fields.append("Home Team Name")
+        if ui_data["away_team_name"] is None: missing_fields.append("Away Team Name")
+        if ui_data["home_score"] is None: missing_fields.append("Home Score")
+        if ui_data["away_score"] is None: missing_fields.append("Away Score")
+
         # Validate home stats
-        if missing_keys := [
-            key for key, value in ui_data["home_stats"].items() if value.strip() == ""
-        ]:
+        if missing_keys := [key for key, value in ui_data["home_stats"].items() if value is None]:
             key_to_label = dict(self.stat_definitions)
-            missing_labels = [key_to_label[key] for key in missing_keys]
-            logger.warning(f"Validation failed: Home team missing fields - {', '.join(missing_labels)}")
-            return
+            missing_fields.extend([f"Home {key_to_label.get(key, key)}" for key in missing_keys])
 
         # Validate away stats
-        if missing_keys := [
-            key for key, value in ui_data["away_stats"].items() if value.strip() == ""
-        ]:
+        if missing_keys := [key for key, value in ui_data["away_stats"].items() if value is None]:
             key_to_label = dict(self.stat_definitions)
-            missing_labels = [key_to_label[key] for key in missing_keys]
-            logger.warning(f"Validation failed: Away team missing fields - {', '.join(missing_labels)}")
-            return
+            missing_fields.extend([f"Away {key_to_label.get(key, key)}" for key in missing_keys])
 
-        # Validate other fields
-        if ui_data["competition"] == "Select Competition":
-            logger.warning("Validation failed: Missing fields - Competition")
+        if missing_fields:
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields[:3])}...")
             return
 
         # Buffer match overview

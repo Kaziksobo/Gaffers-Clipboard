@@ -2,6 +2,7 @@ import customtkinter as ctk
 import logging
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.utils import safe_int_conversion, safe_float_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -198,21 +199,33 @@ class PlayerStatsFrame(ctk.CTkFrame):
         Returns:
             dict: A dictionary containing the collected player statistics.
         '''
-        ui_data = {stat_key: var.get() for stat_key, var in self.stats_vars.items()}
+        player_name = self.player_list_var.get()
+        
+        # Validate Player Name first
+        if player_name == "Click here to select player" or player_name == "No players found" or not player_name:
+            logger.warning("Validation failed: Missing fields - Player")
+            return
 
-        if missing_fields := [
-            key for key, value in ui_data.items() if value.strip() == ""
-        ]:
+        ui_data = {}
+        float_keys = {"distance_covered", "distance_sprinted"}
+
+        # Collect and convert stats
+        for stat_key, var in self.stats_vars.items():
+            value = var.get()
+            if stat_key in float_keys:
+                ui_data[stat_key] = safe_float_conversion(value)
+            else:
+                ui_data[stat_key] = safe_int_conversion(value)
+
+        # Validate that no fields returned None (invalid/empty)
+        if missing_key_list := [key for key, value in ui_data.items() if value is None]:
+            # Create a dictionary from list of tuples for lookup
             key_to_label = dict(self.stat_definitions)
-            missing_labels = [key_to_label[key] for key in missing_fields]
+            missing_labels = [key_to_label.get(key, key) for key in missing_key_list]
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
             return
 
-        ui_data['player_name'] = self.player_list_var.get()
-
-        if ui_data['player_name'] == "Click here to select player" or ui_data['player_name'] == "No players found" or not ui_data['player_name']:
-            logger.warning("Validation failed: Missing fields - Player")
-            return
+        ui_data['player_name'] = player_name
 
         self.controller.buffer_player_performance(ui_data)
 

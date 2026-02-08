@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import logging
+from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +155,7 @@ class CreateCareerFrame(ctk.CTkFrame):
         club_name = self.club_name_entry.get().strip()
         manager_name = self.manager_name_entry.get().strip()
         starting_season = self.starting_season_entry.get().strip()
-        half_length = self.half_length_entry.get().strip()
+        half_length = safe_int_conversion(self.half_length_entry.get().strip())
         match_difficulty = self.match_difficulty_var.get().strip()
 
         # Define validation rules: (value, field_name, condition)
@@ -162,7 +163,7 @@ class CreateCareerFrame(ctk.CTkFrame):
             (club_name, "Club Name", bool(club_name)),
             (manager_name, "Manager Name", bool(manager_name)),
             (starting_season, "Starting Season", bool(starting_season)),
-            (half_length, "Half Length", bool(half_length)),
+            (half_length, "Half Length", half_length is not None),
             (match_difficulty, "Match Difficulty", match_difficulty and match_difficulty != "Select Difficulty"),
         ]
 

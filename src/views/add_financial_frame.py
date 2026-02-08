@@ -2,6 +2,7 @@ import customtkinter as ctk
 import logging
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +119,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         """Compiles the captured financial inputs and commits them to the controller for persistence. 
         This method finalizes the financial data entry workflow and navigates back to the player library view.
         """
-        financial_data = {name: var.get() for name, var in self.data_vars.items()}
+        financial_data = {name: safe_int_conversion(var.get()) for name, var in self.data_vars.items()}
         
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
@@ -129,17 +130,17 @@ class AddFinancialFrame(ctk.CTkFrame):
         # Handle both of the above with a logger warning and return for now, specifiying the field that was left empty
         # If contract length, release clause, or sell on clause are missing, we can default them to zero
         for key in ["Contract Length (years)", "Release Clause", "Sell On Clause (%)"]:
-            if financial_data[key] == "":
-                financial_data[key] = "0"
+            if financial_data[key] is None:
+                financial_data[key] = 0
         
         missing_fields = []
         if player == "Click here to select player" or player == "No players found" or not player:
             missing_fields.append("Player")
         if not season:
             missing_fields.append("Season")
-        if not financial_data["Wage"]:
+        if financial_data["Wage"] is None:
             missing_fields.append("Wage")
-        if not financial_data["Market Value"]:
+        if financial_data["Market Value"] is None:
             missing_fields.append("Market Value")
         
         if missing_fields:

@@ -2,6 +2,7 @@ import customtkinter as ctk
 import logging
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +14,19 @@ class GKStatsFrame(ctk.CTkFrame):
         logger.info("Initializing GKStatsFrame")
         
         self.stats_vars = {}
+        self.stat_definitions = [
+            ("shots_against", "Shots Against"),
+            ("shots_on_target", "Shots On Target"),
+            ("saves", "Saves"),
+            ("goals_conceded", "Goals Conceded"),
+            ("save_success_rate", "Save Success Rate (%)"),
+            ("punch_saves", "Punch Saves"),
+            ("rush_saves", "Rush Saves"),
+            ("penalty_saves", "Penalty Saves"),
+            ("penalty_goals_conceded", "Penalty Goals Conceded"),
+            ("shoot-out_saves", "Shoot-out Saves"),
+            ("shoot-out_goals_conceded", "Shoot-out Goals Conceded")
+        ]
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -56,16 +70,15 @@ class GKStatsFrame(ctk.CTkFrame):
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
-        stat_names = ["Shots Against", "Shots On Target", "Saves", "Goals Conceded", "Save Success Rate (%)", "Punch Saves", "Rush Saves", "Penalty Saves", "Penalty Goals Conceded", "Shoot-out Saves", "Shoot-out Goals Conceded"]
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
         self.stats_grid.grid_columnconfigure(1, weight=1)
-        for row in range(len(stat_names)):
+        for row in range(len(self.stat_definitions)):
             self.stats_grid.grid_rowconfigure(row, weight=1)
         
         # Populate stats grid
-        for i, stat in enumerate(stat_names):
-            self.create_stat_row(i, stat, theme)
+        for i, (stat_key, stat_label) in enumerate(self.stat_definitions):
+            self.create_stat_row(i, stat_key, stat_label, theme)
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
@@ -113,7 +126,7 @@ class GKStatsFrame(ctk.CTkFrame):
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
     
-    def create_stat_row(self, row: int, stat_name: str, theme: dict) -> None:
+    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: dict) -> None:
         '''Create a row in the stats grid for a specific statistic.
 
         Args:
@@ -123,14 +136,14 @@ class GKStatsFrame(ctk.CTkFrame):
         '''
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
-            text=stat_name,
+            text=stat_label,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"]
         )
         self.stat_label.grid(row=row, column=0, padx=5, pady=5, sticky="w")
         
         stat_value = ctk.StringVar(value="0")
-        self.stats_vars[stat_name] = stat_value
+        self.stats_vars[stat_key] = stat_value
         stat_entry = ctk.CTkEntry(
             self.stats_grid,
             textvariable=stat_value,
@@ -150,22 +163,9 @@ class GKStatsFrame(ctk.CTkFrame):
         logger.debug(f"Populating GKStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
             raise UIPopulationError("Received no data to populate player statistics.")
-        key_to_display_name = {
-            'shots_against': 'Shots Against',
-            'shots_on_target': 'Shots On Target',
-            'saves': 'Saves',
-            'goals_conceded': 'Goals Conceded',
-            'save_success_rate': 'Save Success Rate (%)',
-            'punch_saves': 'Punch Saves',
-            'rush_saves': 'Rush Saves',
-            'penalty_saves': 'Penalty Saves',
-            'penalty_goals_conceded': 'Penalty Goals Conceded',
-            'shoot-out_saves': 'Shoot-out Saves',
-            'shoot-out_goals_conceded': 'Shoot-out Goals Conceded'
-        }
         
-        for key, display_name in key_to_display_name.items():
-            self.stats_vars[display_name].set(str(stats_data.get(key, "0")))
+        for stat_key, _ in self.stat_definitions:
+            self.stats_vars[stat_key].set(str(stats_data.get(stat_key, "0")))
         
         logger.debug("GKStatsFrame population complete.")
     
@@ -183,19 +183,24 @@ class GKStatsFrame(ctk.CTkFrame):
         Returns:
             dict: A dictionary containing the collected player statistics.
         '''
-        ui_data = {stat_name: var.get() for stat_name, var in self.stats_vars.items()}
+        player_name = self.player_list_var.get()
         
-        if missing_fields := [
-            key for key, value in ui_data.items() if value.strip() == ""
-        ]:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
-            return
-        
-        ui_data['player_name'] = self.player_list_var.get()
-        
-        if ui_data['player_name'] == "Click here to select player" or ui_data['player_name'] == "No players found" or not ui_data['player_name']:
+        # Validate Player Name first
+        if player_name == "Click here to select player" or player_name == "No players found" or not player_name:
             logger.warning("Validation failed: Missing fields - Player")
             return
+
+        # Convert all stats to integers
+        ui_data = {stat_key: safe_int_conversion(var.get()) for stat_key, var in self.stats_vars.items()}
+        
+        # Check specifically for None (which indicates empty or invalid input)
+        if missing_key_list := [key for key, value in ui_data.items() if value is None]:
+            key_to_label = dict(self.stat_definitions)
+            missing_labels = [key_to_label.get(key, key) for key in missing_key_list]
+            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
+            return 
+        
+        ui_data['player_name'] = player_name
         
         self.controller.buffer_player_performance(ui_data)
 
