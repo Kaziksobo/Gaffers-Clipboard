@@ -9,3 +9,4 @@ src/views/__pycache__
 /data
 /.VSCodeCounter
 /logs
+/__pycache__
