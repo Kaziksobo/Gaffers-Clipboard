@@ -29,6 +29,15 @@
                 "Contract Length (years)": "1",
                 "Release Clause": "6100000",
                 "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-04 02:26:43",
+                "season": "29/30",
+                "Wage": "25000",
+                "Market Value": "3600000",
+                "Contract Length (years)": "1",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "0"
             }
         ],
         "sold": false,
@@ -588,6 +597,15 @@
                 "Contract Length (years)": "2",
                 "Release Clause": "85000000",
                 "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-04 02:28:39",
+                "season": "29/30",
+                "Wage": "75000",
+                "Market Value": "52000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "150000000",
+                "Sell On Clause (%)": "0"
             }
         ],
         "sold": false,
@@ -899,7 +917,7 @@
                 "Sell On Clause (%)": "0"
             }
         ],
-        "sold": false,
+        "sold": true,
         "loaned": false
     },
     {
@@ -1326,6 +1344,15 @@
                 "Contract Length (years)": "1",
                 "Release Clause": "90000000",
                 "Sell On Clause (%)": "0"
+            },
+            {
+                "datetime": "2026-02-04 02:30:01",
+                "season": "29/30",
+                "Wage": "50000",
+                "Market Value": "51000000",
+                "Contract Length (years)": "3",
+                "Release Clause": "120000000",
+                "Sell On Clause (%)": "0"
             }
         ],
         "sold": false,
@@ -1508,7 +1535,7 @@
                 "Sell On Clause (%)": "0"
             }
         ],
-        "sold": false,
+        "sold": true,
         "loaned": false
     },
     {
@@ -1624,6 +1651,15 @@
                 "Wage": "18000",
                 "Market Value": "27000000",
                 "Contract Length (years)": "3",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "9"
+            },
+            {
+                "datetime": "2026-02-04 02:37:24",
+                "season": "29/30",
+                "Wage": "35000",
+                "Market Value": "27000000",
+                "Contract Length (years)": "4",
                 "Release Clause": "0",
                 "Sell On Clause (%)": "9"
             }
@@ -1865,6 +1901,15 @@
                 "Market Value": "109000000",
                 "Contract Length (years)": "2",
                 "Release Clause": "0",
+                "Sell On Clause (%)": "11"
+            },
+            {
+                "datetime": "2026-02-04 02:32:14",
+                "season": "29/30",
+                "Wage": "55000",
+                "Market Value": "109000000",
+                "Contract Length (years)": "5",
+                "Release Clause": "300000000",
                 "Sell On Clause (%)": "11"
             }
         ],
@@ -2413,6 +2458,15 @@
                 "Wage": "55000",
                 "Market Value": "43500000",
                 "Contract Length (years)": "2",
+                "Release Clause": "0",
+                "Sell On Clause (%)": "8"
+            },
+            {
+                "datetime": "2026-02-04 02:33:28",
+                "season": "29/30",
+                "Wage": "60000",
+                "Market Value": "47000000",
+                "Contract Length (years)": "4",
                 "Release Clause": "0",
                 "Sell On Clause (%)": "8"
             }
@@ -3179,6 +3233,66 @@
                 "Market Value": "37500000",
                 "Contract Length (years)": "4",
                 "Release Clause": "100000000",
+                "Sell On Clause (%)": "0"
+            }
+        ],
+        "sold": false,
+        "loaned": false
+    },
+    {
+        "id": 54,
+        "name": "kyle lombardi",
+        "nationality": "Malta",
+        "age": "18",
+        "height": "5'7\"",
+        "weight": "152",
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-02-04 01:52:08",
+                "season": "29/30",
+                "Acceleration": "83",
+                "Agility": "71",
+                "Balance": "71",
+                "Jumping": "61",
+                "Sprint Speed": "76",
+                "Stamina": "72",
+                "Strength": "65",
+                "Aggression": "73",
+                "Att. Position": "46",
+                "Composure": "47",
+                "Interceptions": "75",
+                "Reactions": "62",
+                "Vision": "40",
+                "position": "LB",
+                "Ball Control": "55",
+                "Crossing": "57",
+                "Curve": "50",
+                "Def. Awareness": "72",
+                "Dribbling": "57",
+                "FK Accuracy": "38",
+                "Finishing": "41",
+                "Heading Acc.": "64",
+                "Long Pass": "43",
+                "Long Shots": "39",
+                "Penalties": "39",
+                "Short Pass": "55",
+                "Shot Power": "43",
+                "Slide Tackle": "69",
+                "Stand Tackle": "72",
+                "Volleys": "31"
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-02-04 01:52:36",
+                "season": "29/30",
+                "Wage": "14500",
+                "Market Value": "2700000",
+                "Contract Length (years)": "3",
+                "Release Clause": "0",
                 "Sell On Clause (%)": "0"
             }
         ],
