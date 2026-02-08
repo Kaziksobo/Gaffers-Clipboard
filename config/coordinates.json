@@ -240,7 +240,7 @@
             "x2": 2345,
             "y2": 735
         },
-        "dribble_success": {
+        "dribble_success_rate": {
             "x1": 2270,
             "y1": 757,
             "x2": 2345,
@@ -252,7 +252,7 @@
             "x2": 2345,
             "y2": 839
         },
-        "tackle_success": {
+        "tackle_success_rate": {
             "x1": 2270,
             "y1": 860,
             "x2": 2345,
@@ -264,7 +264,7 @@
             "x2": 2345,
             "y2": 942
         },
-        "fouls_comitted": {
+        "fouls_committed": {
             "x1": 2270,
             "y1": 965,
             "x2": 2345,
