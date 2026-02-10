@@ -180,7 +180,7 @@ class PlayerStatsFrame(ctk.CTkFrame):
         if not stats_data:
             raise UIPopulationError("Received no data to populate player statistics.")
         
-        for stat_key, _ in self.stat_definitions.items():
+        for stat_key, _ in self.stat_definitions:
             self.stats_vars[stat_key].set(str(stats_data.get(stat_key, "0")))
         
         logger.debug("PlayerStatsFrame population complete.")
