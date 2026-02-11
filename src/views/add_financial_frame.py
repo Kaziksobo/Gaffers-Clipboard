@@ -119,7 +119,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         """Compiles the captured financial inputs and commits them to the controller for persistence. 
         This method finalizes the financial data entry workflow and navigates back to the player library view.
         """
-        financial_data = {name: safe_int_conversion(var.get()) for name, var in self.data_vars.items()}
+        financial_data = {name: safe_int_conversion(var.get().replace(',', '').replace('.', '')) for name, var in self.data_vars.items()}
         
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
