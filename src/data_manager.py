@@ -67,7 +67,7 @@ class DataManager:
         except IOError as e:
             logger.error(f"Failed to save JSON to {path}: {e}", exc_info=True)
     
-    def create_new_career(self, club_name: str, manager_name: str, starting_season: str, match_length: str, difficulty: str) -> None:
+    def create_new_career(self, club_name: str, manager_name: str, starting_season: str, half_length: str, difficulty: str) -> None:
         """
         Creates a new career for the given club and starting season. 
         Sets up the career's storage structure and records its configuration and metadata.
@@ -76,7 +76,7 @@ class DataManager:
             club_name (str): The display name of the club associated with the new career.
             manager_name (str): The name of the manager for the new career.
             starting_season (str): The season identifier marking when the career begins.
-            match_length (str): The configured length of matches for this career.
+            half_length (str): The configured length of each half for matches in this career.
             difficulty (str): The difficulty level associated with this career.
         """
         logger.info(f"Creating new career: {club_name} (Manager: {manager_name})")
@@ -109,7 +109,7 @@ class DataManager:
             "manager_name": manager_name,
             "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
             "starting_season": starting_season,
-            "match_length": match_length,
+            "half_length": half_length,
             "difficulty": difficulty
         }
         self._save_json(career_path / "metadata.json", career_metadata)
