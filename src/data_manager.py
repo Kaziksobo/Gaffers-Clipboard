@@ -2,6 +2,23 @@ from pathlib import Path
 import json
 import time
 import logging
+from typing import List, Optional, Union
+from pydantic import ValidationError, TypeAdapter
+from datetime import datetime
+
+from src.types import (
+    GKAttributeSnapshot,
+    OutfieldAttributeSnapshot,
+    FinancialSnapshot,
+    Player,
+    MatchStats,
+    MatchData,
+    OutfieldPlayerPerformance,
+    GoalkeeperPerformance,
+    Match,
+    CareerMetadata,
+    CareerDetail
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,22 +34,23 @@ class DataManager:
         self.data_folder = data_folder
         self.data_folder.mkdir(exist_ok=True)
         
-        self.current_career = None
+        self.current_career: Optional[str] = None
         self.careers_details_path = self.data_folder / "careers_details.json"
         
-        self.players_path = None
-        self.matches_path = None
+        self.players_path: Optional[Path] = None
+        self.matches_path: Optional[Path] = None
         
-        self.players = []
-        self.matches = []
+        self.players: List[Player] = []
+        self.matches: List[Match] = []
     
-    def _load_json(self, path: Path, default=None):
+    def _load_json(self, path: Path, model_class, is_list: bool = True, default=None):
         """
         Loads JSON data from the specified file path. 
         Returns the default value if the file does not exist or is invalid.
 
         Args:
             path (Path): The path to the JSON file.
+            model_class: The Pydantic model class to validate against.
             default: The value to return if loading fails, defaults to an empty list.
 
         Returns:
@@ -45,8 +63,11 @@ class DataManager:
             return default
         try:
             with open(path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except (json.JSONDecodeError, IOError) as e:
+                raw_data = json.load(f)
+            
+            adapter = TypeAdapter(List[model_class] if is_list else model_class)
+            return adapter.validate_python(raw_data)
+        except (json.JSONDecodeError, IOError, ValidationError) as e:
             logger.error(f"Error loading JSON from {path}: {e}", exc_info=True)
             return default
     
@@ -61,7 +82,9 @@ class DataManager:
         """
         if data is None:
             data = []
+            return
         try:
+            data = [item.model_dump(mode="json") for item in data]
             with open(path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4)
         except IOError as e:
@@ -85,35 +108,36 @@ class DataManager:
         self.current_career = career_folder_name
         career_path = self.data_folder / career_folder_name
         career_path.mkdir(exist_ok=True)
-        self.players_path = self.data_folder / career_folder_name / "players.json"
-        self.matches_path = self.data_folder / career_folder_name / "matches.json"
+        
+        self.players_path = career_path / "players.json"
+        self.matches_path = career_path / "matches.json"
         
         # Update careers_details.json
-        careers_details = self._load_json(self.careers_details_path)
+        careers_details = self._load_json(self.careers_details_path, CareerDetail)
         career_id = self._generate_id(careers_details)
         
-        career_detail = {
-            "id": career_id,
-            "club_name": club_name,
-            "folder_name": career_folder_name,
-        }
+        new_detail = CareerDetail(
+            id=career_id,
+            club_name=club_name,
+            folder_name=career_folder_name
+        )
         
-        careers_details.append(career_detail)
+        careers_details.append(new_detail)
         self._save_json(self.careers_details_path, careers_details)
         
         # Create a metadata file for the career
-        career_metadata = {
-            "career_id": career_id,
-            "club_name": club_name,
-            "folder_name": career_folder_name,
-            "manager_name": manager_name,
-            "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "starting_season": starting_season,
-            "half_length": half_length,
-            "difficulty": difficulty
-        }
-        self._save_json(career_path / "metadata.json", career_metadata)
-        
+        metadata = CareerMetadata(
+            career_id=career_id,
+            club_name=club_name,
+            folder_name=career_folder_name,
+            manager_name=manager_name,
+            created_at=datetime.now(),
+            starting_season=starting_season,
+            half_length=int(half_length),
+            difficulty=difficulty
+        )
+        with open(career_path / "metadata.json", 'w', encoding='utf-8') as f:
+            f.write(metadata.model_dump_json(indent=4))
 
         # Initialize empty players and matches files
         self._save_json(self.players_path)
@@ -127,8 +151,8 @@ class DataManager:
         Returns:
             list[str]: A list of career names loaded from the careers details store.
         """
-        careers_details = self._load_json(self.careers_details_path)
-        return [career.get("club_name") for career in careers_details]
+        careers_details = self._load_json(self.careers_details_path, CareerDetail)
+        return [career.club_name for career in careers_details]
     
     def get_career_details(self, career_name: str) -> dict | None:
         """
@@ -141,19 +165,19 @@ class DataManager:
         Returns:
             dict | None: The career details dictionary if found, otherwise None.
         """
-        careers_details = self._load_json(self.careers_details_path)
+        careers_details = self._load_json(self.careers_details_path, CareerDetail)
         career_folder_path = next(
             (
-                career.get("folder_name")
+                career.folder_name
                 for career in careers_details
-                if career.get("club_name") == career_name
+                if career.club_name == career_name
             ),
             None,
         )
         if not career_folder_path:
             return None
         metadata_path = self.data_folder / career_folder_path / "metadata.json"
-        return self._load_json(metadata_path)
+        return self._load_json(metadata_path, CareerMetadata, is_list=False, default={})
     
     def load_career(self, career_name: str) -> None:
         """
@@ -173,15 +197,15 @@ class DataManager:
         self.players_path = self.data_folder / career_folder_name / "players.json"
         self.matches_path = self.data_folder / career_folder_name / "matches.json"
         
-        self.players = self._load_json(self.players_path)
-        self.matches = self._load_json(self.matches_path)
+        self.players = self._load_json(self.players_path, Player)
+        self.matches = self._load_json(self.matches_path, Match)
         logger.info(f"Career {career_name} loaded with {len(self.players)} players and {len(self.matches)} matches.")
 
     def refresh_players(self) -> None:
-        self.players = self._load_json(self.players_path)
+        self.players = self._load_json(self.players_path, Player)
 
     def refresh_matches(self) -> None:
-        self.matches = self._load_json(self.matches_path)
+        self.matches = self._load_json(self.matches_path, Match)
     
     def add_or_update_player(self, player_ui_data: dict, position: str, season: str) -> None:
         """
@@ -196,49 +220,57 @@ class DataManager:
         # Check if player already exists based on name to update them
         # May end up changing this to use ids in the future
         full_name = player_ui_data.get("name").strip().lower()
-        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
+        existing_player = next((p for p in self.players if p.name.strip().lower() == full_name), None)
         
-        non_attributes = ["name", "age", "height", "weight", "country"]
+        top_level_keys = ["name", "age", "height", "weight", "country"]
         
-        attributes = {k: v for k, v in player_ui_data.items() if k not in non_attributes}
-        attributes_snapshot = {
-            "datetime": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "season": season,
-            **attributes
-        }
+        attributes = {k: v for k, v in player_ui_data.items() if k not in top_level_keys}
+        if position == "GK":
+            attributes_snapshot = GKAttributeSnapshot(
+                datetime=datetime.now(),
+                season=season,
+                position_type="GK",
+                **attributes
+            )
+        else:
+            attributes_snapshot = OutfieldAttributeSnapshot(
+                datetime=datetime.now(),
+                season=season,
+                position_type="Outfield",
+                **attributes
+            )
+        
         
         if existing_player:
             logger.info(f"Updating player: {full_name}")
-            existing_player["attribute_history"].append(attributes_snapshot)
+            existing_player.attribute_history.append(attributes_snapshot)
             # If age, height or weight are different, update it
-            if existing_player.get("age") != player_ui_data.get("age").strip():
-                existing_player["age"] = player_ui_data.get("age").strip()
-            if existing_player.get("height") != player_ui_data.get("height").strip():
-                existing_player["height"] = player_ui_data.get("height").strip()
-            if existing_player.get("weight") != player_ui_data.get("weight").strip():
-                existing_player["weight"] = player_ui_data.get("weight").strip()
+            existing_player.age = int(player_ui_data.get("age"))
+            existing_player.height = player_ui_data.get("height")
+            existing_player.weight = int(player_ui_data.get("weight"))
             # If position is new, add it
-            if position not in existing_player.get("positions", []):
-                existing_player["positions"].append(position)
+            if position not in existing_player.positions:
+                existing_player.positions.append(position)
         else:
             logger.info(f"Adding new player: {full_name}")
-            new_player = {
-                "id": self._generate_id(self.players),
-                "name": full_name,
-                "nationality": player_ui_data.get("country").strip(),
-                "age": player_ui_data.get("age").strip(),
-                "height": player_ui_data.get("height").strip(),
-                "weight": player_ui_data.get("weight").strip(),
-                "positions": [position],
-                "attribute_history": [attributes_snapshot],
-                "financial_history": [],
-                "sold": False,
-                "loaned": False
-            }
+            new_id = self._generate_id(self.players)
+            new_player = Player(
+                id=new_id,
+                name=full_name,
+                nationality=player_ui_data.get("country").strip(),
+                age=int(player_ui_data.get("age")),
+                height=player_ui_data.get("height").strip(),
+                weight=int(player_ui_data.get("weight")),
+                positions=[position],
+                attribute_history=[attributes_snapshot],
+                financial_history=[],
+                sold=False,
+                loaned=False
+            )
             self.players.append(new_player)
         self._save_json(self.players_path, self.players)
         # Reload players to ensure consistency
-        self.players = self._load_json(self.players_path)
+        self.players = self._load_json(self.players_path, Player)
     
     def add_financial_data(self, player_name: str, financial_data: dict, season: str) -> None:
         """
@@ -250,29 +282,28 @@ class DataManager:
             season (str): The season associated with the financial snapshot.
         """
         full_name = player_name.strip().lower()
-        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
-        
+        existing_player = next((p for p in self.players if p.name.strip().lower() == full_name), None)
+
         if not existing_player:
             logger.warning(f"Player '{player_name}' not found. Cannot add financial data.")
             return
-        
+
         logger.info(f"Saving financial snapshot for {player_name} (Season: {season})")
-        
-        # Remove any commas from numeric fields
-        for key, value in financial_data.items():
-            if isinstance(value, str):
-                financial_data[key] = value.replace(",", "")
-        
-        financial_snapshot = {
-            "datetime": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "season": season,
-            **financial_data
+
+        cleaned_data = {
+            k: v.replace(",", "") if isinstance(v, str) else v
+            for k, v in financial_data.items()
         }
-        
-        existing_player["financial_history"].append(financial_snapshot)
+        snapshot = FinancialSnapshot(
+            datetime=datetime.now(),
+            season=season,
+            **cleaned_data
+        )
+
+        existing_player.financial_history.append(snapshot)
         self._save_json(self.players_path, self.players)
         # Reload players to ensure consistency
-        self.players = self._load_json(self.players_path)
+        self.players = self._load_json(self.players_path, Player)
     
     def sell_player(self, player_name: str) -> None:
         logger.info(f"Action: Selling player {player_name}")
@@ -288,17 +319,17 @@ class DataManager:
         
     def _update_player_status(self, player_name: str, status_key: str, status_value: bool):
         full_name = player_name.strip().lower()
-        existing_player = next((p for p in self.players if p.get("name").strip().lower() == full_name), None)
+        existing_player = next((p for p in self.players if p.name.strip().lower() == full_name), None)
         
         if not existing_player:
             logger.warning(f"Player '{player_name}' not found. Cannot update status '{status_key}'.")
             return
             
-        existing_player[status_key] = status_value
+        setattr(existing_player, status_key, status_value)
         self._save_json(self.players_path, self.players)
         
         # Reload players to ensure consistency
-        self.players = self._load_json(self.players_path)
+        self.players = self._load_json(self.players_path, Player)
     
     def _generate_id(self, collection: list) -> int:
         """
@@ -311,7 +342,7 @@ class DataManager:
         Returns:
             int: The next available unique ID.
         """
-        return max(item.get("id", 0) for item in collection) + 1 if collection else 1
+        return max((item.id for item in collection), default=0) + 1
     
     def _find_player_id_by_name(self, name: str) -> int | None:
         """
@@ -329,33 +360,41 @@ class DataManager:
         name_norm = name.strip().lower()
         return next(
             (
-                player.get("id")
+                player.id
                 for player in self.players
-                if player.get("name", "").strip().lower() == name_norm
+                if player.name.strip().lower() == name_norm
             ),
             None,
         )
     
     def add_match(self, match_data: dict, player_performances: list[dict]):
         match_id = self._generate_id(self.matches)
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now()
         
         logger.info(f"Adding match {match_id} with {len(player_performances)} player performances.")
         
-        normalised_performances = []
+        normalized_performances = []
         for perf in player_performances:
-            perf_copy = perf.copy()
-            perf_copy["player_id"] = self._find_player_id_by_name(perf_copy.get("player_name", ""))
-            perf_copy.pop("player_name", None)  # Remove name after finding ID
-            normalised_performances.append(perf_copy)
+            p_name = perf.get("player_name", "")
+            p_id = self._find_player_id_by_name(p_name)
+            
+            # Remove name, add ID
+            perf_data = {k: v for k, v in perf.items() if k != "player_name"}
+            perf_data["player_id"] = p_id or 0
+            
+            if perf.get("performance_type") == "GK":
+                normalized_performances.append(GoalkeeperPerformance(**perf_data))
+            else:
+                normalized_performances.append(OutfieldPlayerPerformance(**perf_data))
         
-        new_match = {
-            "id": match_id,
-            "datetime": timestamp,
-            "data": match_data,
-            "player_performances": normalised_performances
-        }
+        new_match = Match(
+            id=match_id,
+            datetime=timestamp,
+            data=MatchData(**match_data),
+            player_performances=normalized_performances
+        )
+        
         self.matches.append(new_match)
         self._save_json(self.matches_path, self.matches)
         # Reload matches to ensure consistency
-        self.matches = self._load_json(self.matches_path)
+        self.matches = self._load_json(self.matches_path, Match)
