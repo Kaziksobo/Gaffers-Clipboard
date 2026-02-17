@@ -13,6 +13,13 @@ class AddFinancialFrame(ctk.CTkFrame):
         logger.info("Initializing AddFinancialFrame")
         
         self.data_vars = {}
+        self.stat_definitions = [
+            ("wage", "Wage"),
+            ("market_value", "Market Value"),
+            ("contract_length", "Contract Length (years)"),
+            ("release_clause", "Release Clause"),
+            ("sell_on_clause", "Sell On Clause (%)")
+        ]
         self.player_names = []
         
         self.grid_columnconfigure(0, weight=1)
@@ -78,11 +85,11 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.financial_frame.grid_columnconfigure(2, weight=0)
         self.financial_frame.grid_columnconfigure(3, weight=1)
         
-        for i in range(len(data_names)):
+        for i in range(len(self.stat_definitions)):
             self.financial_frame.grid_rowconfigure(i, weight=1)
         
-        for i, data in enumerate(data_names):
-            self.create_data_row(i, data, theme)
+        for i, (key, name) in enumerate(self.stat_definitions):
+            self.create_data_row(i, key, name, theme)
         
         # Done Button
         self.done_button = ctk.CTkButton(
@@ -95,7 +102,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         )
         self.done_button.grid(row=4, column=1)
     
-    def create_data_row(self, index: int, data_name: str, theme: dict) -> None:
+    def create_data_row(self, index: int, data_key: str, data_name: str, theme: dict) -> None:
         data_label = ctk.CTkLabel(
             self.financial_frame,
             text=data_name,
@@ -105,7 +112,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
         data_var = ctk.StringVar(value="")
-        self.data_vars[data_name] = data_var
+        self.data_vars[data_key] = data_var
         data_entry = ctk.CTkEntry(
             self.financial_frame,
             textvariable=data_var,
@@ -119,7 +126,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         """Compiles the captured financial inputs and commits them to the controller for persistence. 
         This method finalizes the financial data entry workflow and navigates back to the player library view.
         """
-        financial_data = {name: safe_int_conversion(var.get().replace(',', '').replace('.', '')) for name, var in self.data_vars.items()}
+        financial_data = {key: safe_int_conversion(var.get().replace(',', '').replace('.', '')) for key, var in self.data_vars.items()}
         
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
@@ -129,22 +136,24 @@ class AddFinancialFrame(ctk.CTkFrame):
         # If wage or market value aren't provided, this is also an error
         # Handle both of the above with a logger warning and return for now, specifiying the field that was left empty
         # If contract length, release clause, or sell on clause are missing, we can default them to zero
-        for key in ["Contract Length (years)", "Release Clause", "Sell On Clause (%)"]:
-            if financial_data[key] is None:
-                financial_data[key] = 0
+        
         
         missing_fields = []
         if player == "Click here to select player" or player == "No players found" or not player:
             missing_fields.append("Player")
         if not season:
             missing_fields.append("Season")
-        if financial_data["Wage"] is None:
+        if financial_data["wage"] is None:
             missing_fields.append("Wage")
-        if financial_data["Market Value"] is None:
+        if financial_data["market_value"] is None:
             missing_fields.append("Market Value")
         
+        for field in ["contract_length", "release_clause", "sell_on_clause"]:
+            if financial_data[field] is None:
+                financial_data[field] = 0
+        
         if missing_fields:
-            logger.warning(f"Validation Failed: Missing fields - {', '.join(missing_fields)}")
+            logger.warning(f"Validation Failed: Missing fields - {(', '.join(missing_fields)).title()}")
             return
         
         self.controller.save_financial_data(player, financial_data, season)
