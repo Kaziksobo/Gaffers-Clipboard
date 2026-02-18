@@ -121,7 +121,7 @@ The goal of this phase is to refactor the application's architecture to support 
 ---
 ## Phase 7: Refactoring, Usability & Robustness 
 
-**Status: Not Started** 
+***Status: In Progress*** 
 
 The goal of this phase is to "harden" the application—improving stability, cleaning up the codebase, and adding essential Quality of Life features for the end user before diving into advanced analytics. 
 ### To-Do List: 
