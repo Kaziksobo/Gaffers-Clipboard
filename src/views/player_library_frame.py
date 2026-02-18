@@ -52,6 +52,7 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.buttons_grid.grid_columnconfigure(1, weight=1)
         self.buttons_grid.grid_columnconfigure(2, weight=1)
         self.buttons_grid.grid_columnconfigure(3, weight=1)
+        self.buttons_grid.grid_columnconfigure(4, weight=1)
         self.buttons_grid.grid_rowconfigure(0, weight=1)
         
         self.add_gk_button = ctk.CTkButton(
@@ -84,6 +85,16 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         )
         self.add_financial_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
         
+        self.add_injury_button = ctk.CTkButton(
+            self.buttons_grid,
+            text="Add Player Injury Record",
+            fg_color=theme["colors"]["button_fg"],
+            text_color=theme["colors"]["primary_text"],
+            font=theme["fonts"]["button"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddInjuryFrame"))
+        )
+        self.add_injury_button.grid(row=0, column=3, padx=10, pady=5, sticky="ew")
+        
         self.leave_button = ctk.CTkButton(
             self.buttons_grid,
             text="Sell/loan Player",
@@ -92,7 +103,8 @@ class PlayerLibraryFrame(ctk.CTkFrame):
             font=theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("LeftPlayerFrame"))
         )
-        self.leave_button.grid(row=0, column=3, padx=10, pady=5, sticky="ew")
+        self.leave_button.grid(row=0, column=4, padx=10, pady=5, sticky="ew")
+        
         
         self.home_button = ctk.CTkButton(
             self,

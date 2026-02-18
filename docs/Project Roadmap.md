@@ -128,7 +128,9 @@ The goal of this phase is to "harden" the application—improving stability, cle
 - [ ] **Codebase Refactoring**
 	- [x] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
 	- [x] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
-	- [ ] Make data manager save keys in snake case
+	- [x] Make data manager save keys in snake case
+	- [x] Implement `pydantic` across the data manager for more rigorous data structuring
+		- [ ] Possibly implement across the rest of the application for documentation purposes?
 - [x] **Implement Logging**
 	- [x] Replace all `print()` statements with the Python `logging` module to generate well-formatted, timestamped log files for easier debugging.
 - [ ] **Error Handling & Feedback** 
@@ -137,10 +139,10 @@ The goal of this phase is to "harden" the application—improving stability, cle
 - [ ] **Resolution Independence** 
 	- [ ] Move from hardcoded pixel coordinates to relative scale factors in `coordinates.json`.
 	- [ ] Implement logic to detect screen resolution and scale OCR regions dynamically (supporting 1080p, 4k, etc.).
-- [ ] **Feature Expansions**
+- [x] **Feature Expansions**
 	- [x] **Financial Data:** Create a new, dedicated frame for inputting player financial data, and saving it with the player attributes.
-	- [ ] **Injuries:** Create a new frame for inputting player injury data, allowing the user to attach it to a player in the library.
-	- [ ] **Separate Injuries and Financial Data:** Keep these two separate from the player attributes, so they can be directly accessed from the player library frame.
+	- [x] **Injuries:** Create a new frame for inputting player injury data, allowing the user to attach it to a player in the library.
+	- [x] **Separate Injuries and Financial Data:** Keep these two separate from the player attributes, so they can be directly accessed from the player library frame.
 	- [x] **Sales and Loans:** Add functionality to mark players as sold or loaned out
 	- [x] **GK Performance Frame:** Create a dedicated UI for entering/OCR-ing Goalkeeper match performance stats.
 	- [x] **Optional Player Stats:** Add a toggle or logic to allow saving a match result *without* needing to enter individual player performances.

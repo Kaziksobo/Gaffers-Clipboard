@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field, ConfigDict, model_validator, Discriminator
+from pydantic import BaseModel, Field, ConfigDict, model_validator, Discriminator, field_validator
 from typing import List, Optional, Literal, Union, Annotated
-from datetime import datetime
+from datetime import datetime as DatetimeType
 from abc import ABC
 
 # Enums and constants
@@ -10,7 +10,7 @@ PositionType = Literal["GK", "LB", "RB", "CB", "LWB", "RWB", "CDM", "CM", "CAM",
 # Attribute models
 class BaseAttributeSnapshot(BaseModel, ABC):
     """Common fields for all attribute snapshots."""
-    datetime: datetime
+    datetime: DatetimeType
     season: str
     model_config = ConfigDict(extra="forbid")
 
@@ -69,20 +69,41 @@ class OutfieldAttributeSnapshot(BaseAttributeSnapshot):
     stand_tackle: int = Field(ge=0, le=99)
     volleys: int = Field(ge=0, le=99)
 
-# Financial and player models
+# Financial, injury and player models
 class FinancialSnapshot(BaseModel):
     """Represents a snapshot of a player's financial status at a given point in time. 
     
     This includes their wage, market value, contract length, release clause, and sell-on clause. 
     The datetime and season fields indicate when this snapshot was taken.
     """
-    datetime: datetime
+    datetime: DatetimeType
     season: str
     wage: int = Field(ge=0)
     market_value: int = Field(ge=0)
     contract_length: int = Field(ge=0, le=15)
     release_clause: int = Field(default=0, ge=0)
     sell_on_clause: int = Field(default=0, ge=0, le=100)
+
+class InjuryRecord(BaseModel):
+    datetime: DatetimeType
+    season: str
+    in_game_date: DatetimeType
+    injury_detail: str
+    time_out: int = Field(ge=0)
+    time_out_unit: Literal["Days", "Weeks", "Months"]
+    
+    @field_validator('in_game_date', mode='before')
+    @classmethod
+    def parse_in_game_date(cls, value):
+        """Convert string in dd/mm/yy format to datetime object."""
+        if isinstance(value, DatetimeType):
+            return value  # Already a datetime
+        if isinstance(value, str):
+            try:
+                return DatetimeType.strptime(value.strip(), "%d/%m/%y")
+            except ValueError as e:
+                raise ValueError(f"Invalid date format. Expected dd/mm/yy, got '{value}'") from e
+        raise ValueError(f"in_game_date must be a string or datetime, got {type(value)}")
 
 class Player(BaseModel):
     """Represents a player in the career mode, including their personal information, position(s), attribute history, and financial history.
@@ -97,7 +118,16 @@ class Player(BaseModel):
     
     # Polymorphic List: Can store either GK or Outfield snapshots
     attribute_history: list[Annotated[Union[GKAttributeSnapshot, OutfieldAttributeSnapshot], Field(discriminator='position_type')]] = Field(default_factory=list)
+    
     financial_history: list[FinancialSnapshot] = Field(default_factory=list)
+    injury_history: list[InjuryRecord] = Field(default_factory=list)
+    
+    @model_validator(mode='after')
+    def ensure_injury_history(self):
+        """Ensure injury_history is initialized (handles migration of existing players)."""
+        if self.injury_history is None:
+            self.injury_history = []
+        return self
     
     sold: bool = False
     loaned: bool = False
@@ -214,7 +244,7 @@ class GoalkeeperPerformance(BaseModel):
 class Match(BaseModel):
     """Represents a match in the career mode, including the match data and player performances."""
     id: int
-    datetime: datetime
+    datetime: DatetimeType
     data: MatchData
     player_performances: list[Annotated[Union[OutfieldPlayerPerformance, GoalkeeperPerformance], Field(discriminator='performance_type')]] = Field(default_factory=list)
 
@@ -224,7 +254,7 @@ class CareerMetadata(BaseModel):
     club_name: str
     folder_name: str
     manager_name: str
-    created_at: datetime
+    created_at: DatetimeType
     starting_season: str
     half_length: int
     difficulty: str

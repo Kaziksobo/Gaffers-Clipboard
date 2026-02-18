@@ -10,6 +10,7 @@ from src.types import (
     GKAttributeSnapshot,
     OutfieldAttributeSnapshot,
     FinancialSnapshot,
+    InjuryRecord,
     Player,
     MatchStats,
     MatchData,
@@ -305,6 +306,30 @@ class DataManager:
         # Reload players to ensure consistency
         self.players = self._load_json(self.players_path, Player)
     
+    def add_injury_record(self, player_name: str, season: str, injury_data: dict) -> None:
+        full_name = player_name.strip().lower()
+        existing_player = next((p for p in self.players if p.name.strip().lower() == full_name), None)
+        
+        if not existing_player:
+            logger.warning(f"Player '{player_name}' not found. Cannot add injury record.")
+            return
+
+        logger.info(f"Saving injury record for {player_name} (Season: {season})")
+        
+        snapshot = InjuryRecord(
+            datetime=datetime.now(),
+            season=season,
+            **injury_data
+        )
+        
+        if not existing_player.injury_history:
+            existing_player.injury_history = []
+        
+        existing_player.injury_history.append(snapshot)
+        self._save_json(self.players_path, self.players)
+        # Reload players to ensure consistency
+        self.players = self._load_json(self.players_path, Player)
+        
     def sell_player(self, player_name: str) -> None:
         logger.info(f"Action: Selling player {player_name}")
         self._update_player_status(player_name, "sold", True)

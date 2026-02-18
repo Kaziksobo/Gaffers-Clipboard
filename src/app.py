@@ -22,6 +22,7 @@ from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 from src.views.add_financial_frame import AddFinancialFrame
 from src.views.left_player_frame import LeftPlayerFrame
 from src.views.gk_stats_frame import GKStatsFrame
+from src.views.add_injury_frame import AddInjuryFrame
 from src.data_manager import DataManager
 
 logger = logging.getLogger(__name__)
@@ -39,7 +40,7 @@ class App(ctk.CTk):
         - Sets window title, size, and minimum size.
         - Initializes the DataManager with the data directory.
         - Creates a container frame for all pages.
-        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2, AddFinancial, LeftPlayer, GKStats).
+        - Instantiates and registers each frame (CareerSelect, CreateCareer, MainMenu, AddMatch, MatchStats, PlayerStats, MatchAdded, PlayerLibrary, AddGK, AddOutfield1, AddOutfield2, AddFinancial, LeftPlayer, GKStats, AddInjury).
         - Displays the career select frame on startup.
         '''
         super().__init__()
@@ -73,7 +74,7 @@ class App(ctk.CTk):
         
         self.frames = {}
         
-        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, LeftPlayerFrame, GKStatsFrame):
+        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, LeftPlayerFrame, GKStatsFrame, AddInjuryFrame):
             frame = F(container, self, THEME)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -255,7 +256,10 @@ class App(ctk.CTk):
             player_name (str): The name of the player to mark as returned from loan.
         """
         self.data_manager.return_loan_player(player_name)
-            
+    
+    def add_injury_record(self, player_name: str, season: str, injury_data: dict) -> None:
+        self.data_manager.add_injury_record(player_name, season, injury_data)
+    
     def process_match_stats(self) -> None:
         '''Process match statistics by capturing a screenshot,
         detecting statistics, and populating the MatchStatsFrame with the results.
