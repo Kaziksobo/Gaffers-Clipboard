@@ -1413,6 +1413,15 @@
                 "contract_length": 3,
                 "release_clause": 0,
                 "sell_on_clause": 0
+            },
+            {
+                "datetime": "2026-02-11 02:22:25",
+                "season": "29/30",
+                "Wage": 130000,
+                "Market Value": 179000000,
+                "Contract Length (years)": 4,
+                "Release Clause": 0,
+                "Sell On Clause (%)": 0
             }
         ],
         "sold": false,
@@ -1722,6 +1731,15 @@
                 "contract_length": 1,
                 "release_clause": 0,
                 "sell_on_clause": 0
+            },
+            {
+                "datetime": "2026-02-11 02:19:13",
+                "season": "29/30",
+                "Wage": 20000,
+                "Market Value": 8500000,
+                "Contract Length (years)": 3,
+                "Release Clause": 0,
+                "Sell On Clause (%)": 0
             }
         ],
         "sold": false,
@@ -1842,6 +1860,15 @@
                 "contract_length": 2,
                 "release_clause": 0,
                 "sell_on_clause": 15
+            },
+            {
+                "datetime": "2026-02-11 02:17:38",
+                "season": "29/30",
+                "Wage": 150000,
+                "Market Value": 132000000,
+                "Contract Length (years)": 3,
+                "Release Clause": 0,
+                "Sell On Clause (%)": 15
             }
         ],
         "sold": false,
@@ -2589,6 +2616,15 @@
                 "contract_length": 1,
                 "release_clause": 0,
                 "sell_on_clause": 0
+            },
+            {
+                "datetime": "2026-02-11 02:18:47",
+                "season": "29/30",
+                "Wage": 20000,
+                "Market Value": 9500000,
+                "Contract Length (years)": 3,
+                "Release Clause": 0,
+                "Sell On Clause (%)": 0
             }
         ],
         "sold": false,
@@ -3297,6 +3333,6 @@
             }
         ],
         "sold": false,
-        "loaned": false
+        "loaned": true
     }
 ]
