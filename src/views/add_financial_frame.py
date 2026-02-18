@@ -78,8 +78,6 @@ class AddFinancialFrame(ctk.CTkFrame):
         )
         self.financial_frame.grid(row=3, column=1, pady=(0, 20))
         
-        data_names = ["Wage", "Market Value", "Contract Length (years)", "Release Clause", "Sell On Clause (%)"]
-        
         self.financial_frame.grid_columnconfigure(0, weight=1)
         self.financial_frame.grid_columnconfigure(1, weight=0)
         self.financial_frame.grid_columnconfigure(2, weight=0)
