@@ -7,17 +7,20 @@ from abc import ABC
 DifficultyLevel = Literal["Beginner", "Amateur", "Semi-Pro", "Professional", "World Class", "Legendary", "Ultimate"]
 PositionType = Literal["GK", "LB", "RB", "CB", "LWB", "RWB", "CDM", "CM", "CAM", "LM", "RM", "LW", "RW", "ST", "CF"]
 
-# Attribute models
+# --- Attribute Models ---
+
 class BaseAttributeSnapshot(BaseModel, ABC):
-    """Common fields for all attribute snapshots."""
+    """Represent common fields for all attribute snapshots."""
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    
     datetime: DatetimeType
     season: str
-    model_config = ConfigDict(extra="forbid")
 
 class GKAttributeSnapshot(BaseAttributeSnapshot):
-    """Fields specific to Goalkeeper attributes. 
+    """Represent fields specific to Goalkeeper attributes.
     
-    The position_type field is used as a discriminator for polymorphic behavior in the Player model's attribute_history list.
+    The position_type field is used as a discriminator for polymorphic behavior 
+    in the Player model's attribute_history list.
     """
     
     position_type: Literal["GK"] = Field(default="GK", description="Discriminator for GK attributes")
@@ -28,9 +31,10 @@ class GKAttributeSnapshot(BaseAttributeSnapshot):
     positioning: int = Field(ge=0, le=99)
 
 class OutfieldAttributeSnapshot(BaseAttributeSnapshot):
-    """Fields specific to Outfield player attributes.
+    """Represent fields specific to Outfield player attributes.
     
-    The position_type field is used as a discriminator for polymorphic behavior in the Player model's attribute_history list.
+    The position_type field is used as a discriminator for polymorphic behavior 
+    in the Player model's attribute_history list.
     """
     
     position_type: Literal["Outfield"] = Field(default="Outfield", description="Discriminator for Outfield attributes")
@@ -69,12 +73,13 @@ class OutfieldAttributeSnapshot(BaseAttributeSnapshot):
     stand_tackle: int = Field(ge=0, le=99)
     volleys: int = Field(ge=0, le=99)
 
-# Financial, injury and player models
+# --- Financial & Injury Models ---
+
 class FinancialSnapshot(BaseModel):
-    """Represents a snapshot of a player's financial status at a given point in time. 
+    """Represent a snapshot of a player's financial status at a given time.
     
-    This includes their wage, market value, contract length, release clause, and sell-on clause. 
-    The datetime and season fields indicate when this snapshot was taken.
+    This includes their wage, market value, contract length, release clause, 
+    and sell-on clause.
     """
     datetime: DatetimeType
     season: str
@@ -85,6 +90,11 @@ class FinancialSnapshot(BaseModel):
     sell_on_clause: int = Field(default=0, ge=0, le=100)
 
 class InjuryRecord(BaseModel):
+    """Represents a record of a player's injury at a specific point in time.
+
+    This includes when the injury occurred, what the injury was, 
+    and how long the player is expected to be out.
+    """
     datetime: DatetimeType
     season: str
     in_game_date: DatetimeType
@@ -94,10 +104,10 @@ class InjuryRecord(BaseModel):
     
     @field_validator('in_game_date', mode='before')
     @classmethod
-    def parse_in_game_date(cls, value):
+    def parse_in_game_date(cls, value: Union[str, DatetimeType]) -> DatetimeType:
         """Convert string in dd/mm/yy format to datetime object."""
         if isinstance(value, DatetimeType):
-            return value  # Already a datetime
+            return value
         if isinstance(value, str):
             try:
                 return DatetimeType.strptime(value.strip(), "%d/%m/%y")
@@ -106,15 +116,18 @@ class InjuryRecord(BaseModel):
         raise ValueError(f"in_game_date must be a string or datetime, got {type(value)}")
 
 class Player(BaseModel):
-    """Represents a player in the career mode, including their personal information, position(s), attribute history, and financial history.
+    """Represent a player in the career mode.
+    
+    Includes personal information, position(s), attribute history, 
+    and financial history.
     """
     id: int
     name: str
     nationality: str
-    age: int = Field(ge=16, le=60)
+    age: int = Field(ge=13, le=60)
     height: str = Field(regex=r'^\d{1,2}\'\d{1,2}"$', description="Format: 6'2\"")
     weight: int = Field(description="Weight in pounds", ge=100, le=300)
-    positions: list[str]
+    positions: list[PositionType]
     
     # Polymorphic List: Can store either GK or Outfield snapshots
     attribute_history: list[Annotated[Union[GKAttributeSnapshot, OutfieldAttributeSnapshot], Field(discriminator='position_type')]] = Field(default_factory=list)
@@ -144,10 +157,11 @@ class Player(BaseModel):
             return None
         return sorted(self.attribute_history, key=lambda x: x.datetime)[-1]
 
-# Match models
+
+# --- Match Models ---
+
 class MatchStats(BaseModel):
-    """Represents the statistics for a team in a match.
-    """
+    """Represents the statistics for a team in a match."""
     possession: int = Field(ge=0, le=100)
     ball_recovery: int = Field(ge=0)
     shots: int = Field(ge=0)
@@ -168,13 +182,14 @@ class MatchStats(BaseModel):
     def validate_tackles(self):
         """Ensures that tackles_won does not exceed tackles."""
         if self.tackles_won > self.tackles:
-            raise ValueError(
-                f'tackles_won ({self.tackles_won}) cannot exceed tackles ({self.tackles})'
-            )
+            raise ValueError(f'tackles_won ({self.tackles_won}) cannot exceed tackles ({self.tackles})')
         return self
 
 class MatchData(BaseModel):
-    """Represents the data for a match, including the date and time, competition, teams involved, scores, and team statistics."""
+    """Represent the data for a match.
+    
+    Includes date, competition, teams, scores, and team statistics.
+    """
     competition: str
     home_team_name: str
     away_team_name: str
@@ -184,10 +199,7 @@ class MatchData(BaseModel):
     away_stats: MatchStats
 
 class OutfieldPlayerPerformance(BaseModel):
-    """Represents the performance of an outfield player in a match
-    
-    The performance_type field is used as a discriminator for polymorphic behavior in the Match model's player_performances list.
-    """
+    """Represent the performance of an outfield player in a match."""
     performance_type: Literal["Outfield"] = Field(default="Outfield", description="Discriminator for Outfield performance")
     goals: int = Field(ge=0)
     assists: int = Field(ge=0)
@@ -209,10 +221,7 @@ class OutfieldPlayerPerformance(BaseModel):
     player_id: int
 
 class GoalkeeperPerformance(BaseModel):
-    """Represents the performance of a goalkeeper in a match
-    
-    The performance_type field is used as a discriminator for polymorphic behavior in the Match model's player_performances list.
-    """
+    """Represent the performance of a goalkeeper in a match."""
     performance_type: Literal["GK"] = Field(default="GK", description="Discriminator for GK performance")
     shots_against: int = Field(ge=0)
     shots_on_target: int = Field(ge=0)
@@ -242,11 +251,14 @@ class GoalkeeperPerformance(BaseModel):
         return self
 
 class Match(BaseModel):
-    """Represents a match in the career mode, including the match data and player performances."""
+    """Represent a complete match record."""
     id: int
     datetime: DatetimeType
     data: MatchData
     player_performances: list[Annotated[Union[OutfieldPlayerPerformance, GoalkeeperPerformance], Field(discriminator='performance_type')]] = Field(default_factory=list)
+
+
+# --- Metadata Models ---
 
 class CareerMetadata(BaseModel):
     """Represents the metadata for a career"""
@@ -257,7 +269,7 @@ class CareerMetadata(BaseModel):
     created_at: DatetimeType
     starting_season: str
     half_length: int
-    difficulty: str
+    difficulty: DifficultyLevel
 
 class CareerDetail(BaseModel):
     """Represents the basic details of a career"""
