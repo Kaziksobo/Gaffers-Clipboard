@@ -1,11 +1,21 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, Optional
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 logger = logging.getLogger(__name__)
 
 class LeftPlayerFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict) -> None:
+    """A management frame for executing player sales and loans."""
+
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the LeftPlayerFrame layout and controls.
+
+        Args:
+            parent (ctk.CTkFrame): The parent container widget.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The application's theme configuration.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -88,61 +98,65 @@ class LeftPlayerFrame(ctk.CTkFrame):
         self.return_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
         
     def get_player_name(self) -> str:
-        """Get the currently selected player's name from the dropdown.
+        """Extract and validate the currently selected player's name from the dropdown.
 
         Returns:
-            str: The name of the selected player.
+            str: The valid name of the selected player, or an empty string if invalid.
         """
         player_name = self.player_list_var.get()
-
-        if player_name == "Click here to select player" or player_name == "No players found" or not player_name:
-            logger.warning("Validation Failed: No player selected.")
+        
+        invalid_states = ["Click here to select player", "No players found", ""]
+        if player_name in invalid_states:
+            logger.warning("Validation Failed: No valid player selected for transfer action.")
             return ""
+            
         return player_name
     
     def sell_player(self) -> None:
-        """
-        Sell the currently selected player and navigate back to the player library.
-
-        This retrieves the chosen player from the dropdown, triggers the controller's
-        sell logic, then switches the view to the player library frame.
-        """
+        """Execute the sale of the currently selected player and return to the library."""
         player_name = self.get_player_name()
         if not player_name:
             return
-        self.controller.sell_player(player_name)
-        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        
+        try:
+            logger.info(f"Initiating sale for player: {player_name}")
+            self.controller.sell_player(player_name)
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        except Exception as e:
+            logger.error(f"Failed to execute player sale: {e}", exc_info=True)
     
     def loan_out_player(self) -> None:
-        """Loan out the currently selected player and return to the player library view.
-
-        This uses the selected player from the dropdown, calls the controller loan
-        action, and then switches the active frame back to the player library.
-        """
+        """Execute the loan-out of the currently selected player and return to the library."""
         player_name = self.get_player_name()
         if not player_name:
             return
-        self.controller.loan_out_player(player_name)
-        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        
+        try:
+            logger.info(f"Initiating loan-out for player: {player_name}")
+            self.controller.loan_out_player(player_name)
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        except Exception as e:
+            logger.error(f"Failed to execute player loan: {e}", exc_info=True)
     
     def return_loan_player(self) -> None:
-        """Return the currently selected player from loan and go back to the player library.
-
-        This gets the selected player from the dropdown, invokes the controller's
-        return from loan method, and navigates back to the player library frame.
-        """
+        """Execute the loan return of the currently selected player and return to the library."""
         player_name = self.get_player_name()
         if not player_name:
             return
-        self.controller.return_loan_player(player_name)
-        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+
+        try:
+            logger.info(f"Initiating loan return for player: {player_name}")
+            self.controller.return_loan_player(player_name)
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        except Exception as e:
+            logger.error(f"Failed to execute player loan return: {e}", exc_info=True)
     
     def refresh_player_dropdown(self) -> None:
-        """Reload player names and update the dropdown."""
+        """Fetch the latest active player list from the database and update the dropdown."""
         names = self.controller.get_all_player_names()
         self.player_dropdown.set_values(names or ["No players found"])
     
     def on_show(self) -> None:
-        """Called when the frame is shown; refreshes the player dropdown."""
+        """Lifecycle hook triggered when the frame is displayed to reset its state."""
         self.refresh_player_dropdown()
         self.player_dropdown.set_value("Click here to select player")

@@ -1,27 +1,28 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, Tuple
 from src.exceptions import UIPopulationError
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
 class AddOutfieldFrame1(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict):
-        '''Initializes the outfield player attribute entry frame for the first page.
-        Sets up input fields for player details and physical/mental attributes, and configures the layout.
-
+    """A data entry frame for the first page of Outfield player attributes."""
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the AddOutfieldFrame1 layout and input fields.
+        
         Args:
-            parent: The parent widget for this frame
-            controller: The main application controller.
-            theme (dict): The theme dictionary containing color and font settings.
-        '''
+            parent (ctk.CTkFrame): The parent widget for this frame.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The theme dictionary containing color and font settings.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
         logger.info("Initializing AddOutfieldFrame1")
         
-        self.attr_vars = {}
-        self.attr_definitions_physical = [
+        self.attr_vars: Dict[str, ctk.StringVar] = {}
+        self.attr_definitions_physical: list[Tuple[str, str]] = [
             ("acceleration", "Acceleration"),
             ("agility", "Agility"),
             ("balance", "Balance"),
@@ -30,7 +31,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             ("stamina", "Stamina"),
             ("strength", "Strength"),
         ]
-        self.attr_definitions_mental = [
+        self.attr_definitions_mental: list[Tuple[str, str]] = [
             ("aggression", "Aggression"),
             ("att_position", "Att. Position"),
             ("composure", "Composure"),
@@ -42,13 +43,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=0)
-        self.grid_rowconfigure(2, weight=0)
-        self.grid_rowconfigure(3, weight=0)
-        self.grid_rowconfigure(4, weight=0)
-        self.grid_rowconfigure(5, weight=0)
-        self.grid_rowconfigure(6, weight=1)
+        for i in range(7):
+            self.grid_rowconfigure(i, weight=1 if i in [0, 6] else 0)
         
         self.name_entry = ctk.CTkEntry(
             self,
@@ -157,17 +153,16 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         )
         self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")
 
-    def create_stat_row(self, index: int, attr_key: str, attr_label: str, theme: dict, physical: bool = True) -> None:
-        '''Creates a row in the attributes grid for a specific outfield player attribute.
-        Adds a label and entry field for the attribute to the grid layout.
-        Splits physical and mental attributes into separate columns.
-
+    def create_stat_row(self, index: int, attr_key: str, attr_label: str, theme: Dict[str, Any], physical: bool = True) -> None:
+        """Creates a row in the attributes grid for a specific player attribute.
+        
         Args:
-            index (int): The row index in the grid.
-            attr_name (str): The name of the attribute.
-            theme (dict): The theme dictionary containing color and font settings.
-            physical (bool, optional): Whether the attribute is physical or mental. Defaults to True.
-        '''
+            row (int): The row index in the grid.
+            attr_key (str): The dictionary key for the data model.
+            attr_label (str): The human-readable label for the UI.
+            theme (Dict[str, Any]): The application theme config.
+            physical (bool): Determines the column (0 for physical, 1 for mental).
+        """
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
             text=attr_label,
@@ -187,13 +182,15 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         )
         self.attr_entry.grid(row=index, column=2 if physical else 4, padx=5, pady=5, sticky="ew")
     
-    def populate_stats(self, stats: dict) -> None:
-        '''Populates the outfield player attribute entry fields with detected statistics.
-        Updates the input fields for each attribute using the provided stats dictionary.
-
+    def populate_stats(self, stats: Dict[str, Any]) -> None:
+        """Populates the UI entry fields with OCR-detected statistics.
+        
         Args:
-            stats (dict): A dictionary containing the detected statistics for the player.
-        '''
+            stats (Dict[str, Any]): A dictionary containing attribute keys and values.
+            
+        Raises:
+            UIPopulationError: If the provided stats dictionary is empty.
+        """
         logger.debug(f"Populating AddOutfieldFrame1 with stats: {stats.keys()}")
         if not stats:
             raise UIPopulationError("Received no data to populate outfield player attributes.")
@@ -204,12 +201,9 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         logger.debug("AddOutfieldFrame1 population complete.")
 
     def on_next_page(self) -> None:
-        """
-        Handles the event when the 'Next Page' button is pressed on the first outfield attributes page.
-        Collects the entered player and attribute data, buffers it, processes the next set of attributes, and navigates to the second attributes page.
-        """
+        """Extracts data, validates completeness, buffers it, and transitions to Page 2."""
         # Convert attributes to int immediately
-        ui_data = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
+        ui_data: Dict[str, Any] = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
         # Handle Text fields
         # "or None" converts empty strings to None for consistent validation
@@ -248,22 +242,20 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
             return
 
-        self.controller.buffer_data(ui_data, gk=False, first=True)
-
-        self.controller.process_player_attributes(gk=False, first=False)
-        self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))
+        try:
+            logger.info("Validation passed. Buffering Outfield Page 1 and triggering Page 2 OCR.")
+            # Buffer the current page's data
+            self.controller.buffer_player_attributes(ui_data, gk=False, first=True)
+            
+            # Trigger OCR for the next page
+            self.controller.process_player_attributes(gk=False, first=False)
+            self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))
+        except Exception as e:
+            # Safely catch OCR or buffering failures so the app doesn't crash on transition
+            logger.error(f"Failed to process transition to Page 2: {e}", exc_info=True)
     
     def on_show(self) -> None:
-        """
-        Clears the following input fields when the frame is shown:
-        - Name
-        - Position
-        - Age
-        - Height
-        - Weight
-        - Country\n
-        Also resets the scrollbar to the top of the attributes grid.
-        """
+        """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self.name_entry.delete(0, 'end')
         self.name_entry.configure(placeholder_text="Enter name here")
         

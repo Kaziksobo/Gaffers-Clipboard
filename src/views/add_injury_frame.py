@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion
 from datetime import datetime
@@ -7,32 +8,36 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 class AddInjuryFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict):
+    """A data entry frame for logging a player's injury record."""
+
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the AddInjuryFrame layout and input fields.
+        
+        Args:
+            parent (ctk.CTkFrame): The parent container widget.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The application's theme configuration.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
-        
+
         logger.info("Initializing AddInjuryFrame")
-        
-        self.data_vars = {}
-        self.stat_definitions = [
+
+        self.data_vars: Dict[str, ctk.StringVar] = {}
+        self.stat_definitions: List[Tuple[str, str]] = [
             ("in_game_date", "In-game Date"),
             ("injury_detail", "Injury Detail"),
             ("time_out", "Time Out")
         ]
         self.player_names = []
         self.time_out_unit_var = ctk.StringVar(value="Select unit")
-        
+
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=0)
-        self.grid_rowconfigure(2, weight=0)
-        self.grid_rowconfigure(3, weight=0)
-        self.grid_rowconfigure(4, weight=0)
-        self.grid_rowconfigure(5, weight=0)
-        self.grid_rowconfigure(6, weight=1)
-        
+        for i in range(6):
+            self.grid_rowconfigure(i, weight=1 if i in [0, 5] else 0)
+
         # Main heading
         self.main_heading = ctk.CTkLabel(
             self,
@@ -41,7 +46,7 @@ class AddInjuryFrame(ctk.CTkFrame):
             text_color=theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1)
-        
+
         # Dropdown to select player
         self.player_list_var = ctk.StringVar(value="Click here to select player")
         self.player_dropdown = ScrollableDropdown(
@@ -53,7 +58,7 @@ class AddInjuryFrame(ctk.CTkFrame):
             placeholder="Click here to select player"
         )
         self.player_dropdown.grid(row=2, column=1)
-        
+
         # Season entry
         self.season_entry = ctk.CTkEntry(
             self,
@@ -64,26 +69,26 @@ class AddInjuryFrame(ctk.CTkFrame):
             placeholder_text="Season (e.g., 24/25)"
         )
         self.season_entry.grid(row=3, column=1)
-        
+
         # Data subgrid
         self.data_frame = ctk.CTkFrame(
             self,
             fg_color=theme["colors"]["background"]
         )
         self.data_frame.grid(row=4, column=1)
-        
+
         self.data_frame.grid_columnconfigure(0, weight=1)
         self.data_frame.grid_columnconfigure(1, weight=0)
         self.data_frame.grid_columnconfigure(2, weight=0)
         self.data_frame.grid_columnconfigure(3, weight=0)
         self.data_frame.grid_columnconfigure(4, weight=1)
-        
+
         for i in range(len(self.stat_definitions)):
             self.data_frame.grid_rowconfigure(i, weight=1)
-        
+
         for i, (key, name) in enumerate(self.stat_definitions):
             self.create_data_row(i, key, name, theme)
-        
+
         # Done Button
         self.done_button = ctk.CTkButton(
             self,
@@ -95,7 +100,8 @@ class AddInjuryFrame(ctk.CTkFrame):
         )
         self.done_button.grid(row=5, column=1)
     
-    def create_data_row(self, index: int, data_key: str, data_name: str, theme: dict) -> None:
+    def create_data_row(self, index: int, data_key: str, data_name: str, theme: Dict[str, Any]) -> None:
+        """Helper to create a label, entry pair, and optional unit combobox for injury data."""
         data_label = ctk.CTkLabel(
             self.data_frame,
             text=data_name,
@@ -132,7 +138,8 @@ class AddInjuryFrame(ctk.CTkFrame):
             time_out_unit_dropdown.grid(row=index, column=3, padx=5, pady=5, sticky="ew")
     
     def on_done_button_press(self):
-        injury_data = {key: var.get().strip() for key, var in self.data_vars.items()}
+        """Validates inputs, formats the date safely, and routes to the Controller."""
+        injury_data: Dict[str, Any] = {key: var.get().strip() for key, var in self.data_vars.items()}
         player_name = self.player_list_var.get()
         season = self.season_entry.get().strip()
         injury_data["time_out_unit"] = self.time_out_unit_var.get()
@@ -156,13 +163,37 @@ class AddInjuryFrame(ctk.CTkFrame):
             logger.warning(f"Cannot add injury record. Missing fields: {', '.join(missing_fields)}")
             return
         
-        # Validate in_game_date format
-        in_game_date_str = injury_data.get("in_game_date", "").strip()
+        # Preemptive Date Validation
+        in_game_date_str = str(injury_data.get("in_game_date", ""))
         try:
             datetime.strptime(in_game_date_str, "%d/%m/%y")
         except ValueError:
             logger.warning(f"Cannot add injury record. Invalid date format for 'In-game Date'. Expected format: dd/mm/yy, got: '{in_game_date_str}'")
             return
 
-        self.controller.add_injury_record(player_name, season, injury_data)
-        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        try:
+            logger.info(f"Validation passed. Saving injury record for {player_name}.")
+            self.controller.add_injury_record(player_name, season, injury_data)
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        except Exception as e:
+            # Safely catch Pydantic rejections or DB locks
+            logger.error(f"Failed to save injury data: {e}", exc_info=True)
+    
+    def refresh_player_dropdown(self) -> None:
+        """Fetch the latest player list from the database and update the custom dropdown."""
+        names = self.controller.data_manager.get_all_player_names()
+        self.player_dropdown.set_values(names)
+        
+        if not names:
+            self.player_dropdown.set_value("No players found")
+
+    def on_show(self) -> None:
+        """Lifecycle hook to clear the UI fields when the frame is displayed."""
+        for var in self.data_vars.values():
+            var.set("")
+            
+        self.season_entry.delete(0, 'end')
+        self.time_out_unit_var.set("Select Unit")
+        
+        self.refresh_player_dropdown()
+        self.player_dropdown.set_value("Click here to select player")

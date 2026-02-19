@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, List, Tuple
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion, safe_float_conversion
@@ -7,24 +8,26 @@ from src.utils import safe_int_conversion, safe_float_conversion
 logger = logging.getLogger(__name__)
 
 class MatchStatsFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict) -> None:
-        '''Frame for displaying match statistics in editable text boxes.
+    """A data entry frame for validating and saving team match statistics."""
 
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the MatchStatsFrame layout and input fields.
+        
         Args:
-            parent: The parent CTk window.
-            controller: The main application controller.
-            theme (dict): The theme dictionary containing colors and fonts.
-        '''
+            parent (ctk.CTkFrame): The parent container widget.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The application's theme configuration.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
         logger.info("Initializing MatchStatsFrame")
         
         # Attributes to store stat variables
-        self.home_stats_vars = {}
-        self.away_stats_vars = {}
+        self.home_stats_vars: Dict[str, ctk.StringVar] = {}
+        self.away_stats_vars: Dict[str, ctk.StringVar] = {}
         
-        self.stat_definitions = [
+        self.stat_definitions: List[Tuple[str, str]] = [
             ("possession", "Possession (%)"),
             ("ball_recovery", "Ball Recovery Time (seconds)"),
             ("shots", "Shots"),
@@ -193,14 +196,8 @@ class MatchStatsFrame(ctk.CTkFrame):
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
-    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: dict) -> None:
-        '''Create a row in the stats grid for a specific statistic.
-
-        Args:
-            row (int): The row number in the grid.
-            stat_name (str): The name of the statistic.
-            theme (dict): The theme dictionary containing colors and fonts.
-        '''
+    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: Dict[str, Any]) -> None:
+        """Helper to create a unified Home/Away entry row for a specific statistic."""
         home_stat_value = ctk.StringVar(value="")
         self.home_stats_vars[stat_key] = home_stat_value
         self.home_stat_entry = ctk.CTkEntry(
@@ -229,13 +226,15 @@ class MatchStatsFrame(ctk.CTkFrame):
         )
         self.away_stat_entry.grid(row=row, column=4, padx=5, pady=5)
 
-    def populate_stats(self, stats_data: dict) -> None:
-        '''Populates the match statistics entry fields with detected statistics.
-        Updates the input fields for each statistic using the provided stats_data dictionary.
-
+    def populate_stats(self, stats_data: Dict[str, Any]) -> None:
+        """Populate the Home and Away entry fields with detected match statistics.
+        
         Args:
-            stats_data (dict): A dictionary containing match statistics for home and away teams.
-        '''
+            stats (Dict[str, Any]): A dictionary containing nested 'home_team' and 'away_team' stats.
+            
+        Raises:
+            UIPopulationError: If the provided stats dictionary is empty.
+        """
         logger.debug(f"Populating MatchStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
             raise UIPopulationError("Received no data to populate match statistics.")
@@ -256,8 +255,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         logger.debug("MatchStatsFrame populated successfully.")
 
     def collect_data(self) -> None:
-        '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
-        '''
+        """Extract inputs, validate them, and securely buffer the match overview data."""
         # Helper to convert stat based on key (xG is float, others are int)
         def convert_stat(key: str, value: str):
             if key == "xG":
@@ -299,28 +297,46 @@ class MatchStatsFrame(ctk.CTkFrame):
             return
 
         # Buffer match overview
-        self.controller.buffer_match_overview(ui_data)
+        logger.info("Match overview validation passed. Buffering data.")
+        try:
+            self.controller.buffer_match_overview(ui_data)
+            logger.debug("Match overview buffered successfully.")
+        except Exception as e:
+            logger.error(f"Error buffering match overview: {e}")
+            raise
     
     def on_next_outfield_player_button_press(self) -> None:
-        '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
-        '''
-        self.collect_data()
-        self.controller.process_player_stats()
-        self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+        """Buffer match overview and transition to adding individual player stats."""
+        try: 
+            self.collect_data()
+            self.controller.process_player_stats()
+            self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+        except Exception as e:
+            logger.error(f"Error during transition to PlayerStatsFrame: {e}", exc_info=True)
+            raise
     
     def on_next_goalkeeper_button_press(self) -> None:
-        '''Handle the button pressing event, initiating screenshot capture and navigating to GKStatsFrame.
-        '''
-        self.collect_data()
-        self.controller.process_player_stats(gk=True)
-        self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
+        """Buffer match overview and transition to adding individual goalkeeper stats."""
+        try:
+            self.collect_data()
+            self.controller.process_player_stats(gk=True)
+            self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
+        except Exception as e:
+            logger.error(f"Error during transition to GKStatsFrame: {e}", exc_info=True)
+            raise
     
     def on_done_button_press(self):
-        self.collect_data()
-        self.controller.save_buffered_match()
-        self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
+        """Buffer match overview and trigger the final database save."""
+        try:
+            self.collect_data()
+            self.controller.save_buffered_match()
+            self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
+        except Exception as e:
+            logger.error(f"Error during finalizing match addition: {e}", exc_info=True)
+            raise
     
     def on_show(self) -> None:
+        """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self.competition_var.set("Select Competition")
         self.competition_dropdown.set_value("Select Competition")
                 

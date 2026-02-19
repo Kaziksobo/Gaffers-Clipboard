@@ -1,27 +1,31 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, Tuple
 from src.exceptions import UIPopulationError
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
 class AddOutfieldFrame2(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict):
-        '''Initializes the outfield player attribute entry frame for the second page.
-        Sets up input fields for technical attributes and configures the layout.
-
+    """The outfield player attribute entry frame for the second page.
+    
+    Sets up input fields for technical attributes and configures the layout.
+    """
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the AddOutfieldFrame2 layout and input fields.
+        
         Args:
-            parent: The parent widget for this frame.
-            controller: The main application controller.
-            theme (dict): The theme dictionary containing color and font settings.
-        '''
+            parent (ctk.CTkFrame): The parent widget for this frame.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The theme dictionary containing color and font settings.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
         logger.info("Initializing AddOutfieldFrame2")
         
-        self.attr_vars = {}
-        self.attr_definitions = [
+        self.attr_vars: Dict[str, ctk.StringVar] = {}
+        self.attr_definitions: list[Tuple[str, str]] = [
             ("ball_control", "Ball Control"),
             ("crossing", "Crossing"),
             ("curve", "Curve"),
@@ -84,15 +88,15 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         )
         self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
 
-    def create_stat_row(self, index: int, attr_key: str, attr_label: str, theme: dict) -> None:
-        '''Creates a row in the attributes grid for a specific technical attribute.
-        Adds a label and entry field for the attribute to the grid layout, placing it in the correct column.
-
+    def create_stat_row(self, index: int, attr_key: str, attr_label: str, theme: Dict[str, Any]) -> None:
+        """Creates a row in the attributes grid for a specific technical attribute.
+        
         Args:
             index (int): The index of the attribute in the list.
-            attr_name (str): The name of the attribute to display.
-            theme (dict): The theme dictionary containing color and font settings.
-        '''
+            attr_key (str): The name of the attribute to display.
+            attr_label (str): The human-readable label for the UI.
+            theme (Dict[str, Any]): The theme dictionary containing color and font settings.
+        """
         # place items in two columns but on the same row index (row = index % half)
         half = 8  # number of rows per column (for a 16-item list)
         row = index % half
@@ -128,13 +132,15 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         )
         attr_entry.grid(row=row, column=entry_col, padx=5, pady=5, sticky="ew")
     
-    def populate_stats(self, stats: dict) -> None:
-        '''Populates the technical attribute entry fields with detected statistics.
-        Updates the input fields for each technical attribute using the provided stats dictionary.
-
+    def populate_stats(self, stats: Dict[str, Any]) -> None:
+        """Populates the technical attribute entry fields with detected statistics.
+        
         Args:
-            stats (dict): A dictionary containing attribute names and their corresponding values.
-        '''
+            stats (Dict[str, Any]): A dictionary containing attribute names and their values.
+            
+        Raises:
+            UIPopulationError: If the provided stats dictionary is empty.
+        """
         logger.debug(f"Populating AddOutfieldFrame2 with stats: {stats.keys()}")
         if not stats:
             raise UIPopulationError("Received no data to populate outfield player attributes.")
@@ -145,10 +151,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         logger.debug("AddOutfieldFrame2 population complete.")
     
     def on_done_button_press(self) -> None:
-        """
-        Handles the event when the 'Done' button is pressed on the technical attributes page.
-        Collects the entered attribute data, saves it through the controller, and navigates back to the player library view.
-        """
+        """Collects attributes, validates them, and routes them to the Controller to save."""
         # Convert all technical attributes to integers
         ui_data = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
@@ -159,8 +162,19 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
             return
 
-        self.controller.buffer_data(ui_data, gk=False, first=False)
-
-        self.controller.save_player()
-
-        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        try:
+            logger.info("Validation passed. Buffering Outfield Page 2 and initiating final save.")
+            
+            # Step 1: Push Page 2 data to the buffer
+            self.controller.buffer_player_attributes(ui_data, gk=False, first=False)
+            
+            # Step 2: Tell the Controller to cross the Pydantic boundary
+            self.controller.save_player()
+            
+            # Step 3: Only navigate if the save was successful!
+            logger.info("Outfield player successfully saved. Returning to Player Library.")
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+            
+        except Exception as e:
+            # Catch Pydantic Validation errors or Database locks safely
+            logger.error(f"Failed to save outfield player data: {e}", exc_info=True)

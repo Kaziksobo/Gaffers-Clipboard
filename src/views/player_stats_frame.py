@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, List, Tuple
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion, safe_float_conversion
@@ -7,21 +8,23 @@ from src.utils import safe_int_conversion, safe_float_conversion
 logger = logging.getLogger(__name__)
 
 class PlayerStatsFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict) -> None:
-        '''Frame for displaying player statistics in editable text boxes.
+    """Frame for displaying and adding individual outfield player match statistics."""
 
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the PlayerStatsFrame layout and input fields.
+        
         Args:
-            parent: The parent CTk window.
-            controller: The main application controller.
-            theme (dict): The theme dictionary containing colors and fonts.
-        '''
+            parent (ctk.CTkFrame): The parent container widget.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The application's theme configuration.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
         logger.info("Initializing PlayerStatsFrame")
         
         # Attributes to store stat variables
-        self.stats_vars = {}
+        self.stats_vars: Dict[str, ctk.StringVar] = {}
         
         self.stat_definitions = [
             ("goals", "Goals"),
@@ -31,9 +34,9 @@ class PlayerStatsFrame(ctk.CTkFrame):
             ("passes", "Passes"),
             ("pass_accuracy", "Pass Accuracy (%)"),
             ("dribbles", "Dribbles"),
-            ("dribbles_success_rate", "Dribbles Success Rate (%)"),
+            ("dribble_success_rate", "Dribbles Success Rate (%)"),
             ("tackles", "Tackles"),
-            ("tackles_success_rate", "Tackles Success Rate (%)"),
+            ("tackle_success_rate", "Tackles Success Rate (%)"),
             ("offsides", "Offsides"),
             ("fouls_committed", "Fouls Committed"),
             ("possession_won", "Possession Won"),
@@ -141,15 +144,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
-    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: dict) -> None:
-        '''Create a row in the stats grid for a specific statistic.
-
-        Args:
-            row (int): The row number in the grid.
-            stat_key (str): The key of the statistic.
-            stat_label (str): The label of the statistic.
-            theme (dict): The theme dictionary containing colors and fonts.
-        '''
+    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: Dict[str, Any]) -> None:
+        """Helper to create a unified entry row for a specific performance statistic."""
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
             text=stat_label,
@@ -169,13 +165,15 @@ class PlayerStatsFrame(ctk.CTkFrame):
         )
         stat_entry.grid(row=row, column=1, padx=5, pady=5, sticky="ew")
     
-    def populate_stats(self, stats_data: dict) -> None:
-        '''Populates player statistics entry fields with detected statistics
-        Updates input fields for each statistic using the provided stats_data dictionary
-
+    def populate_stats(self, stats_data: Dict[str, Any]) -> None:
+        """Populate the entry fields with OCR-detected statistics.
+        
         Args:
-            stats_data (dict): A dictionary containing player statistics for the current match
-        '''
+            stats (Dict[str, Any]): A dictionary containing performance data keys and values.
+            
+        Raises:
+            UIPopulationError: If the provided stats dictionary is empty.
+        """
         logger.debug(f"Populating PlayerStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
             raise UIPopulationError("Received no data to populate player statistics.")
@@ -184,29 +182,17 @@ class PlayerStatsFrame(ctk.CTkFrame):
             self.stats_vars[stat_key].set(str(stats_data.get(stat_key, "0")))
         
         logger.debug("PlayerStatsFrame population complete.")
-
-    def refresh_player_dropdown(self) -> None:
-        names = self.controller.get_all_player_names(only_outfield=True)
-        self.player_dropdown.set_values(names or ["No players found"])
-
-    def on_show(self) -> None:
-        self.refresh_player_dropdown()
-        self.player_dropdown.set_value("Click here to select player")
     
-    def collect_data(self) -> dict:
-        '''Collects the player statistics data from the entry fields.
-
-        Returns:
-            dict: A dictionary containing the collected player statistics.
-        '''
+    def collect_data(self) -> None:
+        """Extract inputs, validate them, and buffer the player performance data."""
         player_name = self.player_list_var.get()
-        
+
         # Validate Player Name first
         if player_name == "Click here to select player" or player_name == "No players found" or not player_name:
             logger.warning("Validation failed: Missing fields - Player")
             return
 
-        ui_data = {}
+        ui_data: Dict[str, Any] = {}
         float_keys = {"distance_covered", "distance_sprinted"}
 
         # Collect and convert stats
@@ -227,23 +213,52 @@ class PlayerStatsFrame(ctk.CTkFrame):
 
         ui_data['player_name'] = player_name
 
-        self.controller.buffer_player_performance(ui_data)
+        logger.info(f"Validation passed for {player_name}. Buffering performance data.")
+        try:
+            self.controller.buffer_player_performance(ui_data)
+            logger.debug(f"Buffered data for {player_name}")
+        except Exception as e:
+            logger.error(f"Error buffering player performance data: {e}", exc_info=True)
+            raise
 
     def on_next_outfield_player_button_press(self) -> None:
-        '''Handle the button pressing event, initiating screenshot capture and navigating to PlayerStatsFrame.
-        '''
+        """Buffer current stats, trigger OCR for the next outfield player, and refresh."""
         self.collect_data()
-        self.controller.process_player_stats()
-        self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+        try:
+            # Trigger the controller OCR logic for the next player
+            self.controller.process_player_stats(gk=False)
+            self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
+        except Exception as e:
+            logger.error(f"Failed to process next outfield player stats: {e}", exc_info=True)
     
     def on_next_goalkeeper_button_press(self) -> None:
-        '''Handle the button pressing event, initiating screenshot capture and navigating to GKStatsFrame.
-        '''
+        """Buffer current stats, trigger OCR for the goalkeeper, and transition view."""
         self.collect_data()
-        self.controller.process_player_stats(gk=True)
-        self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
+        try:
+            # Trigger the controller OCR logic for the goalkeeper
+            self.controller.process_player_stats(gk=True)
+            # Assuming you have a separate frame for GK stats
+            self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
+        except Exception as e:
+            logger.error(f"Failed to process next goalkeeper stats: {e}", exc_info=True)
     
     def on_done_button_press(self):
+        """Buffer final player stats and command the controller to save the entire match."""
         self.collect_data()
-        self.controller.save_buffered_match()
-        self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
+        try:
+            logger.info("Initiating final match save from PlayerStatsFrame.")
+            self.controller.save_buffered_match()
+            self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
+        except Exception as e:
+            # Crucial catch for DataPersistenceError to prevent data loss via hard-crash
+            logger.error(f"Failed to save the match to persistent storage: {e}", exc_info=True)
+
+    def refresh_player_dropdown(self) -> None:
+        """Fetch the latest active player list from the database and update the dropdown."""
+        names = self.controller.get_all_player_names(only_outfield=True)
+        self.player_dropdown.set_values(names or ["No players found"])
+
+    def on_show(self) -> None:
+        """Lifecycle hook to clear the UI fields and refresh the dropdown when displayed."""
+        self.refresh_player_dropdown()
+        self.player_dropdown.set_value("Click here to select player")

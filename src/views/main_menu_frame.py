@@ -1,17 +1,20 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, Optional
+from src.types import CareerMetadata
 
 logger = logging.getLogger(__name__)
 
 class MainMenuFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict) -> None:
-        '''Main menu frame for the application.
+    """The central navigation hub shown after a career is successfully loaded."""
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the MainMenuFrame and its navigation components.
 
         Args:
-            parent: The parent CTk window.
-            controller: The main application controller.
-            theme (dict): The theme dictionary containing colors and fonts.
-        '''
+            parent (ctk.CTkFrame): The parent container.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The application's theme configuration.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -21,8 +24,8 @@ class MainMenuFrame(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(4, weight=1)
+        for i in range(5):
+            self.grid_rowconfigure(i, weight=1 if i in [0, 4] else 0)
 
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -73,20 +76,19 @@ class MainMenuFrame(ctk.CTkFrame):
         self.add_match_button.pack(side="right", padx=(10, 0), pady=10)
     
     def get_career_welcome_text(self) -> str:
-        """Generates the welcome text shown on the main menu. Adapts the message based on the currently loaded career details.
+        """Generate a personalized welcome message based on the active career.
 
         Returns:
-            str: A formatted welcome message including club and manager names when available, otherwise a generic welcome message.
+            str: A formatted string including the club and manager name.
         """
-        current_career = self.controller.get_current_career_details()
-        if current_career:
-            club_name = current_career["club_name"] or "your club"
-            manager_name = current_career["manager_name"] or "Gaffer"
-            return f"Welcome back to {club_name}, {manager_name}!"
-        else:
-            return "Welcome to Gaffer's Clipboard!"
+        if current_career := self.controller.get_current_career_details():
+            # Use dot notation for Pydantic attributes
+            return f"Welcome back to {current_career.club_name}, {current_career.manager_name}!"
+
+        logger.warning("No active career found while generating welcome text.")
+        return "Welcome to Gaffer's Clipboard!"
     
     def on_show(self) -> None:
-        """Called when the frame is shown. Refreshes the welcome text."""
+        """Lifecycle hook triggered when the frame is displayed to refresh content."""
         welcome_text = self.get_career_welcome_text()
         self.main_heading.configure(text=welcome_text)

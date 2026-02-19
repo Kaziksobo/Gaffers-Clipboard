@@ -1,12 +1,20 @@
 import customtkinter as ctk
 import logging
+from typing import Dict, Any, List
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
 class CreateCareerFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict) -> None:
-        ## Entries for club name, manager name, starting year, half length, match difficulty
+    """A frame that provides a form for users to create a new FIFA career profile."""
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the CreateCareerFrame with input fields and layout.
+
+        Args:
+            parent (ctk.CTkFrame): The parent container.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The application's theme configuration.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         
@@ -152,26 +160,36 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.create_career_button.grid(row=3, column=1)
         
     def on_create_career_button_press(self) -> None:
-        club_name = self.club_name_entry.get().strip()
-        manager_name = self.manager_name_entry.get().strip()
-        starting_season = self.starting_season_entry.get().strip()
-        half_length = safe_int_conversion(self.half_length_entry.get().strip())
-        match_difficulty = self.match_difficulty_var.get().strip()
+        """Validate input fields and invoke the controller to create a new career profile."""
+        club = self.club_name_entry.get().strip()
+        manager = self.manager_name_entry.get().strip()
+        season = self.starting_season_entry.get().strip()
+        length = safe_int_conversion(self.half_length_entry.get().strip())
+        difficulty = self.difficulty_var.get()
 
-        # Define validation rules: (value, field_name, condition)
-        fields_to_validate = [
-            (club_name, "Club Name", bool(club_name)),
-            (manager_name, "Manager Name", bool(manager_name)),
-            (starting_season, "Starting Season", bool(starting_season)),
-            (half_length, "Half Length", half_length is not None),
-            (match_difficulty, "Match Difficulty", match_difficulty and match_difficulty != "Select Difficulty"),
-        ]
+        missing_fields = []
+        if not club: missing_fields.append("Club Name")
+        if not manager: missing_fields.append("Manager Name")
+        if not season: missing_fields.append("Starting Season")
+        if not length: missing_fields.append("Half Length")
+        if difficulty == "Select Difficulty": missing_fields.append("Difficulty")
 
-        if missing_fields := [
-            name for _, name, is_valid in fields_to_validate if not is_valid
-        ]:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+        if missing_fields:
+            logger.warning(f"Career creation blocked. Missing fields: {', '.join(missing_fields)}")
             return
 
-        self.controller.save_new_career(club_name, manager_name, starting_season, int(half_length), match_difficulty)
-        self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
+        try:
+            # Difficulty is cast to the DifficultyLevel literal type
+            self.controller.save_new_career(
+                club_name=club,
+                manager_name=manager,
+                starting_season=season,
+                half_length=length,
+                match_difficulty=difficulty # type: ignore
+            )
+            
+            logger.info(f"Successfully created career for {club}. Navigating to Main Menu.")
+            self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
+            
+        except Exception as e:
+            logger.error(f"Failed to create new career: {e}", exc_info=True)

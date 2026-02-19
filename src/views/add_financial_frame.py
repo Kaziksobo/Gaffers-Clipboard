@@ -1,19 +1,29 @@
 import customtkinter as ctk
 import logging
-from src.exceptions import UIPopulationError
+from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
 
 class AddFinancialFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller, theme: dict):
+    """A data entry frame for updating a player's financial and contract details."""
+
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+        """Initialize the AddFinancialFrame layout and input fields.
+        
+        Args:
+            parent (ctk.CTkFrame): The parent container widget.
+            controller (Any): The main application controller.
+            theme (Dict[str, Any]): The application's theme configuration.
+        """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        
         logger.info("Initializing AddFinancialFrame")
         
-        self.data_vars = {}
-        self.stat_definitions = [
+        self.data_vars: Dict[str, ctk.StringVar] = {}
+        self.stat_definitions: List[Tuple[str, str]] = [
             ("wage", "Wage"),
             ("market_value", "Market Value"),
             ("contract_length", "Contract Length (years)"),
@@ -100,7 +110,8 @@ class AddFinancialFrame(ctk.CTkFrame):
         )
         self.done_button.grid(row=4, column=1)
     
-    def create_data_row(self, index: int, data_key: str, data_name: str, theme: dict) -> None:
+    def create_data_row(self, index: int, data_key: str, data_name: str, theme: Dict[str, Any]) -> None:
+        """Helper to create a label and entry pair for a financial data point."""
         data_label = ctk.CTkLabel(
             self.financial_frame,
             text=data_name,
@@ -121,10 +132,11 @@ class AddFinancialFrame(ctk.CTkFrame):
         data_entry.grid(row=index, column=2, padx=5, pady=5, sticky="ew")
     
     def on_done_button_press(self) -> None:
-        """Compiles the captured financial inputs and commits them to the controller for persistence. 
-        This method finalizes the financial data entry workflow and navigates back to the player library view.
-        """
-        financial_data = {key: safe_int_conversion(var.get().replace(',', '').replace('.', '')) for key, var in self.data_vars.items()}
+        """Validates inputs, safely extracts monetary values, and routes to the Controller."""
+        financial_data: Dict[str, Any] = {
+            key: safe_int_conversion(var.get().replace(',', '').replace('.', '').replace('k', '000').replace('m', '000000').replace('€', '').replace('£', '').replace('$', ''))
+            for key, var in self.data_vars.items()
+        }
         
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
@@ -154,17 +166,22 @@ class AddFinancialFrame(ctk.CTkFrame):
             logger.warning(f"Validation Failed: Missing fields - {(', '.join(missing_fields)).title()}")
             return
         
-        self.controller.save_financial_data(player, financial_data, season)
-
-        self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        try:
+            logger.info(f"Validation passed. Saving financial data for {player}.")
+            self.controller.save_financial_data(player, financial_data, season)
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+        except Exception as e:
+            # Safely catch Pydantic rejections or DB locks
+            logger.error(f"Failed to save financial data: {e}", exc_info=True)
     
     def refresh_player_dropdown(self) -> None:
+        """Fetch the latest player list from the database and update the custom dropdown."""
         names = self.controller.get_all_player_names()
         self.player_names = names or ["No players found"]
         self.player_dropdown.set_values(self.player_names)
             
     def on_show(self) -> None:
-        """Resets all input fields and refreshes the player dropdown."""
+        """Lifecycle hook to clear the UI fields when the frame is displayed."""
         for var in self.data_vars.values():
             var.set("")
         
