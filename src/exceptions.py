@@ -34,3 +34,18 @@ class InvalidImageError(OCRError):
 class NoDigitsFoundError(OCRError):
     '''Raised when no digit-like contours are found in the ROI.'''
     pass
+
+
+class DataError(Exception):
+    '''Base class for data-related errors.'''
+    pass
+
+class IncompleteDataError(DataError):
+    """Raised when attempting to save a record but the UI buffers are missing required 
+    pages (e.g., page 2 of outfield stats) or critical context fields (name, position)."""
+    pass
+
+class DataPersistenceError(DataError):
+    """Raised when the DataManager fails to save a record, usually wrapping a 
+    Pydantic ValidationError or a file I/O issue."""
+    pass
