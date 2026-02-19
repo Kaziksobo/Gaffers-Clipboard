@@ -1,8 +1,9 @@
 import cv2 as cv
 import numpy as np
 import logging
-from pathlib import Path
 import sys
+from pathlib import Path
+from typing import Tuple, Dict, Any, Optional, Union
 from src.exceptions import OCRError, ModelLoadError, InvalidImageError, NoDigitsFoundError
 
 logger = logging.getLogger(__name__)
@@ -15,17 +16,15 @@ CONFIDENCE_THRESHOLD = 0.5
 
 
 def load_ocr_model() -> cv.ml.KNearest:
-    '''
-    Loads the KNN OCR model from the model directory.
-
-    This function retrieves a pre-trained KNN model for digit recognition from disk and returns it for use in OCR tasks.
-
-    Raises:
-        FileNotFoundError: If the model file does not exist at the expected path.
-
+    """Loads the pre-trained K-Nearest Neighbors model for digit recognition.
+    
     Returns:
-        knn (cv.ml.KNearest): loaded KNN model that can be used in OCR methods
-    '''
+        cv.ml_KNearest: The loaded OpenCV model.
+        
+    Raises:
+        FileNotFoundError: If the model file cannot be found or fails to load.
+        ModelLoadError: If the model file is found but cannot be read or parsed correctly.
+    """
     # Specifies the file path of the model
     model_path = PROJECT_ROOT / "model" / "knn_ocr_model.yml"
     if not model_path.exists():
@@ -57,8 +56,9 @@ def preprocess_roi(
     erode_kernel: tuple[int, int] = (3, 3),
     erode_iterations: int = 2,
     min_h: int = 18,
-    min_w: int = 8) -> dict:
-    '''Preprocesses a region of interest (ROI) from a screenshot for digit recognition.
+    min_w: int = 8) -> dict[str, Any]:
+    '''Extracts a Region of Interest (ROI) from a screenshot and processes it for OCR.
+    
     This function extracts, resizes, and processes the ROI to enhance digit-like features, 
     returning intermediate images and candidate digit regions.
 
@@ -74,9 +74,7 @@ def preprocess_roi(
         min_w (int, optional): Minimum width for candidate digits. Defaults to 8.
 
     Raises:
-        InvalidImageError: If the input image is empty
-        InvalidImageError: If the ROI is out of bounds for the image
-        InvalidImageError: If the cropped ROI is empty
+        InvalidImageError: If the input image is None or the ROI is invalid (e.g., out of bounds, zero-area).
 
     Returns:
         dict: A dictionary containing the processed images and candidate regions. The keys are:
@@ -148,7 +146,7 @@ def recognise_number(
     roi: tuple[int, int, int, int], 
     ocr_model: cv.ml.KNearest, 
     debug: bool = False,
-    preprocess_args: dict | None = None) -> int | tuple[int | None, dict]:
+    preprocess_args: dict | None = None) -> Union[int, Tuple[int, np.ndarray]]:
     """
     Recognise a number from a screenshot ROI using a KNN OCR model.
 
@@ -244,15 +242,18 @@ def recognise_number(
     return recognized_value
 
 def save_debug_image(filename: str, image: np.ndarray) -> None:
-    '''Saves an image to the debug images directory for inspection and troubleshooting.
-
-    This function writes the provided image to a file in the "testing/debug_images" directory under the project root.
-
+    """Utility function to save a debug image to disk.
+    
     Args:
-        filename (str): Name to save the file under
-        image (np.ndarray): Image to be saved
-    '''
-    result = PROJECT_ROOT / "testing" / "debug_images" / filename
-    result.parent.mkdir(parents=True, exist_ok=True)
-    cv.imwrite(str(result), image)
-    logger.debug(f"Saved debug image: {result}")
+        image (np.ndarray): The OpenCV image array to save.
+        filename (str): The desired filename (must include extension).
+    """
+    debug_dir = PROJECT_ROOT / "debug_images"
+    debug_dir.mkdir(parents=True, exist_ok=True)
+    
+    filepath = debug_dir / filename
+    try:
+        cv.imwrite(str(filepath), image)
+        logger.debug(f"Saved debug image: {filepath}")
+    except Exception as e:
+        logger.error(f"Failed to save debug image {filepath}: {e}")
