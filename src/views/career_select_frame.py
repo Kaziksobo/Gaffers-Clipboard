@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import logging
+from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 logger = logging.getLogger(__name__)
 
@@ -53,15 +54,14 @@ class CareerSelectFrame(ctk.CTkFrame):
         
         # Drop down of current careers
         self.careers_list_var = ctk.StringVar(value="Select Career")
-        self.careers_dropdown = ctk.CTkOptionMenu(
+        self.careers_dropdown = ScrollableDropdown(
             self.career_select_frame,
+            theme=theme,
             variable=self.careers_list_var,
             values=self.controller.data_manager.get_all_career_names(),
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["dropdown_fg"],
-            text_color=theme["colors"]["primary_text"],
-            button_color=theme["colors"]["button_fg"],
-            # command=lambda choice: self.controller.set_current_career_by_name(choice)
+            width=350,
+            dropdown_height=200,
+            placeholder="Select Career"
         )
         self.careers_dropdown.grid(row=0, column=0, pady=10)
         
@@ -102,11 +102,13 @@ class CareerSelectFrame(ctk.CTkFrame):
     
     def refresh_careers_dropdown(self) -> None:
         names = self.controller.data_manager.get_all_career_names()
-        self.careers_dropdown.configure(values=names)
+        self.careers_dropdown.set_values(names)
         
         prev = self.careers_list_var.get()
         if prev not in names:
-            self.careers_list_var.set(names[0] if names and names[0] != "No Careers Available" else "Select Career")
+            self.careers_dropdown.set_value(
+                names[0] if names and names[0] != "No Careers Available" else "Select Career"
+            )
     
     def on_show(self) -> None:
         self.refresh_careers_dropdown()
