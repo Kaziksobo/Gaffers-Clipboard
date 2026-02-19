@@ -1,12 +1,13 @@
-def safe_int_conversion(value: str | int | None) -> int | None:
-    """
-    Safely converts a value to an integer or returns None when conversion is not possible.
+from typing import Optional, Union
 
+def safe_int_conversion(value: Optional[Union[str, int, float]]) -> Optional[int]:
+    """Safely converts a value to an integer, returning None if conversion fails.
+    
     Args:
-        value (str | int | None): The value to convert to an integer.
-
+        value (Optional[Union[str, int, float]]): The value to convert.
+        
     Returns:
-        int | None: The converted integer, or None if the input is empty, invalid, or None.
+        Optional[int]: The converted integer, or None if the input is empty, invalid, or None.
     """
     if value is None:
         return None
@@ -28,15 +29,14 @@ def safe_int_conversion(value: str | int | None) -> int | None:
     
     return None
 
-def safe_float_conversion(value: str | float | None) -> float | None:
-    """
-    Safely converts a value to a float or returns None when conversion is not possible.
-
+def safe_float_conversion(value: Optional[Union[str, int, float]]) -> Optional[float]:
+    """Safely converts a value to a float, returning None if conversion fails.
+    
     Args:
-        value (str | float | None): The value to convert to a float.
-
+        value (Optional[Union[str, int, float]]): The value to convert.
+        
     Returns:
-        float | None: The converted float, or None if the input is empty, invalid, or None.
+        Optional[float]: The converted float, or None if the input is empty, invalid, or None.
     """
     if value is None:
         return None
