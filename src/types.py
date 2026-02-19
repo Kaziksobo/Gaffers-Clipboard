@@ -15,6 +15,7 @@ class BaseAttributeSnapshot(BaseModel, ABC):
     
     datetime: DatetimeType
     season: str
+    position: Optional[str] = Field(default=None, description="Specific position (e.g. ST, LB)")
 
 class GKAttributeSnapshot(BaseAttributeSnapshot):
     """Represent fields specific to Goalkeeper attributes.
@@ -125,7 +126,7 @@ class Player(BaseModel):
     name: str
     nationality: str
     age: int = Field(ge=13, le=60)
-    height: str = Field(regex=r'^\d{1,2}\'\d{1,2}"$', description="Format: 6'2\"")
+    height: str = Field(pattern=r'^\d{1,2}\'\d{1,2}"$', description="Height in format X'Y\" (e.g., 6'2\")")
     weight: int = Field(description="Weight in pounds", ge=100, le=300)
     positions: list[PositionType]
     
