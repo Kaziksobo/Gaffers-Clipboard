@@ -232,7 +232,7 @@ class GKStatsFrame(ctk.CTkFrame):
         try:
             logger.info("Initiating final match save from GKStatsFrame.")
             self.controller.save_buffered_match()
-            self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
+            self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
         except Exception as e:
             # Crucial catch for DataPersistenceError to prevent data loss via hard-crash
             logger.error(f"Failed to save the match to persistent storage: {e}", exc_info=True)
