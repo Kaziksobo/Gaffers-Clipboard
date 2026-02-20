@@ -211,7 +211,8 @@ class PlayerStatsFrame(ctk.CTkFrame):
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
             return
 
-        ui_data['player_name'] = player_name
+        ui_data["player_name"] = player_name
+        ui_data["performance_type"] = "Outfield"
 
         logger.info(f"Validation passed for {player_name}. Buffering performance data.")
         try:

@@ -194,7 +194,8 @@ class GKStatsFrame(ctk.CTkFrame):
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
             return 
         
-        ui_data['player_name'] = player_name
+        ui_data["player_name"] = player_name
+        ui_data["performance_type"] = "GK"
         
         logger.info(f"Validation passed for {player_name}. Buffering performance data.")
         try:
@@ -238,7 +239,7 @@ class GKStatsFrame(ctk.CTkFrame):
     
     def refresh_player_dropdown(self) -> None:
         """Fetch the latest active player list from the database and update the dropdown."""
-        names = self.controller.get_all_player_names(only_outfield=True)
+        names = self.controller.get_all_player_names(only_gk=True)
         self.player_dropdown.set_values(names or ["No players found"])
 
     def on_show(self) -> None:
