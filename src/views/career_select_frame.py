@@ -120,6 +120,7 @@ class CareerSelectFrame(ctk.CTkFrame):
     def on_show(self) -> None:
         """Lifecycle hook triggered when this frame is brought to the front."""
         self.refresh_careers_dropdown()
+        self.careers_dropdown.set_value("Click here to select career")
     
     def on_select_button_press(self) -> None:
         """Validate UI selection, set the active career, and navigate to the Main Menu."""
