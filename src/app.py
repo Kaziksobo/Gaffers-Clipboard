@@ -210,7 +210,7 @@ class App(ctk.CTk):
             
         return self.data_manager.get_career_details(self.current_career)
     
-    def get_all_player_names(self, only_outfield: bool = False, only_gk: bool = False) -> list[str]:
+    def get_all_player_names(self, only_outfield: bool = False, only_gk: bool = False, remove_on_loan: bool = False) -> list[str]:
         """Retrieve a sorted list of active player names for UI dropdowns.
 
         Filters out players marked as 'sold'. Can optionally filter by 
@@ -219,6 +219,7 @@ class App(ctk.CTk):
         Args:
             only_outfield (bool): If True, excludes goalkeepers.
             only_gk (bool): If True, strictly returns goalkeepers.
+            remove_on_loan (bool): If True, excludes players marked as on loan.
 
         Returns:
             List[str]: Alphabetically sorted list of player names (by surname). 
@@ -233,7 +234,7 @@ class App(ctk.CTk):
         # Filter out sold players
         active_players = [
             player for player in self.data_manager.players
-            if not player.sold
+            if not player.sold and not (remove_on_loan and player.loaned)
         ]
 
         # Apply positional filters using the Player model's `is_goalkeeper` property

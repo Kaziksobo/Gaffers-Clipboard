@@ -230,7 +230,7 @@ class GKStatsFrame(ctk.CTkFrame):
         """Buffer final player stats and command the controller to save the entire match."""
         self.collect_data()
         try:
-            logger.info("Initiating final match save from PlayerStatsFrame.")
+            logger.info("Initiating final match save from GKStatsFrame.")
             self.controller.save_buffered_match()
             self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
         except Exception as e:
@@ -239,7 +239,7 @@ class GKStatsFrame(ctk.CTkFrame):
     
     def refresh_player_dropdown(self) -> None:
         """Fetch the latest active player list from the database and update the dropdown."""
-        names = self.controller.get_all_player_names(only_gk=True)
+        names = self.controller.get_all_player_names(only_gk=True, remove_on_loan=True)
         self.player_dropdown.set_values(names or ["No players found"])
 
     def on_show(self) -> None:
