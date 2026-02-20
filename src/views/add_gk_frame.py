@@ -21,7 +21,7 @@ class AddGKFrame(ctk.CTkFrame):
         
         logger.info("Initializing AddGKFrame")
         
-        self.attr_var: Dict[str, ctk.StringVar] = {}
+        self.attr_vars: Dict[str, ctk.StringVar] = {}
         self.attr_definitions = [
             ("diving", "Diving"),
             ("handling", "Handling"),
