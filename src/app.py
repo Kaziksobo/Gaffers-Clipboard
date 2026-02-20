@@ -83,7 +83,7 @@ class App(ctk.CTk):
             "La Liga", "Copa del Rey", "Supercopa de España",
             "Bundesliga", "DFB-Pokal", "DFL-Supercup",
             "Serie A", "Coppa Italia", "Supercoppa Italiana",
-            "UEFA Champions League", "UEFA Europa League", "UEFA Europa Conference League", "Uefa Super Cup"
+            "UEFA Champions League", "UEFA Europa League", "UEFA Europa Conference League", "UEFA Super Cup"
         ]
 
         # Frame configuration
