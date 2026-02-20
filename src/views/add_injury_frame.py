@@ -23,7 +23,7 @@ class AddInjuryFrame(ctk.CTkFrame):
 
         logger.info("Initializing AddInjuryFrame")
 
-        self.data_vars: Dict[str, ctk.StringVar] = {}
+        self.data_entries: Dict[str, ctk.CTkEntry] = {}
         self.stat_definitions: List[Tuple[str, str]] = [
             ("in_game_date", "In-game Date"),
             ("injury_detail", "Injury Detail"),
@@ -45,7 +45,7 @@ class AddInjuryFrame(ctk.CTkFrame):
             font=theme["fonts"]["title"],
             text_color=theme["colors"]["primary_text"]
         )
-        self.main_heading.grid(row=1, column=1)
+        self.main_heading.grid(row=1, column=1, pady=(0, 60))
 
         # Dropdown to select player
         self.player_list_var = ctk.StringVar(value="Click here to select player")
@@ -57,7 +57,7 @@ class AddInjuryFrame(ctk.CTkFrame):
             dropdown_height=200,
             placeholder="Click here to select player"
         )
-        self.player_dropdown.grid(row=2, column=1)
+        self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
 
         # Season entry
         self.season_entry = ctk.CTkEntry(
@@ -66,16 +66,16 @@ class AddInjuryFrame(ctk.CTkFrame):
             fg_color=theme["colors"]["entry_fg"],
             text_color=theme["colors"]["primary_text"],
             width=250,
-            placeholder_text="Season (e.g., 24/25)"
+            placeholder_text="Season (e.g. 24/25)"
         )
-        self.season_entry.grid(row=3, column=1)
+        self.season_entry.grid(row=3, column=1, pady=(0, 20))
 
         # Data subgrid
         self.data_frame = ctk.CTkFrame(
             self,
             fg_color=theme["colors"]["background"]
         )
-        self.data_frame.grid(row=4, column=1)
+        self.data_frame.grid(row=4, column=1, pady=(0, 20))
 
         self.data_frame.grid_columnconfigure(0, weight=1)
         self.data_frame.grid_columnconfigure(1, weight=0)
@@ -110,36 +110,35 @@ class AddInjuryFrame(ctk.CTkFrame):
         )
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
-        data_var = ctk.StringVar(value="")
-        self.data_vars[data_key] = data_var
-        
         placeholder_text = "dd/mm/yy" if data_key == "in_game_date" else ""
         
         data_entry = ctk.CTkEntry(
             self.data_frame,
-            textvariable=data_var,
             font=theme["fonts"]["body"],
             text_color=theme["colors"]["primary_text"],
             fg_color=theme["colors"]["entry_fg"],
-            placeholder_text=placeholder_text
+            placeholder_text=placeholder_text,
+            width=300
         )
         data_entry.grid(row=index, column=2, padx=5, pady=5, sticky="ew")
+        self.data_entries[data_key] = data_entry
         
         if data_key == "time_out":
             # Drop down to select between days, weeks, months, in a third column next to the entry
-            time_out_unit_dropdown = ctk.CTkComboBox(
+            time_out_unit_dropdown = ScrollableDropdown(
                 self.data_frame,
+                theme=theme,
                 variable=self.time_out_unit_var,
                 values=["Days", "Weeks", "Months"],
-                font=theme["fonts"]["body"],
-                text_color=theme["colors"]["primary_text"],
-                fg_color=theme["colors"]["dropdown_fg"]
+                width=150,
+                dropdown_height=150,
+                placeholder="Select unit"
             )
-            time_out_unit_dropdown.grid(row=index, column=3, padx=5, pady=5, sticky="ew")
+            time_out_unit_dropdown.grid(row=index, column=3, padx=5, pady=5)
     
     def on_done_button_press(self):
         """Validates inputs, formats the date safely, and routes to the Controller."""
-        injury_data: Dict[str, Any] = {key: var.get().strip() for key, var in self.data_vars.items()}
+        injury_data: Dict[str, Any] = {key: entry.get().strip() for key, entry in self.data_entries.items()}
         player_name = self.player_list_var.get()
         season = self.season_entry.get().strip()
         injury_data["time_out_unit"] = self.time_out_unit_var.get()
@@ -181,7 +180,7 @@ class AddInjuryFrame(ctk.CTkFrame):
     
     def refresh_player_dropdown(self) -> None:
         """Fetch the latest player list from the database and update the custom dropdown."""
-        names = self.controller.data_manager.get_all_player_names()
+        names = self.controller.get_all_player_names()
         self.player_dropdown.set_values(names)
         
         if not names:
@@ -189,11 +188,16 @@ class AddInjuryFrame(ctk.CTkFrame):
 
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
-        for var in self.data_vars.values():
-            var.set("")
-            
-        self.season_entry.delete(0, 'end')
-        self.time_out_unit_var.set("Select Unit")
+        for key, entry in self.data_entries.items():
+            entry.delete(0, "end")
+            entry.configure(placeholder_text="dd/mm/yy" if key == "in_game_date" else "")
+
+        self.season_entry.delete(0, "end")
+        self.season_entry.configure(placeholder_text="Season (e.g. 24/25)")
+        self.time_out_unit_var.set("Select unit")
         
         self.refresh_player_dropdown()
         self.player_dropdown.set_value("Click here to select player")
+        
+        # Ensure placeholder visibility by moving focus away from the season entry
+        self.after_idle(self.done_button.focus_set)
