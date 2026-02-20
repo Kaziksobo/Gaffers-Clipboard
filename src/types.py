@@ -1,3 +1,4 @@
+import contextlib
 from pydantic import BaseModel, Field, ConfigDict, model_validator, Discriminator, field_validator
 from typing import List, Optional, Literal, Union, Annotated
 from datetime import datetime as DatetimeType
@@ -7,12 +8,10 @@ from abc import ABC
 DifficultyLevel = Literal["Beginner", "Amateur", "Semi-Pro", "Professional", "World Class", "Legendary", "Ultimate"]
 PositionType = Literal["GK", "LB", "RB", "CB", "LWB", "RWB", "CDM", "CM", "CAM", "LM", "RM", "LW", "RW", "ST", "CF"]
 
-# --- Attribute Models ---
-
 class BaseAttributeSnapshot(BaseModel, ABC):
     """Represent common fields for all attribute snapshots."""
     model_config = ConfigDict(extra="forbid", frozen=True)
-    
+
     datetime: DatetimeType
     season: str
     position: Optional[str] = Field(default=None, description="Specific position (e.g. ST, LB)")
@@ -23,7 +22,6 @@ class GKAttributeSnapshot(BaseAttributeSnapshot):
     The position_type field is used as a discriminator for polymorphic behavior 
     in the Player model's attribute_history list.
     """
-    
     position_type: Literal["GK"] = Field(default="GK", description="Discriminator for GK attributes")
     diving: int = Field(ge=0, le=99)
     handling: int = Field(ge=0, le=99)
@@ -37,7 +35,6 @@ class OutfieldAttributeSnapshot(BaseAttributeSnapshot):
     The position_type field is used as a discriminator for polymorphic behavior 
     in the Player model's attribute_history list.
     """
-    
     position_type: Literal["Outfield"] = Field(default="Outfield", description="Discriminator for Outfield attributes")
     # Physical
     acceleration: int = Field(ge=0, le=99)
@@ -74,8 +71,6 @@ class OutfieldAttributeSnapshot(BaseAttributeSnapshot):
     stand_tackle: int = Field(ge=0, le=99)
     volleys: int = Field(ge=0, le=99)
 
-# --- Financial & Injury Models ---
-
 class FinancialSnapshot(BaseModel):
     """Represent a snapshot of a player's financial status at a given time.
     
@@ -106,14 +101,23 @@ class InjuryRecord(BaseModel):
     @field_validator('in_game_date', mode='before')
     @classmethod
     def parse_in_game_date(cls, value: Union[str, DatetimeType]) -> DatetimeType:
-        """Convert string in dd/mm/yy format to datetime object."""
+        """Convert string in dd/mm/yy or ISO format to datetime object."""
         if isinstance(value, DatetimeType):
             return value
+
         if isinstance(value, str):
+            value = value.strip()
+
+            # 1. Attempt to parse standard ISO format (from JSON load)
+            if "T" in value or "-" in value:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.fromisoformat(value)
+            # 2. Attempt to parse custom UI format (from Tkinter input)
             try:
-                return DatetimeType.strptime(value.strip(), "%d/%m/%y")
+                return DatetimeType.strptime(value, "%d/%m/%y")
             except ValueError as e:
-                raise ValueError(f"Invalid date format. Expected dd/mm/yy, got '{value}'") from e
+                raise ValueError(f"Invalid date format. Expected dd/mm/yy or ISO, got '{value}'") from e
+
         raise ValueError(f"in_game_date must be a string or datetime, got {type(value)}")
 
 class Player(BaseModel):
