@@ -125,16 +125,16 @@ The goal of this phase is to refactor the application's architecture to support 
 
 The goal of this phase is to "harden" the application—improving stability, cleaning up the codebase, and adding essential Quality of Life features for the end user before diving into advanced analytics. 
 ### To-Do List: 
-- [ ] **Codebase Refactoring**
+- [x] **Codebase Refactoring**
 	- [x] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
 	- [x] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
 	- [x] Make data manager save keys in snake case
 	- [x] Implement `pydantic` across the data manager for more rigorous data structuring
-		- [ ] Possibly implement across the rest of the application for documentation purposes?
+		- [x] Possibly implement across the rest of the application for documentation purposes?
 - [x] **Implement Logging**
 	- [x] Replace all `print()` statements with the Python `logging` module to generate well-formatted, timestamped log files for easier debugging.
 - [ ] **Error Handling & Feedback** 
-	- [ ] Implement robust `try/except` blocks across the entire program (especially OCR and file I/O).
+	- [x] Implement robust `try/except` blocks across the entire program (especially OCR and file I/O).
 	- [ ] Use `tkinter.messagebox` to display friendly error popups to the user instead of silent console failures.
 - [ ] **Resolution Independence** 
 	- [ ] Move from hardcoded pixel coordinates to relative scale factors in `coordinates.json`.
