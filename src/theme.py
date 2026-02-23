@@ -8,6 +8,10 @@ THEME = {
         "primary_text": "#f0f0f0",
         "secondary_text": "#C5C5C5",
         "accent": "#00bfff",
+        "error": "#ff4c4c",
+        "warning": "#ffcc00",
+        "success": "#4caf50",
+        "info": "#2196f3"
     },
     "fonts": {
         "title": ("Segoe UI", 48, "bold"),
