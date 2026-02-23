@@ -18,6 +18,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing AddOutfieldFrame1")
         
@@ -49,22 +50,22 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.name_entry = ctk.CTkEntry(
             self,
             placeholder_text="Enter name here",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
         
         self.season_entry = ctk.CTkEntry(
             self,
             placeholder_text="Season (e.g. 25/26)",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.season_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
 
-        self.base_attr_row = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
         self.base_attr_row.grid_columnconfigure(0, weight=1)
         self.base_attr_row.grid_columnconfigure(1, weight=0)
@@ -78,9 +79,9 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.position_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Position",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.position_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
@@ -88,9 +89,9 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.age_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Age",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.age_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
@@ -98,9 +99,9 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.height_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Height (ft'in\")",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.height_entry.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
@@ -108,9 +109,9 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.weight_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Weight (lbs)",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.weight_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
@@ -118,14 +119,14 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.country_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Country",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.country_entry.grid(row=0, column=5, padx=5, pady=5, sticky="ew")
         
-        self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
+        self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
         self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
        
         self.attributes_grid.grid_columnconfigure(0, weight=1)
@@ -138,36 +139,35 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.attr_definitions_physical):
-            self.create_stat_row(i, key, label, theme, physical=True)
+            self.create_stat_row(i, key, label, physical=True)
 
         for i, (key, label) in enumerate(self.attr_definitions_mental):
-            self.create_stat_row(i, key, label, theme, physical=False)
+            self.create_stat_row(i, key, label, physical=False)
         
         self.next_page_button = ctk.CTkButton(
             self,
             text="Next Page",
-            font=theme["fonts"]["button"],
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             command=lambda: self.on_next_page()
         )
         self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")
 
-    def create_stat_row(self, index: int, attr_key: str, attr_label: str, theme: Dict[str, Any], physical: bool = True) -> None:
+    def create_stat_row(self, index: int, attr_key: str, attr_label: str, physical: bool = True) -> None:
         """Creates a row in the attributes grid for a specific player attribute.
         
         Args:
             row (int): The row index in the grid.
             attr_key (str): The dictionary key for the data model.
             attr_label (str): The human-readable label for the UI.
-            theme (Dict[str, Any]): The application theme config.
             physical (bool): Determines the column (0 for physical, 1 for mental).
         """
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
             text=attr_label,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         attr_label.grid(row=index, column=1 if physical else 3, padx=5, pady=5, sticky="w")
         
@@ -176,9 +176,9 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.attr_entry = ctk.CTkEntry(
             self.attributes_grid,
             textvariable=attr_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.attr_entry.grid(row=index, column=2 if physical else 4, padx=5, pady=5, sticky="ew")
     

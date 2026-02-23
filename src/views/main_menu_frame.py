@@ -17,6 +17,7 @@ class MainMenuFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing MainMenuFrame")
 
@@ -31,22 +32,22 @@ class MainMenuFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text=self.get_career_welcome_text(),
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         # Question Label
         self.question_label = ctk.CTkLabel(
             self, text="What would you like to do?",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["secondary_text"]
         )
         self.question_label.grid(row=2, column=1, pady=10)
 
         # Buttons Frame
         self.button_frame = ctk.CTkFrame(
             self,
-            fg_color=theme["colors"]["background"]
+            fg_color=self.theme["colors"]["background"]
         )
         self.button_frame.grid(row=3, column=1, pady=20)
 
@@ -54,11 +55,11 @@ class MainMenuFrame(ctk.CTkFrame):
         self.player_update_button = ctk.CTkButton(
             self.button_frame,
             text="Update player attributes",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["button_bg"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["button_bg"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         )
         self.player_update_button.pack(side="left", padx=(0, 10), pady=10)
@@ -66,11 +67,11 @@ class MainMenuFrame(ctk.CTkFrame):
         # Add Match Button
         self.add_match_button = ctk.CTkButton(
             self.button_frame, text="Add new match",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["button_bg"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["button_bg"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddMatchFrame"))
         )
         self.add_match_button.pack(side="right", padx=(10, 0), pady=10)

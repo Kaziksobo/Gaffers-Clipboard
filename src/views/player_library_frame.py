@@ -16,6 +16,7 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
 
         logger.info("Initializing PlayerLibraryFrame")
 
@@ -28,8 +29,8 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.title = ctk.CTkLabel(
             self,
             text="Welcome to your player library",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.title.grid(row=1, column=1, pady=(20, 10))
 
@@ -37,13 +38,13 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.info_label = ctk.CTkLabel(
             self,
             text=f"Upon clicking each button, you have {delay_seconds} seconds to take a screenshot.",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["secondary_text"]
         )
         self.info_label.grid(row=2, column=1, pady=(10, 20))
 
         # Add-player-buttons subgrid
-        self.buttons_grid = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.buttons_grid = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.buttons_grid.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
         self.buttons_grid.grid_columnconfigure(0, weight=1)
         self.buttons_grid.grid_columnconfigure(1, weight=1)
@@ -55,9 +56,9 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.add_gk_button = ctk.CTkButton(
             self.buttons_grid,
             text="Add Goalkeeper",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_add_gk_button_press()
         )
         self.add_gk_button.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
@@ -65,9 +66,9 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.add_outfield_button = ctk.CTkButton(
             self.buttons_grid,
             text="Add Outfield Player",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_add_outfield_button_press()
         )
         self.add_outfield_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
@@ -75,9 +76,9 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.add_financial_button = ctk.CTkButton(
             self.buttons_grid,
             text="Add Player Financial Data",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddFinancialFrame"))
         )
         self.add_financial_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
@@ -85,9 +86,9 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.add_injury_button = ctk.CTkButton(
             self.buttons_grid,
             text="Add Player Injury Record",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddInjuryFrame"))
         )
         self.add_injury_button.grid(row=0, column=3, padx=10, pady=5, sticky="ew")
@@ -95,9 +96,9 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.leave_button = ctk.CTkButton(
             self.buttons_grid,
             text="Sell/loan Player",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("LeftPlayerFrame"))
         )
         self.leave_button.grid(row=0, column=4, padx=10, pady=5, sticky="ew")
@@ -106,9 +107,9 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         self.home_button = ctk.CTkButton(
             self,
             text="Return to Main Menu",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
         )
         self.home_button.grid(row=4, column=1, padx=10, pady=5, sticky="ew")

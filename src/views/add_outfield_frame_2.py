@@ -21,6 +21,7 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing AddOutfieldFrame2")
         
@@ -56,12 +57,12 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         self.title = ctk.CTkLabel(
             self,
             text="Page 2 - Technical Attributes",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.title.grid(row=1, column=1, pady=(20, 10))
         
-        self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
+        self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
         self.attributes_grid.grid(row=2, column=1, pady=(10, 20), sticky="nsew")
 
         self.attributes_grid.grid_columnconfigure(0, weight=1)
@@ -76,26 +77,25 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.attr_definitions):
-            self.create_stat_row(i, key, label, theme)
+            self.create_stat_row(i, key, label)
         
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
 
-    def create_stat_row(self, index: int, attr_key: str, attr_label: str, theme: Dict[str, Any]) -> None:
+    def create_stat_row(self, index: int, attr_key: str, attr_label: str) -> None:
         """Creates a row in the attributes grid for a specific technical attribute.
         
         Args:
             index (int): The index of the attribute in the list.
             attr_key (str): The name of the attribute to display.
             attr_label (str): The human-readable label for the UI.
-            theme (Dict[str, Any]): The theme dictionary containing color and font settings.
         """
         # place items in two columns but on the same row index (row = index % half)
         half = 8  # number of rows per column (for a 16-item list)
@@ -116,8 +116,8 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
             text=attr_label,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         attr_label.grid(row=row, column=label_col, padx=5, pady=5, sticky="w")
 
@@ -126,9 +126,9 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         attr_entry = ctk.CTkEntry(
             self.attributes_grid,
             textvariable=attr_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         attr_entry.grid(row=row, column=entry_col, padx=5, pady=5, sticky="ew")
     

@@ -18,6 +18,7 @@ class AddGKFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing AddGKFrame")
         
@@ -39,22 +40,22 @@ class AddGKFrame(ctk.CTkFrame):
         self.name_entry = ctk.CTkEntry(
             self,
             placeholder_text="Enter name here",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
         
         self.season_entry = ctk.CTkEntry(
             self,
             placeholder_text="Season (e.g. 25/26)",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.season_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
 
-        self.base_attr_row = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
         self.base_attr_row.grid_columnconfigure(0, weight=1)
         self.base_attr_row.grid_columnconfigure(1, weight=0)
@@ -67,9 +68,9 @@ class AddGKFrame(ctk.CTkFrame):
         self.age_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Age",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.age_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
@@ -77,9 +78,9 @@ class AddGKFrame(ctk.CTkFrame):
         self.height_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Height (ft'in\")",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.height_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
@@ -87,9 +88,9 @@ class AddGKFrame(ctk.CTkFrame):
         self.weight_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Weight (lbs)",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.weight_entry.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
@@ -97,14 +98,14 @@ class AddGKFrame(ctk.CTkFrame):
         self.country_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Country",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             width=160
         )
         self.country_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
-        self.attributes_grid = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.attributes_grid = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
         
         self.attributes_grid.grid_columnconfigure(0, weight=1)
@@ -115,33 +116,32 @@ class AddGKFrame(ctk.CTkFrame):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.attr_definitions):
-            self.create_attribute_row(i, key, label, theme)
+            self.create_attribute_row(i, key, label)
         
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            font=theme["fonts"]["button"],
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=5, column=1, pady=(0, 20), sticky="ew")
     
-    def create_attribute_row(self, row: int, attr_key: str, attr_label: str, theme: Dict[str, Any]) -> None:
+    def create_attribute_row(self, row: int, attr_key: str, attr_label: str) -> None:
         """Creates a row in the attributes grid for a specific goalkeeper attribute.
         
         Args:
             row (int): The row index in the attributes grid where this attribute should be placed.
             attr_key (str): The key used to identify this attribute in the data model.
             attr_label (str): The human-readable label for this attribute to display in the UI.
-            theme (Dict[str, Any]): The theme dictionary containing color and font settings for styling the widgets.
         """
         
         attr_label = ctk.CTkLabel(
             self.attributes_grid,
             text=attr_label,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         attr_label.grid(row=row, column=1, padx=5, pady=5)
         
@@ -150,9 +150,9 @@ class AddGKFrame(ctk.CTkFrame):
         self.attr_entry = ctk.CTkEntry(
             self.attributes_grid,
             textvariable=attr_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.attr_entry.grid(row=row, column=2, padx=5, pady=5)
     

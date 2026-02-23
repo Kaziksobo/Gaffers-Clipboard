@@ -20,6 +20,7 @@ class AddMatchFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing AddMatchFrame")
 
@@ -30,8 +31,8 @@ class AddMatchFrame(ctk.CTkFrame):
         self.label = ctk.CTkLabel(
             self.container, 
             text="Navigate to the match stats screen", 
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"],
             anchor="center",
         )
         self.label.pack()
@@ -41,8 +42,8 @@ class AddMatchFrame(ctk.CTkFrame):
         self.sub_label = ctk.CTkLabel(
             self.container,
             text=f"Once you click done, you have {delay_seconds} seconds to switch to the game and correct screen.",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["secondary_text"],
             anchor="center",
         )
         self.sub_label.pack()
@@ -50,8 +51,8 @@ class AddMatchFrame(ctk.CTkFrame):
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["secondary_text"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["secondary_text"],
             font=theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )

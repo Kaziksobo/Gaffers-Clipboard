@@ -20,6 +20,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing MatchStatsFrame")
         
@@ -67,16 +68,16 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Match Statistics collected",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         
         # Info Label
         self.info_label = ctk.CTkLabel(
             self, text="Empty stats couldn't be recognised and require manual entry.\n Please review and update player attributes as necessary.",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["secondary_text"]
         )
         self.info_label.grid(row=2, column=1, pady=(0, 20))
         
@@ -84,7 +85,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.competition_var = ctk.StringVar(value="Select Competition")
         self.competition_dropdown = ScrollableDropdown(
             self,
-            theme=theme,
+            theme=self.theme,
             variable=self.competition_var,
             values=self.controller.full_competitions_list,
             width=350,
@@ -94,7 +95,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.competition_dropdown.grid(row=3, column=1, pady=(0, 20))
         
         # Stats Grid
-        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
+        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
 
         # Configure subgrid
@@ -107,51 +108,51 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.home_team_name = ctk.CTkEntry(
             self.stats_grid,
             textvariable=self.home_team_name_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.home_team_name.grid(row=0, column=0, padx=5, pady=5)
 
         self.home_team_score = ctk.CTkEntry(
             self.stats_grid,
             textvariable=self.home_team_score_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.home_team_score.grid(row=0, column=1, padx=5, pady=5)
 
         self.score_dash = ctk.CTkLabel(
             self.stats_grid,
             text="-",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.score_dash.grid(row=0, column=2, padx=5, pady=5)
         self.away_team_score = ctk.CTkEntry(
             self.stats_grid,
             textvariable=self.away_team_score_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.away_team_score.grid(row=0, column=3, padx=5, pady=5)
 
         self.away_team_name = ctk.CTkEntry(
             self.stats_grid,
             textvariable=self.away_team_name_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.away_team_name.grid(row=0, column=4, padx=5, pady=5)
 
         for i, (stat_key, stat_label) in enumerate(self.stat_definitions):
-            self.create_stat_row(i + 1, stat_key, stat_label, theme)
+            self.create_stat_row(i + 1, stat_key, stat_label)
         
         # Direction subgrid
-        self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.direction_frame.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
@@ -161,17 +162,17 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
             text="You can navigate to the first player's stats",
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
             text="Add Outfield Player",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_next_outfield_player_button_press()
         )
         self.next_player_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
@@ -179,9 +180,9 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
             text="Add Goalkeeper",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_next_goalkeeper_button_press()
         )
         self.next_goalkeeper_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
@@ -189,30 +190,30 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
             text="Skip Player Stats",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
-    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: Dict[str, Any]) -> None:
+    def create_stat_row(self, row: int, stat_key: str, stat_label: str) -> None:
         """Helper to create a unified Home/Away entry row for a specific statistic."""
         home_stat_value = ctk.StringVar(value="")
         self.home_stats_vars[stat_key] = home_stat_value
         self.home_stat_entry = ctk.CTkEntry(
             self.stats_grid,
             textvariable=home_stat_value,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.home_stat_entry.grid(row=row, column=0, padx=5, pady=5)
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
             text=stat_label,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.stat_label.grid(row=row, column=2, padx=5, pady=5)
         away_stat_value = ctk.StringVar(value="")
@@ -220,9 +221,9 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.away_stat_entry = ctk.CTkEntry(
             self.stats_grid,
             textvariable=away_stat_value,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         self.away_stat_entry.grid(row=row, column=4, padx=5, pady=5)
 

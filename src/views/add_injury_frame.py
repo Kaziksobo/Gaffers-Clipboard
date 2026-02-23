@@ -20,6 +20,7 @@ class AddInjuryFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
 
         logger.info("Initializing AddInjuryFrame")
 
@@ -42,8 +43,8 @@ class AddInjuryFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Add player injury record",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
 
@@ -51,7 +52,7 @@ class AddInjuryFrame(ctk.CTkFrame):
         self.player_list_var = ctk.StringVar(value="Click here to select player")
         self.player_dropdown = ScrollableDropdown(
             self,
-            theme=theme,
+            theme=self.theme,
             variable=self.player_list_var,
             width=350,
             dropdown_height=200,
@@ -62,9 +63,9 @@ class AddInjuryFrame(ctk.CTkFrame):
         # Season entry
         self.season_entry = ctk.CTkEntry(
             self,
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["entry_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             width=250,
             placeholder_text="Season (e.g. 24/25)"
         )
@@ -73,7 +74,7 @@ class AddInjuryFrame(ctk.CTkFrame):
         # Data subgrid
         self.data_frame = ctk.CTkFrame(
             self,
-            fg_color=theme["colors"]["background"]
+            fg_color=self.theme["colors"]["background"]
         )
         self.data_frame.grid(row=4, column=1, pady=(0, 20))
 
@@ -87,26 +88,26 @@ class AddInjuryFrame(ctk.CTkFrame):
             self.data_frame.grid_rowconfigure(i, weight=1)
 
         for i, (key, name) in enumerate(self.stat_definitions):
-            self.create_data_row(i, key, name, theme)
+            self.create_data_row(i, key, name)
 
         # Done Button
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=self.on_done_button_press
         )
         self.done_button.grid(row=5, column=1)
     
-    def create_data_row(self, index: int, data_key: str, data_name: str, theme: Dict[str, Any]) -> None:
+    def create_data_row(self, index: int, data_key: str, data_name: str) -> None:
         """Helper to create a label, entry pair, and optional unit combobox for injury data."""
         data_label = ctk.CTkLabel(
             self.data_frame,
             text=data_name,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
@@ -114,9 +115,9 @@ class AddInjuryFrame(ctk.CTkFrame):
         
         data_entry = ctk.CTkEntry(
             self.data_frame,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"],
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"],
             placeholder_text=placeholder_text,
             width=300
         )
@@ -127,7 +128,7 @@ class AddInjuryFrame(ctk.CTkFrame):
             # Drop down to select between days, weeks, months, in a third column next to the entry
             time_out_unit_dropdown = ScrollableDropdown(
                 self.data_frame,
-                theme=theme,
+                theme=self.theme,
                 variable=self.time_out_unit_var,
                 values=["Days", "Weeks", "Months"],
                 width=150,

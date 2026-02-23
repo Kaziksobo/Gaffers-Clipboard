@@ -17,14 +17,15 @@ class MatchAddedFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing MatchAddedFrame")
 
         self.label = ctk.CTkLabel(
             self, 
             text="Match successfully recorded", 
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"],
             anchor="center",
         )
         self.label.pack(expand=True)
@@ -32,9 +33,9 @@ class MatchAddedFrame(ctk.CTkFrame):
         self.done_button = ctk.CTkButton(
             self,
             text="Return to Main Menu",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
         )
         self.done_button.pack(pady=10)

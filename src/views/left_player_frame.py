@@ -18,6 +18,7 @@ class LeftPlayerFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing LeftPlayerFrame")
         
@@ -34,8 +35,8 @@ class LeftPlayerFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Sell Player",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(10, 5))
         
@@ -43,7 +44,7 @@ class LeftPlayerFrame(ctk.CTkFrame):
         self.player_list_var = ctk.StringVar(value="Click here to select player")
         self.player_dropdown = ScrollableDropdown(
             self,
-            theme=theme,
+            theme=self.theme,
             variable=self.player_list_var,
             width=350,
             dropdown_height=200,
@@ -52,7 +53,7 @@ class LeftPlayerFrame(ctk.CTkFrame):
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
         
         # Sell/loan mini frame
-        self.sell_loan_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.sell_loan_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.sell_loan_frame.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
         self.sell_loan_frame.grid_columnconfigure(0, weight=1)
         self.sell_loan_frame.grid_columnconfigure(1, weight=1)
@@ -63,11 +64,11 @@ class LeftPlayerFrame(ctk.CTkFrame):
         self.sell_button = ctk.CTkButton(
             self.sell_loan_frame,
             text="Sell Player",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["background"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["background"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
             command=self.sell_player
         )
         self.sell_button.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
@@ -76,11 +77,11 @@ class LeftPlayerFrame(ctk.CTkFrame):
         self.loan_out_button = ctk.CTkButton(
             self.sell_loan_frame,
             text="Loan out Player",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["background"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["background"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
             command=self.loan_out_player
         )
         self.loan_out_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
@@ -88,11 +89,11 @@ class LeftPlayerFrame(ctk.CTkFrame):
         self.return_button = ctk.CTkButton(
             self.sell_loan_frame,
             text="Return from loan",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["background"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["background"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
             command=self.return_loan_player
         )
         self.return_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")

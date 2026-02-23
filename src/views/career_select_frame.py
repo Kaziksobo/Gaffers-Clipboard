@@ -18,6 +18,7 @@ class CareerSelectFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
 
         logger.info("Initializing CareerSelectFrame")
 
@@ -33,8 +34,8 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Welcome to Gaffer's Clipboard!",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
 
@@ -42,15 +43,15 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.info_label = ctk.CTkLabel(
             self,
             text="Please select your career to get started:",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["secondary_text"]
         )
         self.info_label.grid(row=2, column=1, pady=10)
 
         # Career select mini-grid
         self.career_select_frame = ctk.CTkFrame(
             self,
-            fg_color=theme["colors"]["background"]
+            fg_color=self.theme["colors"]["background"]
         )
         self.career_select_frame.grid(row=3, column=1, pady=10)
 
@@ -62,7 +63,7 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.careers_list_var = ctk.StringVar(value="Select Career")
         self.careers_dropdown = ScrollableDropdown(
             self.career_select_frame,
-            theme=theme,
+            theme=self.theme,
             variable=self.careers_list_var,
             values=self.controller.data_manager.get_all_career_names(),
             width=350,
@@ -75,11 +76,11 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.select_career_button = ctk.CTkButton(
             self.career_select_frame,
             text="Select Career",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["background"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["background"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
             command=self.on_select_button_press
         )
         self.select_career_button.grid(row=0, column=1, padx=10, pady=10)
@@ -88,8 +89,8 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.or_label = ctk.CTkLabel(
             self,
             text="-- OR --",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.or_label.grid(row=4, column=1, pady=10)
 
@@ -97,11 +98,11 @@ class CareerSelectFrame(ctk.CTkFrame):
         self.new_career_button = ctk.CTkButton(
             self,
             text="Start New Career",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["background"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
-            hover_color=theme["colors"]["accent"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["background"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("CreateCareerFrame"))
         )
         self.new_career_button.grid(row=5, column=1, pady=20)

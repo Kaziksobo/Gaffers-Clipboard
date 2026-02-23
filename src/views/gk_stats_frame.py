@@ -20,6 +20,7 @@ class GKStatsFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing GKStatsFrame")
         
@@ -52,8 +53,8 @@ class GKStatsFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Goalkeeper Statistics collected",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         
@@ -61,7 +62,7 @@ class GKStatsFrame(ctk.CTkFrame):
         self.player_list_var = ctk.StringVar(value="Click here to select player")
         self.player_dropdown = ScrollableDropdown(
             self,
-            theme=theme,
+            theme=self.theme,
             variable=self.player_list_var,
             width=350,
             dropdown_height=200,
@@ -72,13 +73,13 @@ class GKStatsFrame(ctk.CTkFrame):
         # Info Label
         self.info_label = ctk.CTkLabel(
             self, text="Empty stats couldn't be recognised and require manual entry.\n Please review and update player attributes as necessary.",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["secondary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["secondary_text"]
         )
         self.info_label.grid(row=3, column=1, pady=(0, 20))
         
         # Stats Grid
-        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=theme["colors"]["background"])
+        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
@@ -88,10 +89,10 @@ class GKStatsFrame(ctk.CTkFrame):
         
         # Populate stats grid
         for i, (stat_key, stat_label) in enumerate(self.stat_definitions):
-            self.create_stat_row(i, stat_key, stat_label, theme)
+            self.create_stat_row(i, stat_key, stat_label)
         
         # Direction subgrid
-        self.direction_frame = ctk.CTkFrame(self, fg_color=theme["colors"]["background"])
+        self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.direction_frame.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
@@ -101,17 +102,17 @@ class GKStatsFrame(ctk.CTkFrame):
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
             text="Please navigate to the next player's stats",
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
             text="Next Outfield Player",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_next_outfield_player_button_press()
         )
         self.next_player_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
@@ -119,9 +120,9 @@ class GKStatsFrame(ctk.CTkFrame):
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
             text="Next Goalkeeper",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_next_goalkeeper_button_press()
         )
         self.next_goalkeeper_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
@@ -129,20 +130,20 @@ class GKStatsFrame(ctk.CTkFrame):
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
             text="All Players Added",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
     
-    def create_stat_row(self, row: int, stat_key: str, stat_label: str, theme: Dict[str, Any]) -> None:
+    def create_stat_row(self, row: int, stat_key: str, stat_label: str) -> None:
         """Helper to create a unified entry row for a specific performance statistic."""
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
             text=stat_label,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.stat_label.grid(row=row, column=0, padx=5, pady=5, sticky="w")
         
@@ -151,9 +152,9 @@ class GKStatsFrame(ctk.CTkFrame):
         stat_entry = ctk.CTkEntry(
             self.stats_grid,
             textvariable=stat_value,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         stat_entry.grid(row=row, column=1, padx=5, pady=5, sticky="ew")
     

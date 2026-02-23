@@ -17,6 +17,7 @@ class CreateCareerFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing CreateCareerFrame")
         
@@ -33,15 +34,15 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Create New Career",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1)
         
         # Entry grid
         self.entry_frame = ctk.CTkFrame(
             self,
-            fg_color=theme["colors"]["background"]
+            fg_color=self.theme["colors"]["background"]
         )
         self.entry_frame.grid(row=2, column=1, pady=20)
         self.entry_frame.grid_columnconfigure(0, weight=1)
@@ -60,15 +61,15 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.club_name_label = ctk.CTkLabel(
             self.entry_frame,
             text="Club Name:",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.club_name_label.grid(row=1, column=1, sticky="e", pady=5, padx=(0,10))
         self.club_name_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["entry_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             width=200
         )
         self.club_name_entry.grid(row=1, column=2, sticky="w", pady=5)
@@ -77,15 +78,15 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.manager_name_label = ctk.CTkLabel(
             self.entry_frame,
             text="Manager Name:",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.manager_name_label.grid(row=2, column=1, sticky="e", pady=5, padx=(0,10))
         self.manager_name_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["entry_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             width=200
         )
         self.manager_name_entry.grid(row=2, column=2, sticky="w", pady=5)
@@ -94,15 +95,15 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.starting_season_label = ctk.CTkLabel(
             self.entry_frame,
             text="Starting Season:",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.starting_season_label.grid(row=3, column=1, sticky="e", pady=5, padx=(0,10))
         self.starting_season_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["entry_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             width=200
         )
         self.starting_season_entry.grid(row=3, column=2, sticky="w", pady=5)
@@ -111,15 +112,15 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.half_length_label = ctk.CTkLabel(
             self.entry_frame,
             text="Half Length (minutes):",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.half_length_label.grid(row=4, column=1, sticky="e", pady=5, padx=(0,10))
         self.half_length_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["entry_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             width=200
         )
         self.half_length_entry.grid(row=4, column=2, sticky="w", pady=5)
@@ -128,8 +129,8 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.match_difficulty_label = ctk.CTkLabel(
             self.entry_frame,
             text="Match Difficulty:",
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.match_difficulty_label.grid(row=5, column=1, sticky="e", pady=5, padx=(0,10))
         # Dropdown for match difficulty, with options: Beginner, Amateur, Semi-Pro, Professional, World Class, Legendary, Ultimate
@@ -138,12 +139,12 @@ class CreateCareerFrame(ctk.CTkFrame):
             self.entry_frame,
             variable=self.match_difficulty_var,
             values=["Beginner", "Amateur", "Semi-Pro", "Professional", "World Class", "Legendary", "Ultimate"],
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["dropdown_fg"],
-            text_color=theme["colors"]["primary_text"],
-            button_color=theme["colors"]["button_fg"],
-            dropdown_fg_color=theme["colors"]["dropdown_fg"],
-            dropdown_text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["dropdown_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            button_color=self.theme["colors"]["button_fg"],
+            dropdown_fg_color=self.theme["colors"]["dropdown_fg"],
+            dropdown_text_color=self.theme["colors"]["primary_text"]
         )
         self.match_difficulty_dropdown.grid(row=5, column=2, sticky="w", pady=5)
         
@@ -151,10 +152,10 @@ class CreateCareerFrame(ctk.CTkFrame):
         self.create_career_button = ctk.CTkButton(
             self,
             text="Create Career",
-            fg_color=theme["colors"]["button_fg"],
-            bg_color=theme["colors"]["button_bg"],
-            font=theme["fonts"]["button"],
-            text_color=theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["button_bg"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
             command=self.on_create_career_button_press
         )
         self.create_career_button.grid(row=3, column=1)
