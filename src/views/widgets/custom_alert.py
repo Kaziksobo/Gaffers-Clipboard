@@ -61,8 +61,8 @@ class CustomAlert(ctk.CTkToplevel):
         """
         self.overrideredirect(True) # Remove OS title bar
         
-        popup_width = 400
-        popup_height = 200
+        popup_width = 600
+        popup_height = 400
         
         self.parent.update_idletasks()  # Ensure the parent window's dimensions are up to date
         
