@@ -1,7 +1,9 @@
 import customtkinter as ctk
 import logging
+import re
 from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion
 from datetime import datetime
 
@@ -143,6 +145,16 @@ class AddInjuryFrame(ctk.CTkFrame):
         player_name = self.player_list_var.get()
         season = self.season_entry.get().strip()
         injury_data["time_out_unit"] = self.time_out_unit_var.get()
+        
+        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
+        # If the season is in format "2024/2025", convert it to "24/25"
+        # If the format is completely wrong, just set it to None
+        if re.match(r'^\d{2}/\d{2}$', season):
+            pass
+        elif re.match(r'^\d{4}/\d{4}$', season):
+            season = season[2:4] + '/' + season[7:9]
+        else:
+            season = None
 
         # convert time_out to an integer and store in injury_data, if possible
         time_out_str = injury_data.get("time_out", "")
@@ -161,6 +173,13 @@ class AddInjuryFrame(ctk.CTkFrame):
         )
         if missing_fields:
             logger.warning(f"Cannot add injury record. Missing fields: {', '.join(missing_fields)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
             return
         
         # Preemptive Date Validation
@@ -169,23 +188,56 @@ class AddInjuryFrame(ctk.CTkFrame):
             datetime.strptime(in_game_date_str, "%d/%m/%y")
         except ValueError:
             logger.warning(f"Cannot add injury record. Invalid date format for 'In-game Date'. Expected format: dd/mm/yy, got: '{in_game_date_str}'")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Invalid Date Format",
+                message=f"The 'In-game Date' field must be in the format dd/mm/yy. Please correct the date and try again.",
+                alert_type="warning",
+            )
             return
 
         try:
             logger.info(f"Validation passed. Saving injury record for {player_name}.")
             self.controller.add_injury_record(player_name, season, injury_data)
+            CustomAlert(
+                parent=self,
+                theme = self.theme,
+                title="Data Saved",
+                message=f"Injury data for {player_name} in season {season} has been successfully saved.",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             # Safely catch Pydantic rejections or DB locks
             logger.error(f"Failed to save injury data: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Saving Data",
+                message=f"An error occurred while saving the injury data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
     
     def refresh_player_dropdown(self) -> None:
         """Fetch the latest player list from the database and update the custom dropdown."""
         names = self.controller.get_all_player_names()
-        self.player_dropdown.set_values(names)
-        
         if not names:
-            self.player_dropdown.set_value("No players found")
+            logger.warning("No players found in the database to populate the dropdown.")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Players Found",
+                message="No players were found in the database. Please add players to the library before adding injury information.",
+                alert_type="warning",
+                options=["Return to Library"],
+            )
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+            return
+        self.player_names = names or ["No players found"]
+        self.player_dropdown.set_values(self.player_names)
 
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""

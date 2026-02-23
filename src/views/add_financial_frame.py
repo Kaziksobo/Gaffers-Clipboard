@@ -1,7 +1,9 @@
 import customtkinter as ctk
 import logging
+import re
 from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
@@ -19,6 +21,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         """
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
+        self.theme = theme
         
         logger.info("Initializing AddFinancialFrame")
         
@@ -46,15 +49,15 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Add Financial Information for the player",
-            font=theme["fonts"]["title"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["title"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         
         # Player and season selection mini-frame
         self.selection_frame = ctk.CTkFrame(
             self,
-            fg_color=theme["colors"]["background"]
+            fg_color=self.theme["colors"]["background"]
         )
         self.selection_frame.grid(row=2, column=1, pady=(0, 20))
         
@@ -62,7 +65,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         self.player_list_var = ctk.StringVar(value="Click here to select player")
         self.player_dropdown = ScrollableDropdown(
             self.selection_frame,
-            theme=theme,
+            theme=self.theme,
             variable=self.player_list_var,
             width=350,
             dropdown_height=200,
@@ -73,9 +76,9 @@ class AddFinancialFrame(ctk.CTkFrame):
         # Season entry
         self.season_entry = ctk.CTkEntry(
             self.selection_frame,
-            font=theme["fonts"]["body"],
-            fg_color=theme["colors"]["entry_fg"],
-            text_color=theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme["colors"]["primary_text"],
             width=250,
             placeholder_text="Season (e.g., 24/25)"
         )
@@ -84,7 +87,7 @@ class AddFinancialFrame(ctk.CTkFrame):
         # financial data subgrid
         self.financial_frame = ctk.CTkFrame(
             self,
-            fg_color=theme["colors"]["background"]
+            fg_color=self.theme["colors"]["background"]
         )
         self.financial_frame.grid(row=3, column=1, pady=(0, 20))
         
@@ -97,26 +100,26 @@ class AddFinancialFrame(ctk.CTkFrame):
             self.financial_frame.grid_rowconfigure(i, weight=1)
         
         for i, (key, name) in enumerate(self.stat_definitions):
-            self.create_data_row(i, key, name, theme)
+            self.create_data_row(i, key, name)
         
         # Done Button
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=theme["colors"]["button_fg"],
-            text_color=theme["colors"]["primary_text"],
-            font=theme["fonts"]["button"],
+            fg_color=self.theme["colors"]["button_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=self.on_done_button_press
         )
         self.done_button.grid(row=4, column=1)
     
-    def create_data_row(self, index: int, data_key: str, data_name: str, theme: Dict[str, Any]) -> None:
+    def create_data_row(self, index: int, data_key: str, data_name: str) -> None:
         """Helper to create a label and entry pair for a financial data point."""
         data_label = ctk.CTkLabel(
             self.financial_frame,
             text=data_name,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
         )
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
@@ -125,9 +128,9 @@ class AddFinancialFrame(ctk.CTkFrame):
         data_entry = ctk.CTkEntry(
             self.financial_frame,
             textvariable=data_var,
-            font=theme["fonts"]["body"],
-            text_color=theme["colors"]["primary_text"],
-            fg_color=theme["colors"]["entry_fg"]
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
         )
         data_entry.grid(row=index, column=2, padx=5, pady=5, sticky="ew")
     
@@ -141,12 +144,15 @@ class AddFinancialFrame(ctk.CTkFrame):
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
         
-        # Handling missing fields.
-        # If player or season aren't provided, this is a serious error
-        # If wage or market value aren't provided, this is also an error
-        # Handle both of the above with a logger warning and return for now, specifiying the field that was left empty
-        # If contract length, release clause, or sell on clause are missing, we can default them to zero
-        
+        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
+        # If the season is in format "2024/2025", convert it to "24/25"
+        # If the format is completely wrong, just set it to None
+        if re.match(r'^\d{2}/\d{2}$', season):
+            pass
+        elif re.match(r'^\d{4}/\d{4}$', season):
+            season = season[2:4] + '/' + season[7:9]
+        else:
+            season = None
         
         missing_fields = []
         if player == "Click here to select player" or player == "No players found" or not player:
@@ -164,19 +170,54 @@ class AddFinancialFrame(ctk.CTkFrame):
         
         if missing_fields:
             logger.warning(f"Validation Failed: Missing fields - {(', '.join(missing_fields)).title()}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
             return
         
         try:
             logger.info(f"Validation passed. Saving financial data for {player}.")
             self.controller.save_financial_data(player, financial_data, season)
+            CustomAlert(
+                parent=self,
+                theme = self.theme,
+                title="Data Saved",
+                message=f"Financial data for {player} in season {season} has been successfully saved.",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             # Safely catch Pydantic rejections or DB locks
             logger.error(f"Failed to save financial data: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Saving Data",
+                message=f"An error occurred while saving the financial data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
     
     def refresh_player_dropdown(self) -> None:
         """Fetch the latest player list from the database and update the custom dropdown."""
         names = self.controller.get_all_player_names()
+        if not names:
+            logger.warning("No players found in the database to populate the dropdown.")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Players Found",
+                message="No players were found in the database. Please add players to the library before adding financial information.",
+                alert_type="warning",
+                options=["Return to Library"],
+            )
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+            return
         self.player_names = names or ["No players found"]
         self.player_dropdown.set_values(self.player_names)
             
