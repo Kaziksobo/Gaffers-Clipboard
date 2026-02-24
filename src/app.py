@@ -252,7 +252,7 @@ class App(ctk.CTk):
         else:
             return ["No players found"]
     
-    def buffer_data(self, data: dict[str, Any], gk: bool, first: bool = True) -> None:
+    def buffer_player_attributes(self, data: dict[str, Any], gk: bool, first: bool = True) -> None:
         """Store captured player attribute data during multi-step entry flows.
 
         This method routes raw data from goalkeeper and outfield pages into 
