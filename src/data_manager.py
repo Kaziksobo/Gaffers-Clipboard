@@ -337,7 +337,7 @@ class DataManager:
         player_name = player_ui_data.get("name")
         existing_player = self._find_player_by_name(player_name)
         
-        top_level_keys = ["name", "age", "height", "weight", "country"]
+        top_level_keys = ["name", "age", "height", "weight", "country", "season"]
         
         attributes = {k: v for k, v in player_ui_data.items() if k not in top_level_keys}
         if position == "GK":
