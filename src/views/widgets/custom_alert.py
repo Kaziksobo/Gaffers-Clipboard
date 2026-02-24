@@ -77,7 +77,8 @@ class CustomAlert(ctk.CTkToplevel):
         
         self.geometry(f"{popup_width}x{popup_height}+{center_x}+{center_y}")
         
-        self.attributes("-topmost", True)  # Keep the popup on top of other windows
+        self.lift()  # Bring the popup to the front
+        self.focus_force()  # Focus on the popup window
     
     def _build_ui(self) -> None:
         """Build the UI elements of the alert popup based on the theme and alert type.
@@ -89,13 +90,22 @@ class CustomAlert(ctk.CTkToplevel):
         """
         accent_color = self.theme["colors"][self.alert_type]
         
+        main_container = ctk.CTkFrame(
+            self,
+            fg_color=self.theme["colors"]["background"],
+            border_width=2,              # Thickness of the border
+            border_color=accent_color,   # Ties the border to the error/warning/success color
+            corner_radius=0              # Set to 0 for sharp edges, or match your theme
+        )
+        main_container.pack(fill="both", expand=True)
+        
         # Thin accent line at the top
-        accent_line = ctk.CTkFrame(self, height=5, fg_color=accent_color)
+        accent_line = ctk.CTkFrame(main_container, height=5, fg_color=accent_color)
         accent_line.pack(fill="x", side="top")
         
         # Title label
         title = ctk.CTkLabel(
-            self,
+            main_container,
             text=self.title_text,
             font=self.theme["fonts"]["title"],
             text_color=accent_color,
@@ -104,7 +114,7 @@ class CustomAlert(ctk.CTkToplevel):
         
         # Message textbox with vertical scrollbar
         message_textbox = ctk.CTkTextbox(
-            self,
+            main_container,
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["background"],
@@ -117,7 +127,7 @@ class CustomAlert(ctk.CTkToplevel):
         message_textbox.configure(state="disabled")  # Make the textbox read-only
         
         # Buttons frame
-        buttons_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        buttons_frame = ctk.CTkFrame(main_container, fg_color=self.theme["colors"]["background"])
         buttons_frame.pack(pady=10)
         
         for option in self.options:
@@ -152,8 +162,12 @@ class CustomAlert(ctk.CTkToplevel):
         self.transient(self.parent) should be called to set the popup as a transient window of the parent,
         self.grab_set() should be called to prevent interaction with the parent window, 
         and self.wait_window() should be called to pause execution in the main window until the popup is destroyed."""
-        self.transient(self.parent)
+        self.transient(self.parent)  # Set the popup as a transient window of the parent
         self.grab_set()
+        
+        # If the main app is clicked, force the popup to the front
+        self.parent.bind("<FocusIn>", lambda e: self.lift() if self.winfo_exists() else None, add="+")
+        
         self.wait_window()
         
     def _auto_close(self) -> None:
