@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Any, List, Tuple
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion, safe_float_conversion
 
 logger = logging.getLogger(__name__)
@@ -238,13 +239,37 @@ class MatchStatsFrame(ctk.CTkFrame):
         """
         logger.debug(f"Populating MatchStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
-            raise UIPopulationError("Received no data to populate match statistics.")
+            logger.error("OCR returned no match stats. Prompting user for manual entry.")
+            for key in self.home_stats_vars:
+                self.home_stats_vars[key].set("")
+            for key in self.away_stats_vars:
+                self.away_stats_vars[key].set("")
+            
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Stats Detected",
+                message="The OCR process was unable to detect any match statistics. Please enter the stats manually.",
+                alert_type="warning",
+            )
         
         home_stats = stats_data.get('home_team', {})
         away_stats = stats_data.get('away_team', {})
         
         if home_stats is None or away_stats is None:
-            raise UIPopulationError("Match stats data is missing 'home_team' or 'away_team' keys.")
+            logger.error("OCR returned incomplete match stats. Prompting user for manual entry.")
+            for key in self.home_stats_vars:
+                self.home_stats_vars[key].set("")
+            for key in self.away_stats_vars:
+                self.away_stats_vars[key].set("")
+            
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Incomplete Stats Detected",
+                message="The OCR process returned incomplete match statistics. Please review and enter the missing stats manually.",
+                alert_type="warning",
+            )
 
         self.home_team_score_var.set(str(home_stats.get('score', '0')))
         self.away_team_score_var.set(str(away_stats.get('score', '0')))
@@ -295,16 +320,38 @@ class MatchStatsFrame(ctk.CTkFrame):
 
         if missing_fields:
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields[:3])}...")
-            return
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
+            return 
 
         # Buffer match overview
         logger.info("Match overview validation passed. Buffering data.")
         try:
             self.controller.buffer_match_overview(ui_data)
             logger.debug("Match overview buffered successfully.")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Data Buffered",
+                message="Match overview data has been successfully buffered. You can now proceed to add player stats.",
+                alert_type="success",
+                success_timeout=2
+            )
         except Exception as e:
             logger.error(f"Error buffering match overview: {e}")
-            raise
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Buffering Data",
+                message=f"An error occurred while buffering the match overview data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
     
     def on_next_outfield_player_button_press(self) -> None:
         """Buffer match overview and transition to adding individual player stats."""
@@ -314,7 +361,13 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
         except Exception as e:
             logger.error(f"Error during transition to PlayerStatsFrame: {e}", exc_info=True)
-            raise
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Processing Data",
+                message=f"An error occurred while processing the next player's stats: {str(e)}. Please try again.",
+                alert_type="error",
+            )
     
     def on_next_goalkeeper_button_press(self) -> None:
         """Buffer match overview and transition to adding individual goalkeeper stats."""
@@ -324,7 +377,13 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
         except Exception as e:
             logger.error(f"Error during transition to GKStatsFrame: {e}", exc_info=True)
-            raise
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Processing Data",
+                message=f"An error occurred while processing the next goalkeeper's stats: {str(e)}. Please try again.",
+                alert_type="error",
+            )
     
     def on_done_button_press(self):
         """Buffer match overview and trigger the final database save."""
@@ -334,7 +393,13 @@ class MatchStatsFrame(ctk.CTkFrame):
             self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
         except Exception as e:
             logger.error(f"Error during finalizing match addition: {e}", exc_info=True)
-            raise
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Finalizing Match",
+                message=f"An error occurred while finalizing the match: {str(e)}. Please try again.",
+                alert_type="error",
+            )
     
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""

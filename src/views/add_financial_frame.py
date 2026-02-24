@@ -140,20 +140,20 @@ class AddFinancialFrame(ctk.CTkFrame):
             key: safe_int_conversion(var.get().replace(',', '').replace('.', '').replace('k', '000').replace('m', '000000').replace('€', '').replace('£', '').replace('$', ''))
             for key, var in self.data_vars.items()
         }
-        
+
         player = self.player_list_var.get()
         season = self.season_entry.get().strip()
-        
+
         # Check if the season is in a valid format (e.g. "24/25") using a simple regex
         # If the season is in format "2024/2025", convert it to "24/25"
         # If the format is completely wrong, just set it to None
         if re.match(r'^\d{2}/\d{2}$', season):
             pass
         elif re.match(r'^\d{4}/\d{4}$', season):
-            season = season[2:4] + '/' + season[7:9]
+            season = f'{season[2:4]}/{season[7:9]}'
         else:
             season = None
-        
+
         missing_fields = []
         if player == "Click here to select player" or player == "No players found" or not player:
             missing_fields.append("Player")
@@ -163,11 +163,11 @@ class AddFinancialFrame(ctk.CTkFrame):
             missing_fields.append("Wage")
         if financial_data["market_value"] is None:
             missing_fields.append("Market Value")
-        
+
         for field in ["contract_length", "release_clause", "sell_on_clause"]:
             if financial_data[field] is None:
                 financial_data[field] = 0
-        
+
         if missing_fields:
             logger.warning(f"Validation Failed: Missing fields - {(', '.join(missing_fields)).title()}")
             CustomAlert(
@@ -178,7 +178,7 @@ class AddFinancialFrame(ctk.CTkFrame):
                 alert_type="warning",
             )
             return
-        
+
         try:
             logger.info(f"Validation passed. Saving financial data for {player}.")
             self.controller.save_financial_data(player, financial_data, season)

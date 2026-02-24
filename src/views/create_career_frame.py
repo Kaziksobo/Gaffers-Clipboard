@@ -1,7 +1,9 @@
 import customtkinter as ctk
 import logging
+import re
 from typing import Dict, Any, List
 from src.utils import safe_int_conversion
+from src.views.widgets.custom_alert import CustomAlert
 
 logger = logging.getLogger(__name__)
 
@@ -167,6 +169,16 @@ class CreateCareerFrame(ctk.CTkFrame):
         season = self.starting_season_entry.get().strip()
         length = safe_int_conversion(self.half_length_entry.get().strip())
         difficulty = self.difficulty_var.get()
+        
+        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
+        # If the season is in format "2024/2025", convert it to "24/25"
+        # If the format is completely wrong, just set it to None
+        if re.match(r'^\d{2}/\d{2}$', season):
+            pass
+        elif re.match(r'^\d{4}/\d{4}$', season):
+            season = f'{season[2:4]}/{season[7:9]}'
+        else:
+            season = None
 
         missing_fields = []
         if not club: missing_fields.append("Club Name")
@@ -177,6 +189,13 @@ class CreateCareerFrame(ctk.CTkFrame):
 
         if missing_fields:
             logger.warning(f"Career creation blocked. Missing fields: {', '.join(missing_fields)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
             return
 
         try:
@@ -190,7 +209,23 @@ class CreateCareerFrame(ctk.CTkFrame):
             )
             
             logger.info(f"Successfully created career for {club}. Navigating to Main Menu.")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Career Created",
+                message=f"Your new career with {club} has been successfully created!",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
             
         except Exception as e:
             logger.error(f"Failed to create new career: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Creating Career",
+                message=f"An error occurred while creating the new career: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return

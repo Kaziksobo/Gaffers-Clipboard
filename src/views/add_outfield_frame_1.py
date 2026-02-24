@@ -1,7 +1,9 @@
 import customtkinter as ctk
 import logging
+import re
 from typing import Dict, Any, Tuple
 from src.exceptions import UIPopulationError
+from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
@@ -193,7 +195,18 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         """
         logger.debug(f"Populating AddOutfieldFrame1 with stats: {stats.keys()}")
         if not stats:
-            raise UIPopulationError("Received no data to populate outfield player attributes.")
+            logger.warning("OCR returned no outfield player attributes. Prompting user for manual entry.")
+            for key in self.attr_vars:
+                self.attr_vars[key].set("")
+
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="OCR Failed",
+                message="No outfield player data was detected. Please enter the values manually.",
+                alert_type="warning",
+            )
+            return
         
         for key in self.attr_vars:
             self.attr_vars[key].set(str(stats.get(key, "")))
@@ -205,6 +218,23 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         # Convert attributes to int immediately
         ui_data: Dict[str, Any] = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
+        if invalid_attrs := [
+            key
+            for key, value in ui_data.items()
+            if value is not None and (value > 99 or value < 1)
+        ]:
+            key_to_label = dict(self.attr_definitions)
+            invalid_attr_labels = [key_to_label.get(key, key) for key in invalid_attrs]
+            logger.warning(f"Validation failed: Invalid attribute values for {', '.join(invalid_attr_labels)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Invalid Attribute Values",
+                message=f"The following attributes have invalid values (must be between 1 and 99): {', '.join(invalid_attr_labels)}. Please correct them before proceeding.",
+                alert_type="warning",
+            )
+            return
+        
         # Handle Text fields
         # "or None" converts empty strings to None for consistent validation
         ui_data["season"] = self.season_entry.get().strip() or None
@@ -229,6 +259,43 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             for key in self.attr_vars.keys()
             if ui_data[key] is None
         )
+        
+        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
+        # If the season is in format "2024/2025", convert it to "24/25"
+        # If the format is completely wrong, just set it to None
+        if re.match(r'^\d{2}/\d{2}$', ui_data["season"]):
+            pass
+        elif re.match(r'^\d{4}/\d{4}$', ui_data["season"]):
+            ui_data["season"] = f'{ui_data["season"][2:4]}/{ui_data["season"][7:9]}'
+        else:
+            ui_data["season"] = None
+        
+        # Check if the height is in a valid format (e.g. 6'2") using a simple regex
+        # If the height is in format "6ft 2in", convert it to 6'2\"
+        # If the format is completely wrong, just set it to None
+        if re.match(r'^\d{1,2}\'\d{1,2}"$', ui_data["height"]):
+            pass
+        elif re.match(r'^\d{1,2}ft\s?\d{1,2}in$', ui_data["height"]):
+            if match := re.match(
+                r'^(\d{1,2})ft\s?(\d{1,2})in$', ui_data["height"]
+            ):
+                feet = match[1]
+                inches = match[2]
+                ui_data["height"] = f"{feet}'{inches}\""
+        else:
+            ui_data["height"] = None
+        
+        # Throw a warning if age is higher than 50 or lower than 14
+        if ui_data["age"] is not None and (ui_data["age"] > 50 or ui_data["age"] < 14):
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Age Warning",
+                message=f"Age {ui_data['age']} is outside the expected range of 14-50. Please verify.",
+                alert_type="warning",
+            )
+            return
+        
         # Check static fields
         if ui_data["name"] is None: missing_fields.append("Name")
         if ui_data["season"] is None: missing_fields.append("Season")
@@ -240,19 +307,41 @@ class AddOutfieldFrame1(ctk.CTkFrame):
 
         if missing_fields:
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
             return
 
         try:
             logger.info("Validation passed. Buffering Outfield Page 1 and triggering Page 2 OCR.")
             # Buffer the current page's data
             self.controller.buffer_player_attributes(ui_data, gk=False, first=True)
-            
+            CustomAlert(
+                parent=self,
+                theme = self.theme,
+                title="Data Saved",
+                message=f"First page of outfield data for {ui_data['name']} in season {ui_data['season']} has been successfully saved.",
+                alert_type="success",
+                success_timeout=2
+            )
             # Trigger OCR for the next page
             self.controller.process_player_attributes(gk=False, first=False)
             self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))
         except Exception as e:
             # Safely catch OCR or buffering failures so the app doesn't crash on transition
             logger.error(f"Failed to process transition to Page 2: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Saving Data",
+                message=f"An error occurred while saving the Outfield data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
     
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""

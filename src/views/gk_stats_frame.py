@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Any, List, Tuple
 from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion, safe_float_conversion
 
 logger = logging.getLogger(__name__)
@@ -169,7 +170,18 @@ class GKStatsFrame(ctk.CTkFrame):
         """
         logger.debug(f"Populating GKStatsFrame with stats: {stats_data.keys()}")
         if not stats_data:
-            raise UIPopulationError("Received no data to populate player statistics.")
+            logger.error("OCR returned no goalkeeper stats. Prompting user for manual entry.")
+            for key in self.stats_vars:
+                self.stats_vars[key].set("")
+
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="OCR Failed",
+                message="No goalkeeper stats were detected. Please enter the values manually.",
+                alert_type="warning",
+            )
+            return
         
         for stat_key, _ in self.stat_definitions:
             self.stats_vars[stat_key].set(str(stats_data.get(stat_key, "0")))
@@ -188,11 +200,19 @@ class GKStatsFrame(ctk.CTkFrame):
         # Convert all stats to integers
         ui_data: Dict[str, Any] = {stat_key: safe_int_conversion(var.get()) for stat_key, var in self.stats_vars.items()}
         
+        
         # Check specifically for None (which indicates empty or invalid input)
         if missing_key_list := [key for key, value in ui_data.items() if value is None]:
             key_to_label = dict(self.stat_definitions)
             missing_labels = [key_to_label.get(key, key) for key in missing_key_list]
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_labels)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
             return 
         
         ui_data["player_name"] = player_name
@@ -202,9 +222,24 @@ class GKStatsFrame(ctk.CTkFrame):
         try:
             self.controller.buffer_player_performance(ui_data)
             logger.debug(f"Buffered data for {player_name}")
+            CustomAlert(
+                parent=self,
+                theme = self.theme,
+                title="Data Saved",
+                message=f"Match performance for {ui_data['player_name']} has been successfully saved.",
+                alert_type="success",
+                success_timeout=2
+            )
         except Exception as e:
             logger.error(f"Error buffering player performance data: {e}", exc_info=True)
-            raise
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Saving Data",
+                message=f"An error occurred while saving the player performance data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
 
     def on_next_outfield_player_button_press(self) -> None:
         """Buffer current stats, trigger OCR for the next outfield player, and refresh."""
@@ -215,6 +250,14 @@ class GKStatsFrame(ctk.CTkFrame):
             self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
         except Exception as e:
             logger.error(f"Failed to process next outfield player stats: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Processing Data",
+                message=f"An error occurred while processing the next player's stats: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
     
     def on_next_goalkeeper_button_press(self) -> None:
         """Buffer current stats, trigger OCR for the goalkeeper, and transition view."""
@@ -222,10 +265,17 @@ class GKStatsFrame(ctk.CTkFrame):
         try:
             # Trigger the controller OCR logic for the goalkeeper
             self.controller.process_player_stats(gk=True)
-            # Assuming you have a separate frame for GK stats
             self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
         except Exception as e:
             logger.error(f"Failed to process next goalkeeper stats: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Processing Data",
+                message=f"An error occurred while processing the next goalkeeper's stats: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
     
     def on_done_button_press(self):
         """Buffer final player stats and command the controller to save the entire match."""
@@ -237,11 +287,30 @@ class GKStatsFrame(ctk.CTkFrame):
         except Exception as e:
             # Crucial catch for DataPersistenceError to prevent data loss via hard-crash
             logger.error(f"Failed to save the match to persistent storage: {e}", exc_info=True)
-    
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Saving Match",
+                message=f"An error occurred while saving the match data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
     def refresh_player_dropdown(self) -> None:
         """Fetch the latest active player list from the database and update the dropdown."""
         names = self.controller.get_all_player_names(only_gk=True, remove_on_loan=True)
-        self.player_dropdown.set_values(names or ["No players found"])
+        if not names:
+            logger.warning("No goalkeepers found in the database to populate the dropdown.")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Goalkeepers Found",
+                message="No goalkeepers were found in the database. Please add goalkeepers to the library before adding their stats.",
+                alert_type="warning",
+                options=["Return to Library"],
+            )
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+            return
+        self.player_names = names or ["No players found"]
+        self.player_dropdown.set_values(self.player_names)
 
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields and refresh the dropdown when displayed."""

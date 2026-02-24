@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import logging
+from src.views.widgets.custom_alert import CustomAlert
 from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
@@ -122,6 +123,14 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         except Exception as e:
             # Catch the UIPopulationError from the Controller to prevent navigating to a broken frame
             logger.error(f"Goalkeeper OCR process aborted. Navigation cancelled: {e}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="OCR Process Aborted",
+                message=f"The OCR process for adding a goalkeeper was aborted: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
 
     def on_add_outfield_button_press(self) -> None:
         """Handle the Add Outfield Player button press by triggering OCR and navigating on success."""
@@ -130,3 +139,11 @@ class PlayerLibraryFrame(ctk.CTkFrame):
             self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame1"))
         except Exception as e:
             logger.error(f"Outfield OCR process aborted. Navigation cancelled: {e}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="OCR Process Aborted",
+                message=f"The OCR process for adding an outfield player was aborted: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return

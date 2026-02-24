@@ -2,6 +2,7 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any, Tuple
 from src.exceptions import UIPopulationError
+from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
@@ -143,7 +144,18 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         """
         logger.debug(f"Populating AddOutfieldFrame2 with stats: {stats.keys()}")
         if not stats:
-            raise UIPopulationError("Received no data to populate outfield player attributes.")
+            logger.warning("OCR returned no outfield player attributes. Prompting user for manual entry.")
+            for key in self.attr_vars:
+                self.attr_vars[key].set("")
+
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="OCR Failed",
+                message="No outfield player data was detected. Please enter the values manually.",
+                alert_type="warning",
+            )
+            return
         
         for key in self.attr_vars:
             self.attr_vars[key].set(str(stats.get(key, "")))
@@ -155,11 +167,35 @@ class AddOutfieldFrame2(ctk.CTkFrame):
         # Convert all technical attributes to integers
         ui_data = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
+        if invalid_attrs := [
+            key
+            for key, value in ui_data.items()
+            if value is not None and (value > 99 or value < 1)
+        ]:
+            key_to_label = dict(self.attr_definitions)
+            invalid_attr_labels = [key_to_label.get(key, key) for key in invalid_attrs]
+            logger.warning(f"Validation failed: Invalid attribute values for {', '.join(invalid_attr_labels)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Invalid Attribute Values",
+                message=f"The following attributes have invalid values (must be between 1 and 99): {', '.join(invalid_attr_labels)}. Please correct them before proceeding.",
+                alert_type="warning",
+            )
+            return
+        
         # Validate that no fields are None (missing)
         if missing_keys := [key for key, value in ui_data.items() if value is None]:
             key_to_label = dict(self.attr_definitions)
             missing_labels = [key_to_label[key] for key in missing_keys]
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_labels)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_labels)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
             return
 
         try:
@@ -173,8 +209,24 @@ class AddOutfieldFrame2(ctk.CTkFrame):
             
             # Step 3: Only navigate if the save was successful!
             logger.info("Outfield player successfully saved. Returning to Player Library.")
+            CustomAlert(
+                parent=self,
+                theme = self.theme,
+                title="Data Saved",
+                message=f"Full outfield data has been successfully saved.",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
             
         except Exception as e:
             # Catch Pydantic Validation errors or Database locks safely
             logger.error(f"Failed to save outfield player data: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Saving Data",
+                message=f"An error occurred while saving the Outfield data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return

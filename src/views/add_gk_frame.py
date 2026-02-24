@@ -1,7 +1,8 @@
 import customtkinter as ctk
 import logging
+import re
 from typing import Dict, Any
-from src.exceptions import UIPopulationError
+from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion
 
 logger = logging.getLogger(__name__)
@@ -167,8 +168,19 @@ class AddGKFrame(ctk.CTkFrame):
         """
         logger.debug(f"Populating AddGKFrame with stats: {stats.keys()}")
         if not stats:
-            raise UIPopulationError("Received no data to populate GK attributes.")
-        
+            logger.warning("OCR returned no GK attributes. Prompting user for manual entry.")
+            for key in self.attr_vars:
+                self.attr_vars[key].set("")
+
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="OCR Failed",
+                message="No goalkeeper data was detected. Please enter the values manually.",
+                alert_type="warning",
+            )
+            return
+            
         for key in self.attr_vars:
             self.attr_vars[key].set(str(stats.get(key, "")))
         
@@ -181,6 +193,23 @@ class AddGKFrame(ctk.CTkFrame):
             key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()
         }
 
+        if invalid_attrs := [
+            key
+            for key, value in ui_data.items()
+            if value is not None and (value > 99 or value < 1)
+        ]:
+            key_to_label = dict(self.attr_definitions)
+            invalid_attr_labels = [key_to_label.get(key, key) for key in invalid_attrs]
+            logger.warning(f"Validation failed: Invalid attribute values for {', '.join(invalid_attr_labels)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Invalid Attribute Values",
+                message=f"The following attributes have invalid values (must be between 1 and 99): {', '.join(invalid_attr_labels)}. Please correct them before proceeding.",
+                alert_type="warning",
+            )
+            return
+
         # Handle Text fields
         # usage of "or None" ensures empty strings become None for consistent validation
         ui_data["name"] = self.name_entry.get().strip() or None
@@ -191,6 +220,42 @@ class AddGKFrame(ctk.CTkFrame):
         # Handle Numeric bio fields (Age/Weight) - Convert to int standardizes them
         ui_data["age"] = safe_int_conversion(self.age_entry.get())
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
+
+        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
+        # If the season is in format "2024/2025", convert it to "24/25"
+        # If the format is completely wrong, just set it to None
+        if re.match(r'^\d{2}/\d{2}$', ui_data["season"]):
+            pass
+        elif re.match(r'^\d{4}/\d{4}$', ui_data["season"]):
+            ui_data["season"] = f'{ui_data["season"][2:4]}/{ui_data["season"][7:9]}'
+        else:
+            ui_data["season"] = None
+
+        # Check if the height is in a valid format (e.g. 6'2") using a simple regex
+        # If the height is in format "6ft 2in", convert it to 6'2\"
+        # If the format is completely wrong, just set it to None
+        if re.match(r'^\d{1,2}\'\d{1,2}"$', ui_data["height"]):
+            pass
+        elif re.match(r'^\d{1,2}ft\s?\d{1,2}in$', ui_data["height"]):
+            if match := re.match(
+                r'^(\d{1,2})ft\s?(\d{1,2})in$', ui_data["height"]
+            ):
+                feet = match[1]
+                inches = match[2]
+                ui_data["height"] = f"{feet}'{inches}\""
+        else:
+            ui_data["height"] = None
+
+        # Throw a warning if age is higher than 50 or lower than 14
+        if ui_data["age"] is not None and (ui_data["age"] > 50 or ui_data["age"] < 14):
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Age Warning",
+                message=f"Age {ui_data['age']} is outside the expected range of 14-50. Please verify.",
+                alert_type="warning",
+            )
+            return
 
         # Check dynamic attributes
         key_to_label = dict(self.attr_definitions)
@@ -209,18 +274,41 @@ class AddGKFrame(ctk.CTkFrame):
 
         if missing_fields:
             logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Missing Information",
+                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
+                alert_type="warning",
+            )
             return
 
         try:
             # Buffer the data and attempt the persistent save
             self.controller.buffer_player_attributes(ui_data, gk=True, first=True)
             self.controller.save_player()
-            
+
             logger.info(f"Successfully saved GK {ui_data['name']}. Navigating to Library.")
+            CustomAlert(
+                parent=self,
+                theme = self.theme,
+                title="Data Saved",
+                message=f"Goalkeeper data for {ui_data['name']} in season {ui_data['season']} has been successfully saved.",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             # Safely catch Pydantic rejections from the Controller
             logger.error(f"Failed to save Goalkeeper data: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Saving Data",
+                message=f"An error occurred while saving the Goalkeeper data: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
     
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""

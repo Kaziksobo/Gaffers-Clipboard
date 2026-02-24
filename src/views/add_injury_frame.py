@@ -145,22 +145,27 @@ class AddInjuryFrame(ctk.CTkFrame):
         player_name = self.player_list_var.get()
         season = self.season_entry.get().strip()
         injury_data["time_out_unit"] = self.time_out_unit_var.get()
-        
+
         # Check if the season is in a valid format (e.g. "24/25") using a simple regex
         # If the season is in format "2024/2025", convert it to "24/25"
         # If the format is completely wrong, just set it to None
         if re.match(r'^\d{2}/\d{2}$', season):
             pass
         elif re.match(r'^\d{4}/\d{4}$', season):
-            season = season[2:4] + '/' + season[7:9]
+            season = f'{season[2:4]}/{season[7:9]}'
         else:
             season = None
+        
+        # Check if the time_out_unit is still the placeholder value and if so, set it to None
+        if injury_data["time_out_unit"] == "Select unit":
+            injury_data["time_out_unit"] = None
+        
 
         # convert time_out to an integer and store in injury_data, if possible
         time_out_str = injury_data.get("time_out", "")
         time_out_int = safe_int_conversion(time_out_str)
         injury_data["time_out"] = time_out_int if time_out_int is not None else None
-        
+
         missing_fields = []
         if player_name == "Click here to select player" or player_name == "No players found" or not player_name:
             missing_fields.append("Player")
@@ -181,7 +186,7 @@ class AddInjuryFrame(ctk.CTkFrame):
                 alert_type="warning",
             )
             return
-        
+
         # Preemptive Date Validation
         in_game_date_str = str(injury_data.get("in_game_date", ""))
         try:
@@ -192,7 +197,7 @@ class AddInjuryFrame(ctk.CTkFrame):
                 parent=self,
                 theme=self.theme,
                 title="Invalid Date Format",
-                message=f"The 'In-game Date' field must be in the format dd/mm/yy. Please correct the date and try again.",
+                message="The 'In-game Date' field must be in the format dd/mm/yy. Please correct the date and try again.",
                 alert_type="warning",
             )
             return

@@ -2,6 +2,7 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any, Optional
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.custom_alert import CustomAlert
 
 logger = logging.getLogger(__name__)
 
@@ -117,45 +118,127 @@ class LeftPlayerFrame(ctk.CTkFrame):
         """Execute the sale of the currently selected player and return to the library."""
         player_name = self.get_player_name()
         if not player_name:
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Player Selected",
+                message="Please select a valid player from the dropdown before attempting to sell.",
+                alert_type="warning",
+            )
             return
         
         try:
             logger.info(f"Initiating sale for player: {player_name}")
             self.controller.sell_player(player_name)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Player Sold",
+                message=f"{player_name} has been successfully sold.",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             logger.error(f"Failed to execute player sale: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Player Sale Failed",
+                message=f"Failed to sell player {player_name}. Please try again.",
+                alert_type="error"
+            )
+            return
     
     def loan_out_player(self) -> None:
         """Execute the loan-out of the currently selected player and return to the library."""
         player_name = self.get_player_name()
         if not player_name:
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Player Selected",
+                message="Please select a valid player from the dropdown before attempting to loan out.",
+                alert_type="warning",
+            )
             return
         
         try:
             logger.info(f"Initiating loan-out for player: {player_name}")
             self.controller.loan_out_player(player_name)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Player Loaned Out",
+                message=f"{player_name} has been successfully loaned out.",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             logger.error(f"Failed to execute player loan: {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Player Loan Failed",
+                message=f"Failed to loan player {player_name}. Please try again.",
+                alert_type="error"
+            )
+            return
     
     def return_loan_player(self) -> None:
         """Execute the loan return of the currently selected player and return to the library."""
         player_name = self.get_player_name()
         if not player_name:
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Player Selected",
+                message="Please select a valid player from the dropdown before attempting to return from loan.",
+                alert_type="warning",
+            )
             return
 
         try:
             logger.info(f"Initiating loan return for player: {player_name}")
             self.controller.return_loan_player(player_name)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Player Returned from Loan",
+                message=f"{player_name} has been successfully returned from loan.",
+                alert_type="success",
+                success_timeout=2
+            )
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             logger.error(f"Failed to execute player loan return: {e}", exc_info=True)
-    
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Player Return Failed",
+                message=f"Failed to return player {player_name} from loan. Please try again.",
+                alert_type="error"
+            )
+            return
+        
     def refresh_player_dropdown(self) -> None:
         """Fetch the latest active player list from the database and update the dropdown."""
         names = self.controller.get_all_player_names()
-        self.player_dropdown.set_values(names or ["No players found"])
+        if not names:
+            logger.warning("No players found in the database to populate the dropdown.")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="No Players Found",
+                message="No players were found in the database. Please add players to the library before adding financial information.",
+                alert_type="warning",
+                options=["Return to Library"],
+            )
+            self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
+            return
+        self.player_names = names or ["No players found"]
+        self.player_dropdown.set_values(self.player_names)
     
     def on_show(self) -> None:
         """Lifecycle hook triggered when the frame is displayed to reset its state."""

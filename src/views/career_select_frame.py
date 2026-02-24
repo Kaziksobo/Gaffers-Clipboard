@@ -2,6 +2,7 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.custom_alert import CustomAlert
 
 logger = logging.getLogger(__name__)
 
@@ -127,9 +128,16 @@ class CareerSelectFrame(ctk.CTkFrame):
         """Validate UI selection, set the active career, and navigate to the Main Menu."""
         selected_career = self.careers_list_var.get()
         
-        invalid_states = ["Select Career", "No Careers Available", ""]
+        invalid_states = ["Select Career", "No Careers Available", "Click here to select career"]
         if selected_career in invalid_states:
             logger.warning(f"Invalid career selection attempted: '{selected_career}'. Aborting navigation.")
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Invalid Selection",
+                message="Please select a valid career from the dropdown before proceeding.",
+                alert_type="warning",
+            )
             return
         
         logger.info(f"User validated and selected career: {selected_career}")
@@ -139,3 +147,11 @@ class CareerSelectFrame(ctk.CTkFrame):
             self.controller.show_frame(target_class)
         except Exception as e:
             logger.error(f"Failed to load career '{selected_career}': {e}", exc_info=True)
+            CustomAlert(
+                parent=self,
+                theme=self.theme,
+                title="Error Loading Career",
+                message=f"An error occurred while loading the selected career: {str(e)}. Please try again.",
+                alert_type="error",
+            )
+            return
