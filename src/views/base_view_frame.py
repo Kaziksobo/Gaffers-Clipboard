@@ -55,7 +55,7 @@ class BaseViewFrame(ctk.CTkFrame):
         )
     
     # --- UI Generators ---
-    def create_stat_row(
+    def create_data_row(
         self, 
         parent_widget: Any, 
         index: int, 
@@ -85,8 +85,8 @@ class BaseViewFrame(ctk.CTkFrame):
         entry = ctk.CTkEntry(
             parent_widget,
             textvariable=entry_var,
-            font=self.theme["fonts"]["entry"],
-            fg_color=self.theme["colors"]["entry_bg"],
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"]
         )
         entry.grid(row=index, column=entry_col, sticky="ew", pady=5, padx=5)

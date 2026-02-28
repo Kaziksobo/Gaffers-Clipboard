@@ -131,7 +131,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.attr_definitions_physical):
-            self.create_stat_row(
+            self.create_data_row(
                 parent_widget=self.attributes_grid,
                 index=i,
                 stat_key=key,
@@ -142,7 +142,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
             )
 
         for i, (key, label) in enumerate(self.attr_definitions_mental):
-            self.create_stat_row(
+            self.create_data_row(
                 parent_widget=self.attributes_grid,
                 index=i,
                 stat_key=key,

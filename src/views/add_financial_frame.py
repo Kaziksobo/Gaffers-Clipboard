@@ -77,7 +77,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
             width=250,
-            placeholder_text="Season (e.g., 24/25)"
+            placeholder_text="Season (e.g. 24/25)"
         )
         self.season_entry.grid(row=1, column=2, pady=(0, 20), padx=(20, 0))
         
@@ -97,7 +97,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             self.financial_frame.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.stat_definitions):
-            self.create_stat_row(
+            self.create_data_row(
                 parent_widget=self.financial_frame,
                 index=i,
                 stat_key=key,
@@ -126,7 +126,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             )
 
         ui_data = {
-            key: safe_int_conversion(var.get().replace(",", "").replace("£", "").replace("$", "").replace("€", "").replace("k", "000").strip())
+            key: safe_int_conversion(var.get().replace(",", "").replace("£", "").replace("$", "").replace("€", "").replace("k", "000").replace("m", "000000").strip())
             for key, var in self.data_vars.items()
         }
         

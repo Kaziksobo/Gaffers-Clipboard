@@ -117,7 +117,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.attr_definitions):
-            self.create_attribute_row(
+            self.create_data_row(
                     parent_widget=self.attributes_grid,
                     index=i,
                     stat_key=key,

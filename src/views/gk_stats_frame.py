@@ -89,7 +89,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         
         # Populate stats grid
         for i, (stat_key, stat_label) in enumerate(self.stat_definitions):
-            self.create_stat_row(
+            self.create_data_row(
                 parent_widget=self.stats_grid,
                 index=i,
                 stat_key=stat_key,

@@ -76,7 +76,7 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin):
             row = i % half
             label_col = 1 if i < half else 3
             entry_col = label_col + 1
-            self.create_stat_row(
+            self.create_data_row(
                 parent_widget=self.attributes_grid,
                 index=row,
                 stat_key=key,
