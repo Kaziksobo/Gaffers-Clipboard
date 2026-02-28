@@ -2,9 +2,11 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any
 
+from src.views.base_view_frame import BaseViewFrame
+
 logger = logging.getLogger(__name__)
 
-class AddMatchFrame(ctk.CTkFrame):
+class AddMatchFrame(BaseViewFrame):
     """Frame for adding a match. 
     
     Provides basic layout with instructions and a button used to start 
@@ -18,9 +20,7 @@ class AddMatchFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The theme dictionary containing colors and fonts.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
         
         logger.info("Initializing AddMatchFrame")
 
@@ -52,8 +52,8 @@ class AddMatchFrame(ctk.CTkFrame):
             self,
             text="Done",
             fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["secondary_text"],
-            font=theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["button"],
             command=lambda: self.on_done_button_press()
         )
         self.done_button.pack(pady=10)
@@ -71,3 +71,4 @@ class AddMatchFrame(ctk.CTkFrame):
         except Exception as e:
             # Catch the UIPopulationError from the Controller to prevent navigating to a broken frame
             logger.error(f"Match stats OCR process aborted. Navigation cancelled: {e}", exc_info=True)
+            self.show_error("OCR Process Aborted", f"An error occurred while processing the match stats:\n{str(e)}\n\nPlease try again.")

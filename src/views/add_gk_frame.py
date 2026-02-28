@@ -2,12 +2,14 @@ import customtkinter as ctk
 import logging
 import re
 from typing import Dict, Any
-from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion
+
+from src.views.base_view_frame import BaseViewFrame
+from src.views.mixins import OCRDataMixin
 
 logger = logging.getLogger(__name__)
 
-class AddGKFrame(ctk.CTkFrame):
+class AddGKFrame(BaseViewFrame, OCRDataMixin):
     """A data entry frame for processing and saving Goalkeeper attributes."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the AddGKFrame layout and input fields.
@@ -17,9 +19,7 @@ class AddGKFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The theme dictionary containing color and font settings.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
         
         logger.info("Initializing AddGKFrame")
         
@@ -117,7 +117,13 @@ class AddGKFrame(ctk.CTkFrame):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.attr_definitions):
-            self.create_attribute_row(i, key, label)
+            self.create_attribute_row(
+                    parent_widget=self.attributes_grid,
+                    index=i,
+                    stat_key=key,
+                    stat_label=label,
+                    target_dict=self.attr_vars
+            )
         
         self.done_button = ctk.CTkButton(
             self,
@@ -129,158 +135,45 @@ class AddGKFrame(ctk.CTkFrame):
         )
         self.done_button.grid(row=5, column=1, pady=(0, 20), sticky="ew")
     
-    def create_attribute_row(self, row: int, attr_key: str, attr_label: str) -> None:
-        """Creates a row in the attributes grid for a specific goalkeeper attribute.
-        
-        Args:
-            row (int): The row index in the attributes grid where this attribute should be placed.
-            attr_key (str): The key used to identify this attribute in the data model.
-            attr_label (str): The human-readable label for this attribute to display in the UI.
-        """
-        
-        attr_label = ctk.CTkLabel(
-            self.attributes_grid,
-            text=attr_label,
-            font=self.theme["fonts"]["body"],
-            text_color=self.theme["colors"]["primary_text"]
-        )
-        attr_label.grid(row=row, column=1, padx=5, pady=5)
-        
-        attr_var = ctk.StringVar(value="")  
-        self.attr_vars[attr_key] = attr_var      
-        self.attr_entry = ctk.CTkEntry(
-            self.attributes_grid,
-            textvariable=attr_var,
-            font=self.theme["fonts"]["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
-        )
-        self.attr_entry.grid(row=row, column=2, padx=5, pady=5)
-    
-    def populate_stats(self, stats: Dict[str, Any]) -> None:
-        """Populate the UI entry fields with OCR-detected statistics.
-
-        Args:
-            stats (Dict[str, Any]): A dictionary containing attribute keys and integer values.
-
-        Raises:
-            UIPopulationError: If the provided stats dictionary is empty.
-        """
-        logger.debug(f"Populating AddGKFrame with stats: {stats.keys()}")
-        if not stats:
-            logger.warning("OCR returned no GK attributes. Prompting user for manual entry.")
-            for key in self.attr_vars:
-                self.attr_vars[key].set("")
-
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="OCR Failed",
-                message="No goalkeeper data was detected. Please enter the values manually.",
-                alert_type="warning",
-            )
-            return
-            
-        for key in self.attr_vars:
-            self.attr_vars[key].set(str(stats.get(key, "")))
-        
-        logger.debug("AddGKFrame population complete.")
-    
     def on_done_button_press(self) -> None:
         """Extract inputs, validate them, and route them to the Controller for saving."""
         # Convert attributes to integers using helper
         ui_data: Dict[str, Any] = {
             key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()
         }
-
-        if invalid_attrs := [
-            key
-            for key, value in ui_data.items()
-            if value is not None and (value > 99 or value < 1)
-        ]:
-            key_to_label = dict(self.attr_definitions)
-            invalid_attr_labels = [key_to_label.get(key, key) for key in invalid_attrs]
-            logger.warning(f"Validation failed: Invalid attribute values for {', '.join(invalid_attr_labels)}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Invalid Attribute Values",
-                message=f"The following attributes have invalid values (must be between 1 and 99): {', '.join(invalid_attr_labels)}. Please correct them before proceeding.",
-                alert_type="warning",
-            )
+        
+        if self.validate_attr_range(ui_data, self.attr_definitions):
             return
 
         # Handle Text fields
         # usage of "or None" ensures empty strings become None for consistent validation
         ui_data["name"] = self.name_entry.get().strip() or None
         ui_data["country"] = self.country_entry.get().strip() or None
-        ui_data["season"] = self.season_entry.get().strip() or None
-        ui_data["height"] = self.height_entry.get().strip() or None
+        
+        season = self.validate_season(self.season_entry.get().strip())
+        if season is None:
+            return
+        ui_data["season"] = season
+        
+        height = self.validate_height(self.height_entry.get().strip())
+        if height is None:
+            return
+        ui_data["height"] = height
 
         # Handle Numeric bio fields (Age/Weight) - Convert to int standardizes them
-        ui_data["age"] = safe_int_conversion(self.age_entry.get())
+        ui_data["age"] = self.validate_age(safe_int_conversion(self.age_entry.get()))
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
 
-        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
-        # If the season is in format "2024/2025", convert it to "24/25"
-        # If the format is completely wrong, just set it to None
-        if re.match(r'^\d{2}/\d{2}$', ui_data["season"]):
-            pass
-        elif re.match(r'^\d{4}/\d{4}$', ui_data["season"]):
-            ui_data["season"] = f'{ui_data["season"][2:4]}/{ui_data["season"][7:9]}'
-        else:
-            ui_data["season"] = None
-
-        # Check if the height is in a valid format (e.g. 6'2") using a simple regex
-        # If the height is in format "6ft 2in", convert it to 6'2\"
-        # If the format is completely wrong, just set it to None
-        if re.match(r'^\d{1,2}\'\d{1,2}"$', ui_data["height"]):
-            pass
-        elif re.match(r'^\d{1,2}ft\s?\d{1,2}in$', ui_data["height"]):
-            if match := re.match(
-                r'^(\d{1,2})ft\s?(\d{1,2})in$', ui_data["height"]
-            ):
-                feet = match[1]
-                inches = match[2]
-                ui_data["height"] = f"{feet}'{inches}\""
-        else:
-            ui_data["height"] = None
-
-        # Throw a warning if age is higher than 50 or lower than 14
-        if ui_data["age"] is not None and (ui_data["age"] > 50 or ui_data["age"] < 14):
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Age Warning",
-                message=f"Age {ui_data['age']} is outside the expected range of 14-50. Please verify.",
-                alert_type="warning",
-            )
-            return
-
-        # Check dynamic attributes
-        key_to_label = dict(self.attr_definitions)
-        missing_fields = [
-            key_to_label.get(key, key)
-            for key in self.attr_vars.keys()
-            if ui_data[key] is None
-        ]
-        # Check static fields
-        if ui_data["name"] is None: missing_fields.append("Name")
-        if ui_data["season"] is None: missing_fields.append("Season")
-        if ui_data["age"] is None: missing_fields.append("Age")
-        if ui_data["height"] is None: missing_fields.append("Height")
-        if ui_data["weight"] is None: missing_fields.append("Weight")
-        if ui_data["country"] is None: missing_fields.append("Country")
-
-        if missing_fields:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Missing Information",
-                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
-                alert_type="warning",
-            )
+        key_to_label = {key: label for key, label in self.attr_definitions}
+        key_to_label.update({
+            "name": "Name",
+            "country": "Country",
+            "season": "Season",
+            "height": "Height",
+            "age": "Age",
+            "weight": "Weight"
+        })
+        if self.check_missing_fields(ui_data, key_to_label):
             return
 
         try:
@@ -289,25 +182,12 @@ class AddGKFrame(ctk.CTkFrame):
             self.controller.save_player()
 
             logger.info(f"Successfully saved GK {ui_data['name']}. Navigating to Library.")
-            CustomAlert(
-                parent=self,
-                theme = self.theme,
-                title="Data Saved",
-                message=f"Goalkeeper data for {ui_data['name']} in season {ui_data['season']} has been successfully saved.",
-                alert_type="success",
-                success_timeout=2
-            )
+            self.show_success("Goalkeeper Saved", f"Goalkeeper {ui_data['name']} saved successfully!")
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             # Safely catch Pydantic rejections from the Controller
             logger.error(f"Failed to save Goalkeeper data: {e}", exc_info=True)
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Saving Data",
-                message=f"An error occurred while saving the Goalkeeper data: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("Error Saving Data", f"An error occurred: \n{str(e)}\n\nPlease try again.")
             return
     
     def on_show(self) -> None:

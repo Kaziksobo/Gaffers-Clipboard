@@ -2,9 +2,11 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any
 
+from src.views.base_view_frame import BaseViewFrame
+
 logger = logging.getLogger(__name__)
 
-class MatchAddedFrame(ctk.CTkFrame):
+class MatchAddedFrame(BaseViewFrame):
     """A simple success screen displayed when a match is successfully recorded."""
     
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
@@ -15,9 +17,7 @@ class MatchAddedFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The theme dictionary containing colors and fonts.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
         
         logger.info("Initializing MatchAddedFrame")
 

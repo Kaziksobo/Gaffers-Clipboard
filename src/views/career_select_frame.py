@@ -2,11 +2,12 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
-from src.views.widgets.custom_alert import CustomAlert
+
+from src.views.base_view_frame import BaseViewFrame
 
 logger = logging.getLogger(__name__)
 
-class CareerSelectFrame(ctk.CTkFrame):
+class CareerSelectFrame(BaseViewFrame):
     """The initial startup frame allowing the user to select or create a career."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the CareerSelectFrame with UI components and layout.
@@ -17,9 +18,7 @@ class CareerSelectFrame(ctk.CTkFrame):
                               circular imports with App).
             theme (Dict[str, Any]): The application's theme configuration dictionary.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
 
         logger.info("Initializing CareerSelectFrame")
 
@@ -128,16 +127,10 @@ class CareerSelectFrame(ctk.CTkFrame):
         """Validate UI selection, set the active career, and navigate to the Main Menu."""
         selected_career = self.careers_list_var.get()
         
-        invalid_states = ["Select Career", "No Careers Available", "Click here to select career"]
+        invalid_states = ["Select Career", "No Careers Available", "Click here to select career", ""]
         if selected_career in invalid_states:
             logger.warning(f"Invalid career selection attempted: '{selected_career}'. Aborting navigation.")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Invalid Selection",
-                message="Please select a valid career from the dropdown before proceeding.",
-                alert_type="warning",
-            )
+            self.show_warning("Invalid Selection", "Please select a valid career from the dropdown before proceeding.")
             return
         
         logger.info(f"User validated and selected career: {selected_career}")
@@ -147,11 +140,5 @@ class CareerSelectFrame(ctk.CTkFrame):
             self.controller.show_frame(target_class)
         except Exception as e:
             logger.error(f"Failed to load career '{selected_career}': {e}", exc_info=True)
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Loading Career",
-                message=f"An error occurred while loading the selected career: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("Error Loading Career", f"An error occurred while loading the selected career: {str(e)}\n\nPlease try again.")
             return

@@ -1,11 +1,12 @@
 import customtkinter as ctk
 import logging
-from src.views.widgets.custom_alert import CustomAlert
 from typing import Dict, Any
+
+from src.views.base_view_frame import BaseViewFrame
 
 logger = logging.getLogger(__name__)
 
-class PlayerLibraryFrame(ctk.CTkFrame):
+class PlayerLibraryFrame(BaseViewFrame):
     """The central navigation hub for managing player attributes, finances, and transfers."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the Player Library frame and its navigation buttons.
@@ -15,9 +16,7 @@ class PlayerLibraryFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The application's theme dictionary containing colors and fonts.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
 
         logger.info("Initializing PlayerLibraryFrame")
 
@@ -123,13 +122,7 @@ class PlayerLibraryFrame(ctk.CTkFrame):
         except Exception as e:
             # Catch the UIPopulationError from the Controller to prevent navigating to a broken frame
             logger.error(f"Goalkeeper OCR process aborted. Navigation cancelled: {e}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="OCR Process Aborted",
-                message=f"The OCR process for adding a goalkeeper was aborted: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("OCR Process Aborted", f"An error occurred while processing the goalkeeper attributes:\n{str(e)}\n\nPlease try again.")
             return
 
     def on_add_outfield_button_press(self) -> None:
@@ -139,11 +132,5 @@ class PlayerLibraryFrame(ctk.CTkFrame):
             self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame1"))
         except Exception as e:
             logger.error(f"Outfield OCR process aborted. Navigation cancelled: {e}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="OCR Process Aborted",
-                message=f"The OCR process for adding an outfield player was aborted: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("OCR Process Aborted", f"An error occurred while processing the outfield player attributes:\n{str(e)}\n\nPlease try again.")    
             return

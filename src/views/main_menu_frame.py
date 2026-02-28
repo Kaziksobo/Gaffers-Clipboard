@@ -1,11 +1,12 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, Optional
-from src.types import CareerMetadata
+from typing import Dict, Any
+
+from src.views.base_view_frame import BaseViewFrame
 
 logger = logging.getLogger(__name__)
 
-class MainMenuFrame(ctk.CTkFrame):
+class MainMenuFrame(BaseViewFrame):
     """The central navigation hub shown after a career is successfully loaded."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the MainMenuFrame and its navigation components.
@@ -15,9 +16,7 @@ class MainMenuFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The application's theme configuration.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
         
         logger.info("Initializing MainMenuFrame")
 
@@ -83,7 +82,6 @@ class MainMenuFrame(ctk.CTkFrame):
             str: A formatted string including the club and manager name.
         """
         if current_career := self.controller.get_current_career_details():
-            # Use dot notation for Pydantic attributes
             return f"Welcome back to {current_career.club_name}, {current_career.manager_name}!"
 
         logger.warning("No active career found while generating welcome text.")

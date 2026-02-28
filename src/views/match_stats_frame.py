@@ -1,14 +1,15 @@
 import customtkinter as ctk
 import logging
 from typing import Dict, Any, List, Tuple
-from src.exceptions import UIPopulationError
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
-from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion, safe_float_conversion
+
+from src.views.base_view_frame import BaseViewFrame
+from src.views.mixins import OCRDataMixin
 
 logger = logging.getLogger(__name__)
 
-class MatchStatsFrame(ctk.CTkFrame):
+class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
     """A data entry frame for validating and saving team match statistics."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
@@ -19,9 +20,7 @@ class MatchStatsFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The application's theme configuration.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
         
         logger.info("Initializing MatchStatsFrame")
         
@@ -150,7 +149,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         self.away_team_name.grid(row=0, column=4, padx=5, pady=5)
 
         for i, (stat_key, stat_label) in enumerate(self.stat_definitions):
-            self.create_stat_row(i + 1, stat_key, stat_label)
+            self.create_home_away_stat_row(i + 1, stat_key, stat_label)
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
@@ -198,7 +197,7 @@ class MatchStatsFrame(ctk.CTkFrame):
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
-    def create_stat_row(self, row: int, stat_key: str, stat_label: str) -> None:
+    def create_home_away_stat_row(self, row: int, stat_key: str, stat_label: str) -> None:
         """Helper to create a unified Home/Away entry row for a specific statistic."""
         home_stat_value = ctk.StringVar(value="")
         self.home_stats_vars[stat_key] = home_stat_value
@@ -227,60 +226,15 @@ class MatchStatsFrame(ctk.CTkFrame):
             fg_color=self.theme["colors"]["entry_fg"]
         )
         self.away_stat_entry.grid(row=row, column=4, padx=5, pady=5)
-
-    def populate_stats(self, stats_data: Dict[str, Any]) -> None:
-        """Populate the Home and Away entry fields with detected match statistics.
         
-        Args:
-            stats (Dict[str, Any]): A dictionary containing nested 'home_team' and 'away_team' stats.
-            
-        Raises:
-            UIPopulationError: If the provided stats dictionary is empty.
-        """
-        logger.debug(f"Populating MatchStatsFrame with stats: {stats_data.keys()}")
-        if not stats_data:
-            logger.error("OCR returned no match stats. Prompting user for manual entry.")
-            for key in self.home_stats_vars:
-                self.home_stats_vars[key].set("")
-            for key in self.away_stats_vars:
-                self.away_stats_vars[key].set("")
-            
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="No Stats Detected",
-                message="The OCR process was unable to detect any match statistics. Please enter the stats manually.",
-                alert_type="warning",
-            )
-        
-        home_stats = stats_data.get('home_team', {})
-        away_stats = stats_data.get('away_team', {})
-        
-        if home_stats is None or away_stats is None:
-            logger.error("OCR returned incomplete match stats. Prompting user for manual entry.")
-            for key in self.home_stats_vars:
-                self.home_stats_vars[key].set("")
-            for key in self.away_stats_vars:
-                self.away_stats_vars[key].set("")
-            
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Incomplete Stats Detected",
-                message="The OCR process returned incomplete match statistics. Please review and enter the missing stats manually.",
-                alert_type="warning",
-            )
+    def get_ocr_mapping(self) -> Dict[str, Dict[str, ctk.StringVar]]:
+        """Override OCRDataMixin mapping to handle nested dictionaries cleanly."""
+        return {
+            "home_team": self.home_stats_vars,
+            "away_team": self.away_stats_vars
+        }
 
-        self.home_team_score_var.set(str(home_stats.get('score', '0')))
-        self.away_team_score_var.set(str(away_stats.get('score', '0')))
-
-        for stat_key, _ in self.stat_definitions:
-            self.home_stats_vars[stat_key].set(str(home_stats.get(stat_key, "")))
-            self.away_stats_vars[stat_key].set(str(away_stats.get(stat_key, "")))
-        
-        logger.debug("MatchStatsFrame populated successfully.")
-
-    def collect_data(self) -> None:
+    def collect_data(self) -> bool:
         """Extract inputs, validate them, and securely buffer the match overview data."""
         # Helper to convert stat based on key (xG is float, others are int)
         def convert_stat(key: str, value: str):
@@ -298,108 +252,69 @@ class MatchStatsFrame(ctk.CTkFrame):
             "home_stats": {k: convert_stat(k, v.get()) for k, v in self.home_stats_vars.items()},
             "away_stats": {k: convert_stat(k, v.get()) for k, v in self.away_stats_vars.items()},
         }
-
-        missing_fields = []
-
-        # Validate basic fields
-        if ui_data["competition"] == "Select Competition": missing_fields.append("Competition")
-        if ui_data["home_team_name"] is None: missing_fields.append("Home Team Name")
-        if ui_data["away_team_name"] is None: missing_fields.append("Away Team Name")
-        if ui_data["home_score"] is None: missing_fields.append("Home Score")
-        if ui_data["away_score"] is None: missing_fields.append("Away Score")
-
-        # Validate home stats
-        if missing_keys := [key for key, value in ui_data["home_stats"].items() if value is None]:
-            key_to_label = dict(self.stat_definitions)
-            missing_fields.extend([f"Home {key_to_label.get(key, key)}" for key in missing_keys])
-
-        # Validate away stats
-        if missing_keys := [key for key, value in ui_data["away_stats"].items() if value is None]:
-            key_to_label = dict(self.stat_definitions)
-            missing_fields.extend([f"Away {key_to_label.get(key, key)}" for key in missing_keys])
-
-        if missing_fields:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields[:3])}...")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Missing Information",
-                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
-                alert_type="warning",
-            )
-            return 
+        
+        validation_dict = {
+            "Competition": ui_data["competition"],
+            "Home Team Name": ui_data["home_team_name"],
+            "Away Team Name": ui_data["away_team_name"],
+            "Home Score": ui_data["home_score"],
+            "Away Score": ui_data["away_score"]
+        }
+        
+        key_to_label = dict(self.stat_definitions)
+        for k, v in ui_data["home_stats"].items():
+            validation_dict[f"Home {key_to_label.get(k, k)}"] = v
+        for k, v in ui_data["away_stats"].items():
+            validation_dict[f"Away {key_to_label.get(k, k)}"] = v
+        
+        if self.check_missing_fields(validation_dict, {k: k for k in validation_dict.keys()}):
+            self.show_warning("Missing Fields", "Please fill in all required fields before proceeding.")
+            return False
 
         # Buffer match overview
         logger.info("Match overview validation passed. Buffering data.")
         try:
             self.controller.buffer_match_overview(ui_data)
             logger.debug("Match overview buffered successfully.")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Data Buffered",
-                message="Match overview data has been successfully buffered. You can now proceed to add player stats.",
-                alert_type="success",
-                success_timeout=2
-            )
+            self.show_success("Data Saved", "Match overview data Saved successfully! Proceed to add player stats.")
+            return True
         except Exception as e:
             logger.error(f"Error buffering match overview: {e}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Buffering Data",
-                message=f"An error occurred while buffering the match overview data: {str(e)}. Please try again.",
-                alert_type="error",
-            )
-            return
+            self.show_error("Error Saving Data", f"An error occurred while saving the match overview data: \n{str(e)}. \n\nPlease try again.")
+            return False
     
     def on_next_outfield_player_button_press(self) -> None:
         """Buffer match overview and transition to adding individual player stats."""
+        if not self.collect_data():
+            return
         try: 
-            self.collect_data()
             self.controller.process_player_stats()
             self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
         except Exception as e:
             logger.error(f"Error during transition to PlayerStatsFrame: {e}", exc_info=True)
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Processing Data",
-                message=f"An error occurred while processing the next player's stats: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("Error Processing Data", f"An error occurred while processing the next player's stats: \n{str(e)}. \n\nPlease try again.")
     
     def on_next_goalkeeper_button_press(self) -> None:
         """Buffer match overview and transition to adding individual goalkeeper stats."""
+        if not self.collect_data():
+            return
         try:
-            self.collect_data()
             self.controller.process_player_stats(gk=True)
             self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
         except Exception as e:
             logger.error(f"Error during transition to GKStatsFrame: {e}", exc_info=True)
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Processing Data",
-                message=f"An error occurred while processing the next goalkeeper's stats: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("Error Processing Data", f"An error occurred while processing the goalkeeper's stats: \n{str(e)}. \n\nPlease try again.")
     
     def on_done_button_press(self):
         """Buffer match overview and trigger the final database save."""
+        if not self.collect_data():
+            return
         try:
-            self.collect_data()
             self.controller.save_buffered_match()
             self.controller.show_frame(self.controller.get_frame_class("MatchAddedFrame"))
         except Exception as e:
             logger.error(f"Error during finalizing match addition: {e}", exc_info=True)
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Finalizing Match",
-                message=f"An error occurred while finalizing the match: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("Error Saving Match", f"An error occurred while saving the match data: \n{str(e)}. \n\nPlease try again.")
     
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""

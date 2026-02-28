@@ -1,13 +1,13 @@
 import customtkinter as ctk
 import logging
-import re
-from typing import Dict, Any, List
+from typing import Dict, Any
 from src.utils import safe_int_conversion
-from src.views.widgets.custom_alert import CustomAlert
+
+from src.views.base_view_frame import BaseViewFrame
 
 logger = logging.getLogger(__name__)
 
-class CreateCareerFrame(ctk.CTkFrame):
+class CreateCareerFrame(BaseViewFrame):
     """A frame that provides a form for users to create a new FIFA career profile."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the CreateCareerFrame with input fields and layout.
@@ -17,9 +17,7 @@ class CreateCareerFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The application's theme configuration.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
         
         logger.info("Initializing CreateCareerFrame")
         
@@ -170,32 +168,21 @@ class CreateCareerFrame(ctk.CTkFrame):
         length = safe_int_conversion(self.half_length_entry.get().strip())
         difficulty = self.difficulty_var.get()
         
-        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
-        # If the season is in format "2024/2025", convert it to "24/25"
-        # If the format is completely wrong, just set it to None
-        if re.match(r'^\d{2}/\d{2}$', season):
-            pass
-        elif re.match(r'^\d{4}/\d{4}$', season):
-            season = f'{season[2:4]}/{season[7:9]}'
-        else:
-            season = None
+        # Check if the season is in a valid format (e.g. "24/25")
+        season = self.validate_season(season)
+        if season is None:
+            return
 
         missing_fields = []
         if not club: missing_fields.append("Club Name")
         if not manager: missing_fields.append("Manager Name")
         if not season: missing_fields.append("Starting Season")
         if not length: missing_fields.append("Half Length")
-        if difficulty == "Select Difficulty": missing_fields.append("Difficulty")
+        if difficulty in ["Select Difficulty", ""]: missing_fields.append("Difficulty")
 
         if missing_fields:
             logger.warning(f"Career creation blocked. Missing fields: {', '.join(missing_fields)}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Missing Information",
-                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
-                alert_type="warning",
-            )
+            self.show_warning("Missing Fields", f"The following required fields are missing: {', '.join(missing_fields)}.\n\nPlease fill them in before proceeding.")
             return
 
         try:
@@ -209,23 +196,17 @@ class CreateCareerFrame(ctk.CTkFrame):
             )
             
             logger.info(f"Successfully created career for {club}. Navigating to Main Menu.")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Career Created",
-                message=f"Your new career with {club} has been successfully created!",
-                alert_type="success",
-                success_timeout=2
-            )
+            self.show_success("Career Created", f"Your new career with {club} has been successfully created!")
             self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
             
         except Exception as e:
             logger.error(f"Failed to create new career: {e}", exc_info=True)
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Creating Career",
-                message=f"An error occurred while creating the new career: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("Error Creating Career", f"An error occurred while creating your career: \n{str(e)}\n\nPlease try again.")
             return
+    
+    def on_show(self) -> None:
+        self.club_entry.delete(0, 'end')
+        self.manager_entry.delete(0, 'end')
+        self.season_entry.delete(0, 'end')
+        self.half_length_entry.delete(0, 'end')
+        self.difficulty_var.set("Select Difficulty")

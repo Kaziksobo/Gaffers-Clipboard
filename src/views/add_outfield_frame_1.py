@@ -2,13 +2,14 @@ import customtkinter as ctk
 import logging
 import re
 from typing import Dict, Any, Tuple
-from src.exceptions import UIPopulationError
-from src.views.widgets.custom_alert import CustomAlert
 from src.utils import safe_int_conversion
+
+from src.views.base_view_frame import BaseViewFrame
+from src.views.mixins import OCRDataMixin
 
 logger = logging.getLogger(__name__)
 
-class AddOutfieldFrame1(ctk.CTkFrame):
+class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
     """A data entry frame for the first page of Outfield player attributes."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the AddOutfieldFrame1 layout and input fields.
@@ -18,9 +19,7 @@ class AddOutfieldFrame1(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Dict[str, Any]): The theme dictionary containing color and font settings.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
-        self.controller = controller
-        self.theme = theme
+        super().__init__(parent, controller, theme)
         
         logger.info("Initializing AddOutfieldFrame1")
         
@@ -69,13 +68,8 @@ class AddOutfieldFrame1(ctk.CTkFrame):
 
         self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
-        self.base_attr_row.grid_columnconfigure(0, weight=1)
-        self.base_attr_row.grid_columnconfigure(1, weight=0)
-        self.base_attr_row.grid_columnconfigure(2, weight=0)
-        self.base_attr_row.grid_columnconfigure(3, weight=0)
-        self.base_attr_row.grid_columnconfigure(4, weight=0)
-        self.base_attr_row.grid_columnconfigure(5, weight=0)
-        self.base_attr_row.grid_columnconfigure(6, weight=1)
+        for i in range(7):
+            self.base_attr_row.grid_columnconfigure(i, weight=1 if i in [0, 6] else 0)
         self.base_attr_row.grid_rowconfigure(0, weight=1)
         
         self.position_entry = ctk.CTkEntry(
@@ -131,20 +125,32 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
         self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
        
-        self.attributes_grid.grid_columnconfigure(0, weight=1)
-        self.attributes_grid.grid_columnconfigure(1, weight=0)
-        self.attributes_grid.grid_columnconfigure(2, weight=0)
-        self.attributes_grid.grid_columnconfigure(3, weight=0)
-        self.attributes_grid.grid_columnconfigure(4, weight=0)
-        self.attributes_grid.grid_columnconfigure(5, weight=1)
+        for i in range(6):
+            self.attributes_grid.grid_columnconfigure(i, weight=1 if i in [0, 5] else 0)
         for i in range(max(len(self.attr_definitions_physical), len(self.attr_definitions_mental))):
             self.attributes_grid.grid_rowconfigure(i, weight=1)
         
         for i, (key, label) in enumerate(self.attr_definitions_physical):
-            self.create_stat_row(i, key, label, physical=True)
+            self.create_stat_row(
+                parent_widget=self.attributes_grid,
+                index=i,
+                stat_key=key,
+                stat_label=label,
+                target_dict=self.attr_vars,
+                label_col=1,
+                entry_col=2
+            )
 
         for i, (key, label) in enumerate(self.attr_definitions_mental):
-            self.create_stat_row(i, key, label, physical=False)
+            self.create_stat_row(
+                parent_widget=self.attributes_grid,
+                index=i,
+                stat_key=key,
+                stat_label=label,
+                target_dict=self.attr_vars,
+                label_col=3,
+                entry_col=4
+            )
         
         self.next_page_button = ctk.CTkButton(
             self,
@@ -156,191 +162,61 @@ class AddOutfieldFrame1(ctk.CTkFrame):
         )
         self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")
 
-    def create_stat_row(self, index: int, attr_key: str, attr_label: str, physical: bool = True) -> None:
-        """Creates a row in the attributes grid for a specific player attribute.
-        
-        Args:
-            row (int): The row index in the grid.
-            attr_key (str): The dictionary key for the data model.
-            attr_label (str): The human-readable label for the UI.
-            physical (bool): Determines the column (0 for physical, 1 for mental).
-        """
-        attr_label = ctk.CTkLabel(
-            self.attributes_grid,
-            text=attr_label,
-            font=self.theme["fonts"]["body"],
-            text_color=self.theme["colors"]["primary_text"]
-        )
-        attr_label.grid(row=index, column=1 if physical else 3, padx=5, pady=5, sticky="w")
-        
-        attr_var = ctk.StringVar(value="")
-        self.attr_vars[attr_key] = attr_var
-        self.attr_entry = ctk.CTkEntry(
-            self.attributes_grid,
-            textvariable=attr_var,
-            font=self.theme["fonts"]["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
-        )
-        self.attr_entry.grid(row=index, column=2 if physical else 4, padx=5, pady=5, sticky="ew")
-    
-    def populate_stats(self, stats: Dict[str, Any]) -> None:
-        """Populates the UI entry fields with OCR-detected statistics.
-        
-        Args:
-            stats (Dict[str, Any]): A dictionary containing attribute keys and values.
-            
-        Raises:
-            UIPopulationError: If the provided stats dictionary is empty.
-        """
-        logger.debug(f"Populating AddOutfieldFrame1 with stats: {stats.keys()}")
-        if not stats:
-            logger.warning("OCR returned no outfield player attributes. Prompting user for manual entry.")
-            for key in self.attr_vars:
-                self.attr_vars[key].set("")
-
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="OCR Failed",
-                message="No outfield player data was detected. Please enter the values manually.",
-                alert_type="warning",
-            )
-            return
-        
-        for key in self.attr_vars:
-            self.attr_vars[key].set(str(stats.get(key, "")))
-        
-        logger.debug("AddOutfieldFrame1 population complete.")
-
     def on_next_page(self) -> None:
         """Extracts data, validates completeness, buffers it, and transitions to Page 2."""
         # Convert attributes to int immediately
         ui_data: Dict[str, Any] = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
-        if invalid_attrs := [
-            key
-            for key, value in ui_data.items()
-            if value is not None and (value > 99 or value < 1)
-        ]:
-            key_to_label = dict(self.attr_definitions)
-            invalid_attr_labels = [key_to_label.get(key, key) for key in invalid_attrs]
-            logger.warning(f"Validation failed: Invalid attribute values for {', '.join(invalid_attr_labels)}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Invalid Attribute Values",
-                message=f"The following attributes have invalid values (must be between 1 and 99): {', '.join(invalid_attr_labels)}. Please correct them before proceeding.",
-                alert_type="warning",
-            )
+        if self.validate_attr_range(ui_data, self.attr_definitions_physical + self.attr_definitions_mental):
             return
         
         # Handle Text fields
         # "or None" converts empty strings to None for consistent validation
-        ui_data["season"] = self.season_entry.get().strip() or None
+        season = self.validate_season(self.season_entry.get().strip())
+        if season is None:
+            return
+        ui_data["season"] = season
         ui_data["name"] = self.name_entry.get().strip() or None
         ui_data["position"] = self.position_entry.get().strip() or None
-        ui_data["height"] = self.height_entry.get().strip() or None
+        height = self.validate_height(self.height_entry.get().strip())
+        if height is None:
+            return
+        ui_data["height"] = height
         ui_data["country"] = self.country_entry.get().strip() or None
 
         # Handle Numeric bio fields
-        ui_data["age"] = safe_int_conversion(self.age_entry.get())
+        age = self.validate_age(safe_int_conversion(self.age_entry.get()))
+        if age is None:
+            return
+        ui_data["age"] = age
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
 
-        # Validation Logic
-        missing_fields = []
-
-        # Check dynamic attributes (Physical & Mental)
-        all_definitions = self.attr_definitions_physical + self.attr_definitions_mental
-        key_to_label = dict(all_definitions)
-
-        missing_fields.extend(
-            key_to_label.get(key, key)
-            for key in self.attr_vars.keys()
-            if ui_data[key] is None
-        )
-        
-        # Check if the season is in a valid format (e.g. "24/25") using a simple regex
-        # If the season is in format "2024/2025", convert it to "24/25"
-        # If the format is completely wrong, just set it to None
-        if re.match(r'^\d{2}/\d{2}$', ui_data["season"]):
-            pass
-        elif re.match(r'^\d{4}/\d{4}$', ui_data["season"]):
-            ui_data["season"] = f'{ui_data["season"][2:4]}/{ui_data["season"][7:9]}'
-        else:
-            ui_data["season"] = None
-        
-        # Check if the height is in a valid format (e.g. 6'2") using a simple regex
-        # If the height is in format "6ft 2in", convert it to 6'2\"
-        # If the format is completely wrong, just set it to None
-        if re.match(r'^\d{1,2}\'\d{1,2}"$', ui_data["height"]):
-            pass
-        elif re.match(r'^\d{1,2}ft\s?\d{1,2}in$', ui_data["height"]):
-            if match := re.match(
-                r'^(\d{1,2})ft\s?(\d{1,2})in$', ui_data["height"]
-            ):
-                feet = match[1]
-                inches = match[2]
-                ui_data["height"] = f"{feet}'{inches}\""
-        else:
-            ui_data["height"] = None
-        
-        # Throw a warning if age is higher than 50 or lower than 14
-        if ui_data["age"] is not None and (ui_data["age"] > 50 or ui_data["age"] < 14):
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Age Warning",
-                message=f"Age {ui_data['age']} is outside the expected range of 14-50. Please verify.",
-                alert_type="warning",
-            )
-            return
-        
-        # Check static fields
-        if ui_data["name"] is None: missing_fields.append("Name")
-        if ui_data["season"] is None: missing_fields.append("Season")
-        if ui_data["position"] is None: missing_fields.append("Position")
-        if ui_data["age"] is None: missing_fields.append("Age")
-        if ui_data["height"] is None: missing_fields.append("Height")
-        if ui_data["weight"] is None: missing_fields.append("Weight")
-        if ui_data["country"] is None: missing_fields.append("Country")
-
-        if missing_fields:
-            logger.warning(f"Validation failed: Missing fields - {', '.join(missing_fields)}")
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Missing Information",
-                message=f"The following required fields are missing: {', '.join(missing_fields)}. Please fill them in before proceeding.",
-                alert_type="warning",
-            )
+        # Check for missing fields, for both text-based and numeric fields, using self.check_missing_fields helper with a combined key_to_label mapping for all fields
+        key_to_label = {
+            "name": "Name",
+            "season": "Season",
+            "position": "Position",
+            "height": "Height",
+            "country": "Country",
+            "age": "Age",
+            "weight": "Weight"
+        }
+        key_to_label.update({key: label for key, label in self.attr_definitions_physical + self.attr_definitions_mental})
+        if self.check_missing_fields(ui_data, key_to_label):
             return
 
         try:
             logger.info("Validation passed. Buffering Outfield Page 1 and triggering Page 2 OCR.")
             # Buffer the current page's data
             self.controller.buffer_player_attributes(ui_data, gk=False, first=True)
-            CustomAlert(
-                parent=self,
-                theme = self.theme,
-                title="Data Saved",
-                message=f"First page of outfield data for {ui_data['name']} in season {ui_data['season']} has been successfully saved.",
-                alert_type="success",
-                success_timeout=2
-            )
+            self.show_success("Page 1 Saved", "Outfield Page 1 data saved successfully! Moving to Page 2...")
             # Trigger OCR for the next page
             self.controller.process_player_attributes(gk=False, first=False)
             self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))
         except Exception as e:
             # Safely catch OCR or buffering failures so the app doesn't crash on transition
             logger.error(f"Failed to process transition to Page 2: {e}", exc_info=True)
-            CustomAlert(
-                parent=self,
-                theme=self.theme,
-                title="Error Saving Data",
-                message=f"An error occurred while saving the Outfield data: {str(e)}. Please try again.",
-                alert_type="error",
-            )
+            self.show_error("Error Processing Data", f"An error occurred while processing the data: {str(e)}. Please try again.")
             return
     
     def on_show(self) -> None:
