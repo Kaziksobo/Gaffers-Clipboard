@@ -49,11 +49,11 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
 
         # Dropdown to select player
-        self.player_list_var = ctk.StringVar(value="Click here to select player")
+        self.player_dropdown_var = ctk.StringVar(value="Click here to select player")
         self.player_dropdown = ScrollableDropdown(
             self,
             theme=self.theme,
-            variable=self.player_list_var,
+            variable=self.player_dropdown_var,
             width=350,
             dropdown_height=200,
             placeholder="Click here to select player"
@@ -189,7 +189,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
 
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
-        for key, entry in self.data_entries.items():
+        for key, entry in self.data_vars.items():
             entry.delete(0, "end")
             entry.configure(placeholder_text="dd/mm/yy" if key == "in_game_date" else "")
 
