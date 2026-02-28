@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class PlayerDropdownMixin:
     """A feature pack that adds player dropdown functionality to any frame"""
     def enforce_player_database(self, only_gk: bool = False, only_outfield: bool = False, remove_on_loan: bool = False) -> List[str]:
-        names = self.controller.get_player_names(
+        names = self.controller.get_all_player_names(
             only_gk=only_gk,
             only_outfield=only_outfield,
             remove_on_loan=remove_on_loan
