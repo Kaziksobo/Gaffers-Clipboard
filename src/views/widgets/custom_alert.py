@@ -154,7 +154,11 @@ class CustomAlert(ctk.CTkToplevel):
             self._timer_id = None
         
         self.user_choice = choice
+        
+        self.grab_release()
+        main_app_window = self.parent.winfo_toplevel()
         self.destroy()
+        main_app_window.focus_force()
     
     def _make_modal(self) -> None:
         """Make the popup modal by disabling interaction with the main window until the popup is closed.
@@ -173,7 +177,11 @@ class CustomAlert(ctk.CTkToplevel):
     def _auto_close(self) -> None:
         """Automatically close the popup after a timeout (used for success messages)."""
         self.user_choice = "Timeout"
+        
+        self.grab_release()
+        main_app_window = self.parent.winfo_toplevel()
         self.destroy()
+        main_app_window.focus_force()
     
     def get_result(self) -> Optional[str]:
         """Return the user's choice from the alert popup, if applicable.
