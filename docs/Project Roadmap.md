@@ -121,9 +121,8 @@ The goal of this phase is to refactor the application's architecture to support 
 ---
 ## Phase 7: Refactoring, Usability & Robustness 
 
-***Status: In Progress*** 
+***Status: In Progress*** The goal of this phase is to "harden" the application—improving stability, cleaning up the codebase, and adding essential Quality of Life features for the end user before diving into advanced analytics. 
 
-The goal of this phase is to "harden" the application—improving stability, cleaning up the codebase, and adding essential Quality of Life features for the end user before diving into advanced analytics. 
 ### To-Do List: 
 - [x] **Codebase Refactoring**
 	- [x] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
@@ -131,11 +130,13 @@ The goal of this phase is to "harden" the application—improving stability, cle
 	- [x] Make data manager save keys in snake case
 	- [x] Implement `pydantic` across the data manager for more rigorous data structuring
 		- [x] Possibly implement across the rest of the application for documentation purposes?
+- [ ] **Dependency Management**
+	- [ ] Transition from standard `pip` and `requirements.txt` to `Poetry` for deterministic builds and dependency grouping, setting up a clean environment for final `.exe` packaging.
 - [x] **Implement Logging**
 	- [x] Replace all `print()` statements with the Python `logging` module to generate well-formatted, timestamped log files for easier debugging.
-- [ ] **Error Handling & Feedback** 
+- [x] **Error Handling & Feedback** 
 	- [x] Implement robust `try/except` blocks across the entire program (especially OCR and file I/O).
-	- [ ] Use `tkinter.messagebox` to display friendly error popups to the user instead of silent console failures.
+	- [x] Use `tkinter.messagebox` to display friendly error popups to the user instead of silent console failures.
 - [ ] **Resolution Independence** 
 	- [ ] Move from hardcoded pixel coordinates to relative scale factors in `coordinates.json`.
 	- [ ] Implement logic to detect screen resolution and scale OCR regions dynamically (supporting 1080p, 4k, etc.).
@@ -153,23 +154,46 @@ The goal of this phase is to "harden" the application—improving stability, cle
 **End Goal for Phase 7:** The application is stable, resolution-independent, self-cleaning, and user-friendly enough for someone other than the developer to use without crashing. 
 
 ----
-## Phase 8: Analytics & Distribution 
+## Phase 8: Analytics Engine & Squad Hub
 
 **Status: Not Started**
 
-The goal of this phase is to integrate the OCR tool with the existing analysis scripts and build out the machine learning features.
+The goal of this phase is to transform the application from a raw data-entry tool into a living "Backroom Staff." This involves building a modular analytics engine using pure math, NumPy, and Scikit-Learn to generate actionable insights, and creating immersive UI dashboards to visualize this data.
 
 ### To-Do List: 
-- [ ] **Integrate with Analysis Notebook:**
-	- [ ] Point the `analysis.ipynb` to the folder where the OCR tool saves its output.
-- [ ] **Implement ML Insights:**
-	- [ ] Develop the custom "Form Score" calculation.
-	- [ ] Use clustering to identify player roles automatically.
-	- [ ] Build the performance vs. potential tracking system.
-- [ ] **Build Dashboards:**
-	- [ ] Create the Player Comparison view.
-	- [ ] Design the in-depth, automated Match Reports.
-- [ ] **Package for Distribution:** 
-	- [ ] Use `PyInstaller` to create a standalone `.exe` file.
+- [ ] **Core Analytics Engine (`src/analytics/`):**
+	- [ ] Implement **Custom Match Ratings**: Use weighted positional heuristics to calculate true player performances, bypassing the game's native rating system.
+	- [ ] Implement **Form Scores**: Create an Exponential Moving Average (EMA) algorithm to track highly reactive player form.
+	- [ ] Implement **Monte-Carlo Season Predictor**: Use `numpy` probability distributions to simulate remaining fixtures and predict league finish probabilities.
+- [ ] **Predictive & Tactical ML (Scikit-Learn):**
+	- [ ] **Win-Condition Extraction**: Train a Random Forest model on historical match data to extract feature importances (e.g., discovering that pass accuracy dictates 70% of win probability).
+	- [ ] **Red Zone Injury Flags**: Build a Logistic Regression model to flag players at high risk of injury based on recent sprint distance, rest days, and stamina.
+	- [ ] **Tactical Fingerprinting**: Use K-Means clustering to group historical matches/opponents by playstyle (e.g., High-Press, Possession).
+- [ ] **UI Overhaul: The Manager's Office & Squad Hub:**
+	- [ ] Refactor `player_library_frame.py` into a dynamic, split-screen `Squad Hub`.
+	- [ ] Build the **Manager's Office Dashboard** to display top-level widgets upon loading a career (Title odds, Squad Value, Top Performers, Red Zone warnings).
+	- [ ] Create **Deep-Dive Profiles** (modals/sub-frames) for players, featuring radar charts for attributes and line graphs for growth/regression trajectories.
+- [ ] **Update the Match Loop:**
+	- [ ] Inject the Analytics Engine into the post-match save flow to provide instant feedback widgets (e.g., Custom Ratings display and Win-Condition feedback).
+	- [ ] Create a **Match Day Prep** screen displaying historical context against upcoming opponents and a Lineup Optimizer suggesting XIs based on form and fitness.
+- [ ] **Scouting & Recruitment:**
+	- [ ] Build a "Shortlist Comparison" feature utilizing Cosine Similarity to mathematically compare prospective transfers against an ideal positional profile.
 
-**End Goal for Phase 8:** The application is a distributable, standalone desktop program. Beyond data entry, it serves as a complete "Assistant Manager," automatically generating visual reports, uncovering hidden player trends via Machine Learning, and helping the user make data-driven transfer and tactical decisions without ever touching a line of code.
+**End Goal for Phase 8:** The application automatically transforms raw OCR data into deep, actionable insights. The user interacts with highly visual dashboards that provide tactical feedback, injury warnings, and transfer advice, deeply enriching the realism of their career mode save.
+
+----
+## Phase 9: Distribution & Packaging 
+
+**Status: Not Started**
+
+The final goal of the project is to compile the Python application and its lightweight analytics libraries into a single, user-friendly executable so non-technical gamers can easily install and run it.
+
+### To-Do List: 
+- [ ] **Executable Generation:** - [ ] Configure `PyInstaller` (or Auto-py-to-exe) to package the application.
+	- [ ] Implement PyInstaller hooks to specifically exclude massive, unused modules from `scikit-learn` and `scipy` to keep the `.exe` file size lightweight.
+	- [ ] Ensure `customtkinter` assets, internal template images, and dynamic JSON paths resolve correctly within the packaged environment.
+- [ ] **Testing & Optimization:**
+	- [ ] Test the packaged executable on a separate, fresh machine to guarantee no external Python dependencies or ML libraries need to be installed by the end user.
+	- [ ] Final optimization of application boot times and memory usage.
+
+**End Goal for Phase 9:** "Gaffer's Clipboard" is a distributable, standalone `.exe` desktop program. Anyone can download it, click run, and immediately start utilizing advanced OCR and machine learning analytics for their saves without opening a terminal.
