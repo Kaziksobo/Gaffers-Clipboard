@@ -144,17 +144,37 @@ class BaseViewFrame(ctk.CTkFrame):
         return True
     
     def validate_attr_range(self, data: Dict[str, Any], data_definitions: List[Tuple[str, str]], min_val: int = 1, max_val: int = 99) -> bool:
-        if invalid_attrs := [
-            key
-            for key, value in data.items()
-            if value is not None and (value > max_val or value < min_val)
-        ]:
+        invalid_attrs: List[str] = []
+
+        for key, value in data.items():
+            if value is None:
+                continue
+
+            if isinstance(value, (int, float)):
+                numeric_value = float(value)
+            elif isinstance(value, str):
+                normalized = value.strip().replace(",", "")
+                if not normalized:
+                    continue
+                try:
+                    numeric_value = float(normalized)
+                except ValueError:
+                    invalid_attrs.append(key)
+                    continue
+            else:
+                invalid_attrs.append(key)
+                continue
+
+            if numeric_value > max_val or numeric_value < min_val:
+                invalid_attrs.append(key)
+
+        if invalid_attrs:
             key_to_label = dict(data_definitions)
             invalid_labels = [key_to_label.get(key, key) for key in invalid_attrs]
-            logger.warning(f"Validation failed: Invalid attribute values for {', '.join(invalid_labels)}")
+            logger.warning(f"Validation failed: Invalid or non-numeric attribute values for {', '.join(invalid_labels)}")
             self.show_warning(
                 title="Invalid Attribute Values",
-                message=f"The following attributes have invalid values (must be between {min_val} and {max_val}): {', '.join(invalid_labels)}. Please correct them before proceeding.",
+                message=f"The following attributes have invalid values (must be numeric and between {min_val} and {max_val}): {', '.join(invalid_labels)}. Please correct them before proceeding.",
             )
             return False
         return True
@@ -162,29 +182,35 @@ class BaseViewFrame(ctk.CTkFrame):
     def validate_season(self, season: str) -> Optional[str]:
         """Validate and standardize season input. Returns standardized season or None if invalid."""
         season = season.strip()
-        if re.match(r'^\d{2}/\d{2}$', season):
+        if short_match := re.match(r'^(\d{2})/(\d{2})$', season):
             return season
-        elif re.match(r'^\d{4}/\d{4}$', season):
-            return f'{season[2:4]}/{season[7:9]}'
-        else:
-            logger.warning(f"Season validation failed for input: {season}")
-            self.show_warning(
-                title="Invalid Season Format",
-                message="Season must be in the format '24/25' or '2024/2025'. Please correct it before proceeding.",
-            )
-            return None
+
+        if long_match := re.match(r'^(\d{2})\d{2}/(\d{2})\d{2}$', season):
+            start_suffix, end_suffix = long_match.groups()
+            return f'{start_suffix}/{end_suffix}'
+
+        logger.warning(f"Season validation failed for input: {season}")
+        self.show_warning(
+            title="Invalid Season Format",
+            message="Season must be in the format '24/25' or '2024/2025'. Please correct it before proceeding.",
+        )
+        return None
     
     def validate_height(self, height: str) -> Optional[str]:
         """Validate height input. Returns standardized height or None if invalid."""
         height = height.strip()
-        if re.match(r'^\d{1,2}\'\d{1,2}"$', height):
-            return height
-        if match := re.match(
-                r'^(\d{1,2})ft\s?(\d{1,2})in$', height
-            ):
-                feet = match[1]
-                inches = match[2]
-                return f"""{feet}'{inches}\""""
+        if normalized_match := re.match(r'^(\d{1,2})\'(\d{1,2})"$', height):
+            feet = int(normalized_match.group(1))
+            inches = int(normalized_match.group(2))
+            if 1 <= feet <= 8 and 0 <= inches < 12:
+                return f"{feet}'{inches}\""
+
+        if match := re.match(r'^(\d{1,2})ft\s?(\d{1,2})in$', height):
+            feet = int(match.group(1))
+            inches = int(match.group(2))
+            if 1 <= feet <= 8 and 0 <= inches < 12:
+                return f"{feet}'{inches}\""
+
         logger.warning(f"Height validation failed for input: {height}")
         self.show_warning(
             title="Invalid Height Format",
@@ -192,7 +218,7 @@ class BaseViewFrame(ctk.CTkFrame):
         )
         return None 
     
-    def validate_age(self, age: int, min_age: int = 15, max_age: int = 50) -> bool:
+    def validate_age(self, age: Optional[int], min_age: int = 15, max_age: int = 50) -> bool:
         if age is not None and (age > max_age or age < min_age):
             logger.warning(f"Age validation failed for input: {age}")
             self.show_warning(
