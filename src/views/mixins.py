@@ -24,8 +24,11 @@ class PlayerDropdownMixin:
         return names
     
     def refresh_player_dropdown(self, only_gk: bool = False, only_outfield: bool = False, remove_on_loan: bool = False) -> None:
-        names = self.enforce_player_database(only_gk=only_gk, only_outfield=only_outfield, remove_on_loan=remove_on_loan)
-        if names:
+        if names := self.enforce_player_database(
+            only_gk=only_gk,
+            only_outfield=only_outfield,
+            remove_on_loan=remove_on_loan,
+        ):
             self.player_dropdown.set_values(names)
 
 class OCRDataMixin:
