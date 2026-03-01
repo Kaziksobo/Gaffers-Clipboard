@@ -189,7 +189,8 @@ The goal of this phase is to transform the application from a raw data-entry too
 The final goal of the project is to compile the Python application and its lightweight analytics libraries into a single, user-friendly executable so non-technical gamers can easily install and run it.
 
 ### To-Do List: 
-- [ ] **Executable Generation:** - [ ] Configure `PyInstaller` (or Auto-py-to-exe) to package the application.
+- [ ] **Executable Generation:** 
+	- [ ] Configure `PyInstaller` (or Auto-py-to-exe) to package the application.
 	- [ ] Implement PyInstaller hooks to specifically exclude massive, unused modules from `scikit-learn` and `scipy` to keep the `.exe` file size lightweight.
 	- [ ] Ensure `customtkinter` assets, internal template images, and dynamic JSON paths resolve correctly within the packaged environment.
 - [ ] **Testing & Optimization:**
