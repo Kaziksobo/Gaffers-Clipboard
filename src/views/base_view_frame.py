@@ -92,24 +92,62 @@ class BaseViewFrame(ctk.CTkFrame):
         entry.grid(row=index, column=entry_col, sticky="ew", pady=5, padx=5)
     
     # --- Validation Helpers ---
-    def check_missing_fields(self, data: Dict[str, Any], key_to_label: Dict[str, str], required_keys: Optional[List[str]] = None) -> bool:
+    def check_missing_fields(
+        self,
+        data: Dict[str, Any],
+        key_to_label: Dict[str, str],
+        required_keys: Optional[List[str]] = None,
+        zero_invalid_keys: Optional[List[str]] = None,
+    ) -> bool:
+        """Validate that required keys are present and non-empty.
+
+        Returns:
+            bool: True when validation passes, False when it fails.
+        """
+        def is_zero_value(value: Any) -> bool:
+            if value is None:
+                return False
+            if isinstance(value, bool):
+                return False
+            if isinstance(value, (int, float)):
+                return value == 0
+
+            normalized = str(value).strip().lower().replace(",", "")
+            if normalized in {"", "none", "null", "n/a"}:
+                return False
+            try:
+                return float(normalized) == 0
+            except ValueError:
+                return False
+
         if required_keys is None:
             required_keys = list(key_to_label.keys())
-        missing_fields = [key for key in required_keys if not data.get(key) or str(data.get(key)).strip() == ""]
-        if missing_fields:
+        if zero_invalid_keys is None:
+            zero_invalid_keys = []
+
+        if missing_fields := [
+            key
+            for key in required_keys
+            if (
+                key not in data
+                or data.get(key) is None
+                or not str(data.get(key)).strip()
+                or (key in zero_invalid_keys and is_zero_value(data.get(key)))
+            )
+        ]:
             logger.debug(f"Missing required fields: {missing_fields}")
             self.show_warning(
                 title="Missing Information",
                 message=f"The following required fields are missing: {', '.join(key_to_label.get(key, key) for key in missing_fields)}. Please fill them in before proceeding.",
             )
-            return True
-        return False
+            return False
+        return True
     
     def validate_attr_range(self, data: Dict[str, Any], data_definitions: List[Tuple[str, str]], min_val: int = 1, max_val: int = 99) -> bool:
         if invalid_attrs := [
             key
             for key, value in data.items()
-            if value is not None and (value > 99 or value < 1)
+            if value is not None and (value > max_val or value < min_val)
         ]:
             key_to_label = dict(data_definitions)
             invalid_labels = [key_to_label.get(key, key) for key in invalid_attrs]
@@ -118,8 +156,8 @@ class BaseViewFrame(ctk.CTkFrame):
                 title="Invalid Attribute Values",
                 message=f"The following attributes have invalid values (must be between {min_val} and {max_val}): {', '.join(invalid_labels)}. Please correct them before proceeding.",
             )
-            return True
-        return False
+            return False
+        return True
     
     def validate_season(self, season: str) -> Optional[str]:
         """Validate and standardize season input. Returns standardized season or None if invalid."""
@@ -146,8 +184,7 @@ class BaseViewFrame(ctk.CTkFrame):
             ):
                 feet = match[1]
                 inches = match[2]
-                height = f"{feet}'{inches}\""
-                return height
+                return f"""{feet}'{inches}\""""
         logger.warning(f"Height validation failed for input: {height}")
         self.show_warning(
             title="Invalid Height Format",
@@ -155,12 +192,12 @@ class BaseViewFrame(ctk.CTkFrame):
         )
         return None 
     
-    def validate_age(self, age: int) -> bool:
-        if age is not None and (age > 50 or age < 15):
+    def validate_age(self, age: int, min_age: int = 15, max_age: int = 50) -> bool:
+        if age is not None and (age > max_age or age < min_age):
             logger.warning(f"Age validation failed for input: {age}")
             self.show_warning(
                 title="Age warning",
-                message=f"Age {age} is outside the expected range (15-50). Please double check",
+                message=f"Age {age} is outside the expected range ({min_age}-{max_age}). Please double check",
             )
-            return True
-        return False
+            return False
+        return True

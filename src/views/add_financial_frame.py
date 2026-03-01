@@ -136,7 +136,12 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         
         required_keys = ["wage", "market_value"]
         key_to_label = {key: label for key, label in self.stat_definitions if key not in ["contract_length", "release_clause", "sell_on_clause"]}
-        if self.check_missing_fields(ui_data, key_to_label=key_to_label, required_keys=required_keys):
+        if not self.check_missing_fields(
+            ui_data,
+            key_to_label=key_to_label,
+            required_keys=required_keys,
+            zero_invalid_keys=required_keys,
+        ):
             return
         
 

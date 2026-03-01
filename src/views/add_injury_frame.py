@@ -146,7 +146,13 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         
         ui_data = {key: entry.get() for key, entry in self.data_vars.items()}
         key_to_label = {key: label for key, label in self.stat_definitions}
-        if self.check_missing_fields(ui_data, key_to_label=key_to_label, required_keys=[key for key, _ in self.stat_definitions]):
+        required_injury_keys = [key for key, _ in self.stat_definitions]
+        if not self.check_missing_fields(
+            ui_data,
+            key_to_label=key_to_label,
+            required_keys=required_injury_keys,
+            zero_invalid_keys=required_injury_keys,
+        ):
             return
         
         season = self.validate_season(self.season_entry.get())

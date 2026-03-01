@@ -142,7 +142,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
             key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()
         }
         
-        if self.validate_attr_range(ui_data, self.attr_definitions):
+        if not self.validate_attr_range(ui_data, self.attr_definitions):
             return
 
         # Handle Text fields
@@ -161,7 +161,9 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         ui_data["height"] = height
 
         # Handle Numeric bio fields (Age/Weight) - Convert to int standardizes them
-        ui_data["age"] = self.validate_age(safe_int_conversion(self.age_entry.get()))
+        if not self.validate_age(safe_int_conversion(self.age_entry.get())):
+            return
+        ui_data["age"] = safe_int_conversion(self.age_entry.get())
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
 
         key_to_label = {key: label for key, label in self.attr_definitions}
@@ -173,7 +175,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
             "age": "Age",
             "weight": "Weight"
         })
-        if self.check_missing_fields(ui_data, key_to_label):
+        if not self.check_missing_fields(ui_data, key_to_label):
             return
 
         try:

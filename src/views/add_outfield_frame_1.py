@@ -167,7 +167,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
         # Convert attributes to int immediately
         ui_data: Dict[str, Any] = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
-        if self.validate_attr_range(ui_data, self.attr_definitions_physical + self.attr_definitions_mental):
+        if not self.validate_attr_range(ui_data, self.attr_definitions_physical + self.attr_definitions_mental):
             return
         
         # Handle Text fields
@@ -185,10 +185,9 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
         ui_data["country"] = self.country_entry.get().strip() or None
 
         # Handle Numeric bio fields
-        age = self.validate_age(safe_int_conversion(self.age_entry.get()))
-        if age is None:
+        if not self.validate_age(safe_int_conversion(self.age_entry.get())):
             return
-        ui_data["age"] = age
+        ui_data["age"] = safe_int_conversion(self.age_entry.get())
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
 
         # Check for missing fields, for both text-based and numeric fields, using self.check_missing_fields helper with a combined key_to_label mapping for all fields
@@ -202,7 +201,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
             "weight": "Weight"
         }
         key_to_label.update({key: label for key, label in self.attr_definitions_physical + self.attr_definitions_mental})
-        if self.check_missing_fields(ui_data, key_to_label):
+        if not self.check_missing_fields(ui_data, key_to_label):
             return
 
         try:

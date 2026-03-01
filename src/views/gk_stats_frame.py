@@ -160,7 +160,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         # Convert all stats to integers
         ui_data: Dict[str, Any] = {stat_key: safe_int_conversion(var.get()) for stat_key, var in self.stats_vars.items()}
         
-        if self.check_missing_fields(ui_data, dict(self.stat_definitions)):
+        if not self.check_missing_fields(ui_data, dict(self.stat_definitions)):
             return False
         
         ui_data["player_name"] = player_name

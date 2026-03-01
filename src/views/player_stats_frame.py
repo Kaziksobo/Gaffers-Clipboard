@@ -170,7 +170,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
             else:
                 ui_data[stat_key] = safe_int_conversion(value)
 
-        if self.check_missing_fields(ui_data, dict(self.stat_definitions)):
+        if not self.check_missing_fields(ui_data, dict(self.stat_definitions)):
             return False 
 
         ui_data["player_name"] = player_name

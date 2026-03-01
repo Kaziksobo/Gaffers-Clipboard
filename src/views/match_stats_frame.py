@@ -267,7 +267,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         for k, v in ui_data["away_stats"].items():
             validation_dict[f"Away {key_to_label.get(k, k)}"] = v
         
-        if self.check_missing_fields(validation_dict, {k: k for k in validation_dict.keys()}):
+        if not self.check_missing_fields(validation_dict, {k: k for k in validation_dict.keys()}):
             self.show_warning("Missing Fields", "Please fill in all required fields before proceeding.")
             return False
 

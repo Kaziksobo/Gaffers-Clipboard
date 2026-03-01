@@ -102,11 +102,11 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin):
         ui_data = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
         # Validate that all attributes are within the expected range (1-99)
-        if self.validate_attr_range(ui_data, self.attr_definitions):
+        if not self.validate_attr_range(ui_data, self.attr_definitions):
             return
         
         # Check for missing fields
-        if self.check_missing_fields(ui_data, dict(self.attr_definitions)):
+        if not self.check_missing_fields(ui_data, dict(self.attr_definitions)):
             return
 
         try:
