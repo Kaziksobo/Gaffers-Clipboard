@@ -599,7 +599,10 @@ class App(ctk.CTk):
         # Force Tkinter to flush any pending graphical updates (like button releases) 
         # before we freeze the main thread with time.sleep.
         self.update()
-        time.sleep(delay)
+        self._non_blocking_delay(
+            seconds=delay,
+            message=f"Switch to the game screen now"
+        )
         
         capture_folder = App.PROJECT_ROOT / "screenshots"
         capture_folder.mkdir(parents=True, exist_ok=True)
@@ -614,6 +617,67 @@ class App(ctk.CTk):
         except Exception as e:
             logger.error(f"Screenshot engine failed: {e}", exc_info=True)
             raise ScreenshotError(f"Failed to capture screenshot: {e}") from e
+    
+    def _non_blocking_delay(self, seconds: int, message: str = "Please wait...") -> None:
+        # Create a borderless popup window
+        overlay = ctk.CTkToplevel(self, fg_color=THEME["colors"]["background"])
+        overlay.overrideredirect(True)
+        
+        # Center the popup over the main app
+        width, height = 350, 150
+        app_x = self.winfo_rootx()
+        app_y = self.winfo_rooty()
+        app_width = self.winfo_width()
+        app_height = self.winfo_height()
+        
+        center_x = app_x + (app_width // 2) - (width // 2)
+        center_y = app_y + (app_height // 2) - (height // 2)
+        overlay.geometry(f"{width}x{height}+{center_x}+{center_y}")
+        
+        # Add a colored border frame
+        border_frame = ctk.CTkFrame(
+            overlay, 
+            border_width=2, 
+            border_color=THEME["colors"]["accent"], 
+            corner_radius=0, 
+            fg_color="transparent"
+        )
+        border_frame.pack(fill="both", expand=True)
+        
+        # Add the text message
+        label = ctk.CTkLabel(
+            border_frame, 
+            text=message, 
+            font=THEME["fonts"]["body"], 
+            text_color=THEME["colors"]["primary_text"]
+        )
+        label.pack(pady=(30, 15))
+        
+        # Add animated progress bar
+        spinner = ctk.CTkProgressBar(
+            border_frame, 
+            mode="indeterminate", 
+            width=250, 
+            progress_color=THEME["colors"]["accent"]
+        )
+        spinner.pack(pady=(0, 30))
+        spinner.start()
+        
+        # Lock UI and force popup to the front
+        overlay.transient(self)
+        overlay.grab_set()
+        self.update_idletasks()
+        
+        # Execute non-blocking delay
+        var = ctk.IntVar()
+        self.after(int(seconds * 1000), lambda: var.set(1))
+        self.wait_variable(var)
+        
+        # Clean up and restore focus to main app
+        spinner.stop()
+        overlay.grab_release()
+        overlay.destroy()
+        self.focus_force()
 
     def get_latest_screenshot_path(self) -> Path:
         """Retrieve the file path of the most recently captured screenshot.

@@ -131,8 +131,8 @@ The goal of this phase is to refactor the application's architecture to support 
 	- [ ] Look at fixing OCR digit ordering for cases like 0.4 being returned as 4.0.
 	- [x] Implement `pydantic` across the data manager for more rigorous data structuring
 		- [x] Possibly implement across the rest of the application for documentation purposes?
-- [ ] **Synchronisation**
-	- [ ] Transition from using `time.sleep` for the screenshot delay to a different method that doesn't freeze the application.
+- [x] **Synchronisation**
+	- [x] Transition from using `time.sleep` for the screenshot delay to a different method that doesn't freeze the application.
 - [ ] **Dependency Management**
 	- [ ] Transition from standard `pip` and `requirements.txt` to `Poetry` for deterministic builds and dependency grouping, setting up a clean environment for final `.exe` packaging.
 - [x] **Implement Logging**
