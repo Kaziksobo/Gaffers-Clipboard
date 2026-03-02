@@ -128,7 +128,7 @@ The goal of this phase is to refactor the application's architecture to support 
 	- [x] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
 	- [x] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
 	- [x] Make data manager save keys in snake case
-	- [ ] Look at fixing OCR digit ordering for cases like 0.4 being returned as 4.0.
+	- [x] Look at fixing OCR digit ordering for cases like 0.4 being returned as 4.0.
 	- [x] Implement `pydantic` across the data manager for more rigorous data structuring
 		- [x] Possibly implement across the rest of the application for documentation purposes?
 - [x] **Synchronisation**

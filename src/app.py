@@ -594,22 +594,21 @@ class App(ctk.CTk):
         """
         if delay is None:
             delay = App.DEFAULT_SCREENSHOT_DELAY
-        
+
         logger.info(f"Initiating screenshot (delay: {delay}s)")
         # Force Tkinter to flush any pending graphical updates (like button releases) 
         # before we freeze the main thread with time.sleep.
         self.update()
         self._non_blocking_delay(
-            seconds=delay,
-            message=f"Switch to the game screen now"
+            seconds=delay, message="Switch to the game screen now"
         )
-        
+
         capture_folder = App.PROJECT_ROOT / "screenshots"
         capture_folder.mkdir(parents=True, exist_ok=True)
-        
+
         filename = f"stats_capture_{int(time.time())}.png"
         self.screenshot_path = capture_folder / filename
-        
+
         try:
             pyautogui.screenshot(self.screenshot_path)
             logger.info(f"Screenshot saved: {self.screenshot_path}")
@@ -817,21 +816,19 @@ class App(ctk.CTk):
                 
                 recognised_number = recognised_data[0] if debug else recognised_data
                 
-                # Handling decimal conversions
+                # ocr.recognise_number returns number as a string with no decimal point, e.g. 0.5 is returned as 05, 
+                # convert it to a float if in decimal stats otherwise convert to int
                 if stat_name in decimal_stats:
-                    val_str = str(recognised_number)
-                    if len(val_str) > 1:
-                        val_str = f'{val_str[:-1]}.{val_str[-1]}'
                     try:
-                        parsed_data[stat_name] = float(val_str)
+                        parsed_data[stat_name] = float(recognised_number) / 10
                     except ValueError:
-                        logger.warning(f"Failed to convert {val_str} to float for stat '{stat_name}'. Defaulting to 0.0")
+                        logger.warning(f"Failed to parse decimal stat '{stat_name}' from OCR output '{recognised_number}'. Defaulting to 0.0.")
                         parsed_data[stat_name] = 0.0
                 else:
                     try:
                         parsed_data[stat_name] = int(recognised_number)
                     except ValueError:
-                        logger.warning(f"Failed to convert {recognised_number} to int for stat '{stat_name}'. Defaulting to 0")
+                        logger.warning(f"Failed to parse integer stat '{stat_name}' from OCR output '{recognised_number}'. Defaulting to 0.")
                         parsed_data[stat_name] = 0
             
             return parsed_data

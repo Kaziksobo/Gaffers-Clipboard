@@ -146,7 +146,7 @@ def recognise_number(
     roi: tuple[int, int, int, int], 
     ocr_model: cv.ml.KNearest, 
     debug: bool = False,
-    preprocess_args: dict | None = None) -> Union[int, Tuple[int, np.ndarray]]:
+    preprocess_args: dict | None = None) -> Union[str, Tuple[str, np.ndarray]]:
     """
     Recognise a number from a screenshot ROI using a KNN OCR model.
 
@@ -173,9 +173,9 @@ def recognise_number(
             running in debug mode).
 
     Returns:
-        int: The recognised integer when ``debug`` is False.
-        tuple[int | None, dict]: When ``debug`` is True, returns a pair ``(value, debug_data)``
-            where ``value`` is the recognised integer (or ``None`` if no digits were found) and
+        str: The recognised string value when ``debug`` is False.
+        tuple[str | None, dict]: When ``debug`` is True, returns a pair ``(value, debug_data)``
+            where ``value`` is the recognised string (or ``None`` if no digits were found) and
             ``debug_data`` is a dict with keys:
                 - 'threshold': numpy.ndarray (thresholded image)
                 - 'eroded': numpy.ndarray (eroded image)
@@ -233,7 +233,7 @@ def recognise_number(
             return None, {'threshold': thresh, 'eroded': eroded_thresh, 'digit_rois': debug_rois}
         raise NoDigitsFoundError("No digit-like contours were found in the ROI.")
 
-    recognized_value = int(''.join(recognised_digits))
+    recognized_value = ''.join(recognised_digits)
     
     logger.debug(f"Final recognised value: {recognized_value}")
     
