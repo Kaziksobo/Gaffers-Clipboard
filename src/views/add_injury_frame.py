@@ -174,7 +174,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             return
 
         # Preemptive Date Validation
-        in_game_date_str = str(ui_data.get("in_game_date", ""))
+        in_game_date_str = str(ui_data.get("in_game_date", "")).strip()
         try:
             datetime.strptime(in_game_date_str, "%d/%m/%y")
         except ValueError:

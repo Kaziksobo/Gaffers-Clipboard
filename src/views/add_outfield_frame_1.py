@@ -169,7 +169,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
 
         if not self.validate_attr_range(ui_data, self.attr_definitions_physical + self.attr_definitions_mental):
             return
-        
+
         # Handle Text fields
         # "or None" converts empty strings to None for consistent validation
         season = self.validate_season(self.season_entry.get().strip())
@@ -190,7 +190,6 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
         ui_data["age"] = safe_int_conversion(self.age_entry.get())
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
 
-        # Check for missing fields, for both text-based and numeric fields, using self.check_missing_fields helper with a combined key_to_label mapping for all fields
         key_to_label = {
             "name": "Name",
             "season": "Season",
@@ -198,9 +197,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
             "height": "Height",
             "country": "Country",
             "age": "Age",
-            "weight": "Weight"
-        }
-        key_to_label.update({key: label for key, label in self.attr_definitions_physical + self.attr_definitions_mental})
+            "weight": "Weight",
+        } | self.attr_definitions_physical + self.attr_definitions_mental
         if not self.check_missing_fields(ui_data, key_to_label):
             return
 

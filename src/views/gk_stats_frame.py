@@ -171,10 +171,11 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.controller.buffer_player_performance(ui_data)
             logger.debug(f"Buffered data for {player_name}")
             self.show_success("Data Saved", f"Performance data for {player_name} has been saved successfully.")
+            return True
         except Exception as e:
             logger.error(f"Error buffering player performance data: {e}", exc_info=True)
             self.show_error("Error Saving Data", f"An error occurred while saving the performance data: \n{str(e)}. \n\nPlease try again.")
-            return
+            return False
 
     def on_next_outfield_player_button_press(self) -> None:
         """Buffer current stats, trigger OCR for the next outfield player, and refresh."""

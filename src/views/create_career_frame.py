@@ -166,7 +166,7 @@ class CreateCareerFrame(BaseViewFrame):
         manager = self.manager_name_entry.get().strip()
         season = self.starting_season_entry.get().strip()
         length = safe_int_conversion(self.half_length_entry.get().strip())
-        difficulty = self.difficulty_var.get()
+        difficulty = self.match_difficulty_var.get()
         
         # Check if the season is in a valid format (e.g. "24/25")
         season = self.validate_season(season)
@@ -205,8 +205,8 @@ class CreateCareerFrame(BaseViewFrame):
             return
     
     def on_show(self) -> None:
-        self.club_entry.delete(0, 'end')
-        self.manager_entry.delete(0, 'end')
-        self.season_entry.delete(0, 'end')
+        self.club_name_entry.delete(0, 'end')
+        self.manager_name_entry.delete(0, 'end')
+        self.starting_season_entry.delete(0, 'end')
         self.half_length_entry.delete(0, 'end')
-        self.difficulty_var.set("Select Difficulty")
+        self.match_difficulty_var.set("Select Difficulty")

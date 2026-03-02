@@ -124,6 +124,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
                 title="No Player Selected",
                 message="Please select a player from the dropdown before saving.",
             )
+            return
 
         ui_data = {
             key: safe_int_conversion(var.get().replace(",", "").replace("£", "").replace("$", "").replace("€", "").replace("k", "000").replace("m", "000000").strip())

@@ -141,7 +141,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         ui_data: Dict[str, Any] = {
             key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()
         }
-        
+
         if not self.validate_attr_range(ui_data, self.attr_definitions):
             return
 
@@ -149,12 +149,12 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         # usage of "or None" ensures empty strings become None for consistent validation
         ui_data["name"] = self.name_entry.get().strip() or None
         ui_data["country"] = self.country_entry.get().strip() or None
-        
+
         season = self.validate_season(self.season_entry.get().strip())
         if season is None:
             return
         ui_data["season"] = season
-        
+
         height = self.validate_height(self.height_entry.get().strip())
         if height is None:
             return
@@ -166,15 +166,14 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         ui_data["age"] = safe_int_conversion(self.age_entry.get())
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
 
-        key_to_label = {key: label for key, label in self.attr_definitions}
-        key_to_label.update({
+        key_to_label = dict(self.attr_definitions) | {
             "name": "Name",
             "country": "Country",
             "season": "Season",
             "height": "Height",
             "age": "Age",
-            "weight": "Weight"
-        })
+            "weight": "Weight",
+        }
         if not self.check_missing_fields(ui_data, key_to_label):
             return
 

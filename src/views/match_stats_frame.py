@@ -252,7 +252,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             "home_stats": {k: convert_stat(k, v.get()) for k, v in self.home_stats_vars.items()},
             "away_stats": {k: convert_stat(k, v.get()) for k, v in self.away_stats_vars.items()},
         }
-        
+
         validation_dict = {
             "Competition": ui_data["competition"],
             "Home Team Name": ui_data["home_team_name"],
@@ -260,14 +260,16 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             "Home Score": ui_data["home_score"],
             "Away Score": ui_data["away_score"]
         }
-        
+
         key_to_label = dict(self.stat_definitions)
         for k, v in ui_data["home_stats"].items():
             validation_dict[f"Home {key_to_label.get(k, k)}"] = v
         for k, v in ui_data["away_stats"].items():
             validation_dict[f"Away {key_to_label.get(k, k)}"] = v
-        
-        if not self.check_missing_fields(validation_dict, {k: k for k in validation_dict.keys()}):
+
+        if not self.check_missing_fields(
+            validation_dict, {k: k for k in validation_dict}
+        ):
             self.show_warning("Missing Fields", "Please fill in all required fields before proceeding.")
             return False
 
