@@ -21,10 +21,10 @@ The primary goal of this phase was to prove that we can reliably identify a sing
 
 **Status: Complete**
 
-The goal of this phase was to build the basic application framework around the proven OCR logic. This involves creating the project structure and a simple user interface. This has been successfully completed, using Tkinter to create the basic GUI, and integrating the OCR logic to read a digit from a static image when a button is pressed.
+The goal of this phase was to build the basic application framework around the proven OCR logic. This involves creating the project structure and a simple user interface. This has been successfully completed, using `Tkinter` to create the basic GUI, and integrating the OCR logic to read a digit from a static image when a button is pressed.
 
 ### Key Achievements:
-- [x] A working Tkinter window with a button and label.
+- [x] A working `Tkinter` window with a button and label.
 - [x] Integrated OCR logic to read a digit from a static image.
 - [x] The label updates correctly when the button is pressed.
 - [x] GitHub repository and file structure created.
@@ -128,11 +128,11 @@ The goal of this phase is to refactor the application's architecture to support 
 	- [x] Rename `gui.py` to `app.py` to better reflect its role as the main application controller.
 	- [x] Clean up screenshot storage logic to automatically delete old files (keep only the last X screenshots) to save disk space. 
 	- [x] Make data manager save keys in snake case
- - [ ] Look at fixing OCR digit ordering for cases like 0.4 being returned as 4.0.
+	- [ ] Look at fixing OCR digit ordering for cases like 0.4 being returned as 4.0.
 	- [x] Implement `pydantic` across the data manager for more rigorous data structuring
 		- [x] Possibly implement across the rest of the application for documentation purposes?
 - [ ] **Synchronisation**
- - [ ] Transition from using time.sleep for the screenshot delay to a different method that doesn't freeze the application.
+	- [ ] Transition from using `time.sleep` for the screenshot delay to a different method that doesn't freeze the application.
 - [ ] **Dependency Management**
 	- [ ] Transition from standard `pip` and `requirements.txt` to `Poetry` for deterministic builds and dependency grouping, setting up a clean environment for final `.exe` packaging.
 - [x] **Implement Logging**
