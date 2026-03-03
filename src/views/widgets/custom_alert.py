@@ -1,3 +1,4 @@
+import contextlib
 import customtkinter as ctk
 import logging
 import tkinter as tk
@@ -278,11 +279,8 @@ class CustomAlert(ctk.CTkToplevel):
         """Finalize user choice, close popup, and restore focus to main app window."""
         self.user_choice = choice
 
-        try:
+        with contextlib.suppress(tk.TclError):
             self.grab_release()
-        except tk.TclError:
-            pass
-
         self.destroy()
         try:
             main_app_window = self.parent.winfo_toplevel()

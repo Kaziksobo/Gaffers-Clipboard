@@ -143,9 +143,9 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         if player_name in ["Select Player", "Click here to select player", "No players found"]:
             self.show_warning("Selection Error", "Please select a player before saving.")
             return
-        
+
         ui_data = {key: entry.get() for key, entry in self.data_vars.items()}
-        key_to_label = {key: label for key, label in self.stat_definitions}
+        key_to_label = dict(self.stat_definitions)
         required_injury_keys = [key for key, _ in self.stat_definitions]
         if not self.check_missing_fields(
             ui_data,
@@ -154,17 +154,17 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             zero_invalid_keys=required_injury_keys,
         ):
             return
-        
+
         season = self.validate_season(self.season_entry.get())
         if season is None:
             return
-        
+
         time_out_unit = self.time_out_unit_var.get()
         if time_out_unit in ["Select unit", ""]:
             self.show_warning("Selection Error", "Please select a unit for 'Time Out'.")
             return
         ui_data["time_out_unit"] = time_out_unit
-        
+
         # Convert time_out to an integer if possible, otherwise show a warning
         try:
             ui_data["time_out"] = safe_int_conversion(ui_data["time_out"])
