@@ -13,7 +13,7 @@ from src import ocr
 from src.theme import THEME
 from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError
 from src.data_manager import DataManager
-from src.types import CareerMetadata, Player, Match, CareerDetail
+from src.custom_types import CareerMetadata, Player, Match, CareerDetail
 
 # View imports
 from src.views.career_select_frame import CareerSelectFrame
