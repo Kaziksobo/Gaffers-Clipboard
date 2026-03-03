@@ -10,3 +10,4 @@ src/views/__pycache__
 /.VSCodeCounter
 /logs
 /__pycache__
+/.venv

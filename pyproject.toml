@@ -1,0 +1,13 @@
+[project]
+name = "gaffers-clipboard"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "customtkinter>=5.2.2",
+    "numpy>=2.4.2",
+    "opencv-python>=4.13.0.92",
+    "pyautogui>=0.9.54",
+    "pydantic>=2.12.5",
+]
