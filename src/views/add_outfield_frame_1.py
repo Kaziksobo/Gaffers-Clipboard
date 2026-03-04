@@ -198,7 +198,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
             "country": "Country",
             "age": "Age",
             "weight": "Weight",
-        } | self.attr_definitions_physical + self.attr_definitions_mental
+        } | dict(self.attr_definitions_physical) | dict(self.attr_definitions_mental)
         if not self.check_missing_fields(ui_data, key_to_label):
             return
 
