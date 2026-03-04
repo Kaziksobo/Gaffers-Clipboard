@@ -200,14 +200,14 @@ class BaseViewFrame(ctk.CTkFrame):
         """Validate height input. Returns standardized height or None if invalid."""
         height = height.strip()
         if normalized_match := re.match(r'^(\d{1,2})\'(\d{1,2})"$', height):
-            feet = int(normalized_match.group(1))
-            inches = int(normalized_match.group(2))
+            feet = int(normalized_match[1])
+            inches = int(normalized_match[2])
             if 1 <= feet <= 8 and 0 <= inches < 12:
                 return f"{feet}'{inches}\""
 
         if match := re.match(r'^(\d{1,2})ft\s?(\d{1,2})in$', height):
-            feet = int(match.group(1))
-            inches = int(match.group(2))
+            feet = int(match[1])
+            inches = int(match[2])
             if 1 <= feet <= 8 and 0 <= inches < 12:
                 return f"{feet}'{inches}\""
 

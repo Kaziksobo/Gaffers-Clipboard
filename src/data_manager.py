@@ -5,7 +5,7 @@ from typing import List, Optional, Union, Type, TypeVar, Any
 from pydantic import ValidationError, TypeAdapter, BaseModel
 from datetime import datetime
 
-from src.types import (
+from src.custom_types import (
     GKAttributeSnapshot,
     OutfieldAttributeSnapshot,
     FinancialSnapshot,
