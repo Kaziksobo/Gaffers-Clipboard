@@ -11,6 +11,7 @@ from pydantic import ValidationError, TypeAdapter, BaseModel
 # Internal imports
 from src import ocr
 from src.theme import THEME
+from src.utils import get_screen_resolution, scale_coordinates
 from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError
 from src.data_manager import DataManager
 from src.custom_types import CareerMetadata, Player, Match, CareerDetail
@@ -769,9 +770,13 @@ class App(ctk.CTk):
     
         try:
             with open(coordinates_path, 'r') as f:
-                coordinates = json.load(f)
+                raw_coordinates = json.load(f)
         except json.JSONDecodeError as e:
             raise ConfigurationError("Coordinates configuration file is corrupt.") from e
+
+        # Scale normalised 0-1 coordinates to absolute pixels for the current screen
+        screen_w, screen_h = get_screen_resolution()
+        coordinates = scale_coordinates(raw_coordinates, screen_w, screen_h)
 
         # --- 2. Initialize Engine & Load Image ---
         ocr_model = ocr.load_ocr_model()
@@ -873,9 +878,13 @@ class App(ctk.CTk):
         
         try:
             with open(coordinates_path, 'r') as f:
-                coordinates = json.load(f)
+                raw_coordinates = json.load(f)
         except json.JSONDecodeError as e:
             raise ConfigurationError(f"Coordinates configuration file is corrupt: {e}") from e
+
+        # Scale normalised 0-1 coordinates to absolute pixels for the current screen
+        screen_w, screen_h = get_screen_resolution()
+        coordinates = scale_coordinates(raw_coordinates, screen_w, screen_h)
 
         # --- 2. Initialize Engine & Load Image ---
         ocr_model = ocr.load_ocr_model()

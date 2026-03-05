@@ -6,11 +6,15 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.append(str(PROJECT_ROOT))
 
 from src import ocr
+from src.utils import scale_coordinates
 
-# Load coordinates from JSON file
+# Load coordinates from JSON file and scale to the test screenshot resolution
 coordinates_path = PROJECT_ROOT / "config" / "coordinates.json"
 with open(coordinates_path, 'r') as f:
-    coordinates = json.load(f)
+    raw_coordinates = json.load(f)
+
+# Test screenshots were captured at 2560x1440
+coordinates = scale_coordinates(raw_coordinates, 2560, 1440)
 
 # Import OCR model
 ocr_model = ocr.load_ocr_model()

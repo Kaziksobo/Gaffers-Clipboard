@@ -140,9 +140,9 @@ The goal of this phase is to refactor the application's architecture to support 
 - [x] **Error Handling & Feedback** 
 	- [x] Implement robust `try/except` blocks across the entire program (especially OCR and file I/O).
 	- [x] Use `tkinter.messagebox` to display friendly error popups to the user instead of silent console failures.
-- [ ] **Resolution Independence** 
-	- [ ] Move from hardcoded pixel coordinates to relative scale factors in `coordinates.json`.
-	- [ ] Implement logic to detect screen resolution and scale OCR regions dynamically (supporting 1080p, 4k, etc.).
+- [x] **Resolution Independence** 
+	- [x] Move from hardcoded pixel coordinates to relative scale factors in `coordinates.json`.
+	- [x] Implement logic to detect screen resolution and scale OCR regions dynamically (supporting 1080p, 4k, etc.).
 - [x] **Feature Expansions**
 	- [x] **Financial Data:** Create a new, dedicated frame for inputting player financial data, and saving it with the player attributes.
 	- [x] **Injuries:** Create a new frame for inputting player injury data, allowing the user to attach it to a player in the library.

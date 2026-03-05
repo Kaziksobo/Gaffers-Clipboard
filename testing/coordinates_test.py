@@ -1,16 +1,25 @@
 import json
 import cv2 as cv
+import sys
 from pathlib import Path
 
 # Load test coordinates from JSON file
 PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.append(str(PROJECT_ROOT))
+
+from src.utils import scale_coordinates
+
 coordinates_path = PROJECT_ROOT / "config" / "coordinates.json"
 with open(coordinates_path, 'r') as f:
-    coordinates = json.load(f)
+    raw_coordinates = json.load(f)
 
 # Load a cropped fullscreen screenshot for testing
 screenshot_path = PROJECT_ROOT / "testing" / "fullscreen_screenshots" / "gk_performance.png"
 screenshot_image = cv.imread(str(screenshot_path))
+
+# Scale to the test screenshot resolution (2560x1440)
+h, w = screenshot_image.shape[:2]
+coordinates = scale_coordinates(raw_coordinates, w, h)
 
 for screen_name, screen_data in coordinates.items():
     if screen_name == 'gk_performance':
