@@ -104,7 +104,8 @@ class CreateCareerFrame(BaseViewFrame):
             font=self.theme["fonts"]["body"],
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            width=200
+            width=200,
+            placeholder_text="e.g. 24/25"
         )
         self.starting_season_entry.grid(row=3, column=2, sticky="w", pady=5)
         
@@ -208,5 +209,6 @@ class CreateCareerFrame(BaseViewFrame):
         self.club_name_entry.delete(0, 'end')
         self.manager_name_entry.delete(0, 'end')
         self.starting_season_entry.delete(0, 'end')
+        self.starting_season_entry.configure(placeholder_text="e.g. 24/25")
         self.half_length_entry.delete(0, 'end')
         self.match_difficulty_var.set("Select Difficulty")
