@@ -133,8 +133,8 @@ The goal of this phase is to refactor the application's architecture to support 
 		- [x] Possibly implement across the rest of the application for documentation purposes?
 - [x] **Synchronisation**
 	- [x] Transition from using `time.sleep` for the screenshot delay to a different method that doesn't freeze the application.
-- [ ] **Dependency Management**
-	- [ ] Transition from standard `pip` and `requirements.txt` to `Poetry` for deterministic builds and dependency grouping, setting up a clean environment for final `.exe` packaging.
+- [x] **Dependency Management**
+	- [x] Transition from standard `pip` and `requirements.txt` to `Poetry` for deterministic builds and dependency grouping, setting up a clean environment for final `.exe` packaging.
 - [x] **Implement Logging**
 	- [x] Replace all `print()` statements with the Python `logging` module to generate well-formatted, timestamped log files for easier debugging.
 - [x] **Error Handling & Feedback** 
