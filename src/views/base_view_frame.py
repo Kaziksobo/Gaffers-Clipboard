@@ -21,6 +21,7 @@ class BaseViewFrame(ctk.CTkFrame):
         self.theme = theme
         
         self.data_vars: Dict[str, ctk.StringVar] = {}
+        self._dismissed_warnings: List[Tuple[str, Any]] = []
     
     # --- Popup Managers ---
     def show_error(self, title: str, message: str) -> None:
@@ -44,15 +45,17 @@ class BaseViewFrame(ctk.CTkFrame):
             success_timeout=timeout
         )
     
-    def show_warning(self, title: str, message: str) -> None:
+    def show_warning(self, title: str, message: str, options: Optional[List[str]] = None) -> Optional[str]:
         """Show a warning popup with the given title and message."""
-        CustomAlert(
+        alert = CustomAlert(
             parent=self,
             theme=self.theme,
             title=title,
             message=message,
-            alert_type="warning"
+            alert_type="warning",
+            options=options
         )
+        return alert.get_result()
     
     # --- UI Generators ---
     def create_data_row(
@@ -218,12 +221,79 @@ class BaseViewFrame(ctk.CTkFrame):
         )
         return None 
     
+    def soft_validate(self, warning_key: str, value: Any, title: str, message: str) -> bool:
+        """Perform a soft validation that allows the user to override the warning."""
+        if (warning_key, value) in self._dismissed_warnings:
+            return True
+
+        result = self.show_warning(
+            title=title,
+            message=message,
+            options=["Yes, it's correct", "No, I'll fix it"]
+        )
+        if result == "Yes, it's correct":
+            self._dismissed_warnings.append((warning_key, value))
+            return True
+        else:
+            return False
+    
     def validate_age(self, age: Optional[int], min_age: int = 15, max_age: int = 50) -> bool:
         if age is not None and (age > max_age or age < min_age):
-            logger.warning(f"Age validation failed for input: {age}")
+            return self.soft_validate(
+                warning_key="age",
+                value=age,
+                title="Unusual Age Value",
+                message=f"The age you entered ({age}) is outside the typical range of {min_age}-{max_age}. Are you sure this is correct?"
+            )
+        return True
+    
+    def validate_weight(self, weight: Optional[int], min_weight: int = 100, max_weight: int = 400) -> bool:
+        if weight is not None and (weight > max_weight or weight < min_weight):
+            return self.soft_validate(
+                warning_key="weight",
+                value=weight,
+                title="Unusual Weight Value",
+                message=f"The weight you entered ({weight} lbs) is outside the typical range of {min_weight}-{max_weight} lbs. Are you sure this is correct?"
+            )
+        return True
+    
+    def validate_minutes_played(self, minutes: Optional[int], max_minutes: int = 150) -> bool:
+        if minutes is not None and (minutes > max_minutes or minutes <= 0):
+            return self.soft_validate(
+                warning_key="minutes_played",
+                value=minutes,
+                title="Unusual Minutes Played Value",
+                message=f"The minutes played you entered ({minutes}) is outside the typical range of 1-{max_minutes} minutes. Are you sure this is correct?"
+            )
+        return True
+    
+    def validate_xg(self, xg: Optional[float], max_xg: float = 8.0) -> bool:
+        if xg is not None and (xg > max_xg or xg < 0):
+            return self.soft_validate(
+                warning_key="xg",
+                value=xg,
+                title="Unusual xG Value",
+                message=f"The xG you entered ({xg}) is outside the typical range of 0-{max_xg}. Are you sure this is correct?"
+            )
+        return True
+    
+    def validate_pair_hard(
+        self,
+        data: Dict[str, Any],
+        constraints: List[Tuple[str, str, str, str]]) -> bool:
+        violations = []
+        for key_a, label_a, key_b, label_b in constraints:
+            val_a = data.get(key_a)
+            val_b = data.get(key_b)
+            if val_a is not None and val_b is not None and val_a > val_b:
+                violations.append((label_a, val_a, label_b, val_b))
+        
+        if violations:
             self.show_warning(
-                title="Age warning",
-                message=f"Age {age} is outside the expected range ({min_age}-{max_age}). Please double check",
+                title="Invalid stat pairs",
+                message="The following stat pairs are inconsistent: \n\n"
+                        + "\n".join(f"- {label_a} ({val_a}) should not be greater than {label_b} ({val_b})" for label_a, val_a, label_b, val_b in violations)
+                        + "\n\nPlease correct these before proceeding."
             )
             return False
         return True
