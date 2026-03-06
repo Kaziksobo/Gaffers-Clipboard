@@ -188,6 +188,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
         if not self.validate_age(safe_int_conversion(self.age_entry.get())):
             return
         ui_data["age"] = safe_int_conversion(self.age_entry.get())
+        if not self.validate_weight(safe_int_conversion(self.weight_entry.get())):
+            return
         ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
 
         key_to_label = {
@@ -218,6 +220,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
     
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
+        self._dismissed_warnings.clear()
+        
         self.name_entry.delete(0, 'end')
         self.name_entry.configure(placeholder_text="Enter name here")
         
