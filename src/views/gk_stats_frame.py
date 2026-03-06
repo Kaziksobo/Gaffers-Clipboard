@@ -163,6 +163,41 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         if not self.check_missing_fields(ui_data, dict(self.stat_definitions)):
             return False
         
+        percentage_keys = {"save_success_rate"}
+        percentage_data = {k: v for k, v in ui_data.items() if k in percentage_keys}
+        percentage_defs = [(k, label) for k, label in self.stat_definitions if k in percentage_keys]
+        if not self.validate_attr_range(percentage_data, percentage_defs, min_val=0, max_val=100):
+            return False
+        
+        saves = ui_data.get("saves")
+        shots_on_target = ui_data.get("shots_on_target")
+        if saves is not None and shots_on_target is not None and saves > shots_on_target:
+            if not self.soft_validate(
+                "saves_vs_shots",
+                (saves, shots_on_target),
+                "Saves Exceed Shots On Target",
+                f"The number of saves ({saves}) exceeds the number of shots on target ({shots_on_target}). Please double-check these values.",
+            ):
+                return False
+        
+        goals_conceded = ui_data.get("goals_conceded")
+        if saves is not None and goals_conceded is not None and saves + goals_conceded > shots_on_target:
+            if not self.soft_validate(
+                "saves_plus_goals_vs_shots",
+                (saves, goals_conceded, shots_on_target),
+                "Saves + Goals Conceded Exceed Shots On Target",
+                f"The combined total of saves ({saves}) and goals conceded ({goals_conceded}) exceeds the number of shots on target ({shots_on_target}). Please double-check these values.",
+            ):
+                return False
+        if goals_conceded is not None and shots_on_target is not None and goals_conceded > shots_on_target:
+            if not self.soft_validate(
+                "goals_conceded_vs_shots",
+                (goals_conceded, shots_on_target),
+                "Goals Conceded Exceed Shots On Target",
+                f"The number of goals conceded ({goals_conceded}) exceeds the number of shots on target ({shots_on_target}). Please double-check these values.",
+            ):
+                return False
+        
         ui_data["player_name"] = player_name
         ui_data["performance_type"] = "GK"
         
@@ -219,5 +254,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields and refresh the dropdown when displayed."""
+        self._dismissed_warnings.clear()
+        
         self.refresh_player_dropdown(only_gk=True, remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
