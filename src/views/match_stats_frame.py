@@ -272,6 +272,42 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         ):
             self.show_warning("Missing Fields", "Please fill in all required fields before proceeding.")
             return False
+        
+        percentage_data = {
+            "Home Possession": ui_data["home_stats"]["possession"],
+            "Away Possession": ui_data["away_stats"]["possession"]
+        }
+        percentage_defs = [("Home Possession", "Home Possession (%)"), ("Away Possession", "Away Possession (%)")]
+        if not self.validate_attr_range(percentage_data, percentage_defs, min_value=0, max_value=100):
+            return False
+        
+        home_poss = ui_data["home_stats"]["possession"]
+        away_poss = ui_data["away_stats"]["possession"]
+        if home_poss is not None and away_poss is not None and (home_poss + away_poss > 100):
+            if not self.soft_validate(
+                "possession_sum",
+                home_poss + away_poss,
+                "Possession Total Exceeds 100%",
+                f"Home possession ({home_poss}%) and Away possession ({away_poss}%) total {home_poss + away_poss}%, which exceeds 100%. Are you sure?",
+            ):
+                return False
+        
+        if not self.validate_field_lte(ui_data["home_stats"], [
+            ("tackles_won", "Home Tackles Won", "tackles", "Home Tackles"),
+        ]):
+            return False
+        if not self.validate_field_lte(ui_data["away_stats"], [
+            ("tackles_won", "Away Tackles Won", "tackles", "Away Tackles"),
+        ]):
+            return False
+        
+        home_xg = ui_data["home_stats"].get("xG")
+        if not self.validate_xg(home_xg):
+            return False
+
+        away_xg = ui_data["away_stats"].get("xG")
+        if not self.validate_xg(away_xg):
+            return False
 
         # Buffer match overview
         logger.info("Match overview validation passed. Buffering data.")
@@ -320,6 +356,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
     
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
+        self._dismissed_warnings.clear()
+        
         self.competition_var.set("Select Competition")
         self.competition_dropdown.set_value("Select Competition")
                 
