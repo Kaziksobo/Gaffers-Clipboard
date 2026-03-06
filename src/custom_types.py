@@ -13,7 +13,7 @@ class BaseAttributeSnapshot(BaseModel, ABC):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     datetime: DatetimeType
-    season: str
+    season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
     position: Optional[str] = Field(default=None, description="Specific position (e.g. ST, LB)")
 
 class GKAttributeSnapshot(BaseAttributeSnapshot):
@@ -78,7 +78,7 @@ class FinancialSnapshot(BaseModel):
     and sell-on clause.
     """
     datetime: DatetimeType
-    season: str
+    season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
     wage: int = Field(ge=0)
     market_value: int = Field(ge=0)
     contract_length: int = Field(ge=0, le=15)
@@ -92,7 +92,7 @@ class InjuryRecord(BaseModel):
     and how long the player is expected to be out.
     """
     datetime: DatetimeType
-    season: str
+    season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
     in_game_date: DatetimeType
     injury_detail: str
     time_out: int = Field(ge=0)
@@ -101,7 +101,7 @@ class InjuryRecord(BaseModel):
     @field_validator('in_game_date', mode='before')
     @classmethod
     def parse_in_game_date(cls, value: Union[str, DatetimeType]) -> DatetimeType:
-        """Convert string in dd/mm/yy or ISO format to datetime object."""
+        """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
         if isinstance(value, DatetimeType):
             return value
 
@@ -113,10 +113,11 @@ class InjuryRecord(BaseModel):
                 with contextlib.suppress(ValueError):
                     return DatetimeType.fromisoformat(value)
             # 2. Attempt to parse custom UI format (from Tkinter input)
-            try:
-                return DatetimeType.strptime(value, "%d/%m/%y")
-            except ValueError as e:
-                raise ValueError(f"Invalid date format. Expected dd/mm/yy or ISO, got '{value}'") from e
+            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.strptime(value, date_format)
+            
+            raise ValueError(f"Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, got '{value}'")
 
         raise ValueError(f"in_game_date must be a string or datetime, got {type(value)}")
 
@@ -131,7 +132,7 @@ class Player(BaseModel):
     nationality: str
     age: int = Field(ge=13, le=60)
     height: str = Field(pattern=r'^\d{1,2}\'\d{1,2}"$', description="Height in format X'Y\" (e.g., 6'2\")")
-    weight: int = Field(description="Weight in pounds", ge=100, le=300)
+    weight: int = Field(description="Weight in pounds", ge=100, le=400)
     positions: list[PositionType]
     
     # Polymorphic List: Can store either GK or Outfield snapshots
@@ -224,7 +225,15 @@ class OutfieldPlayerPerformance(BaseModel):
     distance_covered: float = Field(ge=0)
     distance_sprinted: float = Field(ge=0)
     player_id: int
-
+    
+    @model_validator(mode='after')
+    def validate_distances(self):
+        """Ensures that distance_sprinted does not exceed distance_covered."""
+        if self.distance_sprinted > self.distance_covered:
+            raise ValueError(
+                f'distance_sprinted ({self.distance_sprinted}) cannot exceed distance_covered ({self.distance_covered})'
+            )
+        return self
 class GoalkeeperPerformance(BaseModel):
     """Represent the performance of a goalkeeper in a match."""
     performance_type: Literal["GK"] = Field(default="GK", description="Discriminator for GK performance")
@@ -272,8 +281,8 @@ class CareerMetadata(BaseModel):
     folder_name: str
     manager_name: str
     created_at: DatetimeType
-    starting_season: str
-    half_length: int
+    starting_season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
+    half_length: int = Field(ge=4, le=20, description="IRL length of each half in minutes")
     difficulty: DifficultyLevel
 
 class CareerDetail(BaseModel):
