@@ -45,7 +45,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         # Main Heading
         self.main_heading = ctk.CTkLabel(
             self,
-            text="Add Financial Information for the player",
+            text="Update Player Financials",
             font=self.theme["fonts"]["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
@@ -108,7 +108,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         # Done Button
         self.done_button = ctk.CTkButton(
             self,
-            text="Done",
+            text="Save Financials",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],

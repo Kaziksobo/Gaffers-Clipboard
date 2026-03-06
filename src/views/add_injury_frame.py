@@ -42,7 +42,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         # Main heading
         self.main_heading = ctk.CTkLabel(
             self,
-            text="Add player injury record",
+            text="Log Player Injury",
             font=self.theme["fonts"]["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
@@ -93,7 +93,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         # Done Button
         self.done_button = ctk.CTkButton(
             self,
-            text="Done",
+            text="Save Record",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],

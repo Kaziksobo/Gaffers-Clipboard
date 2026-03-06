@@ -77,7 +77,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         # Loan button
         self.loan_out_button = ctk.CTkButton(
             self.sell_loan_frame,
-            text="Loan out Player",
+            text="Loan Out Player",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["background"],
             font=self.theme["fonts"]["button"],
@@ -89,7 +89,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         
         self.return_button = ctk.CTkButton(
             self.sell_loan_frame,
-            text="Return from loan",
+            text="Return From Loan",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["background"],
             font=self.theme["fonts"]["button"],
