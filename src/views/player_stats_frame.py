@@ -172,7 +172,23 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
 
         if not self.check_missing_fields(ui_data, dict(self.stat_definitions)):
             return False 
-
+        
+        percentage_keys = {"shot_accuracy", "pass_accuracy", "dribble_success_rate", "tackle_success_rate"}
+        percentage_data = {k: v for k, v in ui_data.items() if k in percentage_keys}
+        percentage_defs = [(k, label) for k, label in self.stat_definitions if k in percentage_keys]
+        if not self.validate_attr_range(percentage_data, percentage_defs, min_val=0, max_val=100):
+            return False
+        
+        if not self.validate_minutes_played(ui_data.get("minutes_played")):
+            return False
+        
+        if not self.validate_field_lte(ui_data, [
+            ("goals", "Goals", "shots", "Shots"),
+            ("assists", "Assists", "passes", "Passes"),
+            ("distance_sprinted", "Distance Sprinted", "distance_covered", "Distance Covered"),
+        ]):
+            return False
+        
         ui_data["player_name"] = player_name
         ui_data["performance_type"] = "Outfield"
 
@@ -229,5 +245,6 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
 
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields and refresh the dropdown when displayed."""
+        self._dismissed_warnings.clear()
         self.refresh_player_dropdown(only_outfield=True, remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
