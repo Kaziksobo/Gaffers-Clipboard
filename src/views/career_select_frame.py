@@ -42,7 +42,7 @@ class CareerSelectFrame(BaseViewFrame):
         # Info label
         self.info_label = ctk.CTkLabel(
             self,
-            text="Please select your career to get started:",
+            text="Select an existing save or start a new journey",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["secondary_text"]
         )
@@ -68,14 +68,14 @@ class CareerSelectFrame(BaseViewFrame):
             values=self.controller.data_manager.get_all_career_names(),
             width=350,
             dropdown_height=200,
-            placeholder="Select Career"
+            placeholder="Select existing career"
         )
         self.careers_dropdown.grid(row=0, column=0, pady=10)
 
         # Select Career Button
         self.select_career_button = ctk.CTkButton(
             self.career_select_frame,
-            text="Select Career",
+            text="Load Career",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["background"],
             font=self.theme["fonts"]["button"],
@@ -97,7 +97,7 @@ class CareerSelectFrame(BaseViewFrame):
         # New Career Button
         self.new_career_button = ctk.CTkButton(
             self,
-            text="Start New Career",
+            text="Create New Career",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["background"],
             font=self.theme["fonts"]["button"],
@@ -121,16 +121,16 @@ class CareerSelectFrame(BaseViewFrame):
     def on_show(self) -> None:
         """Lifecycle hook triggered when this frame is brought to the front."""
         self.refresh_careers_dropdown()
-        self.careers_dropdown.set_value("Click here to select career")
+        self.careers_dropdown.set_value("Select existing career")
     
     def on_select_button_press(self) -> None:
         """Validate UI selection, set the active career, and navigate to the Main Menu."""
         selected_career = self.careers_list_var.get()
         
-        invalid_states = ["Select Career", "No Careers Available", "Click here to select career", ""]
+        invalid_states = ["Select Career", "No Careers Available", "Click here to select career", "Select existing career", ""]
         if selected_career in invalid_states:
             logger.warning(f"Invalid career selection attempted: '{selected_career}'. Aborting navigation.")
-            self.show_warning("Invalid Selection", "Please select a valid career from the dropdown before proceeding.")
+            self.show_warning("No Career Selected", "Please choose an existing save from the dropdown, or click 'Create New Career' to start fresh.")
             return
         
         logger.info(f"User validated and selected career: {selected_career}")

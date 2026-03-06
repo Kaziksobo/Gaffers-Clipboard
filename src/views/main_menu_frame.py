@@ -53,7 +53,7 @@ class MainMenuFrame(BaseViewFrame):
         # Player Update Button
         self.player_update_button = ctk.CTkButton(
             self.button_frame,
-            text="Update player attributes",
+            text="Enter Player Library",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["button_bg"],
             font=self.theme["fonts"]["button"],
@@ -65,7 +65,8 @@ class MainMenuFrame(BaseViewFrame):
 
         # Add Match Button
         self.add_match_button = ctk.CTkButton(
-            self.button_frame, text="Add new match",
+            self.button_frame, 
+            text="Add New Match",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["button_bg"],
             font=self.theme["fonts"]["button"],
