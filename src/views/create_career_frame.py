@@ -112,7 +112,7 @@ class CreateCareerFrame(BaseViewFrame):
         # Half Length
         self.half_length_label = ctk.CTkLabel(
             self.entry_frame,
-            text="Half Length (minutes):",
+            text="Half Length (mins):",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
@@ -149,17 +149,44 @@ class CreateCareerFrame(BaseViewFrame):
         )
         self.match_difficulty_dropdown.grid(row=5, column=2, sticky="w", pady=5)
         
+        # Button subgrid (return to main menu, create career)
+        button_subgrid = ctk.CTkFrame(
+            self,
+            fg_color=self.theme["colors"]["background"]
+        )
+        button_subgrid.grid(row=3, column=1, pady=20)
+        button_subgrid.grid_columnconfigure(0, weight=1)
+        button_subgrid.grid_columnconfigure(1, weight=0)
+        button_subgrid.grid_columnconfigure(2, weight=0)
+        button_subgrid.grid_columnconfigure(3, weight=1)
+        button_subgrid.grid_rowconfigure(0, weight=1)
+        button_subgrid.grid_rowconfigure(1, weight=0)
+        button_subgrid.grid_rowconfigure(2, weight=1)
+        
+        # Return to Main Menu Button
+        self.return_button = ctk.CTkButton(
+            button_subgrid,
+            text="Return to Career Selection",
+            fg_color=self.theme["colors"]["button_fg"],
+            bg_color=self.theme["colors"]["background"],
+            font=self.theme["fonts"]["button"],
+            text_color=self.theme["colors"]["primary_text"],
+            hover_color=self.theme["colors"]["accent"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("CareerSelectFrame"))
+        )
+        self.return_button.grid(row=1, column=1, padx=10)
+
         # Create Career Button
         self.create_career_button = ctk.CTkButton(
-            self,
-            text="Create Career",
+            button_subgrid,
+            text="Start Career",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["button_bg"],
             font=self.theme["fonts"]["button"],
             text_color=self.theme["colors"]["primary_text"],
             command=self.on_create_career_button_press
         )
-        self.create_career_button.grid(row=3, column=1)
+        self.create_career_button.grid(row=1, column=2, padx=10)
         
     def on_create_career_button_press(self) -> None:
         """Validate input fields and invoke the controller to create a new career profile."""
@@ -183,7 +210,7 @@ class CreateCareerFrame(BaseViewFrame):
 
         if missing_fields:
             logger.warning(f"Career creation blocked. Missing fields: {', '.join(missing_fields)}")
-            self.show_warning("Missing Fields", f"The following required fields are missing: {', '.join(missing_fields)}.\n\nPlease fill them in before proceeding.")
+            self.show_warning("Missing Information", f"The following required fields are missing: {', '.join(missing_fields)}.\n\nPlease fill them in before proceeding.")
             return
 
         try:
