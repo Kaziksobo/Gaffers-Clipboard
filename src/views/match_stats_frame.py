@@ -278,7 +278,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             "Away Possession": ui_data["away_stats"]["possession"]
         }
         percentage_defs = [("Home Possession", "Home Possession (%)"), ("Away Possession", "Away Possession (%)")]
-        if not self.validate_attr_range(percentage_data, percentage_defs, min_value=0, max_value=100):
+        if not self.validate_attr_range(percentage_data, percentage_defs, min_val=0, max_val=100):
             return False
         
         home_poss = ui_data["home_stats"]["possession"]
@@ -292,11 +292,11 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             ):
                 return False
         
-        if not self.validate_field_lte(ui_data["home_stats"], [
+        if not self.validate_pair_hard(ui_data["home_stats"], [
             ("tackles_won", "Home Tackles Won", "tackles", "Home Tackles"),
         ]):
             return False
-        if not self.validate_field_lte(ui_data["away_stats"], [
+        if not self.validate_pair_hard(ui_data["away_stats"], [
             ("tackles_won", "Away Tackles Won", "tackles", "Away Tackles"),
         ]):
             return False

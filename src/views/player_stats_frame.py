@@ -182,7 +182,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         if not self.validate_minutes_played(ui_data.get("minutes_played")):
             return False
         
-        if not self.validate_field_lte(ui_data, [
+        if not self.validate_pair_hard(ui_data, [
             ("goals", "Goals", "shots", "Shots"),
             ("assists", "Assists", "passes", "Passes"),
             ("distance_sprinted", "Distance Sprinted", "distance_covered", "Distance Covered"),
