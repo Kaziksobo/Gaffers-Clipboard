@@ -175,7 +175,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             if not self.soft_validate(
                 "saves_vs_shots",
                 (saves, shots_on_target),
-                "Saves Exceed Shots On Target",
+                "Data Inconsistency",
                 f"The number of saves ({saves}) exceeds the number of shots on target ({shots_on_target}). Please double-check these values.",
             ):
                 return False
@@ -185,7 +185,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             if not self.soft_validate(
                 "saves_plus_goals_vs_shots",
                 (saves, goals_conceded, shots_on_target),
-                "Saves + Goals Conceded Exceed Shots On Target",
+                "Data Inconsistency",
                 f"The combined total of saves ({saves}) and goals conceded ({goals_conceded}) exceeds the number of shots on target ({shots_on_target}). Please double-check these values.",
             ):
                 return False
@@ -193,7 +193,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             if not self.soft_validate(
                 "goals_conceded_vs_shots",
                 (goals_conceded, shots_on_target),
-                "Goals Conceded Exceed Shots On Target",
+                "Data Inconsistency",
                 f"The number of goals conceded ({goals_conceded}) exceeds the number of shots on target ({shots_on_target}). Please double-check these values.",
             ):
                 return False
