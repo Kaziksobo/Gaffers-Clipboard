@@ -1740,7 +1740,16 @@
                 "sell_on_clause": 9
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-03-06T14:00:01.650424",
+                "season": "29/30",
+                "in_game_date": "2030-01-23T00:00:00",
+                "injury_detail": "Sprained Knee",
+                "time_out": 4,
+                "time_out_unit": "Weeks"
+            }
+        ],
         "sold": false,
         "loaned": false
     },
@@ -1813,7 +1822,7 @@
         ],
         "injury_history": [],
         "sold": false,
-        "loaned": false
+        "loaned": true
     },
     {
         "id": 30,
@@ -2024,7 +2033,24 @@
                 "sell_on_clause": 11
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-02-26T18:24:14.218250",
+                "season": "29/30",
+                "in_game_date": "2029-11-27T00:00:00",
+                "injury_detail": "Sprained knee",
+                "time_out": 4,
+                "time_out_unit": "Weeks"
+            },
+            {
+                "datetime": "2026-03-04T02:29:38.975093",
+                "season": "29/30",
+                "in_game_date": "2030-01-06T00:00:00",
+                "injury_detail": "Broken Toe",
+                "time_out": 3,
+                "time_out_unit": "Months"
+            }
+        ],
         "sold": false,
         "loaned": false
     },
@@ -2086,7 +2112,16 @@
                 "sell_on_clause": 0
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-03-02T00:22:07.290991",
+                "season": "29/30",
+                "in_game_date": "2029-12-11T00:00:00",
+                "injury_detail": "Bruised Shoulder",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            }
+        ],
         "sold": false,
         "loaned": false
     },
@@ -2600,7 +2635,16 @@
                 "sell_on_clause": 8
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-02-26T18:23:32.864689",
+                "season": "29/30",
+                "in_game_date": "2029-11-24T00:00:00",
+                "injury_detail": "Broken Toe",
+                "time_out": 3,
+                "time_out_unit": "Months"
+            }
+        ],
         "sold": false,
         "loaned": false
     },
@@ -2735,7 +2779,7 @@
         ],
         "injury_history": [],
         "sold": false,
-        "loaned": false
+        "loaned": true
     },
     {
         "id": 44,
@@ -2875,7 +2919,16 @@
                 "sell_on_clause": 0
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-03-02T10:06:53.057015",
+                "season": "29/30",
+                "in_game_date": "2029-12-16T00:00:00",
+                "injury_detail": "Bruised Shoulder",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            }
+        ],
         "sold": false,
         "loaned": false
     },
@@ -3336,7 +3389,16 @@
                 "sell_on_clause": 12
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-03-02T00:21:27.498502",
+                "season": "29/30",
+                "in_game_date": "2029-12-11T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            }
+        ],
         "sold": false,
         "loaned": false
     },
@@ -3553,6 +3615,68 @@
                 "wage": 15500,
                 "market_value": 1800000,
                 "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "loaned": true
+    },
+    {
+        "id": 56,
+        "name": "Gustavo Sa",
+        "nationality": "Portugal",
+        "age": 25,
+        "height": "6'1\"",
+        "weight": 176,
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-03-04T00:46:30.574788",
+                "season": "29/30",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 87,
+                "sprint_speed": 85,
+                "agility": 88,
+                "balance": 74,
+                "jumping": 76,
+                "stamina": 76,
+                "strength": 82,
+                "aggression": 82,
+                "att_position": 79,
+                "composure": 75,
+                "interceptions": 82,
+                "reactions": 80,
+                "vision": 71,
+                "defensive_awareness": 76,
+                "ball_control": 87,
+                "crossing": 88,
+                "curve": 74,
+                "dribbling": 85,
+                "fk_accuracy": 76,
+                "finishing": 82,
+                "heading_accuracy": 73,
+                "long_pass": 82,
+                "long_shots": 79,
+                "penalties": 75,
+                "short_pass": 82,
+                "shot_power": 80,
+                "slide_tackle": 71,
+                "stand_tackle": 80,
+                "volleys": 76
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-03-04T00:47:15.435110",
+                "season": "29/30",
+                "wage": 65000,
+                "market_value": 40500000,
+                "contract_length": 4,
                 "release_clause": 0,
                 "sell_on_clause": 0
             }
