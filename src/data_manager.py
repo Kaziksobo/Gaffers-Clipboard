@@ -80,14 +80,34 @@ class DataManager:
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 raw_data = json.load(f)
-            
-            adapter = TypeAdapter(List[model_class] if is_list else model_class)
-            
-            return adapter.validate_python(raw_data)
-        
-        except (json.JSONDecodeError, IOError, ValidationError) as e:
+        except (json.JSONDecodeError, IOError) as e:
             logger.error(f"Error loading JSON from {path}: {e}", exc_info=True)
             return default
+
+        adapter = TypeAdapter(List[model_class] if is_list else model_class)
+
+        try:
+            return adapter.validate_python(raw_data)
+        except ValidationError:
+            if not is_list:
+                logger.error(f"Validation failed for {path}, returning default.")
+                return default
+            if not isinstance(raw_data, list):
+                logger.error(f"Expected list in {path} but got {type(raw_data).__name__}. Returning default.")
+                return default
+            # Partial recovery: validate each item individually
+            logger.warning(f"Full list validation failed for {path}. Attempting partial recovery.")
+            item_adapter = TypeAdapter(model_class)
+            recovered = []
+            skipped = 0
+            for i, item in enumerate(raw_data):
+                try:
+                    recovered.append(item_adapter.validate_python(item))
+                except ValidationError:
+                    skipped += 1
+                    logger.debug(f"Skipped invalid item at index {i} in {path}.")
+            logger.warning(f"Partial recovery: {len(recovered)} valid, {skipped} skipped from {path}.")
+            return recovered
     
     def _save_json(self, path: Path, data: Union[T, List[T], None] = None) -> None:
         """Save the provided data as JSON to the specified file path.
@@ -122,6 +142,90 @@ class DataManager:
         
         except (IOError, TypeError) as e:
             logger.error(f"Failed to save JSON to {path}: {e}", exc_info=True)
+
+    def _load_matches_strict_or_raise(self) -> list[Match]:
+        """Strictly load matches.json and raise on any ambiguity.
+
+        This is intentionally fail-closed to protect against destructive overwrites.
+        """
+        if not self.matches_path:
+            raise RuntimeError("Cannot load matches: no active career/matches path is set.")
+
+        if not self.matches_path.exists():
+            return []
+
+        try:
+            with open(self.matches_path, 'r', encoding='utf-8') as f:
+                raw_data = json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            raise ValueError(
+                f"Refusing to save: unable to read matches.json at {self.matches_path}: {e}"
+            ) from e
+
+        if not isinstance(raw_data, list):
+            raise ValueError(
+                f"Refusing to save: matches.json must contain a list, got {type(raw_data).__name__}."
+            )
+
+        try:
+            adapter = TypeAdapter(List[Match])
+            return adapter.validate_python(raw_data)
+        except ValidationError as e:
+            raise ValueError(
+                f"Refusing to save: matches.json failed strict validation with {len(e.errors())} errors."
+            ) from e
+
+    def _load_players_strict_or_raise(self) -> list[Player]:
+        """Strictly load players.json and raise on any ambiguity.
+
+        This is intentionally fail-closed to protect against destructive overwrites.
+        """
+        if not self.players_path:
+            raise RuntimeError("Cannot load players: no active career/players path is set.")
+
+        if not self.players_path.exists():
+            return []
+
+        try:
+            with open(self.players_path, 'r', encoding='utf-8') as f:
+                raw_data = json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            raise ValueError(
+                f"Refusing to save: unable to read players.json at {self.players_path}: {e}"
+            ) from e
+
+        if not isinstance(raw_data, list):
+            raise ValueError(
+                f"Refusing to save: players.json must contain a list, got {type(raw_data).__name__}."
+            )
+
+        try:
+            adapter = TypeAdapter(List[Player])
+            return adapter.validate_python(raw_data)
+        except ValidationError as e:
+            raise ValueError(
+                f"Refusing to save: players.json failed strict validation with {len(e.errors())} errors."
+            ) from e
+
+    def _save_json_atomic_or_raise(self, path: Path, data: Union[T, List[T], None] = None) -> None:
+        """Atomically save JSON and raise on failure instead of swallowing errors."""
+        if data is None:
+            data = []
+
+        if isinstance(data, list):
+            export_data = [
+                item.model_dump(mode="json") if isinstance(item, BaseModel) else item
+                for item in data
+            ]
+        elif isinstance(data, BaseModel):
+            export_data = data.model_dump(mode="json")
+        else:
+            export_data = data
+
+        tmp_path = path.with_suffix(f"{path.suffix}.tmp")
+        with open(tmp_path, 'w', encoding='utf-8') as f:
+            json.dump(export_data, f, indent=4)
+        tmp_path.replace(path)
     
     def create_new_career(
         self, 
@@ -333,6 +437,9 @@ class DataManager:
             position (PositionType): The position associated with this snapshot.
             season (str): The season identifier (e.g., "24/25").
         """
+        # Fail closed: if on-disk players cannot be fully validated, abort before any write.
+        self.players = self._load_players_strict_or_raise()
+
         # Check if player already exists based on name to update them
         player_name = player_ui_data.get("name")
         existing_player = self._find_player_by_name(player_name)
@@ -384,9 +491,9 @@ class DataManager:
                 loaned=False
             )
             self.players.append(new_player)
-        self._save_json(self.players_path, self.players)
-        # Reload players to ensure consistency
-        self.players = self._load_json(self.players_path, Player)
+        self._save_json_atomic_or_raise(self.players_path, self.players)
+        # Reload players strictly to ensure consistency
+        self.players = self._load_players_strict_or_raise()
     
     def add_financial_data(
         self, 
@@ -404,6 +511,7 @@ class DataManager:
                                    'market_value', 'release_clause'.
             season (str): The season identifier (e.g., "2024/2025").
         """
+        self.players = self._load_players_strict_or_raise()
         existing_player = self._find_player_by_name(player_name)
 
         if not existing_player:
@@ -428,8 +536,8 @@ class DataManager:
             
             existing_player.financial_history.append(snapshot)
             
-            self._save_json(self.players_path, self.players)
-            self.players = self._load_json(self.players_path, Player)
+            self._save_json_atomic_or_raise(self.players_path, self.players)
+            self.players = self._load_players_strict_or_raise()
             
         except ValidationError as e:
             logger.error(f"Validation failed for financial data: {e}")
@@ -450,6 +558,7 @@ class DataManager:
             injury_data (dict): Dictionary containing 'in_game_date', 
                                 'injury_detail', 'time_out', etc.
         """
+        self.players = self._load_players_strict_or_raise()
         existing_player = self._find_player_by_name(player_name)
         
         if not existing_player:
@@ -467,8 +576,8 @@ class DataManager:
             
             existing_player.injury_history.append(snapshot)
             
-            self._save_json(self.players_path, self.players)
-            self.players = self._load_json(self.players_path, Player)
+            self._save_json_atomic_or_raise(self.players_path, self.players)
+            self.players = self._load_players_strict_or_raise()
             
         except (ValidationError, ValueError) as e:
             logger.error(f"Failed to add injury record: {e}")
@@ -512,6 +621,7 @@ class DataManager:
             status_key (str): The attribute name to update (e.g., 'sold', 'loaned').
             status_value (bool): The new boolean value.
         """
+        self.players = self._load_players_strict_or_raise()
         existing_player = self._find_player_by_name(player_name)
         
         if not existing_player:
@@ -529,8 +639,8 @@ class DataManager:
         
         setattr(existing_player, status_key, status_value)
         
-        self._save_json(self.players_path, self.players)
-        self.players = self._load_json(self.players_path, Player)
+        self._save_json_atomic_or_raise(self.players_path, self.players)
+        self.players = self._load_players_strict_or_raise()
     
     def _generate_id(self, collection: list[Any]) -> int:
         """Generate a unique ID for a new item in a collection.
@@ -590,42 +700,44 @@ class DataManager:
             player_performances (list[dict]): List of raw performance dictionaries 
                                               from the UI.
         """
+        # Fail closed: if on-disk matches cannot be fully validated, abort before any write.
+        self.matches = self._load_matches_strict_or_raise()
         match_id = self._generate_id(self.matches)
         timestamp = datetime.now()
-        
+
         logger.info(
             f"Adding match {match_id} vs {match_data.get('away_team_name', 'Unknown')} "
             f"with {len(player_performances)} player performances."
         )
-        
+
         normalized_performances = []
         for perf in player_performances:
             p_name = perf.get("player_name", "")
             p_id = self._find_player_id_by_name(p_name)
-            
+
             if not p_id:
                 logger.warning(
                     f"Skipping stats for '{p_name}' in match {match_id}: "
                     f"Player not found in database."
                 )
                 continue
-            
+
             # Remove name, add ID
             perf_data = {k: v for k, v in perf.items() if k != "player_name"}
             perf_data["player_id"] = p_id
-            
+
             if perf.get("performance_type") == "GK":
                 normalized_performances.append(GoalkeeperPerformance(**perf_data))
             else:
                 normalized_performances.append(OutfieldPlayerPerformance(**perf_data))
-        
+
         new_match = Match(
             id=match_id,
             datetime=timestamp,
             data=MatchData(**match_data),
             player_performances=normalized_performances
         )
-        
+
         self.matches.append(new_match)
-        self._save_json(self.matches_path, self.matches)
-        self.matches = self._load_json(self.matches_path, Match)
+        self._save_json_atomic_or_raise(self.matches_path, self.matches)
+        self.matches = self._load_matches_strict_or_raise()
