@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 
 class CareerSelectFrame(BaseViewFrame):
     """The initial startup frame allowing the user to select or create a career."""
+    _show_main_menu_nav = False
+    
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the CareerSelectFrame with UI components and layout.
         

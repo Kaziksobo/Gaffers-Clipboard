@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 
 class MainMenuFrame(BaseViewFrame):
     """The central navigation hub shown after a career is successfully loaded."""
+    _show_main_menu_nav = False
+    
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the MainMenuFrame and its navigation components.
 

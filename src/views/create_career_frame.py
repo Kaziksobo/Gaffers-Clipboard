@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 
 class CreateCareerFrame(BaseViewFrame):
     """A frame that provides a form for users to create a new FIFA career profile."""
+    _show_main_menu_nav = False
+    
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the CreateCareerFrame with input fields and layout.
 

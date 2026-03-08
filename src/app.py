@@ -154,6 +154,18 @@ class App(ctk.CTk):
         # Trigger on_show lifecycle method if it exists for the frame
         if hasattr(frame, "on_show"):
             frame.on_show()
+    def has_unsaved_work(self) -> bool:
+        return bool(
+            self.player_attributes_buffer
+            or self.match_overview_buffer
+            or self.player_performances_buffer
+        )
+        
+    def clear_session_buffers(self) -> None:
+        logger.info("Clearing session buffers.")
+        self.player_attributes_buffer = {}
+        self.match_overview_buffer = {}
+        self.player_performances_buffer = []
 
     def set_current_career_by_name(self, career_name: str) -> None:
         """Load the specified career and set it as the active context.

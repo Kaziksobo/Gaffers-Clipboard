@@ -7,6 +7,9 @@ from src.views.widgets.custom_alert import CustomAlert
 logger = logging.getLogger(__name__)
 
 class BaseViewFrame(ctk.CTkFrame):
+    
+    _show_main_menu_nav = True
+    
     """A base frame for all views in the app, providing common functionality and layout"""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]):
         """Initialize the BaseViewFrame layout and common UI elements.
@@ -22,6 +25,31 @@ class BaseViewFrame(ctk.CTkFrame):
         
         self.data_vars: Dict[str, ctk.StringVar] = {}
         self._dismissed_warnings: List[Tuple[str, Any]] = []
+        
+        if self._show_main_menu_nav:
+            self._main_menu_button = ctk.CTkButton(
+                self,
+                text="← Main Menu",
+                fg_color=theme["colors"]["button_fg"],
+                text_color=theme["colors"]["primary_text"],
+                font=theme["fonts"]["button"],
+                command=self._on_main_menu_press
+            )
+            self._main_menu_button.place(x=10, y=10)
+    
+    # --- Navigation ---
+    def _on_main_menu_press(self) -> None:
+        if self.controller.has_unsaved_work():
+            result = self.show_warning(
+                title="Unsaved Work",
+                message="You have unsaved work in progress. Returning to the main menu will discard it.\n\nAre you sure you want to continue?",
+                options=["Yes, Discard It", "No, Stay Here"]
+            )
+            if result != "Yes, Discard It":
+                return
+            self.controller.clear_session_buffers()
+        
+        self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
     
     # --- Popup Managers ---
     def show_info(self, title: str, message: str, options: Optional[List[str]] = None) -> Optional[str]:
