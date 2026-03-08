@@ -46,7 +46,7 @@ class CustomAlert(ctk.CTkToplevel):
         self.success_timeout = success_timeout
 
         self._timer_id = None
-        self._focus_bindtag = f"CustomAlertFocus_{id(self)}"
+        self._poll_id = None
 
         self.user_choice: Optional[str] = None
 
@@ -65,6 +65,7 @@ class CustomAlert(ctk.CTkToplevel):
         and center it in the middle of the app.
         """
         self.overrideredirect(True) # Remove OS title bar
+        self.attributes('-toolwindow', True)
         
         if self.alert_type == "info":
             popup_width = 700
@@ -173,7 +174,7 @@ class CustomAlert(ctk.CTkToplevel):
         for index, option in enumerate(self.options):
             button = ctk.CTkButton(
                 buttons_frame,
-                text=option.title(),
+                text=option,
                 font=self.theme["fonts"]["button"],
                 fg_color=self.theme["colors"]["button_fg"],
                 bg_color=self.theme["colors"]["button_bg"],
@@ -214,45 +215,26 @@ class CustomAlert(ctk.CTkToplevel):
         self._close_with_choice(choice)
     
     def _make_modal(self) -> None:
-        """Make the popup modal by disabling interaction with the main window until the popup is closed.
-        
-        self.transient(self.parent) should be called to set the popup as a transient window of the parent,
-        self.grab_set() should be called to prevent interaction with the parent window, 
-        and self.wait_window() should be called to pause execution in the main window until the popup is destroyed."""
-        self.transient(self.parent)  # Set the popup as a transient window of the parent
+        """Make the popup modal by disabling interaction with the main window until the popup is closed."""
+        self.transient(self.parent)
         self.grab_set()
-        
-        # If the main app is clicked, force the popup to the front
-        current_bindtags = self.parent.bindtags()
-        if self._focus_bindtag not in current_bindtags:
-            self.parent.bindtags((self._focus_bindtag, *current_bindtags))
-        self.parent.bind_class(
-            self._focus_bindtag,
-            "<FocusIn>",
-            self._on_parent_focus,
-            add="+"
-        )
-        
+        self._start_visibility_poll()
         self.wait_window()
 
-    def _on_parent_focus(self, _event: tk.Event) -> None:
-        """Bring this alert to front when the parent receives focus."""
+    def _start_visibility_poll(self) -> None:
+        """Periodically lift the alert above the main window.
+
+        overrideredirect(True) windows on Windows lose their stacking
+        position when the user alt-tabs or an external app overlays them.
+        A lightweight poll every 200ms ensures the alert stays visible
+        for as long as it exists.
+        """
         if self.winfo_exists():
-            self.lift()
-
-    def _remove_parent_focus_binding(self) -> None:
-        """Remove this alert's parent focus bindtag and associated class binding."""
-        try:
-            self.parent.unbind_class(self._focus_bindtag, "<FocusIn>")
-        except tk.TclError:
-            logger.debug("Could not unbind focus class for %s", self._focus_bindtag, exc_info=True)
-
-        try:
-            current_bindtags = self.parent.bindtags()
-            if self._focus_bindtag in current_bindtags:
-                self.parent.bindtags(tuple(tag for tag in current_bindtags if tag != self._focus_bindtag))
-        except tk.TclError:
-            logger.debug("Could not update parent bindtags for %s", self._focus_bindtag, exc_info=True)
+            try:
+                self.lift()
+            except tk.TclError:
+                return
+            self._poll_id = self.after(200, self._start_visibility_poll)
 
     def destroy(self) -> None:
         """Destroy the alert and clean up transient bindings/timers."""
@@ -264,7 +246,13 @@ class CustomAlert(ctk.CTkToplevel):
             finally:
                 self._timer_id = None
 
-        self._remove_parent_focus_binding()
+        if self._poll_id is not None:
+            try:
+                self.after_cancel(self._poll_id)
+            except tk.TclError:
+                pass
+            finally:
+                self._poll_id = None
 
         super().destroy()
 
