@@ -67,7 +67,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         # Main Heading
         self.main_heading = ctk.CTkLabel(
             self,
-            text="Match Statistics collected",
+            text="Review Match Statistics",
             font=self.theme["fonts"]["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
@@ -75,7 +75,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         
         # Info Label
         self.info_label = ctk.CTkLabel(
-            self, text="Empty stats couldn't be recognised and require manual entry.\n Please review and update player attributes as necessary.",
+            self, 
+            text="Please review the captured match data. Fill in any missing fields and correct any inaccuracies.",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["secondary_text"]
         )
@@ -161,7 +162,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
-            text="You can navigate to the first player's stats",
+            text="To log individual performances, navigate to the in-game player performance screen:",
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["body"],
         )
@@ -169,7 +170,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
-            text="Add Outfield Player",
+            text="Scan Outfield Player",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],
@@ -179,7 +180,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
 
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
-            text="Add Goalkeeper",
+            text="Scan Goalkeeper",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],
@@ -189,7 +190,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
-            text="Skip Player Stats",
+            text="Save Match Only",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],

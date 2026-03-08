@@ -53,7 +53,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         # Main Heading
         self.main_heading = ctk.CTkLabel(
             self,
-            text="Goalkeeper Statistics collected",
+            text="Review Goalkeeper Stats",
             font=self.theme["fonts"]["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
@@ -110,7 +110,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
-            text="Please navigate to the next player's stats",
+            text="To scan another player, navigate to their in-game stats:",
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["body"],
         )
@@ -118,7 +118,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
-            text="Next Outfield Player",
+            text="Scan an Outfield Player",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],
@@ -128,7 +128,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
 
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
-            text="Next Goalkeeper",
+            text="Scan a Goalkeeper",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],
@@ -138,7 +138,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
-            text="All Players Added",
+            text="Save all and Finish Match",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],

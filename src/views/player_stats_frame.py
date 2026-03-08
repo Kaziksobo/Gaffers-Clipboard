@@ -58,7 +58,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         # Main Heading
         self.main_heading = ctk.CTkLabel(
             self,
-            text="Player Statistics collected",
+            text="Review Outfield Player Stats",
             font=self.theme["fonts"]["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
@@ -78,7 +78,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         
         # Info Label
         self.info_label = ctk.CTkLabel(
-            self, text="Empty stats couldn't be recognised and require manual entry.\n Please review and update player attributes as necessary.",
+            self, text="Please review the captured player performance data.\nFill in any missing fields and correct any inaccuracies.",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["secondary_text"]
         )
@@ -115,7 +115,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
 
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
-            text="Please navigate to the next player's stats",
+            text="To scan another player, navigate to their in-game stats:",
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["body"],
         )
@@ -123,7 +123,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
-            text="Next Outfield Player",
+            text="Scan an Outfield Player",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],
@@ -133,7 +133,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
 
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
-            text="Next Goalkeeper",
+            text="Scan a Goalkeeper",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],
@@ -143,7 +143,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
-            text="All Players Added",
+            text="Save all and Finish Match",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             font=self.theme["fonts"]["button"],
