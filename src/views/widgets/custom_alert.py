@@ -32,7 +32,7 @@ class CustomAlert(ctk.CTkToplevel):
             theme (Dict[str, Any]): The application theme configuration.
             title (str): The title of the alert popup.
             message (str): The message to display in the alert.
-            alert_type (str): The type of alert ("error", "warning", "success").
+            alert_type (str): The type of alert ("error", "warning", "success", "info").
             options (Optional[List[str]]): Additional options for the alert (e.g., buttons).
             success_timeout (int): The timeout in seconds for success alerts (0 means no timeout).
         """
@@ -66,8 +66,12 @@ class CustomAlert(ctk.CTkToplevel):
         """
         self.overrideredirect(True) # Remove OS title bar
         
-        popup_width = 600
-        popup_height = 400
+        if self.alert_type == "info":
+            popup_width = 700
+            popup_height = 500
+        else:
+            popup_width = 600
+            popup_height = 400
 
         def get_screen_center() -> tuple[int, int]:
             screen_width = self.winfo_screenwidth()
@@ -142,34 +146,23 @@ class CustomAlert(ctk.CTkToplevel):
         )
         title.pack(pady=10)
 
-        # Message textbox with explicit vertical scrollbar
-        message_frame = ctk.CTkFrame(
-            main_container,
-            fg_color="transparent",
-        )
-        message_frame.pack(fill="both", expand=True, padx=5, pady=5)
-
+        # Message textbox (uses CTkTextbox's built-in scrollbar)
         message_textbox = ctk.CTkTextbox(
-            message_frame,
+            main_container,
             font=self.theme["fonts"]["body"],
             text_color=colors.get("primary_text", "white"),
             fg_color=background_color,
             border_width=0,
             wrap="word",
         )
-        message_textbox.pack(side="left", fill="both", expand=True)
+        message_textbox.pack(fill="both", expand=True, padx=5, pady=5)
 
-        message_scrollbar = ctk.CTkScrollbar(
-            message_frame,
-            orientation="vertical",
-            command=message_textbox.yview,
-        )
-        message_scrollbar.pack(side="right", fill="y")
+        message_textbox.insert("0.0", self.message_text)
+        message_textbox.configure(state="disabled")
 
-        message_textbox.configure(yscrollcommand=message_scrollbar.set)
-
-        message_textbox.insert("0.0", self.message_text)  # Insert the message text
-        message_textbox.configure(state="disabled")  # Make the textbox read-only
+        # Hide the built-in scrollbar if all content is visible
+        self._message_textbox = message_textbox
+        self.after(50, self._toggle_scrollbar)
         
         # Buttons frame
         buttons_frame = ctk.CTkFrame(main_container, fg_color=background_color)
@@ -288,6 +281,14 @@ class CustomAlert(ctk.CTkToplevel):
         except tk.TclError:
             logger.debug("Could not restore focus to main app window", exc_info=True)
         
+    def _toggle_scrollbar(self) -> None:
+        """Show the built-in scrollbar only when the text content overflows."""
+        with contextlib.suppress(tk.TclError, AttributeError):
+            if self._message_textbox.yview() == (0.0, 1.0):
+                self._message_textbox._scrollbar.grid_remove()
+            else:
+                self._message_textbox._scrollbar.grid()
+
     def _auto_close(self) -> None:
         """Automatically close the popup after a timeout (used for success messages)."""
         self._close_with_choice(AUTO_CLOSE_SENTINEL)

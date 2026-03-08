@@ -24,6 +24,18 @@ class BaseViewFrame(ctk.CTkFrame):
         self._dismissed_warnings: List[Tuple[str, Any]] = []
     
     # --- Popup Managers ---
+    def show_info(self, title: str, message: str, options: Optional[List[str]] = None) -> Optional[str]:
+        """Show an informational popup with the given title and message."""
+        alert = CustomAlert(
+            parent=self,
+            theme=self.theme,
+            title=title,
+            message=message,
+            alert_type="info",
+            options=options
+        )
+        return alert.get_result()
+    
     def show_error(self, title: str, message: str) -> None:
         """Show an error popup with the given title and message."""
         CustomAlert(

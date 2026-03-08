@@ -37,9 +37,9 @@ class PlayerLibraryFrame(BaseViewFrame):
         self.delay_seconds = getattr(self.controller, "screenshot_delay", 3)
         self.info_label = ctk.CTkLabel(
             self,
-            text=f"Manage your roster below. Use the 'Auto-Fill' buttons to auto-capture attributes directly from your game.",
+            text="Manage your roster below. Use the 'Auto-Fill' buttons to auto-capture attributes directly from your game.",
             font=self.theme["fonts"]["body"],
-            text_color=self.theme["colors"]["secondary_text"]
+            text_color=self.theme["colors"]["secondary_text"],
         )
         self.info_label.grid(row=2, column=1, pady=(10, 20))
 
@@ -84,7 +84,7 @@ class PlayerLibraryFrame(BaseViewFrame):
         self.lower_buttons_grid.grid_rowconfigure(0, weight=1)
         self.lower_buttons_grid.grid_rowconfigure(1, weight=0)
         self.lower_buttons_grid.grid_rowconfigure(2, weight=1)
-        
+
         self.add_financial_button = ctk.CTkButton(
             self.lower_buttons_grid,
             text="Update Player Financials",
@@ -128,6 +128,13 @@ class PlayerLibraryFrame(BaseViewFrame):
 
     def on_add_gk_button_press(self) -> None:
         """Handle the Add Goalkeeper button press by triggering OCR and navigating on success."""
+        check = self.show_info(
+            "Prepare Goalkeeper Scan",
+            f"Please navigate to the correct screen in EA FC before starting the scanning process:\n- Open the squad hub and select your goalkeeper.\n- Tab over to the attributes section.\n- Ensure you are on the 1st page (showing diving, handling, etc.).\nWhen ready, click 'Start Scan' and keep the game window open and unobstructed\nThe scan will start in {self.delay_seconds} seconds",
+            options=["Start Scan", "Cancel"]
+        )
+        if not check or check == "Cancel":
+            return
         try:
             self.controller.process_player_attributes(gk=True, first=True)
             self.controller.show_frame(self.controller.get_frame_class("AddGKFrame"))
@@ -139,6 +146,13 @@ class PlayerLibraryFrame(BaseViewFrame):
 
     def on_add_outfield_button_press(self) -> None:
         """Handle the Add Outfield Player button press by triggering OCR and navigating on success."""
+        check = self.show_info(
+            "Prepare Outfield Player Scan",
+            f"Please navigate to the correct screen in EA FC before starting the scanning process:\n- Open the squad hub and select your outfield player.\n- Tab over to the attributes section.\n- Switch to the 3rd page (showing physical and mental attributes).\nWhen ready, click 'Start Scan' and keep the game window open and unobstructed\nThe scan will start in {self.delay_seconds} seconds",
+            options=["Start Scan", "Cancel"]
+        )
+        if not check or check == "Cancel":
+            return
         try:
             self.controller.process_player_attributes(gk=False, first=True)
             self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame1"))
