@@ -172,14 +172,10 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         
         saves = ui_data.get("saves")
         shots_on_target = ui_data.get("shots_on_target")
-        if saves is not None and shots_on_target is not None and saves > shots_on_target:
-            if not self.soft_validate(
-                "saves_vs_shots",
-                (saves, shots_on_target),
-                "Data Inconsistency",
-                f"The number of saves ({saves}) exceeds the number of shots on target ({shots_on_target}). Please double-check these values.",
-            ):
-                return False
+        if not self.validate_pair_hard(ui_data, [
+            ("saves", "Saves", "shots_on_target", "Shots On Target"),
+        ]):
+            return False
         
         goals_conceded = ui_data.get("goals_conceded")
         if saves is not None and goals_conceded is not None and saves + goals_conceded > shots_on_target:
