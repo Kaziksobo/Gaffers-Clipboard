@@ -309,3 +309,14 @@ class BaseViewFrame(ctk.CTkFrame):
             )
             return False
         return True
+    
+    def validate_stat_max(self, data: Dict[str, Any], stat_key: str, stat_label: str, max_value: int) -> bool:
+        value = data.get(stat_key)
+        if value is not None and value > max_value:
+            return self.soft_validate(
+                warning_key=stat_key,
+                value=value,
+                title=f"Unusually High {stat_label}",
+                message=f"The {stat_label} you entered ({value}) is unusually high (greater than {max_value}).\nAre you sure this is correct?"
+            )
+        return True

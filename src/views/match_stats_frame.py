@@ -308,6 +308,24 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         away_xg = ui_data["away_stats"].get("xG")
         if not self.validate_xg(away_xg):
             return False
+        
+        stat_max_rules = [
+            ("ball_recovery", "Ball Recovery Time", 50),
+            ("shots", "Shots", 50),
+            ("passes", "Passes", 1000),
+            ("tackles", "Tackles", 100),
+            ("interceptions", "Interceptions", 100),
+            ("saves", "Saves", 50),
+            ("fouls_committed", "Fouls Committed", 100),
+            ("offsides", "Offsides", 50),
+            ("corners", "Corners", 50),
+            ("free_kicks", "Free Kicks", 100),
+            ("penalty_kicks", "Penalty Kicks", 20),
+            ("yellow_cards", "Yellow Cards", 20)
+        ]
+        for stat_key, stat_label, max_val in stat_max_rules:
+            if not self.validate_stat_max(ui_data, stat_key, stat_label, max_val):
+                return False
 
         # Buffer match overview
         logger.info("Match overview validation passed. Buffering data.")

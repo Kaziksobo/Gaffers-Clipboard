@@ -190,6 +190,25 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         ]):
             return False
         
+        stat_max_rules = [
+            ("goals", "Goals", 8),
+            ("assists", "Assists", 8),
+            ("shots", "Shots", 20),
+            ("passes", "Passes", 100),
+            ("dribbles", "Dribbles", 50),
+            ("tackles", "Tackles", 50),
+            ("offsides", "Offsides", 8),
+            ("fouls_committed", "Fouls Committed", 8),
+            ("possession_won", "Possession Won", 50),
+            ("possession_lost", "Possession Lost", 50),
+            ("distance_covered", "Distance Covered (km)", 15),
+            ("distance_sprinted", "Distance Sprinted (km)", 10)
+        ]
+
+        for key, label, max_val in stat_max_rules:
+            if not self.validate_stat_max(ui_data, key, label, max_value=max_val):
+                return False
+        
         ui_data["player_name"] = player_name
         ui_data["performance_type"] = "Outfield"
 

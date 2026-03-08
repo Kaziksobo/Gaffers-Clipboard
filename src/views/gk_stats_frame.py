@@ -199,6 +199,22 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             ):
                 return False
         
+        stat_max_rules = [
+            ("shots_against", "Shots Against", 25),
+            ("shots_on_target", "Shots On Target", 25),
+            ("saves", "Saves", 25),
+            ("goals_conceded", "Goals Conceded", 10),
+            ("punch_saves", "Punch Saves", 15),
+            ("rush_saves", "Rush Saves", 15),
+            ("penalty_saves", "Penalty Saves", 5),
+            ("penalty_goals_conceded", "Penalty Goals Conceded", 5),
+            ("shoot_out_saves", "Shoot-out Saves", 5),
+            ("shoot_out_goals_conceded", "Shoot-out Goals Conceded", 5)
+        ]
+        for stat_key, stat_label, max_val in stat_max_rules:
+            if not self.validate_stat_max(ui_data, stat_key, stat_label, max_val):
+                return False
+        
         ui_data["player_name"] = player_name
         ui_data["performance_type"] = "GK"
         
