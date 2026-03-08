@@ -140,6 +140,7 @@ The goal of this phase is to refactor the application's architecture to support 
 - [x] **Error Handling & Feedback** 
 	- [x] Implement robust `try/except` blocks across the entire program (especially OCR and file I/O).
 	- [x] Use `tkinter.messagebox` to display friendly error popups to the user instead of silent console failures.
+	- [x] Add extra warning popups to validate inputted stats before they are submitted
 - [x] **Resolution Independence** 
 	- [x] Move from hardcoded pixel coordinates to relative scale factors in `coordinates.json`.
 	- [x] Implement logic to detect screen resolution and scale OCR regions dynamically (supporting 1080p, 4k, etc.).
@@ -150,8 +151,9 @@ The goal of this phase is to refactor the application's architecture to support 
 	- [x] **Sales and Loans:** Add functionality to mark players as sold or loaned out
 	- [x] **GK Performance Frame:** Create a dedicated UI for entering/OCR-ing Goalkeeper match performance stats.
 	- [x] **Optional Player Stats:** Add a toggle or logic to allow saving a match result *without* needing to enter individual player performances.
+	- [ ] **Position Select:** Add a position select widget (dropdown with checkboxes) to the player performance frames, allowing the user to specify what position a player played in the match 
 - [ ] **User Experience & Documentation**
-	- [ ] Add an "Instructions" or "Help" tab/modal within the app explaining how to capture data. 
+	- [x] Add an "Instructions" or "Help" tab/modal within the app explaining how to capture data. 
 	- [ ] Write a comprehensive `README.md` for the GitHub repository detailing installation and usage. 
 
 **End Goal for Phase 7:** The application is stable, resolution-independent, self-cleaning, and user-friendly enough for someone other than the developer to use without crashing. 
