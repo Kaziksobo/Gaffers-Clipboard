@@ -12,7 +12,7 @@ from pydantic import ValidationError, TypeAdapter, BaseModel
 from src import ocr
 from src.theme import THEME
 from src.utils import get_screen_resolution, scale_coordinates
-from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError
+from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError, DuplicateRecordError
 from src.data_manager import DataManager
 from src.custom_types import CareerMetadata, Player, Match, CareerDetail
 
@@ -953,6 +953,12 @@ class App(ctk.CTk):
                                                from the UI or OCR.
         """
         logger.info(f"Buffering player performance data for: {performance_data.get('player_name', 'Unknown')}")
+        # Check if data for this player has already been buffered
+        for dataset in self.player_performances_buffer:
+            if dataset.get('player_name') == performance_data.get('player_name'):
+                logger.error(f"Duplicate player performance detected for {performance_data.get('player_name')}. Each player's performance should only be buffered once per match.")
+                raise DuplicateRecordError(performance_data.get('player_name'))
+                
         self.player_performances_buffer.append(performance_data)
     
     def save_buffered_match(self) -> None:

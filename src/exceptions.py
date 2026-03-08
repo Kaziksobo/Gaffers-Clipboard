@@ -49,3 +49,7 @@ class DataPersistenceError(DataError):
     """Raised when the DataManager fails to save a record, usually wrapping a 
     Pydantic ValidationError or a file I/O issue."""
     pass
+
+class DuplicateRecordError(DataError):
+    """Raised when attempting to save a record that already exists in the database"""
+    pass

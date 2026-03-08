@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion, safe_float_conversion
+from src.exceptions import DuplicateRecordError
 
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
@@ -207,6 +208,10 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             logger.debug(f"Buffered data for {player_name}")
             self.show_success("Data Saved", f"Performance data for {player_name} has been saved successfully.")
             return True
+        except DuplicateRecordError as e:
+            logger.error(f"Duplicate record error while buffering data for {player_name}: {e}", exc_info=True)
+            self.show_error("Duplicate Record", f"Performance data for {player_name} has already been buffered. Each player's performance can only be added once per match.")
+            return False
         except Exception as e:
             logger.error(f"Error buffering player performance data: {e}", exc_info=True)
             self.show_error("Error Saving Data", f"An error occurred while saving the performance data: \n{str(e)}. \n\nPlease try again.")
