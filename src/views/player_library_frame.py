@@ -130,7 +130,7 @@ class PlayerLibraryFrame(BaseViewFrame):
         """Handle the Add Goalkeeper button press by triggering OCR and navigating on success."""
         check = self.show_info(
             "Prepare Goalkeeper Scan",
-            f"Please navigate to the correct screen in EA FC before starting the scanning process:\n- Open the squad hub and select your goalkeeper.\n- Tab over to the attributes section.\n- Ensure you are on the 1st page (showing diving, handling, etc.).\nWhen ready, click 'Start Scan' and keep the game window open and unobstructed\nThe scan will start in {self.delay_seconds} seconds",
+            f"Please navigate to the correct screen in EA FC before starting the scanning process:\n- Open the Squad Hub and select your goalkeeper.\n- Tab over to the Attributes section.\n- Ensure you are on the 1st page (showing Diving, Handling, etc.).\nWhen ready, click 'Start Scan' and keep the game window open and unobstructed.\nThe scan will start in {self.delay_seconds} seconds.",
             options=["Start Scan", "Cancel"]
         )
         if not check or check == "Cancel":
@@ -148,7 +148,7 @@ class PlayerLibraryFrame(BaseViewFrame):
         """Handle the Add Outfield Player button press by triggering OCR and navigating on success."""
         check = self.show_info(
             "Prepare Outfield Player Scan",
-            f"Please navigate to the correct screen in EA FC before starting the scanning process:\n- Open the squad hub and select your outfield player.\n- Tab over to the attributes section.\n- Switch to the 3rd page (showing physical and mental attributes).\nWhen ready, click 'Start Scan' and keep the game window open and unobstructed\nThe scan will start in {self.delay_seconds} seconds",
+            f"Please navigate to the correct screen in EA FC before starting the scanning process:\n- Open the Squad Hub and select your outfield player.\n- Tab over to the Attributes section.\n- Switch to the 3rd page (showing Physical and Mental attributes).\n\nWhen ready, click 'Start Scan' and keep the game window open and unobstructed.\nThe scan will start in {self.delay_seconds} seconds.",
             options=["Start Scan", "Cancel"]
         )
         if not check or check == "Cancel":
