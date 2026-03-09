@@ -426,7 +426,7 @@ class DataManager:
         self, 
         player_ui_data: dict, 
         position: PositionType, 
-        season: str) -> None:
+        in_game_date: str) -> None:
         """Add a new player or update an existing one based on their name.
 
         If the player name exists, appends the new attribute snapshot. 
@@ -435,7 +435,6 @@ class DataManager:
         Args:
             player_ui_data (dict): Dictionary containing player bio and attributes.
             position (PositionType): The position associated with this snapshot.
-            season (str): The season identifier (e.g., "24/25").
         """
         # Fail closed: if on-disk players cannot be fully validated, abort before any write.
         self.players = self._load_players_strict_or_raise()
@@ -444,20 +443,20 @@ class DataManager:
         player_name = player_ui_data.get("name")
         existing_player = self._find_player_by_name(player_name)
         
-        top_level_keys = ["name", "age", "height", "weight", "country", "season"]
+        top_level_keys = ["name", "age", "height", "weight", "country", "in_game_date"]
         
         attributes = {k: v for k, v in player_ui_data.items() if k not in top_level_keys}
         if position == "GK":
             attributes_snapshot = GKAttributeSnapshot(
                 datetime=datetime.now(),
-                season=season,
+                in_game_date=in_game_date,
                 position_type="GK",
                 **attributes
             )
         else:
             attributes_snapshot = OutfieldAttributeSnapshot(
                 datetime=datetime.now(),
-                season=season,
+                in_game_date=in_game_date,
                 position_type="Outfield",
                 **attributes
             )
@@ -488,6 +487,7 @@ class DataManager:
                 financial_history=[],
                 injury_history=[],
                 sold=False,
+                date_sold=None,
                 loaned=False
             )
             self.players.append(new_player)
@@ -499,7 +499,7 @@ class DataManager:
         self, 
         player_name: str, 
         financial_data: dict, 
-        season: str) -> None:
+        in_game_date: str) -> None:
         """Add a financial snapshot to a specific player's history.
 
         Cleans currency strings (removes commas) before validating against 
@@ -509,7 +509,7 @@ class DataManager:
             player_name (str): The name of the player to update.
             financial_data (dict): Dictionary containing keys like 'wage', 
                                    'market_value', 'release_clause'.
-            season (str): The season identifier (e.g., "2024/2025").
+            in_game_date (str): The in-game date for the financial snapshot (e.g., "24/11/24").
         """
         self.players = self._load_players_strict_or_raise()
         existing_player = self._find_player_by_name(player_name)
@@ -518,7 +518,7 @@ class DataManager:
             logger.warning(f"Player '{player_name}' not found. Cannot add financial data.")
             return
 
-        logger.info(f"Saving financial snapshot for {player_name} (Season: {season})")
+        logger.info(f"Saving financial snapshot for {player_name}")
 
         # Clean Data (Remove commas from currency strings)
         # This ensures "120,000" becomes "120000" so Pydantic can parse it as int
@@ -530,7 +530,7 @@ class DataManager:
         try:
             snapshot = FinancialSnapshot(
                 datetime=datetime.now(),
-                season=season,
+                in_game_date=in_game_date,
                 **cleaned_data
             )
             
@@ -545,7 +545,6 @@ class DataManager:
     def add_injury_record(
         self, 
         player_name: str, 
-        season: str, 
         injury_data: dict) -> None:
         """Add an injury record to a player's history.
 
@@ -554,7 +553,6 @@ class DataManager:
 
         Args:
             player_name (str): The name of the player to update.
-            season (str): The season identifier.
             injury_data (dict): Dictionary containing 'in_game_date', 
                                 'injury_detail', 'time_out', etc.
         """
@@ -565,12 +563,11 @@ class DataManager:
             logger.warning(f"Player '{player_name}' not found. Cannot add injury record.")
             return
 
-        logger.info(f"Saving injury record for {player_name} (Season: {season})")
+        logger.info(f"Saving injury record for {player_name}")
         
         try:
             snapshot = InjuryRecord(
                 datetime=datetime.now(),
-                season=season,
                 **injury_data
             )
             
@@ -582,14 +579,15 @@ class DataManager:
         except (ValidationError, ValueError) as e:
             logger.error(f"Failed to add injury record: {e}")
         
-    def sell_player(self, player_name: str) -> None:
+    def sell_player(self, player_name: str, in_game_date: str) -> None:
         """Mark a player as sold in the database.
 
         Args:
             player_name (str): The name of the player to sell.
+            in_game_date (str): The in-game date when the player was sold.
         """
         logger.info(f"Action: Selling player {player_name}")
-        self._update_player_status(player_name, "sold", True)
+        self._update_player_status(player_name, status_key="sold", status_value=True, in_game_date=in_game_date)
     
     def loan_out_player(self, player_name: str) -> None:
         """Mark a player as loaned out.
@@ -598,7 +596,7 @@ class DataManager:
             player_name (str): The name of the player to loan out.
         """
         logger.info(f"Action: Loaning out player {player_name}")
-        self._update_player_status(player_name, "loaned", True)
+        self._update_player_status(player_name, status_key="loaned", status_value=True)
     
     def return_loan_player(self, player_name: str) -> None:
         """Mark a player as returned from loan (active again).
@@ -607,38 +605,46 @@ class DataManager:
             player_name (str): The name of the player returning.
         """
         logger.info(f"Action: Returning player {player_name} from loan")
-        self._update_player_status(player_name, "loaned", False)
+        self._update_player_status(player_name, status_key="loaned", status_value=False)
         
     def _update_player_status(
         self, 
         player_name: str, 
         status_key: str, 
-        status_value: bool):
+        status_value: bool,
+        in_game_date: Optional[str] = None) -> None:
         """Helper method to update a boolean status flag on a player.
 
         Args:
             player_name (str): The name of the player.
             status_key (str): The attribute name to update (e.g., 'sold', 'loaned').
             status_value (bool): The new boolean value.
+            in_game_date (Optional[str]): The in-game date for the status change, only needed for 'sold' status to set the date_sold field.
         """
         self.players = self._load_players_strict_or_raise()
         existing_player = self._find_player_by_name(player_name)
-        
+
         if not existing_player:
             logger.warning(
                 f"Player '{player_name}' not found. "
                 f"Cannot update status '{status_key}'."
             )
             return
-        
+
         if not hasattr(existing_player, status_key):
             logger.error(
                 f"Invalid status key '{status_key}' for Player model. Update aborted."
             )
             return
-        
+
+        if status_key == "sold" and status_value:
+            if not in_game_date:
+                logger.error("In-game date is required when marking a player as sold.")
+                return
+            existing_player.date_sold = in_game_date
+
         setattr(existing_player, status_key, status_value)
-        
+
         self._save_json_atomic_or_raise(self.players_path, self.players)
         self.players = self._load_players_strict_or_raise()
     

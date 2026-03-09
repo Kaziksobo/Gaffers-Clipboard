@@ -47,14 +47,14 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
         
-        self.season_entry = ctk.CTkEntry(
+        self.in_game_date_entry = ctk.CTkEntry(
             self,
-            placeholder_text="Season (e.g. 25/26)",
+            placeholder_text="In-game date (e.g. 01/07/29)",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"]
         )
-        self.season_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
+        self.in_game_date_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
 
         self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
@@ -150,10 +150,10 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         ui_data["name"] = self.name_entry.get().strip() or None
         ui_data["country"] = self.country_entry.get().strip() or None
 
-        season = self.validate_season(self.season_entry.get().strip())
-        if season is None:
+        in_game_date = self.in_game_date_entry.get().strip()
+        if not self.validate_in_game_date(in_game_date):
             return
-        ui_data["season"] = season
+        ui_data["in_game_date"] = in_game_date
 
         height = self.validate_height(self.height_entry.get().strip())
         if height is None:
@@ -171,7 +171,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         key_to_label = dict(self.attr_definitions) | {
             "name": "Name",
             "country": "Country",
-            "season": "Season",
+            "in_game_date": "In-game Date",
             "height": "Height",
             "age": "Age",
             "weight": "Weight",
@@ -199,6 +199,9 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         
         self.name_entry.delete(0, 'end')
         self.name_entry.configure(placeholder_text="Enter name here")
+
+        self.in_game_date_entry.delete(0, 'end')
+        self.in_game_date_entry.configure(placeholder_text="In-game date (e.g. 01/07/29)")
         
         self.age_entry.delete(0, 'end')
         self.age_entry.configure(placeholder_text="Age")

@@ -297,7 +297,7 @@ class App(ctk.CTk):
 
         Raises:
             IncompleteDataError: If the buffers are incomplete or missing critical 
-                                 context fields (name, position, season) prior to save.
+                                 context fields (name, position, in-game date) prior to save.
             DataPersistenceError: If the DataManager fails to save the player, 
                                   often due to validation errors or file I/O issues.
         """
@@ -306,19 +306,18 @@ class App(ctk.CTk):
         
         # If gk, then only gk_attr will be present
         # If outfield first, then outfield_attr_1 and outfield_attr_2 will be present
-        # If gk, position is 'GK' and season is taken from season key in gk_attr
-        # If outfield, position and season are taken from outfield_attr_1
+        # in_game_date is always in the first page of attributes; season is derived from it
         
         player_name = ""
         position = ""
-        season = ""
+        in_game_date = ""
         attributes: dict[str, Any] = {}
         
         if 'gk_attr' in self.player_attributes_buffer:
             gk_data = self.player_attributes_buffer['gk_attr']
             player_name = gk_data.get('name', '').strip()
             position = 'GK'
-            season = gk_data.get('season', '').strip()
+            in_game_date = gk_data.get('in_game_date', '').strip()
             attributes = gk_data
             
         elif 'outfield_attr_1' in self.player_attributes_buffer and 'outfield_attr_2' in self.player_attributes_buffer:
@@ -326,7 +325,7 @@ class App(ctk.CTk):
             out_2 = self.player_attributes_buffer['outfield_attr_2']
             player_name = out_1.get('name', '').strip()
             position = out_1.get('position', '').strip()
-            season = out_1.get('season', '').strip()
+            in_game_date = out_1.get('in_game_date', '').strip()
             
             # Safely merge both pages of attributes
             attributes = {**out_1, **out_2}
@@ -334,9 +333,9 @@ class App(ctk.CTk):
         else:
             raise IncompleteDataError("Cannot save: Missing page 1 or page 2 of outfield attributes.")
         
-        if not player_name or not position or not season:
-            logger.error(f"Save aborted: Missing critical context. Name: '{player_name}', Pos: '{position}', Season: '{season}'")
-            raise IncompleteDataError("Cannot save: Missing required player context fields (Name, Position, or Season).")
+        if not player_name or not position or not in_game_date:
+            logger.error(f"Save aborted: Missing critical context. Name: '{player_name}', Pos: '{position}', Date: '{in_game_date}'")
+            raise IncompleteDataError("Cannot save: Missing required player context fields (Name, Position, or In-game Date).")
         
         logger.info(f"Saving player {player_name} at position {position}")
         
@@ -344,7 +343,7 @@ class App(ctk.CTk):
             self.data_manager.add_or_update_player(
                 player_ui_data=attributes,
                 position=position,
-                season=season
+                in_game_date=in_game_date
             )
         except Exception as e:
             # We catch the generic exception (like a Pydantic ValidationError) 
@@ -355,7 +354,7 @@ class App(ctk.CTk):
             # Reset buffer after saving
             self.player_attributes_buffer = {}
     
-    def save_financial_data(self, player_name: str, financial_data: dict, season: str) -> None:
+    def save_financial_data(self, player_name: str, financial_data: dict, in_game_date: str) -> None:
         """Commit the financial data for a specific player to persistent storage.
         
         Acts as the gatekeeper for monetary updates, ensuring the UI has provided 
@@ -365,7 +364,7 @@ class App(ctk.CTk):
         Args:
             player_name (str): The name of the player to update.
             financial_data (Dict[str, Any]): The raw monetary details supplied by the UI.
-            season (str): The season associated with the financial snapshot.
+            in_game_date (str): The in-game date for the financial snapshot.
             
         Raises:
             IncompleteDataError: If the player name, season, or data dictionary is missing.
@@ -376,52 +375,55 @@ class App(ctk.CTk):
             logger.error("Financial save aborted: Player name is missing.")
             raise IncompleteDataError("Cannot save: No player selected.")
 
-        if not season or not season.strip():
-            logger.error("Financial save aborted: Season is missing.")
-            raise IncompleteDataError("Cannot save: Season is required.")
-
         if not financial_data:
             logger.error(f"Financial save aborted: No data provided for {player_name}.")
             raise IncompleteDataError("Cannot save: Financial data fields are empty.")
+        
+        if not in_game_date or not in_game_date.strip():
+            logger.error("Financial save aborted: In-game date is missing.")
+            raise IncompleteDataError("Cannot save: In-game date is required.")
 
-        logger.info(f"Initiating financial save for player '{player_name}' (Season: {season})")
+        logger.info(f"Initiating financial save for player '{player_name}'")
         try:
-            self.data_manager.add_financial_data(player_name, financial_data, season)
+            self.data_manager.add_financial_data(player_name, financial_data, in_game_date)
         except Exception as e:
             logger.error(f"Failed to persist financial data for {player_name}: {e}", exc_info=True)
             raise DataPersistenceError(
                 f"Backend failed to save financial data: {e}"
             ) from e
     
-    def sell_player(self, player_name: str) -> None:
+    def sell_player(self, player_name: str, in_game_date: str) -> None:
         """Mark a player as sold, permanently removing them from active squad selection.
 
         Args:
             player_name (str): The name of the player to sell.
-            
+            in_game_date (str): The in-game date for the sale.
         Raises:
             IncompleteDataError: If the player name is missing or empty.
         """
         if not player_name or not player_name.strip():
             logger.error("Sell action aborted: No player name provided.")
             raise IncompleteDataError("Cannot sell: No player selected.")
+        if not in_game_date or not in_game_date.strip():
+            logger.error("Sell action aborted: No in-game date provided.")
+            raise IncompleteDataError("Cannot sell: In-game date is required.")
             
         logger.info(f"Routing sell request for player: {player_name}")
-        self.data_manager.sell_player(player_name)
+        self.data_manager.sell_player(player_name, in_game_date)
     
     def loan_out_player(self, player_name: str) -> None:
         """Mark a player as loaned out, temporarily removing them from active squad selection.
 
         Args:
             player_name (str): The name of the player to loan out.
-            
+
         Raises:
             IncompleteDataError: If the player name is missing or empty.
         """
         if not player_name or not player_name.strip():
             logger.error("Loan out action aborted: No player name provided.")
             raise IncompleteDataError("Cannot loan out: No player selected.")
-            
+
         logger.info(f"Routing loan out request for player: {player_name}")
         self.data_manager.loan_out_player(player_name)
     
@@ -430,18 +432,18 @@ class App(ctk.CTk):
 
         Args:
             player_name (str): The name of the player returning from loan.
-            
+
         Raises:
             IncompleteDataError: If the player name is missing or empty.
         """
         if not player_name or not player_name.strip():
             logger.error("Return loan action aborted: No player name provided.")
             raise IncompleteDataError("Cannot return from loan: No player selected.")
-            
+
         logger.info(f"Routing return from loan request for player: {player_name}")
         self.data_manager.return_loan_player(player_name)
     
-    def add_injury_record(self, player_name: str, season: str, injury_data: Dict[str, Any]) -> None:
+    def add_injury_record(self, player_name: str, injury_data: Dict[str, Any]) -> None:
         """Commit an injury record for a specific player to persistent storage.
         
         Acts as the gatekeeper for injury updates, ensuring the UI has provided 
@@ -450,7 +452,6 @@ class App(ctk.CTk):
 
         Args:
             player_name (str): The name of the player who sustained the injury.
-            season (str): The season in which the injury occurred.
             injury_data (Dict[str, Any]): The raw injury details (date, duration, type) from the UI.
             
         Raises:
@@ -462,19 +463,15 @@ class App(ctk.CTk):
             logger.error("Injury save aborted: Player name is missing.")
             raise IncompleteDataError("Cannot save injury: No player selected.")
             
-        if not season or not season.strip():
-            logger.error("Injury save aborted: Season is missing.")
-            raise IncompleteDataError("Cannot save injury: Season is required.")
-            
         if not injury_data:
             logger.error(f"Injury save aborted: No data provided for {player_name}.")
             raise IncompleteDataError("Cannot save injury: Injury data fields are empty.")
 
-        logger.info(f"Initiating injury record save for player '{player_name}' (Season: {season})")
+        logger.info(f"Initiating injury record save for player '{player_name}'")
         
         # 2. Cross the Pydantic Boundary
         try:
-            self.data_manager.add_injury_record(player_name, season, injury_data)
+            self.data_manager.add_injury_record(player_name, injury_data)
         except Exception as e:
             # We explicitly mention date formatting in the error wrap because 
             # that is the #1 reason this specific Pydantic model will fail.

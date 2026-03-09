@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import logging
 import re
+from datetime import datetime
 from typing import Dict, Any, List, Tuple, Optional
 from src.views.widgets.custom_alert import CustomAlert
 
@@ -348,3 +349,16 @@ class BaseViewFrame(ctk.CTkFrame):
                 message=f"The {stat_label} you entered ({value}) is unusually high (greater than {max_value}).\nAre you sure this is correct?"
             )
         return True
+    
+    def validate_in_game_date(self, date_str: str) -> bool:
+        date_str = date_str.strip()
+        try:
+            datetime.strptime(date_str, "%d/%m/%y")
+            return True
+        except ValueError:
+            logger.warning(f"Date validation failed for input: {date_str}")
+            self.show_warning(
+                title="Invalid Date Format",
+                message="The 'In-game Date' field must be in the format dd/mm/yy. Please correct it before proceeding.",
+            )
+            return False

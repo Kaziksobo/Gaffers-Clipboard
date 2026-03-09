@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import Any, Dict, Optional, Tuple, Union
 
 import pyautogui
@@ -101,6 +102,20 @@ def safe_int_conversion(value: Optional[Union[str, int, float]]) -> Optional[int
             return None
     
     return None
+
+
+def derive_season(date_str: str) -> str:
+    """Derive the football season string from a dd/mm/yy date.
+
+    July (month 7) onward starts a new season.
+    E.g. 01/07/29 -> '29/30', 15/01/30 -> '29/30'.
+    """
+    dt = datetime.strptime(date_str.strip(), "%d/%m/%y")
+    year = dt.year % 100
+    if dt.month >= 7:
+        return f"{year:02d}/{(year + 1) % 100:02d}"
+    return f"{(year - 1) % 100:02d}/{year:02d}"
+
 
 def safe_float_conversion(value: Optional[Union[str, int, float]]) -> Optional[float]:
     """Safely converts a value to a float, returning None if conversion fails.

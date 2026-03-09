@@ -13,8 +13,30 @@ class BaseAttributeSnapshot(BaseModel, ABC):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     datetime: DatetimeType
-    season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
+    in_game_date: DatetimeType
     position: Optional[str] = Field(default=None, description="Specific position (e.g. ST, LB)")
+    @field_validator('in_game_date', mode='before')
+    @classmethod
+    def parse_in_game_date(cls, value: Union[str, DatetimeType]) -> DatetimeType:
+        """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
+        if isinstance(value, DatetimeType):
+            return value
+
+        if isinstance(value, str):
+            value = value.strip()
+
+            # 1. Attempt to parse standard ISO format (from JSON load)
+            if "T" in value or "-" in value:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.fromisoformat(value)
+            # 2. Attempt to parse custom UI format (from Tkinter input)
+            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.strptime(value, date_format)
+            
+            raise ValueError(f"Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, got '{value}'")
+
+        raise ValueError(f"in_game_date must be a string or datetime, got {type(value)}")
 
 class GKAttributeSnapshot(BaseAttributeSnapshot):
     """Represent fields specific to Goalkeeper attributes.
@@ -78,12 +100,34 @@ class FinancialSnapshot(BaseModel):
     and sell-on clause.
     """
     datetime: DatetimeType
-    season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
+    in_game_date: DatetimeType
     wage: int = Field(ge=0)
     market_value: int = Field(ge=0)
     contract_length: int = Field(ge=0, le=15)
     release_clause: int = Field(default=0, ge=0)
     sell_on_clause: int = Field(default=0, ge=0, le=100)
+    @field_validator('in_game_date', mode='before')
+    @classmethod
+    def parse_in_game_date(cls, value: Union[str, DatetimeType]) -> DatetimeType:
+        """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
+        if isinstance(value, DatetimeType):
+            return value
+
+        if isinstance(value, str):
+            value = value.strip()
+
+            # 1. Attempt to parse standard ISO format (from JSON load)
+            if "T" in value or "-" in value:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.fromisoformat(value)
+            # 2. Attempt to parse custom UI format (from Tkinter input)
+            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.strptime(value, date_format)
+            
+            raise ValueError(f"Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, got '{value}'")
+
+        raise ValueError(f"in_game_date must be a string or datetime, got {type(value)}")
 
 class InjuryRecord(BaseModel):
     """Represents a record of a player's injury at a specific point in time.
@@ -92,7 +136,6 @@ class InjuryRecord(BaseModel):
     and how long the player is expected to be out.
     """
     datetime: DatetimeType
-    season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
     in_game_date: DatetimeType
     injury_detail: str
     time_out: int = Field(ge=0)
@@ -149,12 +192,45 @@ class Player(BaseModel):
         return self
     
     sold: bool = False
+    date_sold: Optional[DatetimeType] = None
     loaned: bool = False
+    
+    @model_validator(mode='after')
+    def validate_sold_date(self):
+        """Ensures that if a player is sold, date_sold is provided."""
+        if self.sold and self.date_sold is None:
+            raise ValueError('date_sold must be provided if player is sold')
+        return self
     
     @property
     def is_goalkeeper(self) -> bool:
         """Determines if the player is a goalkeeper based on their positions list."""
         return "GK" in self.positions
+    
+    @field_validator('date_sold', mode='before')
+    @classmethod
+    def parse_sold_date(cls, value: Union[str, DatetimeType, None]) -> Optional[DatetimeType]:
+        """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
+        if value is None:
+            return None
+        if isinstance(value, DatetimeType):
+            return value
+
+        if isinstance(value, str):
+            value = value.strip()
+
+            # 1. Attempt to parse standard ISO format (from JSON load)
+            if "T" in value or "-" in value:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.fromisoformat(value)
+            # 2. Attempt to parse custom UI format (from Tkinter input)
+            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.strptime(value, date_format)
+            
+            raise ValueError(f"Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, got '{value}'")
+
+        raise ValueError(f"date_sold must be a string or datetime, got {type(value)}")
 
     @property
     def current_attributes(self) -> Optional[Union[GKAttributeSnapshot, OutfieldAttributeSnapshot]]:

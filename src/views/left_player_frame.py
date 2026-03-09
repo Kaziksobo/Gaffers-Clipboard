@@ -31,7 +31,8 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         self.grid_rowconfigure(1, weight=0)
         self.grid_rowconfigure(2, weight=0)
         self.grid_rowconfigure(3, weight=0)
-        self.grid_rowconfigure(4, weight=1)
+        self.grid_rowconfigure(4, weight=0)
+        self.grid_rowconfigure(5, weight=1)
         
         self.main_heading = ctk.CTkLabel(
             self,
@@ -53,9 +54,40 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
         
+        # In-game Date mini frame
+        self.in_game_date_frame = ctk.CTkFrame(
+            self,
+            fg_color=self.theme["colors"]["background"]
+        )
+        self.in_game_date_frame.grid(row=3, column=1, padx=(20, 0), pady=(0, 20), sticky="ew")
+        self.in_game_date_frame.grid_columnconfigure(0, weight=1)
+        self.in_game_date_frame.grid_columnconfigure(1, weight=0)
+        self.in_game_date_frame.grid_columnconfigure(2, weight=0)
+        self.in_game_date_frame.grid_columnconfigure(3, weight=1)
+        self.in_game_date_frame.grid_rowconfigure(0, weight=1)
+        self.in_game_date_frame.grid_rowconfigure(1, weight=0)
+        self.in_game_date_frame.grid_rowconfigure(2, weight=1)
+        
+        self.in_game_date_label = ctk.CTkLabel(
+            self.in_game_date_frame,
+            text="Enter the in-game date if selling player:",
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
+        )
+        self.in_game_date_label.grid(row=1, column=1, padx=(20, 0), sticky="w")
+        self.in_game_date_entry = ctk.CTkEntry(
+            self.in_game_date_frame,
+            font=self.theme["fonts"]["body"],
+            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme["colors"]["primary_text"],
+            width=200,
+            placeholder_text="e.g. 01/01/25"
+        )
+        self.in_game_date_entry.grid(row=1, column=2, padx=(20, 0), sticky="e")
+        
         # Sell/loan mini frame
         self.sell_loan_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
-        self.sell_loan_frame.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
+        self.sell_loan_frame.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
         self.sell_loan_frame.grid_columnconfigure(0, weight=1)
         self.sell_loan_frame.grid_columnconfigure(1, weight=1)
         self.sell_loan_frame.grid_columnconfigure(2, weight=1)
@@ -98,6 +130,19 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
             command=self.return_loan_player
         )
         self.return_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
+    
+    def get_in_game_date(self) -> Optional[str]:
+        """Helper to extract and validate the in-game date from the entry field.
+
+        Returns:
+            Optional[str]: The valid in-game date string, or None if invalid.
+        """
+        in_game_date_str = self.in_game_date_entry.get().strip()
+        
+        if not self.validate_in_game_date(in_game_date_str):
+            return None
+        
+        return in_game_date_str
         
     def _get_player_name(self) -> Optional[str]:
         """Extract and validate the currently selected player's name from the dropdown.
@@ -110,7 +155,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         invalid_states = ["Click here to select player", "No players found", ""]
         if player_name in invalid_states:
             self.show_warning("Selection Error", "Please select a player before performing an action.")
-            return None
+            return
             
         return player_name
     
@@ -118,6 +163,10 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         """Execute the sale of the currently selected player and return to the library."""
         player_name = self._get_player_name()
         if not player_name:
+            return
+        
+        in_game_date = self.get_in_game_date()
+        if in_game_date is None:
             return
         
         # Ask for confirmation before selling the player
@@ -131,7 +180,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         
         try:
             logger.info(f"Initiating sale for player: {player_name}")
-            self.controller.sell_player(player_name)
+            self.controller.sell_player(player_name, in_game_date)
             self.show_success("Player Sold", f"{player_name} has been successfully sold.")
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
@@ -175,3 +224,6 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         """Lifecycle hook triggered when the frame is displayed to reset its state."""
         self.refresh_player_dropdown()
         self.player_dropdown.set_value("Click here to select player")
+        
+        self.in_game_date_entry.delete(0, "end")
+        self.in_game_date_entry.configure(placeholder_text="e.g. 01/01/25")

@@ -40,7 +40,8 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         self.grid_rowconfigure(2, weight=0)
         self.grid_rowconfigure(3, weight=0)
         self.grid_rowconfigure(4, weight=0)
-        self.grid_rowconfigure(5, weight=1)
+        self.grid_rowconfigure(5, weight=0)
+        self.grid_rowconfigure(6, weight=1)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -70,23 +71,43 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         )
         self.player_dropdown.grid(row=1, column=1, pady=(0, 20), padx=(0, 20))
         
-        # Season entry
-        self.season_entry = ctk.CTkEntry(
-            self.selection_frame,
+        # In-game Date mini frame
+        self.in_game_date_frame = ctk.CTkFrame(
+            self,
+            fg_color=self.theme["colors"]["background"]
+        )
+        self.in_game_date_frame.grid(row=3, column=1, padx=(20, 0), pady=(0, 20), sticky="ew")
+        self.in_game_date_frame.grid_columnconfigure(0, weight=1)
+        self.in_game_date_frame.grid_columnconfigure(1, weight=0)
+        self.in_game_date_frame.grid_columnconfigure(2, weight=0)
+        self.in_game_date_frame.grid_columnconfigure(3, weight=1)
+        self.in_game_date_frame.grid_rowconfigure(0, weight=1)
+        self.in_game_date_frame.grid_rowconfigure(1, weight=0)
+        self.in_game_date_frame.grid_rowconfigure(2, weight=1)
+        
+        self.in_game_date_label = ctk.CTkLabel(
+            self.in_game_date_frame,
+            text="Enter the in-game date for this update:",
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
+        )
+        self.in_game_date_label.grid(row=1, column=1, padx=(20, 0), sticky="w")
+        self.in_game_date_entry = ctk.CTkEntry(
+            self.in_game_date_frame,
             font=self.theme["fonts"]["body"],
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            width=250,
-            placeholder_text="Season (e.g. 24/25)"
+            width=200,
+            placeholder_text="e.g. 01/01/25"
         )
-        self.season_entry.grid(row=1, column=2, pady=(0, 20), padx=(20, 0))
+        self.in_game_date_entry.grid(row=1, column=2, padx=(20, 0), sticky="e")
         
         # financial data subgrid
         self.financial_frame = ctk.CTkFrame(
             self,
             fg_color=self.theme["colors"]["background"]
         )
-        self.financial_frame.grid(row=3, column=1, pady=(0, 20))
+        self.financial_frame.grid(row=4, column=1, pady=(0, 20))
         
         self.financial_frame.grid_columnconfigure(0, weight=1)
         self.financial_frame.grid_columnconfigure(1, weight=0)
@@ -114,7 +135,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             font=self.theme["fonts"]["button"],
             command=self.on_done_button_press
         )
-        self.done_button.grid(row=4, column=1)
+        self.done_button.grid(row=5, column=1)
     
     def on_done_button_press(self) -> None:
         """Validates inputs, safely extracts monetary values, and routes to the Controller."""
@@ -131,10 +152,6 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             for key, var in self.data_vars.items()
         }
         
-        season = self.validate_season(self.season_entry.get().strip())
-        if season is None:
-            return
-        
         required_keys = ["wage", "market_value"]
         key_to_label = {key: label for key, label in self.stat_definitions if key not in ["contract_length", "release_clause", "sell_on_clause"]}
         if not self.check_missing_fields(
@@ -150,9 +167,13 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             if ui_data[field] is None:
                 ui_data[field] = 0
 
+        in_game_date = self.in_game_date_entry.get().strip()
+        if not self.validate_in_game_date(in_game_date):
+            return
+        
         try:
             logger.info(f"Validation passed. Saving financial data for {player}.")
-            self.controller.save_financial_data(player, ui_data, season)
+            self.controller.save_financial_data(player, ui_data, in_game_date)
             self.show_success("Data Saved", f"Financial details for {player} updated successfully.")
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
@@ -169,3 +190,6 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         self.refresh_player_dropdown()
         
         self.player_dropdown.set_value("Click here to select player")
+        
+        self.in_game_date_entry.delete(0, "end")
+        self.in_game_date_entry.configure(placeholder_text="e.g. 01/01/25")

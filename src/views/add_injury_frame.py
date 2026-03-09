@@ -36,8 +36,8 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
-        for i in range(6):
-            self.grid_rowconfigure(i, weight=1 if i in [0, 5] else 0)
+        for i in range(5):
+            self.grid_rowconfigure(i, weight=1 if i in [0, 4] else 0)
 
         # Main heading
         self.main_heading = ctk.CTkLabel(
@@ -60,23 +60,12 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
 
-        # Season entry
-        self.season_entry = ctk.CTkEntry(
-            self,
-            font=self.theme["fonts"]["body"],
-            fg_color=self.theme["colors"]["entry_fg"],
-            text_color=self.theme["colors"]["primary_text"],
-            width=250,
-            placeholder_text="Season (e.g. 24/25)"
-        )
-        self.season_entry.grid(row=3, column=1, pady=(0, 20))
-
         # Data subgrid
         self.data_frame = ctk.CTkFrame(
             self,
             fg_color=self.theme["colors"]["background"]
         )
-        self.data_frame.grid(row=4, column=1, pady=(0, 20))
+        self.data_frame.grid(row=3, column=1, pady=(0, 20))
 
         self.data_frame.grid_columnconfigure(0, weight=1)
         self.data_frame.grid_columnconfigure(1, weight=0)
@@ -99,7 +88,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             font=self.theme["fonts"]["button"],
             command=self.on_done_button_press
         )
-        self.done_button.grid(row=5, column=1)
+        self.done_button.grid(row=4, column=1)
     
     def create_data_row(self, index: int, data_key: str, data_name: str) -> None:
         """Helper to create a label, entry pair, and optional unit combobox for injury data."""
@@ -155,10 +144,6 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         ):
             return
 
-        season = self.validate_season(self.season_entry.get())
-        if season is None:
-            return
-
         time_out_unit = self.time_out_unit_var.get()
         if time_out_unit in ["Select unit", ""]:
             self.show_warning("Selection Error", "Please select a unit for 'Time Out'.")
@@ -175,17 +160,13 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
 
         # Preemptive Date Validation
         in_game_date_str = str(ui_data.get("in_game_date", "")).strip()
-        try:
-            datetime.strptime(in_game_date_str, "%d/%m/%y")
-        except ValueError:
-            logger.warning(f"Cannot add injury record. Invalid date format for 'In-game Date'. Expected format: dd/mm/yy, got: '{in_game_date_str}'")
-            self.show_warning("Input Error", "The 'In-game Date' field must be in the format dd/mm/yy. Please correct it and try again.")
+        if not self.validate_in_game_date(in_game_date_str):
             return
 
         try:
             logger.info(f"Validation passed. Saving injury record for {player_name}.")
-            self.controller.add_injury_record(player_name, season, ui_data)
-            self.show_success("Data Saved", f"Injury record for {player_name} in season {season} has been successfully saved.")
+            self.controller.add_injury_record(player_name, ui_data)
+            self.show_success("Data Saved", f"Injury record for {player_name} has been successfully saved.")
             self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         except Exception as e:
             # Safely catch Pydantic rejections or DB locks
@@ -199,12 +180,10 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             entry.delete(0, "end")
             entry.configure(placeholder_text="dd/mm/yy" if key == "in_game_date" else "")
 
-        self.season_entry.delete(0, "end")
-        self.season_entry.configure(placeholder_text="Season (e.g. 24/25)")
         self.time_out_unit_var.set("Select unit")
         
         self.refresh_player_dropdown()
         self.player_dropdown.set_value("Click here to select player")
         
-        # Ensure placeholder visibility by moving focus away from the season entry
+        # Ensure placeholder visibility by moving focus away from entries
         self.after_idle(self.done_button.focus_set)
