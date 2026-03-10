@@ -65,7 +65,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             placeholder_text="Enter name here",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            fg_color=self.theme["colors"]["entry_fg"],
+            width=200
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), padx=(0, 10), sticky="e")
         
@@ -76,7 +77,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             variable=self.player_dropdown_var,
             width=200,
             dropdown_height=150,
-            placeholder="Or select existing player"
+            placeholder="Or select existing player",
+            command=self._on_player_selected
         )
         self.player_dropdown.grid(row=1, column=2, pady=(10, 5), padx=(10, 0), sticky="w")
         
@@ -192,6 +194,22 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         )
         self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")
 
+    def _on_player_selected(self, name: str) -> None:
+        """Auto-fill bio fields when an existing player is selected."""
+        bio = self.controller.get_player_bio(name)
+        if bio is None:
+            return
+        self.position_entry.delete(0, 'end')
+        self.position_entry.insert(0, ", ".join(bio["positions"]))
+        self.age_entry.delete(0, 'end')
+        self.age_entry.insert(0, str(bio["age"]))
+        self.height_entry.delete(0, 'end')
+        self.height_entry.insert(0, bio["height"])
+        self.weight_entry.delete(0, 'end')
+        self.weight_entry.insert(0, str(bio["weight"]))
+        self.country_entry.delete(0, 'end')
+        self.country_entry.insert(0, bio["country"])
+
     def on_next_page(self) -> None:
         """Extracts data, validates completeness, buffers it, and transitions to Page 2."""
         # Convert attributes to int immediately
@@ -285,7 +303,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self._dismissed_warnings.clear()
         
-        self.refresh_player_dropdown()
+        self.refresh_player_dropdown(only_outfield=True)
         self.player_dropdown.set_value("Or select existing player")
         
         self.name_entry.delete(0, 'end')

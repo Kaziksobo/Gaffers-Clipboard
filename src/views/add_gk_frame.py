@@ -55,7 +55,8 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             placeholder_text="Enter name here",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            fg_color=self.theme["colors"]["entry_fg"],
+            width=200
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), padx=(0, 10), sticky="e")
         
@@ -66,7 +67,8 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             variable=self.player_dropdown_var,
             width=200,
             dropdown_height=150,
-            placeholder="Or select existing player"
+            placeholder="Or select existing player",
+            command=self._on_player_selected
         )
         self.player_dropdown.grid(row=1, column=2, pady=(10, 5), padx=(10, 0), sticky="w")
         
@@ -165,6 +167,20 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         )
         self.done_button.grid(row=4, column=1, pady=(0, 20), sticky="ew")
     
+    def _on_player_selected(self, name: str) -> None:
+        """Auto-fill bio fields when an existing player is selected."""
+        bio = self.controller.get_player_bio(name)
+        if bio is None:
+            return
+        self.age_entry.delete(0, 'end')
+        self.age_entry.insert(0, str(bio["age"]))
+        self.height_entry.delete(0, 'end')
+        self.height_entry.insert(0, bio["height"])
+        self.weight_entry.delete(0, 'end')
+        self.weight_entry.insert(0, str(bio["weight"]))
+        self.country_entry.delete(0, 'end')
+        self.country_entry.insert(0, bio["country"])
+
     def on_done_button_press(self) -> None:
         """Extract inputs, validate them, and route them to the Controller for saving."""
         # Convert attributes to integers using helper
@@ -182,13 +198,13 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         if player_name_dropdown in invalid_fields:
             player_name_dropdown = None
         ui_data["name"] = player_name_dropdown or self.name_entry.get().strip() or None
-        
+
         if ui_data["name"] is None:
             self.show_error("Validation Error", "Please enter a name or select an existing player.")
             return
 
         is_existing_player = player_name_dropdown is not None
-        
+
         country = self.country_entry.get().strip()
         ui_data["country"] = country if country not in invalid_fields else None
 
@@ -208,21 +224,21 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
 
         # Handle Numeric bio fields (Age/Weight) - Convert to int standardizes them
         age_raw = safe_int_conversion(self.age_entry.get())
-        if age_raw is not None:
-            if not self.validate_age(age_raw):
-                return
-            ui_data["age"] = age_raw
-        else:
+        if age_raw is None:
             ui_data["age"] = None
 
-        weight_raw = safe_int_conversion(self.weight_entry.get())
-        if weight_raw is not None:
-            if not self.validate_weight(weight_raw):
-                return
-            ui_data["weight"] = weight_raw
+        elif not self.validate_age(age_raw):
+            return
         else:
+            ui_data["age"] = age_raw
+        weight_raw = safe_int_conversion(self.weight_entry.get())
+        if weight_raw is None:
             ui_data["weight"] = None
 
+        elif not self.validate_weight(weight_raw):
+            return
+        else:
+            ui_data["weight"] = weight_raw
         key_to_label = dict(self.attr_definitions) | {
             "name": "Name",
             "country": "Country",
@@ -256,7 +272,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self._dismissed_warnings.clear()
         
-        self.refresh_player_dropdown()
+        self.refresh_player_dropdown(only_gk=True)
         self.player_dropdown.set_value("Or select existing player")
         
         self.name_entry.delete(0, 'end')

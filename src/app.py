@@ -264,7 +264,20 @@ class App(ctk.CTk):
             )
         else:
             return ["No players found"]
-    
+
+    def get_player_bio(self, name: str) -> Optional[dict]:
+        """Return bio fields for a player, or None if not found."""
+        player = self.data_manager._find_player_by_name(name)
+        if player is None:
+            return None
+        return {
+            "age": player.age,
+            "height": player.height,
+            "weight": player.weight,
+            "country": player.nationality,
+            "positions": player.positions,
+        }
+
     def buffer_player_attributes(self, data: dict[str, Any], gk: bool, first: bool = True) -> None:
         """Store captured player attribute data during multi-step entry flows.
 
