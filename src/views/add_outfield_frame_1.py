@@ -200,7 +200,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         if bio is None:
             return
         self.position_entry.delete(0, 'end')
-        self.position_entry.insert(0, ", ".join(bio["positions"]))
+        self.position_entry.insert(0, bio["positions"][-1])
         self.age_entry.delete(0, 'end')
         self.age_entry.insert(0, str(bio["age"]))
         self.height_entry.delete(0, 'end')
