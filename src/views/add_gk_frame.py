@@ -3,13 +3,14 @@ import logging
 import re
 from typing import Dict, Any
 from src.utils import safe_int_conversion
+from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin
+from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
 
 logger = logging.getLogger(__name__)
 
-class AddGKFrame(BaseViewFrame, OCRDataMixin):
+class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
     """A data entry frame for processing and saving Goalkeeper attributes."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the AddGKFrame layout and input fields.
@@ -35,29 +36,58 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
-        for i in range(7):
-            self.grid_rowconfigure(i, weight=1 if i in [0, 6] else 0)
+        for i in range(6):
+            self.grid_rowconfigure(i, weight=1 if i in [0, 5] else 0)
+        
+        self.name_and_date_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.name_and_date_frame.grid(row=1, column=1, pady=(10, 5), sticky="ew")
+        self.name_and_date_frame.grid_columnconfigure(0, weight=1)
+        self.name_and_date_frame.grid_columnconfigure(1, weight=0)
+        self.name_and_date_frame.grid_columnconfigure(2, weight=0)
+        self.name_and_date_frame.grid_columnconfigure(3, weight=1)
+        self.name_and_date_frame.grid_rowconfigure(0, weight=1)
+        self.name_and_date_frame.grid_rowconfigure(1, weight=0)
+        self.name_and_date_frame.grid_rowconfigure(2, weight=0)
+        self.name_and_date_frame.grid_rowconfigure(3, weight=1)
         
         self.name_entry = ctk.CTkEntry(
-            self,
+            self.name_and_date_frame,
             placeholder_text="Enter name here",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"]
         )
-        self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
+        self.name_entry.grid(row=1, column=1, pady=(10, 5), padx=(0, 10), sticky="e")
         
+        self.player_dropdown_var = ctk.StringVar(value="Or select existing player")
+        self.player_dropdown = ScrollableDropdown(
+            self.name_and_date_frame,
+            theme=self.theme,
+            variable=self.player_dropdown_var,
+            width=200,
+            dropdown_height=150,
+            placeholder="Or select existing player"
+        )
+        self.player_dropdown.grid(row=1, column=2, pady=(10, 5), padx=(10, 0), sticky="w")
+        
+        self.in_game_date_label = ctk.CTkLabel(
+            self.name_and_date_frame,
+            text="In-game date:",
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
+        )
+        self.in_game_date_label.grid(row=2, column=1, padx=(20, 10), pady=(10, 5), sticky="w")
         self.in_game_date_entry = ctk.CTkEntry(
-            self,
-            placeholder_text="In-game date (e.g. 01/07/29)",
+            self.name_and_date_frame,
+            placeholder_text="e.g. 01/07/29",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"]
         )
-        self.in_game_date_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
+        self.in_game_date_entry.grid(row=2, column=2, pady=(10, 5), padx=(10, 20), sticky="ew")
 
         self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
-        self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
+        self.base_attr_row.grid(row=2, column=1, pady=(5, 10), sticky="nsew")
         self.base_attr_row.grid_columnconfigure(0, weight=1)
         self.base_attr_row.grid_columnconfigure(1, weight=0)
         self.base_attr_row.grid_columnconfigure(2, weight=0)
@@ -107,7 +137,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         self.country_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
         self.attributes_grid = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
-        self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
+        self.attributes_grid.grid(row=3, column=1, pady=(0, 10), sticky="nsew")
         
         self.attributes_grid.grid_columnconfigure(0, weight=1)
         self.attributes_grid.grid_columnconfigure(1, weight=0)
@@ -133,7 +163,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
             text_color=self.theme["colors"]["primary_text"],
             command=lambda: self.on_done_button_press()
         )
-        self.done_button.grid(row=5, column=1, pady=(0, 20), sticky="ew")
+        self.done_button.grid(row=4, column=1, pady=(0, 20), sticky="ew")
     
     def on_done_button_press(self) -> None:
         """Extract inputs, validate them, and route them to the Controller for saving."""
@@ -147,26 +177,51 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
 
         # Handle Text fields
         # usage of "or None" ensures empty strings become None for consistent validation
-        ui_data["name"] = self.name_entry.get().strip() or None
-        ui_data["country"] = self.country_entry.get().strip() or None
+        invalid_fields = ["Or select existing player", "Enter name here", "e.g. 01/07/29", "Height (ft'in\")", "Weight (lbs)", "Country", "Age", "No Players Found", ""]
+        player_name_dropdown = self.player_dropdown_var.get()
+        if player_name_dropdown in invalid_fields:
+            player_name_dropdown = None
+        ui_data["name"] = player_name_dropdown or self.name_entry.get().strip() or None
+        
+        if ui_data["name"] is None:
+            self.show_error("Validation Error", "Please enter a name or select an existing player.")
+            return
+
+        is_existing_player = player_name_dropdown is not None
+        
+        country = self.country_entry.get().strip()
+        ui_data["country"] = country if country not in invalid_fields else None
 
         in_game_date = self.in_game_date_entry.get().strip()
         if not self.validate_in_game_date(in_game_date):
             return
         ui_data["in_game_date"] = in_game_date
 
-        height = self.validate_height(self.height_entry.get().strip())
-        if height is None:
-            return
-        ui_data["height"] = height
+        height_raw = self.height_entry.get().strip()
+        if height_raw and height_raw not in invalid_fields:
+            height = self.validate_height(height_raw)
+            if height is None:
+                return
+            ui_data["height"] = height
+        else:
+            ui_data["height"] = None
 
         # Handle Numeric bio fields (Age/Weight) - Convert to int standardizes them
-        if not self.validate_age(safe_int_conversion(self.age_entry.get())):
-            return
-        ui_data["age"] = safe_int_conversion(self.age_entry.get())
-        if not self.validate_weight(safe_int_conversion(self.weight_entry.get())):
-            return
-        ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
+        age_raw = safe_int_conversion(self.age_entry.get())
+        if age_raw is not None:
+            if not self.validate_age(age_raw):
+                return
+            ui_data["age"] = age_raw
+        else:
+            ui_data["age"] = None
+
+        weight_raw = safe_int_conversion(self.weight_entry.get())
+        if weight_raw is not None:
+            if not self.validate_weight(weight_raw):
+                return
+            ui_data["weight"] = weight_raw
+        else:
+            ui_data["weight"] = None
 
         key_to_label = dict(self.attr_definitions) | {
             "name": "Name",
@@ -176,7 +231,11 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
             "age": "Age",
             "weight": "Weight",
         }
-        if not self.check_missing_fields(ui_data, key_to_label):
+        if is_existing_player:
+            required_keys = [k for k, _ in self.attr_definitions] + ["name", "in_game_date"]
+        else:
+            required_keys = None
+        if not self.check_missing_fields(ui_data, key_to_label, required_keys=required_keys):
             return
 
         try:
@@ -197,11 +256,14 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin):
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self._dismissed_warnings.clear()
         
+        self.refresh_player_dropdown()
+        self.player_dropdown.set_value("Or select existing player")
+        
         self.name_entry.delete(0, 'end')
         self.name_entry.configure(placeholder_text="Enter name here")
 
         self.in_game_date_entry.delete(0, 'end')
-        self.in_game_date_entry.configure(placeholder_text="In-game date (e.g. 01/07/29)")
+        self.in_game_date_entry.configure(placeholder_text="e.g. 01/07/29")
         
         self.age_entry.delete(0, 'end')
         self.age_entry.configure(placeholder_text="Age")

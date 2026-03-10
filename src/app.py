@@ -324,7 +324,7 @@ class App(ctk.CTk):
             out_1 = self.player_attributes_buffer['outfield_attr_1']
             out_2 = self.player_attributes_buffer['outfield_attr_2']
             player_name = out_1.get('name', '').strip()
-            position = out_1.get('position', '').strip()
+            position = out_1.get('position') or None
             in_game_date = out_1.get('in_game_date', '').strip()
             
             # Safely merge both pages of attributes
@@ -333,17 +333,19 @@ class App(ctk.CTk):
         else:
             raise IncompleteDataError("Cannot save: Missing page 1 or page 2 of outfield attributes.")
         
-        if not player_name or not position or not in_game_date:
-            logger.error(f"Save aborted: Missing critical context. Name: '{player_name}', Pos: '{position}', Date: '{in_game_date}'")
-            raise IncompleteDataError("Cannot save: Missing required player context fields (Name, Position, or In-game Date).")
+        if not player_name or not in_game_date:
+            logger.error(f"Save aborted: Missing critical context. Name: '{player_name}', Date: '{in_game_date}'")
+            raise IncompleteDataError("Cannot save: Missing required player context fields (Name or In-game Date).")
         
         logger.info(f"Saving player {player_name} at position {position}")
         
+        is_gk = 'gk_attr' in self.player_attributes_buffer
         try:
             self.data_manager.add_or_update_player(
                 player_ui_data=attributes,
                 position=position,
-                in_game_date=in_game_date
+                in_game_date=in_game_date,
+                is_gk=is_gk
             )
         except Exception as e:
             # We catch the generic exception (like a Pydantic ValidationError) 

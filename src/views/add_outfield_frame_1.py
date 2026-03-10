@@ -201,27 +201,56 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             return
 
         # Handle Text fields
-        # "or None" converts empty strings to None for consistent validation
+        # usage of "or None" ensures empty strings become None for consistent validation
+        invalid_fields = ["Or select existing player", "Enter name here", "e.g. 01/07/29", "Height (ft'in\")", "Weight (lbs)", "Country", "Age", "No Players Found", "Position", ""]
+        player_name_dropdown = self.player_dropdown_var.get()
+        if player_name_dropdown in invalid_fields:
+            player_name_dropdown = None
+        ui_data["name"] = player_name_dropdown or self.name_entry.get().strip() or None
+
+        if ui_data["name"] is None:
+            self.show_error("Validation Error", "Please enter a name or select an existing player.")
+            return
+
+        is_existing_player = player_name_dropdown is not None
+
+        country = self.country_entry.get().strip()
+        ui_data["country"] = country if country not in invalid_fields else None
+
         in_game_date = self.in_game_date_entry.get().strip()
         if not self.validate_in_game_date(in_game_date):
             return
         ui_data["in_game_date"] = in_game_date
-        ui_data["name"] = self.name_entry.get().strip() or None
-        ui_data["position"] = self.position_entry.get().strip() or None
-        height = self.validate_height(self.height_entry.get().strip())
-        if height is None:
-            return
-        ui_data["height"] = height
-        ui_data["country"] = self.country_entry.get().strip() or None
+
+        height_raw = self.height_entry.get().strip()
+        if height_raw and height_raw not in invalid_fields:
+            height = self.validate_height(height_raw)
+            if height is None:
+                return
+            ui_data["height"] = height
+        else:
+            ui_data["height"] = None
+
+        position = self.position_entry.get().strip()
+        ui_data["position"] = position if position not in invalid_fields else None
 
         # Handle Numeric bio fields
-        if not self.validate_age(safe_int_conversion(self.age_entry.get())):
-            return
-        ui_data["age"] = safe_int_conversion(self.age_entry.get())
-        if not self.validate_weight(safe_int_conversion(self.weight_entry.get())):
-            return
-        ui_data["weight"] = safe_int_conversion(self.weight_entry.get())
+        age_raw = safe_int_conversion(self.age_entry.get())
+        if age_raw is None:
+            ui_data["age"] = None
 
+        elif not self.validate_age(age_raw):
+            return
+        else:
+            ui_data["age"] = age_raw
+        weight_raw = safe_int_conversion(self.weight_entry.get())
+        if weight_raw is None:
+            ui_data["weight"] = None
+
+        elif not self.validate_weight(weight_raw):
+            return
+        else:
+            ui_data["weight"] = weight_raw
         key_to_label = {
             "name": "Name",
             "in_game_date": "In-game Date",
@@ -231,7 +260,11 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             "age": "Age",
             "weight": "Weight",
         } | dict(self.attr_definitions_physical) | dict(self.attr_definitions_mental)
-        if not self.check_missing_fields(ui_data, key_to_label):
+        if is_existing_player:
+            required_keys = [k for k, _ in self.attr_definitions_physical] + [k for k, _ in self.attr_definitions_mental] + ["name", "in_game_date"]
+        else:
+            required_keys = None
+        if not self.check_missing_fields(ui_data, key_to_label, required_keys=required_keys):
             return
 
         try:

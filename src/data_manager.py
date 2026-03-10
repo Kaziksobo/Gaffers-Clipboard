@@ -425,8 +425,9 @@ class DataManager:
     def add_or_update_player(
         self, 
         player_ui_data: dict, 
-        position: PositionType, 
-        in_game_date: str) -> None:
+        position: Optional[PositionType], 
+        in_game_date: str,
+        is_gk: bool = False) -> None:
         """Add a new player or update an existing one based on their name.
 
         If the player name exists, appends the new attribute snapshot. 
@@ -446,7 +447,7 @@ class DataManager:
         top_level_keys = ["name", "age", "height", "weight", "country", "in_game_date"]
         
         attributes = {k: v for k, v in player_ui_data.items() if k not in top_level_keys}
-        if position == "GK":
+        if is_gk:
             attributes_snapshot = GKAttributeSnapshot(
                 datetime=datetime.now(),
                 in_game_date=in_game_date,
@@ -465,14 +466,28 @@ class DataManager:
         if existing_player:
             logger.info(f"Updating player: {player_name}")
             existing_player.attribute_history.append(attributes_snapshot)
-            # If age, height or weight are different, update it
-            existing_player.age = int(player_ui_data.get("age"))
-            existing_player.height = player_ui_data.get("height")
-            existing_player.weight = int(player_ui_data.get("weight"))
+            # Only update base attributes if new values are provided
+            if player_ui_data.get("age") is not None:
+                existing_player.age = int(player_ui_data.get("age"))
+            if player_ui_data.get("height") is not None:
+                existing_player.height = player_ui_data.get("height")
+            if player_ui_data.get("weight") is not None:
+                existing_player.weight = int(player_ui_data.get("weight"))
+            if player_ui_data.get("country") is not None:
+                existing_player.nationality = player_ui_data.get("country").strip()
             # If position is new, add it
-            if position not in existing_player.positions:
+            if position is not None and position not in existing_player.positions:
                 existing_player.positions.append(position)
         else:
+            if not all([
+                player_name,
+                player_ui_data.get("country"),
+                player_ui_data.get("age"),
+                player_ui_data.get("height"),
+                player_ui_data.get("weight"),
+                position
+            ]):
+                raise ValueError("New players require name, country, age, height, weight, and position.")
             logger.info(f"Adding new player: {player_name}")
             new_id = self._generate_id(self.players)
             new_player = Player(
