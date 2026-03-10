@@ -98,7 +98,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
             width=200,
-            placeholder_text="e.g. 01/01/25"
+            placeholder_text="dd/mm/yy"
         )
         self.in_game_date_entry.grid(row=1, column=2, padx=(20, 0), sticky="e")
         
@@ -192,4 +192,4 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         self.player_dropdown.set_value("Click here to select player")
         
         self.in_game_date_entry.delete(0, "end")
-        self.in_game_date_entry.configure(placeholder_text="e.g. 01/01/25")
+        self.in_game_date_entry.configure(placeholder_text="dd/mm/yy")

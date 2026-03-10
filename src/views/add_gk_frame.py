@@ -81,7 +81,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.in_game_date_label.grid(row=2, column=1, padx=(20, 10), pady=(10, 5), sticky="w")
         self.in_game_date_entry = ctk.CTkEntry(
             self.name_and_date_frame,
-            placeholder_text="e.g. 01/07/29",
+            placeholder_text="dd/mm/yy",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"]
@@ -193,7 +193,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
 
         # Handle Text fields
         # usage of "or None" ensures empty strings become None for consistent validation
-        invalid_fields = ["Or select existing player", "Enter name here", "e.g. 01/07/29", "Height (ft'in\")", "Weight (lbs)", "Country", "Age", "No Players Found", ""]
+        invalid_fields = ["Or select existing player", "Enter name here", "dd/mm/yy", "Height (ft'in\")", "Weight (lbs)", "Country", "Age", "No Players Found", ""]
         player_name_dropdown = self.player_dropdown_var.get()
         if player_name_dropdown in invalid_fields:
             player_name_dropdown = None
@@ -279,7 +279,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.name_entry.configure(placeholder_text="Enter name here")
 
         self.in_game_date_entry.delete(0, 'end')
-        self.in_game_date_entry.configure(placeholder_text="e.g. 01/07/29")
+        self.in_game_date_entry.configure(placeholder_text="dd/mm/yy")
         
         self.age_entry.delete(0, 'end')
         self.age_entry.configure(placeholder_text="Age")
