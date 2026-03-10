@@ -5,11 +5,12 @@ from typing import Dict, Any, Tuple
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin
+from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
+from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 logger = logging.getLogger(__name__)
 
-class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
+class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
     """A data entry frame for the first page of Outfield player attributes."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the AddOutfieldFrame1 layout and input fields.
@@ -48,23 +49,52 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
         for i in range(7):
             self.grid_rowconfigure(i, weight=1 if i in [0, 6] else 0)
         
+        self.name_and_date_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.name_and_date_frame.grid(row=1, column=1, pady=(10, 5), sticky="ew")
+        self.name_and_date_frame.grid_columnconfigure(0, weight=1)
+        self.name_and_date_frame.grid_columnconfigure(1, weight=0)
+        self.name_and_date_frame.grid_columnconfigure(2, weight=0)
+        self.name_and_date_frame.grid_columnconfigure(3, weight=1)
+        self.name_and_date_frame.grid_rowconfigure(0, weight=1)
+        self.name_and_date_frame.grid_rowconfigure(1, weight=0)
+        self.name_and_date_frame.grid_rowconfigure(2, weight=0)
+        self.name_and_date_frame.grid_rowconfigure(3, weight=1)
+        
         self.name_entry = ctk.CTkEntry(
-            self,
+            self.name_and_date_frame,
             placeholder_text="Enter name here",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"]
         )
-        self.name_entry.grid(row=1, column=1, pady=(10, 5), sticky="ew")
+        self.name_entry.grid(row=1, column=1, pady=(10, 5), padx=(0, 10), sticky="e")
         
+        self.player_dropdown_var = ctk.StringVar(value="Or select existing player")
+        self.player_dropdown = ScrollableDropdown(
+            self.name_and_date_frame,
+            theme=self.theme,
+            variable=self.player_dropdown_var,
+            width=200,
+            dropdown_height=150,
+            placeholder="Or select existing player"
+        )
+        self.player_dropdown.grid(row=1, column=2, pady=(10, 5), padx=(10, 0), sticky="w")
+        
+        self.in_game_date_label = ctk.CTkLabel(
+            self.name_and_date_frame,
+            text="In-game date:",
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
+        )
+        self.in_game_date_label.grid(row=2, column=1, padx=(20, 10), pady=(10, 5), sticky="w")
         self.in_game_date_entry = ctk.CTkEntry(
-            self,
-            placeholder_text="In-game date (e.g. 01/07/29)",
+            self.name_and_date_frame,
+            placeholder_text="e.g. 01/07/29",
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"]
         )
-        self.in_game_date_entry.grid(row=2, column=1, pady=(10, 5), sticky="ew")
+        self.in_game_date_entry.grid(row=2, column=2, pady=(10, 5), padx=(10, 20), sticky="ew")
 
         self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
         self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
@@ -222,11 +252,14 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin):
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self._dismissed_warnings.clear()
         
+        self.refresh_player_dropdown()
+        self.player_dropdown.set_value("Or select existing player")
+        
         self.name_entry.delete(0, 'end')
         self.name_entry.configure(placeholder_text="Enter name here")
         
         self.in_game_date_entry.delete(0, 'end')
-        self.in_game_date_entry.configure(placeholder_text="In-game date (e.g. 01/07/29)")
+        self.in_game_date_entry.configure(placeholder_text="e.g. 01/07/29")
         
         self.position_entry.delete(0, 'end')
         self.position_entry.configure(placeholder_text="Position")
