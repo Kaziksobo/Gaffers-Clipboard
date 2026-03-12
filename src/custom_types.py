@@ -1,6 +1,6 @@
 import contextlib
 from pydantic import BaseModel, Field, ConfigDict, model_validator, Discriminator, field_validator
-from typing import List, Optional, Literal, Union, Annotated
+from typing import List, Optional, Literal, Union, Annotated, TypedDict, Any
 from datetime import datetime as DatetimeType
 from abc import ABC
 
@@ -385,3 +385,13 @@ class CareerDetail(BaseModel):
     id: int
     club_name: str
     folder_name: str
+
+
+# --- UI Display Models ---
+class PlayerBioDict(TypedDict):
+    """Bio snapshot of a player for UI display."""
+    age: int
+    height: str
+    weight: int
+    country: str
+    positions: List[PositionType]
