@@ -272,6 +272,7 @@ class MatchData(BaseModel):
     
     Includes date, competition, teams, scores, and team statistics.
     """
+    in_game_date: DatetimeType
     competition: str
     home_team_name: str
     away_team_name: str
@@ -279,6 +280,23 @@ class MatchData(BaseModel):
     away_score: int
     home_stats: MatchStats
     away_stats: MatchStats
+
+    @field_validator('in_game_date', mode='before')
+    @classmethod
+    def parse_in_game_date(cls, value: Union[str, DatetimeType]) -> DatetimeType:
+        """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
+        if isinstance(value, DatetimeType):
+            return value
+        if isinstance(value, str):
+            value = value.strip()
+            if "T" in value or "-" in value:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.fromisoformat(value)
+            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
+                with contextlib.suppress(ValueError):
+                    return DatetimeType.strptime(value, date_format)
+            raise ValueError(f"Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, got '{value}'")
+        raise ValueError(f"in_game_date must be a string or datetime, got {type(value)}")
 
 class OutfieldPlayerPerformance(BaseModel):
     """Represent the performance of an outfield player in a match."""

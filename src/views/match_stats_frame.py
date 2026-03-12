@@ -62,7 +62,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         self.grid_rowconfigure(3, weight=0)
         self.grid_rowconfigure(4, weight=0)
         self.grid_rowconfigure(5, weight=0)
-        self.grid_rowconfigure(6, weight=1)
+        self.grid_rowconfigure(6, weight=0)
+        self.grid_rowconfigure(7, weight=1)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -82,6 +83,25 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         )
         self.info_label.grid(row=2, column=1, pady=(0, 20))
         
+        # In-game date entry
+        self.date_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.date_frame.grid(row=3, column=1, pady=(0, 20))
+        self.in_game_date_label = ctk.CTkLabel(
+            self.date_frame,
+            text="In-game date:",
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"]
+        )
+        self.in_game_date_label.grid(row=0, column=0, padx=(0, 10))
+        self.in_game_date_entry = ctk.CTkEntry(
+            self.date_frame,
+            placeholder_text="dd/mm/yy",
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
+        )
+        self.in_game_date_entry.grid(row=0, column=1)
+        
         # Competition dropdown
         self.competition_var = ctk.StringVar(value="Select Competition")
         self.competition_dropdown = ScrollableDropdown(
@@ -93,11 +113,11 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             dropdown_height=200,
             placeholder="Select Competition"
         )
-        self.competition_dropdown.grid(row=3, column=1, pady=(0, 20))
+        self.competition_dropdown.grid(row=4, column=1, pady=(0, 20))
         
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
-        self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
+        self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
 
         # Configure subgrid
         for col in range(5):
@@ -154,7 +174,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
-        self.direction_frame.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
+        self.direction_frame.grid(row=6, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
         self.direction_frame.grid_columnconfigure(2, weight=1)
@@ -243,8 +263,13 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
                 return safe_float_conversion(value)
             return safe_int_conversion(value)
 
+        in_game_date = self.in_game_date_entry.get().strip()
+        if not self.validate_in_game_date(in_game_date):
+            return False
+
         # Collect match overview with type conversion
         ui_data = {
+            "in_game_date": in_game_date,
             "competition": self.competition_var.get(),
             "home_team_name": self.home_team_name_var.get().strip() or None,
             "away_team_name": self.away_team_name_var.get().strip() or None,
@@ -379,6 +404,9 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         
         self.competition_var.set("Select Competition")
         self.competition_dropdown.set_value("Select Competition")
+        
+        self.in_game_date_entry.delete(0, 'end')
+        self.in_game_date_entry.configure(placeholder_text="dd/mm/yy")
                 
         # Reset team names
         self.home_team_name_var.set("Home Team")
