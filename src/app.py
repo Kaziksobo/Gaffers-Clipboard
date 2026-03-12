@@ -14,7 +14,7 @@ from src.theme import THEME
 from src.utils import get_screen_resolution, scale_coordinates
 from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError, DuplicateRecordError
 from src.data_manager import DataManager
-from src.custom_types import CareerMetadata, Player, Match, CareerDetail
+from src.custom_types import CareerMetadata, Player, Match, CareerDetail, DifficultyLevel, PlayerBioDict
 
 # View imports
 from src.views.career_select_frame import CareerSelectFrame
@@ -155,6 +155,11 @@ class App(ctk.CTk):
         if hasattr(frame, "on_show"):
             frame.on_show()
     def has_unsaved_work(self) -> bool:
+        """Check if there are any unsaved changes in the session buffers.
+        
+        Returns:
+            bool: True if any of the buffers contain data, indicating potential unsaved work.
+        """
         return bool(
             self.player_attributes_buffer
             or self.match_overview_buffer
@@ -162,6 +167,7 @@ class App(ctk.CTk):
         )
         
     def clear_session_buffers(self) -> None:
+        """Clear all session buffers."""
         logger.info("Clearing session buffers.")
         self.player_attributes_buffer = {}
         self.match_overview_buffer = {}
@@ -192,7 +198,7 @@ class App(ctk.CTk):
         manager_name: str, 
         starting_season: str, 
         half_length: int, 
-        match_difficulty: str) -> None:
+        match_difficulty: DifficultyLevel) -> None:
         """Create a new career profile and immediately activate it.
 
         This routes the initial settings to the DataManager for persistence,
@@ -210,7 +216,7 @@ class App(ctk.CTk):
         )
         self.set_current_career_by_name(club_name)
     
-    def get_current_career_details(self) -> dict | None:
+    def get_current_career_details(self) -> Optional[CareerMetadata]:
         """Retrieve the metadata model for the currently active career.
 
         Returns:
@@ -265,8 +271,15 @@ class App(ctk.CTk):
         else:
             return ["No players found"]
 
-    def get_player_bio(self, name: str) -> Optional[dict]:
-        """Return bio fields for a player, or None if not found."""
+    def get_player_bio(self, name: str) -> Optional[PlayerBioDict]:
+        """Retrieve the high-level details of a player by name for display in the UI.
+
+        Args:
+            name (str): The full name of the player (e.g., "John Doe") to look up.
+
+        Returns:
+            Optional[PlayerBioDict]: A dictionary containing the player's high-level details, or None if the player is not found.
+        """
         player = self.data_manager._find_player_by_name(name)
         if player is None:
             return None
@@ -369,7 +382,7 @@ class App(ctk.CTk):
             # Reset buffer after saving
             self.player_attributes_buffer = {}
     
-    def save_financial_data(self, player_name: str, financial_data: dict, in_game_date: str) -> None:
+    def save_financial_data(self, player_name: str, financial_data: dict[str, Any], in_game_date: str) -> None:
         """Commit the financial data for a specific player to persistent storage.
         
         Acts as the gatekeeper for monetary updates, ensuring the UI has provided 
@@ -382,7 +395,7 @@ class App(ctk.CTk):
             in_game_date (str): The in-game date for the financial snapshot.
             
         Raises:
-            IncompleteDataError: If the player name, season, or data dictionary is missing.
+            IncompleteDataError: If the player name, in-game date, or data dictionary is missing.
             DataPersistenceError: If the backend fails to process or save the data.
         """
         # Validate critical context before hitting the DataManager
@@ -414,7 +427,7 @@ class App(ctk.CTk):
             player_name (str): The name of the player to sell.
             in_game_date (str): The in-game date for the sale.
         Raises:
-            IncompleteDataError: If the player name is missing or empty.
+            IncompleteDataError: If the player name or in-game date are missing or empty.
         """
         if not player_name or not player_name.strip():
             logger.error("Sell action aborted: No player name provided.")
@@ -470,7 +483,7 @@ class App(ctk.CTk):
             injury_data (Dict[str, Any]): The raw injury details (date, duration, type) from the UI.
             
         Raises:
-            IncompleteDataError: If the player name, season, or data dictionary is missing.
+            IncompleteDataError: If the player name or data dictionary is missing.
             DataPersistenceError: If the backend fails to validate (e.g., bad date format) or save the data.
         """
         # 1. Validate critical context before hitting the DataManager
@@ -506,7 +519,7 @@ class App(ctk.CTk):
             UIPopulationError: If the screenshot, OCR, or frame population fails.
         """
         try:
-            self.capture_screenshot()
+            self._capture_screenshot()
 
             stats: Dict[str, Any] = self.detect_stats(is_it_player=False)
 
@@ -542,7 +555,7 @@ class App(ctk.CTk):
             UIPopulationError: If the screenshot, OCR process, or frame population fails.
         """
         try:
-            self.capture_screenshot()
+            self._capture_screenshot()
             
             stats: Dict[str, Any] = self.detect_stats(is_it_player=True, gk=gk)
             
@@ -580,7 +593,7 @@ class App(ctk.CTk):
             UIPopulationError: If the capture, OCR detection, or UI population fails.
         """
         try:
-            self.capture_screenshot()
+            self._capture_screenshot()
             
             stats: Dict[str, Any] = self.detect_player_attributes(gk=gk, first=first)
             
@@ -603,7 +616,7 @@ class App(ctk.CTk):
             # Re-raise to trigger a GUI warning popup
             raise UIPopulationError(f"Failed to extract player attributes from screen: {e}") from e
     
-    def capture_screenshot(self, delay: int | None = None) -> None:
+    def _capture_screenshot(self, delay: int | None = None) -> None:
         """Capture a screenshot of the display after a specified delay.
 
         Temporarily halts execution to allow the user to bring the EA FC 
@@ -643,6 +656,22 @@ class App(ctk.CTk):
             raise ScreenshotError(f"Failed to capture screenshot: {e}") from e
     
     def _non_blocking_delay(self, seconds: int, message: str = "Please wait...") -> None:
+        """Display a modal overlay with a spinner message while the application processes events.
+
+        Creates a temporary borderless popup window centered over the main application window.
+        The popup shows a custom message and an animated spinner for the specified duration.
+        Unlike a blocking sleep, this method allows the Tkinter event loop to continue processing,
+        keeping the UI responsive (e.g., window repaint, button clicks) while waiting.
+
+        Args:
+            seconds (int): The duration to display the overlay, in seconds.
+            message (str, optional): The text message to display. Defaults to "Please wait...".
+
+        Note:
+            This is primarily used to give the user time to switch to the game window
+            before the application captures a screenshot.
+        """
+        
         # Create a borderless popup window
         overlay = ctk.CTkToplevel(self, fg_color=THEME["colors"]["background"])
         overlay.overrideredirect(True)
@@ -703,7 +732,7 @@ class App(ctk.CTk):
         overlay.destroy()
         self.focus_force()
 
-    def get_latest_screenshot_path(self) -> Path:
+    def _get_latest_screenshot_path(self) -> Path:
         """Retrieve the file path of the most recently captured screenshot.
 
         Scans the dedicated screenshots directory and returns the absolute path 
@@ -730,7 +759,7 @@ class App(ctk.CTk):
         raise ScreenshotError("No screenshots found in the screenshots directory.")
     
     def _cleanup_screenshots(self, max_files: int = 5) -> None:
-        """Background task to remove old screenshots and free up disk space.
+        """Keep the screenshots directory tidy by retaining only the most recent captures.
 
         Scans the screenshots directory for files generated by the application 
         and deletes the oldest files, keeping only the 'max_files' most recent. 
@@ -765,7 +794,7 @@ class App(ctk.CTk):
             except Exception as e:
                 logger.warning(f"Failed to delete screenshot {file_path}. It may be in use: {e}")
     
-    def detect_stats(self, is_it_player: bool, gk: bool = False) -> dict:
+    def _detect_stats(self, is_it_player: bool, gk: bool = False) -> dict[str, Any]:
         """Detect and extract statistics from the latest screenshot using OCR.
 
         Loads ROI (Region of Interest) coordinates from the JSON config, maps 
@@ -785,7 +814,7 @@ class App(ctk.CTk):
             Dict[str, Any]: A dictionary containing the strictly typed detected statistics.
         """
         logger.info(f"Starting OCR (player mode: {is_it_player})")
-        latest_screenshot_path = self.get_latest_screenshot_path()
+        latest_screenshot_path = self._get_latest_screenshot_path()
 
         # --- 1. Load Configurations ---
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
@@ -873,7 +902,7 @@ class App(ctk.CTk):
 
         return results
     
-    def detect_player_attributes(self, gk=False, first=True) -> dict:
+    def _detect_player_attributes(self, gk: bool = False, first: bool = True) -> dict[str, Any]:
         """Detect and extract player attribute statistics from the latest screenshot.
 
         Loads coordinates based on player position and page, processes the screenshot 
@@ -893,7 +922,7 @@ class App(ctk.CTk):
             Dict[str, Any]: A dictionary mapping attribute names to their parsed integer values.
         """
         logger.info(f"Starting Attribute OCR (GK: {gk}, First Page: {first})")
-        latest_screenshot_path = self.get_latest_screenshot_path()
+        latest_screenshot_path = self._get_latest_screenshot_path()
 
         # --- 1. Load Configurations ---
         coordinates_path = App.PROJECT_ROOT / "config" / "coordinates.json"
@@ -956,7 +985,7 @@ class App(ctk.CTk):
 
         return results
     
-    def buffer_match_overview(self, overview_data: dict) -> None:
+    def buffer_match_overview(self, overview_data: dict[str, Any]) -> None:
         """Store captured match overview data in the temporary session buffer.
 
         Args:
@@ -966,7 +995,7 @@ class App(ctk.CTk):
         logger.info("Buffering match overview data.")
         self.match_overview_buffer = overview_data
     
-    def buffer_player_performance(self, performance_data: dict) -> None:
+    def buffer_player_performance(self, performance_data: dict[str, Any]) -> None:
         """Store a single player's match performance in the temporary session buffer.
 
         This method is designed to be called multiple times per match to build up 
