@@ -3,7 +3,7 @@
         "id": 1,
         "name": "kepa",
         "nationality": "Spain",
-        "age": 34,
+        "age": 35,
         "height": "6'2\"",
         "weight": 196,
         "positions": [
@@ -12,7 +12,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:19:08",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": null,
                 "position_type": "GK",
                 "diving": 78,
@@ -20,12 +20,23 @@
                 "kicking": 82,
                 "reflexes": 81,
                 "positioning": 76
+            },
+            {
+                "datetime": "2026-03-10T14:06:57.430976",
+                "in_game_date": "2030-01-23T00:00:00",
+                "position": null,
+                "position_type": "GK",
+                "diving": 78,
+                "handling": 78,
+                "kicking": 81,
+                "reflexes": 81,
+                "positioning": 75
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T03:50:56",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 25000,
                 "market_value": 3000000,
                 "contract_length": 1,
@@ -34,7 +45,7 @@
             },
             {
                 "datetime": "2026-02-04T02:26:43",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 25000,
                 "market_value": 3600000,
                 "contract_length": 1,
@@ -44,13 +55,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 2,
         "name": "jonas urbig",
         "nationality": "Germany",
-        "age": 25,
+        "age": 26,
         "height": "6'2\"",
         "weight": 182,
         "positions": [
@@ -59,7 +71,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:20:00",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": null,
                 "position_type": "GK",
                 "diving": 90,
@@ -67,12 +79,23 @@
                 "kicking": 89,
                 "reflexes": 93,
                 "positioning": 82
+            },
+            {
+                "datetime": "2026-03-10T14:09:18.708636",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": null,
+                "position_type": "GK",
+                "diving": 92,
+                "handling": 83,
+                "kicking": 89,
+                "reflexes": 95,
+                "positioning": 82
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T03:51:41",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 50000,
                 "market_value": 65000000,
                 "contract_length": 5,
@@ -82,6 +105,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -97,7 +121,18 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:20:39",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
+                "position": null,
+                "position_type": "GK",
+                "diving": 71,
+                "handling": 52,
+                "kicking": 72,
+                "reflexes": 84,
+                "positioning": 80
+            },
+            {
+                "datetime": "2026-03-10T14:11:07.592417",
+                "in_game_date": "2030-02-23T00:00:00",
                 "position": null,
                 "position_type": "GK",
                 "diving": 71,
@@ -110,7 +145,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T03:55:06",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 6700,
                 "market_value": 2900000,
                 "contract_length": 3,
@@ -120,13 +155,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 4,
         "name": "jose gaya",
         "nationality": "Spain",
-        "age": 34,
+        "age": 35,
         "height": "5'8\"",
         "weight": 145,
         "positions": [
@@ -135,7 +171,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:24:29",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 89,
@@ -167,12 +203,47 @@
                 "slide_tackle": 86,
                 "stand_tackle": 89,
                 "volleys": 53
+            },
+            {
+                "datetime": "2026-03-10T14:13:36.731074",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 89,
+                "sprint_speed": 80,
+                "agility": 78,
+                "balance": 81,
+                "jumping": 67,
+                "stamina": 82,
+                "strength": 74,
+                "aggression": 81,
+                "att_position": 69,
+                "composure": 70,
+                "interceptions": 89,
+                "reactions": 77,
+                "vision": 71,
+                "defensive_awareness": 87,
+                "ball_control": 76,
+                "crossing": 79,
+                "curve": 75,
+                "dribbling": 73,
+                "fk_accuracy": 40,
+                "finishing": 54,
+                "heading_accuracy": 73,
+                "long_pass": 72,
+                "long_shots": 52,
+                "penalties": 53,
+                "short_pass": 75,
+                "shot_power": 55,
+                "slide_tackle": 87,
+                "stand_tackle": 90,
+                "volleys": 50
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:00:23",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 70000,
                 "market_value": 44000000,
                 "contract_length": 1,
@@ -181,7 +252,7 @@
             },
             {
                 "datetime": "2026-02-02T06:14:49",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 80000,
                 "market_value": 44000000,
                 "contract_length": 3,
@@ -191,6 +262,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -206,7 +278,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:25:14",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 81,
@@ -238,12 +310,47 @@
                 "slide_tackle": 59,
                 "stand_tackle": 74,
                 "volleys": 42
+            },
+            {
+                "datetime": "2026-03-10T14:15:36.292706",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 81,
+                "sprint_speed": 77,
+                "agility": 68,
+                "balance": 70,
+                "jumping": 57,
+                "stamina": 82,
+                "strength": 65,
+                "aggression": 62,
+                "att_position": 47,
+                "composure": 47,
+                "interceptions": 77,
+                "reactions": 60,
+                "vision": 56,
+                "defensive_awareness": 64,
+                "ball_control": 72,
+                "crossing": 67,
+                "curve": 57,
+                "dribbling": 61,
+                "fk_accuracy": 38,
+                "finishing": 47,
+                "heading_accuracy": 73,
+                "long_pass": 51,
+                "long_shots": 41,
+                "penalties": 42,
+                "short_pass": 67,
+                "shot_power": 52,
+                "slide_tackle": 62,
+                "stand_tackle": 74,
+                "volleys": 42
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:02:13",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 2400000,
                 "contract_length": 1,
@@ -253,6 +360,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -268,7 +376,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:26:10",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 83,
@@ -300,12 +408,47 @@
                 "slide_tackle": 67,
                 "stand_tackle": 75,
                 "volleys": 31
+            },
+            {
+                "datetime": "2026-03-10T14:16:55.586624",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 83,
+                "sprint_speed": 84,
+                "agility": 72,
+                "balance": 70,
+                "jumping": 59,
+                "stamina": 81,
+                "strength": 64,
+                "aggression": 63,
+                "att_position": 52,
+                "composure": 46,
+                "interceptions": 78,
+                "reactions": 54,
+                "vision": 46,
+                "defensive_awareness": 61,
+                "ball_control": 63,
+                "crossing": 66,
+                "curve": 52,
+                "dribbling": 58,
+                "fk_accuracy": 36,
+                "finishing": 41,
+                "heading_accuracy": 71,
+                "long_pass": 58,
+                "long_shots": 43,
+                "penalties": 39,
+                "short_pass": 64,
+                "shot_power": 48,
+                "slide_tackle": 68,
+                "stand_tackle": 76,
+                "volleys": 31
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:03:10",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 3900000,
                 "contract_length": 2,
@@ -315,6 +458,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -330,7 +474,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:27:58",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 91,
@@ -367,7 +511,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:03:30",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 7000000,
                 "contract_length": 2,
@@ -377,13 +521,14 @@
         ],
         "injury_history": [],
         "sold": true,
+        "date_sold": "2029-07-01T00:00:00",
         "loaned": false
     },
     {
         "id": 8,
         "name": "giovanni eradi",
         "nationality": "Gibraltar",
-        "age": 18,
+        "age": 19,
         "height": "5'6\"",
         "weight": 141,
         "positions": [
@@ -392,7 +537,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:28:45",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 89,
@@ -424,12 +569,47 @@
                 "slide_tackle": 69,
                 "stand_tackle": 72,
                 "volleys": 39
+            },
+            {
+                "datetime": "2026-03-12T01:56:24.881004",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 91,
+                "sprint_speed": 84,
+                "agility": 75,
+                "balance": 74,
+                "jumping": 66,
+                "stamina": 81,
+                "strength": 72,
+                "aggression": 73,
+                "att_position": 48,
+                "composure": 50,
+                "interceptions": 76,
+                "reactions": 61,
+                "vision": 41,
+                "defensive_awareness": 66,
+                "ball_control": 66,
+                "crossing": 62,
+                "curve": 49,
+                "dribbling": 68,
+                "fk_accuracy": 42,
+                "finishing": 39,
+                "heading_accuracy": 61,
+                "long_pass": 50,
+                "long_shots": 45,
+                "penalties": 44,
+                "short_pass": 63,
+                "shot_power": 55,
+                "slide_tackle": 70,
+                "stand_tackle": 81,
+                "volleys": 43
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:03:49",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 15000,
                 "market_value": 3100000,
                 "contract_length": 3,
@@ -439,13 +619,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 9,
         "name": "giovanni borg",
         "nationality": "Gibraltar",
-        "age": 18,
+        "age": 19,
         "height": "5'8\"",
         "weight": 152,
         "positions": [
@@ -454,7 +635,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:31:33",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 84,
@@ -486,12 +667,47 @@
                 "slide_tackle": 65,
                 "stand_tackle": 65,
                 "volleys": 37
+            },
+            {
+                "datetime": "2026-03-12T01:57:19.360409",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 84,
+                "sprint_speed": 80,
+                "agility": 75,
+                "balance": 69,
+                "jumping": 61,
+                "stamina": 78,
+                "strength": 65,
+                "aggression": 70,
+                "att_position": 53,
+                "composure": 53,
+                "interceptions": 70,
+                "reactions": 57,
+                "vision": 44,
+                "defensive_awareness": 67,
+                "ball_control": 60,
+                "crossing": 63,
+                "curve": 51,
+                "dribbling": 60,
+                "fk_accuracy": 40,
+                "finishing": 39,
+                "heading_accuracy": 67,
+                "long_pass": 53,
+                "long_shots": 43,
+                "penalties": 39,
+                "short_pass": 60,
+                "shot_power": 47,
+                "slide_tackle": 67,
+                "stand_tackle": 68,
+                "volleys": 39
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:08:20",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 1400000,
                 "contract_length": 3,
@@ -501,6 +717,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -516,7 +733,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:35:58",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 75,
@@ -553,7 +770,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:08:49",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 55000,
                 "market_value": 39000000,
                 "contract_length": 3,
@@ -563,6 +780,7 @@
         ],
         "injury_history": [],
         "sold": true,
+        "date_sold": "2029-07-01T00:00:00",
         "loaned": false
     },
     {
@@ -578,7 +796,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:37:22",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 72,
@@ -610,12 +828,47 @@
                 "slide_tackle": 85,
                 "stand_tackle": 81,
                 "volleys": 70
+            },
+            {
+                "datetime": "2026-03-12T01:58:53.133681",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 77,
+                "sprint_speed": 90,
+                "agility": 70,
+                "balance": 67,
+                "jumping": 91,
+                "stamina": 84,
+                "strength": 90,
+                "aggression": 91,
+                "att_position": 73,
+                "composure": 79,
+                "interceptions": 85,
+                "reactions": 84,
+                "vision": 85,
+                "defensive_awareness": 80,
+                "ball_control": 78,
+                "crossing": 72,
+                "curve": 57,
+                "dribbling": 73,
+                "fk_accuracy": 58,
+                "finishing": 65,
+                "heading_accuracy": 88,
+                "long_pass": 87,
+                "long_shots": 71,
+                "penalties": 80,
+                "short_pass": 86,
+                "shot_power": 78,
+                "slide_tackle": 85,
+                "stand_tackle": 81,
+                "volleys": 70
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T04:09:24",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 55000,
                 "market_value": 43500000,
                 "contract_length": 2,
@@ -624,7 +877,7 @@
             },
             {
                 "datetime": "2026-02-04T02:28:39",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 75000,
                 "market_value": 52000000,
                 "contract_length": 3,
@@ -634,6 +887,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -649,7 +903,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:38:27",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 82,
@@ -681,12 +935,47 @@
                 "slide_tackle": 85,
                 "stand_tackle": 84,
                 "volleys": 28
+            },
+            {
+                "datetime": "2026-03-12T01:59:17.892629",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 83,
+                "sprint_speed": 87,
+                "agility": 76,
+                "balance": 78,
+                "jumping": 84,
+                "stamina": 80,
+                "strength": 75,
+                "aggression": 88,
+                "att_position": 28,
+                "composure": 84,
+                "interceptions": 84,
+                "reactions": 82,
+                "vision": 60,
+                "defensive_awareness": 80,
+                "ball_control": 82,
+                "crossing": 39,
+                "curve": 26,
+                "dribbling": 73,
+                "fk_accuracy": 25,
+                "finishing": 21,
+                "heading_accuracy": 72,
+                "long_pass": 74,
+                "long_shots": 25,
+                "penalties": 33,
+                "short_pass": 83,
+                "shot_power": 48,
+                "slide_tackle": 85,
+                "stand_tackle": 84,
+                "volleys": 27
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:19:45",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 34000,
                 "market_value": 29000000,
                 "contract_length": 3,
@@ -696,13 +985,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 13,
         "name": "renato veiga",
         "nationality": "Portugal",
-        "age": 25,
+        "age": 26,
         "height": "6'3\"",
         "weight": 194,
         "positions": [
@@ -711,7 +1001,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:39:06",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 74,
@@ -743,12 +1033,47 @@
                 "slide_tackle": 82,
                 "stand_tackle": 85,
                 "volleys": 72
+            },
+            {
+                "datetime": "2026-03-12T02:00:10.331066",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 74,
+                "sprint_speed": 91,
+                "agility": 78,
+                "balance": 73,
+                "jumping": 83,
+                "stamina": 74,
+                "strength": 87,
+                "aggression": 92,
+                "att_position": 66,
+                "composure": 82,
+                "interceptions": 84,
+                "reactions": 84,
+                "vision": 70,
+                "defensive_awareness": 80,
+                "ball_control": 86,
+                "crossing": 70,
+                "curve": 73,
+                "dribbling": 81,
+                "fk_accuracy": 77,
+                "finishing": 51,
+                "heading_accuracy": 76,
+                "long_pass": 84,
+                "long_shots": 71,
+                "penalties": 62,
+                "short_pass": 87,
+                "shot_power": 76,
+                "slide_tackle": 82,
+                "stand_tackle": 86,
+                "volleys": 72
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:28:59",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 50000,
                 "market_value": 35000000,
                 "contract_length": 4,
@@ -758,6 +1083,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -773,7 +1099,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:40:01",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 85,
@@ -805,12 +1131,47 @@
                 "slide_tackle": 82,
                 "stand_tackle": 94,
                 "volleys": 43
+            },
+            {
+                "datetime": "2026-03-12T02:00:35.125417",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 85,
+                "sprint_speed": 93,
+                "agility": 64,
+                "balance": 75,
+                "jumping": 91,
+                "stamina": 68,
+                "strength": 99,
+                "aggression": 96,
+                "att_position": 50,
+                "composure": 83,
+                "interceptions": 88,
+                "reactions": 89,
+                "vision": 63,
+                "defensive_awareness": 92,
+                "ball_control": 81,
+                "crossing": 54,
+                "curve": 54,
+                "dribbling": 69,
+                "fk_accuracy": 46,
+                "finishing": 41,
+                "heading_accuracy": 83,
+                "long_pass": 76,
+                "long_shots": 43,
+                "penalties": 52,
+                "short_pass": 79,
+                "shot_power": 67,
+                "slide_tackle": 84,
+                "stand_tackle": 94,
+                "volleys": 43
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:39:21",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 50000,
                 "market_value": 108000000,
                 "contract_length": 2,
@@ -819,7 +1180,7 @@
             },
             {
                 "datetime": "2026-02-02T06:17:18",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 85000,
                 "market_value": 108000000,
                 "contract_length": 5,
@@ -829,13 +1190,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 15,
         "name": "borja varela",
         "nationality": "Spain",
-        "age": 19,
+        "age": 20,
         "height": "6'3\"",
         "weight": 169,
         "positions": [
@@ -844,7 +1206,42 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:41:03",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 65,
+                "sprint_speed": 63,
+                "agility": 42,
+                "balance": 66,
+                "jumping": 78,
+                "stamina": 58,
+                "strength": 88,
+                "aggression": 83,
+                "att_position": 29,
+                "composure": 49,
+                "interceptions": 62,
+                "reactions": 70,
+                "vision": 40,
+                "defensive_awareness": 77,
+                "ball_control": 47,
+                "crossing": 35,
+                "curve": 31,
+                "dribbling": 36,
+                "fk_accuracy": 23,
+                "finishing": 24,
+                "heading_accuracy": 63,
+                "long_pass": 46,
+                "long_shots": 23,
+                "penalties": 28,
+                "short_pass": 51,
+                "shot_power": 54,
+                "slide_tackle": 60,
+                "stand_tackle": 71,
+                "volleys": 29
+            },
+            {
+                "datetime": "2026-03-12T02:01:04.887737",
+                "in_game_date": "2030-02-23T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 65,
@@ -881,7 +1278,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:39:48",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 15500,
                 "market_value": 2900000,
                 "contract_length": 2,
@@ -891,6 +1288,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -906,7 +1304,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:41:43",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 62,
@@ -943,7 +1341,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:40:14",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 11000,
                 "market_value": 5500000,
                 "contract_length": 1,
@@ -953,13 +1351,14 @@
         ],
         "injury_history": [],
         "sold": true,
+        "date_sold": "2029-07-01T00:00:00",
         "loaned": false
     },
     {
         "id": 17,
         "name": "fabio cardenas",
         "nationality": "Portugal",
-        "age": 19,
+        "age": 20,
         "height": "6'2\"",
         "weight": 167,
         "positions": [
@@ -968,7 +1367,42 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:42:52",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 67,
+                "sprint_speed": 64,
+                "agility": 51,
+                "balance": 60,
+                "jumping": 72,
+                "stamina": 68,
+                "strength": 79,
+                "aggression": 71,
+                "att_position": 35,
+                "composure": 51,
+                "interceptions": 66,
+                "reactions": 69,
+                "vision": 42,
+                "defensive_awareness": 78,
+                "ball_control": 51,
+                "crossing": 35,
+                "curve": 35,
+                "dribbling": 38,
+                "fk_accuracy": 25,
+                "finishing": 30,
+                "heading_accuracy": 61,
+                "long_pass": 43,
+                "long_shots": 31,
+                "penalties": 32,
+                "short_pass": 45,
+                "shot_power": 53,
+                "slide_tackle": 62,
+                "stand_tackle": 70,
+                "volleys": 26
+            },
+            {
+                "datetime": "2026-03-12T02:01:42.594226",
+                "in_game_date": "2030-02-23T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 67,
@@ -1005,7 +1439,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:40:32",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 1600000,
                 "contract_length": 2,
@@ -1015,13 +1449,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 18,
         "name": "fabrice diabate",
         "nationality": "Ivory Coast",
-        "age": 18,
+        "age": 19,
         "height": "6'1\"",
         "weight": 167,
         "positions": [
@@ -1030,7 +1465,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:43:28",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 72,
@@ -1062,12 +1497,47 @@
                 "slide_tackle": 81,
                 "stand_tackle": 76,
                 "volleys": 33
+            },
+            {
+                "datetime": "2026-03-12T02:02:11.210952",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 72,
+                "sprint_speed": 80,
+                "agility": 65,
+                "balance": 71,
+                "jumping": 76,
+                "stamina": 79,
+                "strength": 87,
+                "aggression": 71,
+                "att_position": 39,
+                "composure": 64,
+                "interceptions": 68,
+                "reactions": 73,
+                "vision": 52,
+                "defensive_awareness": 75,
+                "ball_control": 60,
+                "crossing": 49,
+                "curve": 40,
+                "dribbling": 50,
+                "fk_accuracy": 36,
+                "finishing": 36,
+                "heading_accuracy": 68,
+                "long_pass": 58,
+                "long_shots": 41,
+                "penalties": 49,
+                "short_pass": 74,
+                "shot_power": 52,
+                "slide_tackle": 81,
+                "stand_tackle": 78,
+                "volleys": 33
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:41:00",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 15000,
                 "market_value": 8500000,
                 "contract_length": 4,
@@ -1077,6 +1547,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -1092,7 +1563,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T00:44:01",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 58,
@@ -1124,12 +1595,47 @@
                 "slide_tackle": 59,
                 "stand_tackle": 68,
                 "volleys": 29
+            },
+            {
+                "datetime": "2026-03-12T02:03:58.248663",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 58,
+                "sprint_speed": 69,
+                "agility": 55,
+                "balance": 54,
+                "jumping": 66,
+                "stamina": 63,
+                "strength": 75,
+                "aggression": 64,
+                "att_position": 37,
+                "composure": 55,
+                "interceptions": 75,
+                "reactions": 71,
+                "vision": 37,
+                "defensive_awareness": 73,
+                "ball_control": 64,
+                "crossing": 38,
+                "curve": 32,
+                "dribbling": 47,
+                "fk_accuracy": 33,
+                "finishing": 33,
+                "heading_accuracy": 61,
+                "long_pass": 61,
+                "long_shots": 35,
+                "penalties": 40,
+                "short_pass": 67,
+                "shot_power": 49,
+                "slide_tackle": 59,
+                "stand_tackle": 68,
+                "volleys": 30
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:41:25",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 11500,
                 "market_value": 1800000,
                 "contract_length": 3,
@@ -1139,13 +1645,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 20,
         "name": "marcos llorente",
         "nationality": "Spain",
-        "age": 34,
+        "age": 35,
         "height": "6'0\"",
         "weight": 163,
         "positions": [
@@ -1154,7 +1661,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:23:25",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RB",
                 "position_type": "Outfield",
                 "acceleration": 89,
@@ -1186,12 +1693,47 @@
                 "slide_tackle": 71,
                 "stand_tackle": 79,
                 "volleys": 60
+            },
+            {
+                "datetime": "2026-03-12T02:04:36.460569",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "RB",
+                "position_type": "Outfield",
+                "acceleration": 90,
+                "sprint_speed": 89,
+                "agility": 76,
+                "balance": 68,
+                "jumping": 77,
+                "stamina": 84,
+                "strength": 71,
+                "aggression": 75,
+                "att_position": 72,
+                "composure": 72,
+                "interceptions": 80,
+                "reactions": 83,
+                "vision": 81,
+                "defensive_awareness": 72,
+                "ball_control": 82,
+                "crossing": 79,
+                "curve": 72,
+                "dribbling": 82,
+                "fk_accuracy": 55,
+                "finishing": 74,
+                "heading_accuracy": 61,
+                "long_pass": 75,
+                "long_shots": 73,
+                "penalties": 57,
+                "short_pass": 84,
+                "shot_power": 79,
+                "slide_tackle": 69,
+                "stand_tackle": 77,
+                "volleys": 58
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:41:54",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 65000,
                 "market_value": 24000000,
                 "contract_length": 2,
@@ -1201,6 +1743,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -1216,7 +1759,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:24:38",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RB",
                 "position_type": "Outfield",
                 "acceleration": 88,
@@ -1253,7 +1796,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:42:22",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 38000,
                 "market_value": 21000000,
                 "contract_length": 2,
@@ -1263,13 +1806,14 @@
         ],
         "injury_history": [],
         "sold": true,
+        "date_sold": "2029-07-01T00:00:00",
         "loaned": false
     },
     {
         "id": 22,
         "name": "pepelu",
         "nationality": "Spain",
-        "age": 30,
+        "age": 31,
         "height": "6'1\"",
         "weight": 160,
         "positions": [
@@ -1278,7 +1822,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:25:50",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CDM",
                 "position_type": "Outfield",
                 "acceleration": 64,
@@ -1310,12 +1854,47 @@
                 "slide_tackle": 74,
                 "stand_tackle": 85,
                 "volleys": 61
+            },
+            {
+                "datetime": "2026-03-12T02:05:46.679385",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 64,
+                "sprint_speed": 67,
+                "agility": 76,
+                "balance": 73,
+                "jumping": 73,
+                "stamina": 87,
+                "strength": 76,
+                "aggression": 75,
+                "att_position": 75,
+                "composure": 79,
+                "interceptions": 83,
+                "reactions": 89,
+                "vision": 94,
+                "defensive_awareness": 87,
+                "ball_control": 85,
+                "crossing": 72,
+                "curve": 76,
+                "dribbling": 72,
+                "fk_accuracy": 75,
+                "finishing": 77,
+                "heading_accuracy": 64,
+                "long_pass": 93,
+                "long_shots": 77,
+                "penalties": 80,
+                "short_pass": 95,
+                "shot_power": 73,
+                "slide_tackle": 74,
+                "stand_tackle": 85,
+                "volleys": 61
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:42:53",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 55000,
                 "market_value": 53000000,
                 "contract_length": 1,
@@ -1324,7 +1903,7 @@
             },
             {
                 "datetime": "2026-02-02T06:06:30",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 70000,
                 "market_value": 53000000,
                 "contract_length": 4,
@@ -1334,6 +1913,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -1349,7 +1929,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:26:32",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CM",
                 "position_type": "Outfield",
                 "acceleration": 76,
@@ -1381,12 +1961,47 @@
                 "slide_tackle": 77,
                 "stand_tackle": 88,
                 "volleys": 58
+            },
+            {
+                "datetime": "2026-03-12T02:09:55.731886",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CM",
+                "position_type": "Outfield",
+                "acceleration": 76,
+                "sprint_speed": 79,
+                "agility": 83,
+                "balance": 78,
+                "jumping": 68,
+                "stamina": 88,
+                "strength": 60,
+                "aggression": 83,
+                "att_position": 81,
+                "composure": 79,
+                "interceptions": 87,
+                "reactions": 84,
+                "vision": 84,
+                "defensive_awareness": 81,
+                "ball_control": 87,
+                "crossing": 74,
+                "curve": 79,
+                "dribbling": 77,
+                "fk_accuracy": 54,
+                "finishing": 84,
+                "heading_accuracy": 71,
+                "long_pass": 87,
+                "long_shots": 89,
+                "penalties": 61,
+                "short_pass": 88,
+                "shot_power": 72,
+                "slide_tackle": 77,
+                "stand_tackle": 88,
+                "volleys": 58
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:43:26",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 40000,
                 "market_value": 45500000,
                 "contract_length": 1,
@@ -1395,7 +2010,7 @@
             },
             {
                 "datetime": "2026-02-04T02:30:01",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 50000,
                 "market_value": 51000000,
                 "contract_length": 3,
@@ -1405,6 +2020,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -1420,7 +2036,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:27:15",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CM",
                 "position_type": "Outfield",
                 "acceleration": 88,
@@ -1452,12 +2068,47 @@
                 "slide_tackle": 68,
                 "stand_tackle": 82,
                 "volleys": 67
+            },
+            {
+                "datetime": "2026-03-12T02:10:25.696690",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CM",
+                "position_type": "Outfield",
+                "acceleration": 88,
+                "sprint_speed": 79,
+                "agility": 92,
+                "balance": 76,
+                "jumping": 81,
+                "stamina": 78,
+                "strength": 79,
+                "aggression": 83,
+                "att_position": 95,
+                "composure": 85,
+                "interceptions": 92,
+                "reactions": 97,
+                "vision": 91,
+                "defensive_awareness": 86,
+                "ball_control": 99,
+                "crossing": 74,
+                "curve": 55,
+                "dribbling": 78,
+                "fk_accuracy": 59,
+                "finishing": 90,
+                "heading_accuracy": 74,
+                "long_pass": 93,
+                "long_shots": 92,
+                "penalties": 60,
+                "short_pass": 95,
+                "shot_power": 89,
+                "slide_tackle": 68,
+                "stand_tackle": 82,
+                "volleys": 67
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:43:53",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 60000,
                 "market_value": 166000000,
                 "contract_length": 3,
@@ -1466,7 +2117,7 @@
             },
             {
                 "datetime": "2026-02-11T02:22:25",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 130000,
                 "market_value": 179000000,
                 "contract_length": 4,
@@ -1477,7 +2128,6 @@
         "injury_history": [
             {
                 "datetime": "2026-02-20T14:57:27.406204",
-                "season": "29/30",
                 "in_game_date": "2029-10-27T00:00:00",
                 "injury_detail": "Sprained Knee",
                 "time_out": 4,
@@ -1485,6 +2135,7 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -1500,7 +2151,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:28:42",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CDM",
                 "position_type": "Outfield",
                 "acceleration": 64,
@@ -1537,7 +2188,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:44:16",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 1200000,
                 "contract_length": 2,
@@ -1547,6 +2198,7 @@
         ],
         "injury_history": [],
         "sold": true,
+        "date_sold": "2029-07-01T00:00:00",
         "loaned": false
     },
     {
@@ -1562,7 +2214,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:29:17",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CDM",
                 "position_type": "Outfield",
                 "acceleration": 68,
@@ -1599,7 +2251,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:44:42",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 3300000,
                 "contract_length": 1,
@@ -1609,6 +2261,7 @@
         ],
         "injury_history": [],
         "sold": true,
+        "date_sold": "2029-07-01T00:00:00",
         "loaned": false
     },
     {
@@ -1624,7 +2277,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:30:05",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CDM",
                 "position_type": "Outfield",
                 "acceleration": 67,
@@ -1656,12 +2309,47 @@
                 "slide_tackle": 60,
                 "stand_tackle": 68,
                 "volleys": 44
+            },
+            {
+                "datetime": "2026-03-12T02:07:30.359971",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 68,
+                "sprint_speed": 63,
+                "agility": 66,
+                "balance": 65,
+                "jumping": 64,
+                "stamina": 82,
+                "strength": 66,
+                "aggression": 62,
+                "att_position": 50,
+                "composure": 57,
+                "interceptions": 72,
+                "reactions": 73,
+                "vision": 66,
+                "defensive_awareness": 63,
+                "ball_control": 73,
+                "crossing": 45,
+                "curve": 44,
+                "dribbling": 56,
+                "fk_accuracy": 42,
+                "finishing": 43,
+                "heading_accuracy": 44,
+                "long_pass": 61,
+                "long_shots": 49,
+                "penalties": 44,
+                "short_pass": 77,
+                "shot_power": 54,
+                "slide_tackle": 60,
+                "stand_tackle": 68,
+                "volleys": 45
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:45:04",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 12000,
                 "market_value": 2000000,
                 "contract_length": 2,
@@ -1671,6 +2359,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -1686,7 +2375,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:30:54",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CDM",
                 "position_type": "Outfield",
                 "acceleration": 81,
@@ -1718,12 +2407,47 @@
                 "slide_tackle": 74,
                 "stand_tackle": 83,
                 "volleys": 48
+            },
+            {
+                "datetime": "2026-03-12T02:08:23.028090",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 81,
+                "sprint_speed": 80,
+                "agility": 78,
+                "balance": 78,
+                "jumping": 77,
+                "stamina": 79,
+                "strength": 82,
+                "aggression": 78,
+                "att_position": 53,
+                "composure": 75,
+                "interceptions": 73,
+                "reactions": 79,
+                "vision": 73,
+                "defensive_awareness": 84,
+                "ball_control": 78,
+                "crossing": 76,
+                "curve": 59,
+                "dribbling": 63,
+                "fk_accuracy": 51,
+                "finishing": 51,
+                "heading_accuracy": 72,
+                "long_pass": 83,
+                "long_shots": 65,
+                "penalties": 56,
+                "short_pass": 86,
+                "shot_power": 72,
+                "slide_tackle": 74,
+                "stand_tackle": 83,
+                "volleys": 48
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:45:30",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 18000,
                 "market_value": 27000000,
                 "contract_length": 3,
@@ -1732,7 +2456,7 @@
             },
             {
                 "datetime": "2026-02-04T02:37:24",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 35000,
                 "market_value": 27000000,
                 "contract_length": 4,
@@ -1743,7 +2467,6 @@
         "injury_history": [
             {
                 "datetime": "2026-03-06T14:00:01.650424",
-                "season": "29/30",
                 "in_game_date": "2030-01-23T00:00:00",
                 "injury_detail": "Sprained Knee",
                 "time_out": 4,
@@ -1751,13 +2474,14 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 29,
         "name": "gabriel rogers",
         "nationality": "Gibraltar",
-        "age": 20,
+        "age": 21,
         "height": "5'9\"",
         "weight": 163,
         "positions": [
@@ -1766,7 +2490,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:32:15",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 84,
@@ -1798,12 +2522,47 @@
                 "slide_tackle": 39,
                 "stand_tackle": 39,
                 "volleys": 64
+            },
+            {
+                "datetime": "2026-03-12T02:16:07.570086",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 84,
+                "sprint_speed": 82,
+                "agility": 81,
+                "balance": 72,
+                "jumping": 53,
+                "stamina": 67,
+                "strength": 50,
+                "aggression": 42,
+                "att_position": 81,
+                "composure": 56,
+                "interceptions": 40,
+                "reactions": 73,
+                "vision": 62,
+                "defensive_awareness": 36,
+                "ball_control": 82,
+                "crossing": 66,
+                "curve": 55,
+                "dribbling": 77,
+                "fk_accuracy": 49,
+                "finishing": 75,
+                "heading_accuracy": 66,
+                "long_pass": 65,
+                "long_shots": 77,
+                "penalties": 51,
+                "short_pass": 65,
+                "shot_power": 60,
+                "slide_tackle": 40,
+                "stand_tackle": 40,
+                "volleys": 64
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:46:16",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 15500,
                 "market_value": 6000000,
                 "contract_length": 1,
@@ -1812,7 +2571,7 @@
             },
             {
                 "datetime": "2026-02-11T02:19:13",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 20000,
                 "market_value": 8500000,
                 "contract_length": 3,
@@ -1822,13 +2581,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 30,
         "name": "michael ratcliffe",
         "nationality": "Gibraltar",
-        "age": 18,
+        "age": 19,
         "height": "5'9\"",
         "weight": 149,
         "positions": [
@@ -1837,7 +2597,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:33:06",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 89,
@@ -1869,12 +2629,47 @@
                 "slide_tackle": 40,
                 "stand_tackle": 40,
                 "volleys": 63
+            },
+            {
+                "datetime": "2026-03-12T02:16:56.309844",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 89,
+                "sprint_speed": 86,
+                "agility": 77,
+                "balance": 72,
+                "jumping": 55,
+                "stamina": 72,
+                "strength": 60,
+                "aggression": 42,
+                "att_position": 72,
+                "composure": 47,
+                "interceptions": 42,
+                "reactions": 70,
+                "vision": 62,
+                "defensive_awareness": 46,
+                "ball_control": 83,
+                "crossing": 60,
+                "curve": 54,
+                "dribbling": 83,
+                "fk_accuracy": 48,
+                "finishing": 70,
+                "heading_accuracy": 64,
+                "long_pass": 65,
+                "long_shots": 62,
+                "penalties": 59,
+                "short_pass": 58,
+                "shot_power": 52,
+                "slide_tackle": 43,
+                "stand_tackle": 41,
+                "volleys": 64
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:46:58",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 15500,
                 "market_value": 4900000,
                 "contract_length": 3,
@@ -1884,6 +2679,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -1899,7 +2695,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:33:56",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 89,
@@ -1931,12 +2727,47 @@
                 "slide_tackle": 48,
                 "stand_tackle": 59,
                 "volleys": 90
+            },
+            {
+                "datetime": "2026-03-12T02:11:12.238807",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 88,
+                "sprint_speed": 86,
+                "agility": 90,
+                "balance": 94,
+                "jumping": 50,
+                "stamina": 76,
+                "strength": 47,
+                "aggression": 61,
+                "att_position": 92,
+                "composure": 87,
+                "interceptions": 62,
+                "reactions": 93,
+                "vision": 91,
+                "defensive_awareness": 41,
+                "ball_control": 98,
+                "crossing": 75,
+                "curve": 83,
+                "dribbling": 87,
+                "fk_accuracy": 82,
+                "finishing": 88,
+                "heading_accuracy": 67,
+                "long_pass": 86,
+                "long_shots": 83,
+                "penalties": 73,
+                "short_pass": 91,
+                "shot_power": 86,
+                "slide_tackle": 48,
+                "stand_tackle": 61,
+                "volleys": 90
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:47:18",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 80000,
                 "market_value": 132000000,
                 "contract_length": 2,
@@ -1945,7 +2776,7 @@
             },
             {
                 "datetime": "2026-02-11T02:17:38",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 150000,
                 "market_value": 132000000,
                 "contract_length": 3,
@@ -1956,7 +2787,6 @@
         "injury_history": [
             {
                 "datetime": "2026-02-20T16:03:18.044299",
-                "season": "29/30",
                 "in_game_date": "2029-11-03T00:00:00",
                 "injury_detail": "Sprained Knee",
                 "time_out": 4,
@@ -1964,13 +2794,14 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 32,
         "name": "can uzun",
         "nationality": "Turkey",
-        "age": 23,
+        "age": 24,
         "height": "6'1\"",
         "weight": 154,
         "positions": [
@@ -1979,7 +2810,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:34:35",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 86,
@@ -2011,12 +2842,47 @@
                 "slide_tackle": 28,
                 "stand_tackle": 26,
                 "volleys": 79
+            },
+            {
+                "datetime": "2026-03-12T02:11:43.382488",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 85,
+                "sprint_speed": 73,
+                "agility": 89,
+                "balance": 86,
+                "jumping": 85,
+                "stamina": 81,
+                "strength": 80,
+                "aggression": 43,
+                "att_position": 90,
+                "composure": 78,
+                "interceptions": 27,
+                "reactions": 83,
+                "vision": 77,
+                "defensive_awareness": 26,
+                "ball_control": 93,
+                "crossing": 56,
+                "curve": 81,
+                "dribbling": 85,
+                "fk_accuracy": 62,
+                "finishing": 89,
+                "heading_accuracy": 73,
+                "long_pass": 84,
+                "long_shots": 86,
+                "penalties": 69,
+                "short_pass": 97,
+                "shot_power": 83,
+                "slide_tackle": 27,
+                "stand_tackle": 25,
+                "volleys": 78
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:47:40",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 35000,
                 "market_value": 109000000,
                 "contract_length": 2,
@@ -2025,7 +2891,7 @@
             },
             {
                 "datetime": "2026-02-04T02:32:14",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 55000,
                 "market_value": 109000000,
                 "contract_length": 5,
@@ -2036,7 +2902,6 @@
         "injury_history": [
             {
                 "datetime": "2026-02-26T18:24:14.218250",
-                "season": "29/30",
                 "in_game_date": "2029-11-27T00:00:00",
                 "injury_detail": "Sprained knee",
                 "time_out": 4,
@@ -2044,7 +2909,6 @@
             },
             {
                 "datetime": "2026-03-04T02:29:38.975093",
-                "season": "29/30",
                 "in_game_date": "2030-01-06T00:00:00",
                 "injury_detail": "Broken Toe",
                 "time_out": 3,
@@ -2052,22 +2916,24 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 33,
         "name": "santiago simo",
         "nationality": "Spain",
-        "age": 21,
+        "age": 22,
         "height": "5'8\"",
         "weight": 147,
         "positions": [
-            "CAM"
+            "CAM",
+            "LW"
         ],
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:35:12",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 82,
@@ -2099,12 +2965,47 @@
                 "slide_tackle": 24,
                 "stand_tackle": 41,
                 "volleys": 63
+            },
+            {
+                "datetime": "2026-03-10T14:19:10.861117",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 82,
+                "sprint_speed": 83,
+                "agility": 87,
+                "balance": 73,
+                "jumping": 48,
+                "stamina": 67,
+                "strength": 49,
+                "aggression": 41,
+                "att_position": 80,
+                "composure": 69,
+                "interceptions": 45,
+                "reactions": 71,
+                "vision": 76,
+                "defensive_awareness": 31,
+                "ball_control": 82,
+                "crossing": 70,
+                "curve": 45,
+                "dribbling": 81,
+                "fk_accuracy": 39,
+                "finishing": 72,
+                "heading_accuracy": 53,
+                "long_pass": 78,
+                "long_shots": 79,
+                "penalties": 51,
+                "short_pass": 75,
+                "shot_power": 59,
+                "slide_tackle": 24,
+                "stand_tackle": 41,
+                "volleys": 63
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:48:13",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 28000,
                 "market_value": 25000000,
                 "contract_length": 3,
@@ -2115,7 +3016,6 @@
         "injury_history": [
             {
                 "datetime": "2026-03-02T00:22:07.290991",
-                "season": "29/30",
                 "in_game_date": "2029-12-11T00:00:00",
                 "injury_detail": "Bruised Shoulder",
                 "time_out": 5,
@@ -2123,6 +3023,7 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -2138,7 +3039,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:35:49",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 92,
@@ -2170,12 +3071,47 @@
                 "slide_tackle": 39,
                 "stand_tackle": 42,
                 "volleys": 57
+            },
+            {
+                "datetime": "2026-03-12T02:12:06.001248",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 92,
+                "sprint_speed": 77,
+                "agility": 85,
+                "balance": 75,
+                "jumping": 55,
+                "stamina": 69,
+                "strength": 54,
+                "aggression": 56,
+                "att_position": 71,
+                "composure": 52,
+                "interceptions": 35,
+                "reactions": 65,
+                "vision": 69,
+                "defensive_awareness": 51,
+                "ball_control": 89,
+                "crossing": 68,
+                "curve": 58,
+                "dribbling": 82,
+                "fk_accuracy": 63,
+                "finishing": 74,
+                "heading_accuracy": 58,
+                "long_pass": 81,
+                "long_shots": 66,
+                "penalties": 58,
+                "short_pass": 83,
+                "shot_power": 69,
+                "slide_tackle": 39,
+                "stand_tackle": 43,
+                "volleys": 57
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:48:47",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 25000,
                 "market_value": 23500000,
                 "contract_length": 3,
@@ -2185,13 +3121,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 35,
         "name": "samuel dixon",
         "nationality": "Gibraltar",
-        "age": 18,
+        "age": 19,
         "height": "5'8\"",
         "weight": 143,
         "positions": [
@@ -2200,7 +3137,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:37:22",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 63,
@@ -2232,12 +3169,47 @@
                 "slide_tackle": 27,
                 "stand_tackle": 29,
                 "volleys": 45
+            },
+            {
+                "datetime": "2026-03-12T02:12:31.447088",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 74,
+                "sprint_speed": 89,
+                "agility": 76,
+                "balance": 83,
+                "jumping": 52,
+                "stamina": 60,
+                "strength": 52,
+                "aggression": 43,
+                "att_position": 52,
+                "composure": 76,
+                "interceptions": 37,
+                "reactions": 57,
+                "vision": 84,
+                "defensive_awareness": 39,
+                "ball_control": 66,
+                "crossing": 55,
+                "curve": 53,
+                "dribbling": 86,
+                "fk_accuracy": 42,
+                "finishing": 61,
+                "heading_accuracy": 47,
+                "long_pass": 85,
+                "long_shots": 85,
+                "penalties": 49,
+                "short_pass": 96,
+                "shot_power": 80,
+                "slide_tackle": 35,
+                "stand_tackle": 35,
+                "volleys": 47
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:49:06",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 16500,
                 "market_value": 4000000,
                 "contract_length": 3,
@@ -2247,13 +3219,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 36,
         "name": "giovanni vella",
         "nationality": "Malta",
-        "age": 19,
+        "age": 20,
         "height": "5'8\"",
         "weight": 138,
         "positions": [
@@ -2262,7 +3235,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:38:15",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 72,
@@ -2294,12 +3267,47 @@
                 "slide_tackle": 44,
                 "stand_tackle": 41,
                 "volleys": 53
+            },
+            {
+                "datetime": "2026-03-12T02:13:01.547595",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 72,
+                "sprint_speed": 79,
+                "agility": 78,
+                "balance": 75,
+                "jumping": 54,
+                "stamina": 66,
+                "strength": 54,
+                "aggression": 50,
+                "att_position": 64,
+                "composure": 64,
+                "interceptions": 37,
+                "reactions": 70,
+                "vision": 77,
+                "defensive_awareness": 41,
+                "ball_control": 75,
+                "crossing": 53,
+                "curve": 56,
+                "dribbling": 71,
+                "fk_accuracy": 55,
+                "finishing": 63,
+                "heading_accuracy": 44,
+                "long_pass": 77,
+                "long_shots": 68,
+                "penalties": 51,
+                "short_pass": 78,
+                "shot_power": 61,
+                "slide_tackle": 45,
+                "stand_tackle": 41,
+                "volleys": 54
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:49:44",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 17500,
                 "market_value": 2800000,
                 "contract_length": 2,
@@ -2309,13 +3317,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 37,
         "name": "gregorio vazquez",
         "nationality": "Spain",
-        "age": 18,
+        "age": 19,
         "height": "6'1\"",
         "weight": 176,
         "positions": [
@@ -2324,7 +3333,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:39:06",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 69,
@@ -2356,12 +3365,47 @@
                 "slide_tackle": 36,
                 "stand_tackle": 34,
                 "volleys": 52
+            },
+            {
+                "datetime": "2026-03-12T02:13:30.010286",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 70,
+                "sprint_speed": 79,
+                "agility": 73,
+                "balance": 74,
+                "jumping": 48,
+                "stamina": 62,
+                "strength": 52,
+                "aggression": 53,
+                "att_position": 60,
+                "composure": 62,
+                "interceptions": 31,
+                "reactions": 56,
+                "vision": 79,
+                "defensive_awareness": 37,
+                "ball_control": 67,
+                "crossing": 58,
+                "curve": 51,
+                "dribbling": 79,
+                "fk_accuracy": 46,
+                "finishing": 58,
+                "heading_accuracy": 47,
+                "long_pass": 73,
+                "long_shots": 66,
+                "penalties": 57,
+                "short_pass": 84,
+                "shot_power": 70,
+                "slide_tackle": 37,
+                "stand_tackle": 35,
+                "volleys": 52
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:50:14",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 17500,
                 "market_value": 3400000,
                 "contract_length": 3,
@@ -2371,6 +3415,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -2386,7 +3431,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:41:06",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CAM",
                 "position_type": "Outfield",
                 "acceleration": 77,
@@ -2418,12 +3463,47 @@
                 "slide_tackle": 46,
                 "stand_tackle": 38,
                 "volleys": 47
+            },
+            {
+                "datetime": "2026-03-12T02:13:54.913069",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 80,
+                "sprint_speed": 78,
+                "agility": 84,
+                "balance": 76,
+                "jumping": 54,
+                "stamina": 72,
+                "strength": 52,
+                "aggression": 51,
+                "att_position": 58,
+                "composure": 63,
+                "interceptions": 39,
+                "reactions": 70,
+                "vision": 75,
+                "defensive_awareness": 36,
+                "ball_control": 73,
+                "crossing": 57,
+                "curve": 59,
+                "dribbling": 73,
+                "fk_accuracy": 54,
+                "finishing": 64,
+                "heading_accuracy": 47,
+                "long_pass": 73,
+                "long_shots": 60,
+                "penalties": 59,
+                "short_pass": 79,
+                "shot_power": 61,
+                "slide_tackle": 46,
+                "stand_tackle": 39,
+                "volleys": 47
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:50:39",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 16500,
                 "market_value": 5000000,
                 "contract_length": 2,
@@ -2433,13 +3513,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 39,
         "name": "dominic mercer",
         "nationality": "Gibraltar",
-        "age": 21,
+        "age": 22,
         "height": "5'5\"",
         "weight": 134,
         "positions": [
@@ -2448,7 +3529,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:41:46",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RW",
                 "position_type": "Outfield",
                 "acceleration": 88,
@@ -2480,12 +3561,47 @@
                 "slide_tackle": 36,
                 "stand_tackle": 48,
                 "volleys": 70
+            },
+            {
+                "datetime": "2026-03-12T02:19:27.543093",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "RW",
+                "position_type": "Outfield",
+                "acceleration": 88,
+                "sprint_speed": 88,
+                "agility": 88,
+                "balance": 75,
+                "jumping": 69,
+                "stamina": 86,
+                "strength": 65,
+                "aggression": 55,
+                "att_position": 81,
+                "composure": 49,
+                "interceptions": 42,
+                "reactions": 71,
+                "vision": 59,
+                "defensive_awareness": 50,
+                "ball_control": 86,
+                "crossing": 65,
+                "curve": 59,
+                "dribbling": 90,
+                "fk_accuracy": 52,
+                "finishing": 88,
+                "heading_accuracy": 61,
+                "long_pass": 73,
+                "long_shots": 66,
+                "penalties": 55,
+                "short_pass": 74,
+                "shot_power": 66,
+                "slide_tackle": 36,
+                "stand_tackle": 49,
+                "volleys": 70
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:51:12",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 22000,
                 "market_value": 35500000,
                 "contract_length": 3,
@@ -2494,7 +3610,7 @@
             },
             {
                 "datetime": "2026-02-02T06:12:55",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 30000,
                 "market_value": 35500000,
                 "contract_length": 4,
@@ -2504,13 +3620,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 40,
         "name": "alex baena",
         "nationality": "Spain",
-        "age": 27,
+        "age": 28,
         "height": "5'9\"",
         "weight": 154,
         "positions": [
@@ -2519,7 +3636,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:42:29",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 85,
@@ -2551,12 +3668,47 @@
                 "slide_tackle": 67,
                 "stand_tackle": 72,
                 "volleys": 74
+            },
+            {
+                "datetime": "2026-03-12T02:14:17.047643",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 85,
+                "sprint_speed": 86,
+                "agility": 85,
+                "balance": 73,
+                "jumping": 77,
+                "stamina": 78,
+                "strength": 63,
+                "aggression": 80,
+                "att_position": 85,
+                "composure": 85,
+                "interceptions": 70,
+                "reactions": 84,
+                "vision": 94,
+                "defensive_awareness": 75,
+                "ball_control": 93,
+                "crossing": 87,
+                "curve": 78,
+                "dribbling": 90,
+                "fk_accuracy": 80,
+                "finishing": 81,
+                "heading_accuracy": 61,
+                "long_pass": 91,
+                "long_shots": 82,
+                "penalties": 73,
+                "short_pass": 94,
+                "shot_power": 82,
+                "slide_tackle": 67,
+                "stand_tackle": 72,
+                "volleys": 74
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:51:40",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 110000,
                 "market_value": 105500000,
                 "contract_length": 4,
@@ -2566,13 +3718,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 41,
         "name": "williot swedburg",
         "nationality": "Sweden",
-        "age": 25,
+        "age": 26,
         "height": "6'2\"",
         "weight": 165,
         "positions": [
@@ -2581,7 +3734,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:43:31",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 85,
@@ -2613,12 +3766,47 @@
                 "slide_tackle": 50,
                 "stand_tackle": 74,
                 "volleys": 68
+            },
+            {
+                "datetime": "2026-03-12T02:14:38.601404",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 85,
+                "sprint_speed": 81,
+                "agility": 92,
+                "balance": 69,
+                "jumping": 71,
+                "stamina": 81,
+                "strength": 58,
+                "aggression": 58,
+                "att_position": 87,
+                "composure": 80,
+                "interceptions": 67,
+                "reactions": 78,
+                "vision": 86,
+                "defensive_awareness": 59,
+                "ball_control": 84,
+                "crossing": 75,
+                "curve": 66,
+                "dribbling": 82,
+                "fk_accuracy": 52,
+                "finishing": 88,
+                "heading_accuracy": 62,
+                "long_pass": 80,
+                "long_shots": 86,
+                "penalties": 61,
+                "short_pass": 83,
+                "shot_power": 74,
+                "slide_tackle": 49,
+                "stand_tackle": 74,
+                "volleys": 67
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:52:04",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 55000,
                 "market_value": 43500000,
                 "contract_length": 2,
@@ -2627,7 +3815,7 @@
             },
             {
                 "datetime": "2026-02-04T02:33:28",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 60000,
                 "market_value": 47000000,
                 "contract_length": 4,
@@ -2638,7 +3826,6 @@
         "injury_history": [
             {
                 "datetime": "2026-02-26T18:23:32.864689",
-                "season": "29/30",
                 "in_game_date": "2029-11-24T00:00:00",
                 "injury_detail": "Broken Toe",
                 "time_out": 3,
@@ -2646,6 +3833,7 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -2661,7 +3849,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:44:13",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 84,
@@ -2693,12 +3881,47 @@
                 "slide_tackle": 29,
                 "stand_tackle": 39,
                 "volleys": 61
+            },
+            {
+                "datetime": "2026-03-12T02:15:35.249178",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 84,
+                "sprint_speed": 81,
+                "agility": 85,
+                "balance": 72,
+                "jumping": 59,
+                "stamina": 68,
+                "strength": 59,
+                "aggression": 52,
+                "att_position": 68,
+                "composure": 59,
+                "interceptions": 39,
+                "reactions": 67,
+                "vision": 62,
+                "defensive_awareness": 34,
+                "ball_control": 77,
+                "crossing": 67,
+                "curve": 51,
+                "dribbling": 75,
+                "fk_accuracy": 53,
+                "finishing": 64,
+                "heading_accuracy": 42,
+                "long_pass": 59,
+                "long_shots": 68,
+                "penalties": 56,
+                "short_pass": 74,
+                "shot_power": 64,
+                "slide_tackle": 30,
+                "stand_tackle": 40,
+                "volleys": 63
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:52:42",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 4600000,
                 "contract_length": 2,
@@ -2708,13 +3931,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 43,
         "name": "dominic walsh",
         "nationality": "Gibraltar",
-        "age": 20,
+        "age": 21,
         "height": "5'9\"",
         "weight": 154,
         "positions": [
@@ -2723,7 +3947,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:44:57",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 88,
@@ -2755,12 +3979,47 @@
                 "slide_tackle": 40,
                 "stand_tackle": 39,
                 "volleys": 64
+            },
+            {
+                "datetime": "2026-03-12T02:16:31.999504",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 88,
+                "sprint_speed": 84,
+                "agility": 85,
+                "balance": 71,
+                "jumping": 65,
+                "stamina": 72,
+                "strength": 64,
+                "aggression": 47,
+                "att_position": 73,
+                "composure": 51,
+                "interceptions": 40,
+                "reactions": 70,
+                "vision": 66,
+                "defensive_awareness": 32,
+                "ball_control": 77,
+                "crossing": 72,
+                "curve": 55,
+                "dribbling": 71,
+                "fk_accuracy": 47,
+                "finishing": 83,
+                "heading_accuracy": 54,
+                "long_pass": 68,
+                "long_shots": 78,
+                "penalties": 54,
+                "short_pass": 64,
+                "shot_power": 62,
+                "slide_tackle": 40,
+                "stand_tackle": 40,
+                "volleys": 67
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:55:19",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 17000,
                 "market_value": 7000000,
                 "contract_length": 1,
@@ -2769,7 +4028,7 @@
             },
             {
                 "datetime": "2026-02-11T02:18:47",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 20000,
                 "market_value": 9500000,
                 "contract_length": 3,
@@ -2779,6 +4038,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -2794,7 +4054,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:46:06",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RW",
                 "position_type": "Outfield",
                 "acceleration": 89,
@@ -2826,12 +4086,47 @@
                 "slide_tackle": 21,
                 "stand_tackle": 21,
                 "volleys": 83
+            },
+            {
+                "datetime": "2026-03-12T02:18:03.991587",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "RW",
+                "position_type": "Outfield",
+                "acceleration": 89,
+                "sprint_speed": 90,
+                "agility": 98,
+                "balance": 73,
+                "jumping": 63,
+                "stamina": 70,
+                "strength": 48,
+                "aggression": 27,
+                "att_position": 94,
+                "composure": 75,
+                "interceptions": 16,
+                "reactions": 78,
+                "vision": 89,
+                "defensive_awareness": 17,
+                "ball_control": 89,
+                "crossing": 72,
+                "curve": 70,
+                "dribbling": 92,
+                "fk_accuracy": 43,
+                "finishing": 93,
+                "heading_accuracy": 59,
+                "long_pass": 68,
+                "long_shots": 89,
+                "penalties": 47,
+                "short_pass": 71,
+                "shot_power": 83,
+                "slide_tackle": 21,
+                "stand_tackle": 20,
+                "volleys": 83
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:55:38",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 28000,
                 "market_value": 93000000,
                 "contract_length": 2,
@@ -2840,7 +4135,7 @@
             },
             {
                 "datetime": "2026-02-02T06:16:13",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 60000,
                 "market_value": 93000000,
                 "contract_length": 5,
@@ -2850,6 +4145,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -2865,7 +4161,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:48:07",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RW",
                 "position_type": "Outfield",
                 "acceleration": 99,
@@ -2897,12 +4193,47 @@
                 "slide_tackle": 43,
                 "stand_tackle": 49,
                 "volleys": 79
+            },
+            {
+                "datetime": "2026-03-12T02:18:28.612180",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "RW",
+                "position_type": "Outfield",
+                "acceleration": 99,
+                "sprint_speed": 96,
+                "agility": 93,
+                "balance": 79,
+                "jumping": 58,
+                "stamina": 81,
+                "strength": 53,
+                "aggression": 46,
+                "att_position": 95,
+                "composure": 56,
+                "interceptions": 39,
+                "reactions": 82,
+                "vision": 74,
+                "defensive_awareness": 45,
+                "ball_control": 92,
+                "crossing": 78,
+                "curve": 66,
+                "dribbling": 94,
+                "fk_accuracy": 48,
+                "finishing": 96,
+                "heading_accuracy": 74,
+                "long_pass": 78,
+                "long_shots": 92,
+                "penalties": 59,
+                "short_pass": 75,
+                "shot_power": 73,
+                "slide_tackle": 43,
+                "stand_tackle": 49,
+                "volleys": 79
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:55:56",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 15500,
                 "market_value": 124000000,
                 "contract_length": 1,
@@ -2911,7 +4242,7 @@
             },
             {
                 "datetime": "2026-02-02T06:08:09",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 75000,
                 "market_value": 124000000,
                 "contract_length": 6,
@@ -2922,7 +4253,6 @@
         "injury_history": [
             {
                 "datetime": "2026-03-02T10:06:53.057015",
-                "season": "29/30",
                 "in_game_date": "2029-12-16T00:00:00",
                 "injury_detail": "Bruised Shoulder",
                 "time_out": 5,
@@ -2930,6 +4260,7 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -2945,7 +4276,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:48:42",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RW",
                 "position_type": "Outfield",
                 "acceleration": 84,
@@ -2982,7 +4313,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:56:39",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 16000,
                 "market_value": 16000000,
                 "contract_length": 1,
@@ -2991,7 +4322,7 @@
             },
             {
                 "datetime": "2026-02-02T06:11:16",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 25000,
                 "market_value": 16000000,
                 "contract_length": 4,
@@ -3001,13 +4332,14 @@
         ],
         "injury_history": [],
         "sold": true,
+        "date_sold": "2029-07-01T00:00:00",
         "loaned": false
     },
     {
         "id": 47,
         "name": "larson flores",
         "nationality": "Malta",
-        "age": 18,
+        "age": 19,
         "height": "5'9\"",
         "weight": 145,
         "positions": [
@@ -3016,7 +4348,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:49:23",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RW",
                 "position_type": "Outfield",
                 "acceleration": 79,
@@ -3048,12 +4380,47 @@
                 "slide_tackle": 35,
                 "stand_tackle": 38,
                 "volleys": 59
+            },
+            {
+                "datetime": "2026-03-12T02:19:54.297039",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "RW",
+                "position_type": "Outfield",
+                "acceleration": 80,
+                "sprint_speed": 86,
+                "agility": 88,
+                "balance": 72,
+                "jumping": 53,
+                "stamina": 64,
+                "strength": 58,
+                "aggression": 50,
+                "att_position": 69,
+                "composure": 53,
+                "interceptions": 43,
+                "reactions": 62,
+                "vision": 69,
+                "defensive_awareness": 42,
+                "ball_control": 72,
+                "crossing": 60,
+                "curve": 56,
+                "dribbling": 77,
+                "fk_accuracy": 51,
+                "finishing": 74,
+                "heading_accuracy": 42,
+                "long_pass": 57,
+                "long_shots": 71,
+                "penalties": 57,
+                "short_pass": 66,
+                "shot_power": 64,
+                "slide_tackle": 38,
+                "stand_tackle": 40,
+                "volleys": 67
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:57:00",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 18500,
                 "market_value": 2800000,
                 "contract_length": 3,
@@ -3063,6 +4430,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -3078,7 +4446,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:50:05",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "ST",
                 "position_type": "Outfield",
                 "acceleration": 90,
@@ -3110,12 +4478,47 @@
                 "slide_tackle": 20,
                 "stand_tackle": 19,
                 "volleys": 79
+            },
+            {
+                "datetime": "2026-03-12T02:20:20.880214",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 90,
+                "sprint_speed": 90,
+                "agility": 78,
+                "balance": 90,
+                "jumping": 88,
+                "stamina": 73,
+                "strength": 89,
+                "aggression": 77,
+                "att_position": 99,
+                "composure": 78,
+                "interceptions": 32,
+                "reactions": 76,
+                "vision": 78,
+                "defensive_awareness": 28,
+                "ball_control": 94,
+                "crossing": 46,
+                "curve": 45,
+                "dribbling": 83,
+                "fk_accuracy": 51,
+                "finishing": 91,
+                "heading_accuracy": 79,
+                "long_pass": 58,
+                "long_shots": 87,
+                "penalties": 61,
+                "short_pass": 92,
+                "shot_power": 96,
+                "slide_tackle": 19,
+                "stand_tackle": 18,
+                "volleys": 78
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:57:24",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 50000,
                 "market_value": 185000000,
                 "contract_length": 3,
@@ -3124,7 +4527,7 @@
             },
             {
                 "datetime": "2026-02-02T06:19:01",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 80000,
                 "market_value": 185000000,
                 "contract_length": 6,
@@ -3134,13 +4537,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
         "id": 49,
         "name": "jasper hicks",
         "nationality": "Gibraltar",
-        "age": 20,
+        "age": 21,
         "height": "5'9\"",
         "weight": 149,
         "positions": [
@@ -3149,7 +4553,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T01:50:50",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "ST",
                 "position_type": "Outfield",
                 "acceleration": 94,
@@ -3181,12 +4585,47 @@
                 "slide_tackle": 47,
                 "stand_tackle": 33,
                 "volleys": 89
+            },
+            {
+                "datetime": "2026-03-12T02:20:48.356303",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 95,
+                "sprint_speed": 88,
+                "agility": 94,
+                "balance": 72,
+                "jumping": 57,
+                "stamina": 63,
+                "strength": 64,
+                "aggression": 66,
+                "att_position": 84,
+                "composure": 52,
+                "interceptions": 58,
+                "reactions": 85,
+                "vision": 57,
+                "defensive_awareness": 41,
+                "ball_control": 74,
+                "crossing": 62,
+                "curve": 57,
+                "dribbling": 74,
+                "fk_accuracy": 49,
+                "finishing": 88,
+                "heading_accuracy": 54,
+                "long_pass": 56,
+                "long_shots": 70,
+                "penalties": 57,
+                "short_pass": 66,
+                "shot_power": 92,
+                "slide_tackle": 48,
+                "stand_tackle": 36,
+                "volleys": 89
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T05:57:44",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 18000,
                 "market_value": 25500000,
                 "contract_length": 1,
@@ -3195,7 +4634,7 @@
             },
             {
                 "datetime": "2026-02-02T06:09:48",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 30000,
                 "market_value": 25500000,
                 "contract_length": 4,
@@ -3205,13 +4644,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 50,
         "name": "marcos barbosa",
         "nationality": "Portugal",
-        "age": 16,
+        "age": 17,
         "height": "5'7\"",
         "weight": 149,
         "positions": [
@@ -3220,7 +4660,42 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T06:26:58",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 87,
+                "sprint_speed": 80,
+                "agility": 79,
+                "balance": 81,
+                "jumping": 74,
+                "stamina": 80,
+                "strength": 73,
+                "aggression": 72,
+                "att_position": 55,
+                "composure": 60,
+                "interceptions": 70,
+                "reactions": 65,
+                "vision": 50,
+                "defensive_awareness": 75,
+                "ball_control": 64,
+                "crossing": 67,
+                "curve": 52,
+                "dribbling": 75,
+                "fk_accuracy": 44,
+                "finishing": 44,
+                "heading_accuracy": 56,
+                "long_pass": 57,
+                "long_shots": 46,
+                "penalties": 53,
+                "short_pass": 63,
+                "shot_power": 55,
+                "slide_tackle": 73,
+                "stand_tackle": 73,
+                "volleys": 35
+            },
+            {
+                "datetime": "2026-03-12T01:58:00.322712",
+                "in_game_date": "2030-02-23T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 87,
@@ -3257,7 +4732,7 @@
         "financial_history": [
             {
                 "datetime": "2026-02-02T06:27:25",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 5500000,
                 "contract_length": 4,
@@ -3267,13 +4742,14 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
         "id": 51,
         "name": "joachim lehmann",
         "nationality": "Switzerland",
-        "age": 19,
+        "age": 20,
         "height": "6'1\"",
         "weight": 169,
         "positions": [
@@ -3282,7 +4758,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T06:30:19",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CDM",
                 "position_type": "Outfield",
                 "acceleration": 77,
@@ -3314,12 +4790,47 @@
                 "slide_tackle": 72,
                 "stand_tackle": 73,
                 "volleys": 56
+            },
+            {
+                "datetime": "2026-03-12T02:09:27.489698",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 77,
+                "sprint_speed": 78,
+                "agility": 83,
+                "balance": 87,
+                "jumping": 79,
+                "stamina": 84,
+                "strength": 83,
+                "aggression": 80,
+                "att_position": 63,
+                "composure": 71,
+                "interceptions": 75,
+                "reactions": 80,
+                "vision": 74,
+                "defensive_awareness": 76,
+                "ball_control": 78,
+                "crossing": 72,
+                "curve": 56,
+                "dribbling": 75,
+                "fk_accuracy": 60,
+                "finishing": 52,
+                "heading_accuracy": 72,
+                "long_pass": 74,
+                "long_shots": 66,
+                "penalties": 56,
+                "short_pass": 83,
+                "shot_power": 73,
+                "slide_tackle": 73,
+                "stand_tackle": 74,
+                "volleys": 56
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T06:30:47",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 29000,
                 "market_value": 24500000,
                 "contract_length": 4,
@@ -3329,6 +4840,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -3344,7 +4856,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T07:58:33",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "RB",
                 "position_type": "Outfield",
                 "acceleration": 98,
@@ -3376,12 +4888,47 @@
                 "slide_tackle": 79,
                 "stand_tackle": 80,
                 "volleys": 41
+            },
+            {
+                "datetime": "2026-03-12T02:05:11.930540",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "RB",
+                "position_type": "Outfield",
+                "acceleration": 99,
+                "sprint_speed": 95,
+                "agility": 82,
+                "balance": 87,
+                "jumping": 79,
+                "stamina": 90,
+                "strength": 75,
+                "aggression": 73,
+                "att_position": 63,
+                "composure": 70,
+                "interceptions": 80,
+                "reactions": 78,
+                "vision": 62,
+                "defensive_awareness": 80,
+                "ball_control": 82,
+                "crossing": 82,
+                "curve": 56,
+                "dribbling": 85,
+                "fk_accuracy": 48,
+                "finishing": 40,
+                "heading_accuracy": 64,
+                "long_pass": 66,
+                "long_shots": 50,
+                "penalties": 58,
+                "short_pass": 71,
+                "shot_power": 61,
+                "slide_tackle": 79,
+                "stand_tackle": 80,
+                "volleys": 41
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T07:58:56",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 40000,
                 "market_value": 50500000,
                 "contract_length": 4,
@@ -3392,7 +4939,6 @@
         "injury_history": [
             {
                 "datetime": "2026-03-02T00:21:27.498502",
-                "season": "29/30",
                 "in_game_date": "2029-12-11T00:00:00",
                 "injury_detail": "Bruised Elbow",
                 "time_out": 5,
@@ -3400,6 +4946,7 @@
             }
         ],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -3415,7 +4962,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-02T08:04:12",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "CB",
                 "position_type": "Outfield",
                 "acceleration": 75,
@@ -3447,12 +4994,47 @@
                 "slide_tackle": 78,
                 "stand_tackle": 81,
                 "volleys": 36
+            },
+            {
+                "datetime": "2026-03-12T02:02:44.329843",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 79,
+                "sprint_speed": 90,
+                "agility": 71,
+                "balance": 79,
+                "jumping": 89,
+                "stamina": 82,
+                "strength": 90,
+                "aggression": 82,
+                "att_position": 43,
+                "composure": 76,
+                "interceptions": 85,
+                "reactions": 85,
+                "vision": 50,
+                "defensive_awareness": 79,
+                "ball_control": 73,
+                "crossing": 54,
+                "curve": 50,
+                "dribbling": 58,
+                "fk_accuracy": 37,
+                "finishing": 33,
+                "heading_accuracy": 81,
+                "long_pass": 56,
+                "long_shots": 48,
+                "penalties": 46,
+                "short_pass": 74,
+                "shot_power": 65,
+                "slide_tackle": 78,
+                "stand_tackle": 84,
+                "volleys": 36
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-02T08:04:49",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 38000,
                 "market_value": 37500000,
                 "contract_length": 4,
@@ -3462,6 +5044,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": false
     },
     {
@@ -3477,7 +5060,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-04T01:52:08",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LB",
                 "position_type": "Outfield",
                 "acceleration": 83,
@@ -3509,12 +5092,47 @@
                 "slide_tackle": 69,
                 "stand_tackle": 72,
                 "volleys": 31
+            },
+            {
+                "datetime": "2026-03-12T01:55:50.161684",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 83,
+                "sprint_speed": 80,
+                "agility": 76,
+                "balance": 73,
+                "jumping": 63,
+                "stamina": 74,
+                "strength": 67,
+                "aggression": 74,
+                "att_position": 47,
+                "composure": 48,
+                "interceptions": 78,
+                "reactions": 63,
+                "vision": 40,
+                "defensive_awareness": 75,
+                "ball_control": 58,
+                "crossing": 60,
+                "curve": 51,
+                "dribbling": 60,
+                "fk_accuracy": 41,
+                "finishing": 42,
+                "heading_accuracy": 67,
+                "long_pass": 45,
+                "long_shots": 41,
+                "penalties": 42,
+                "short_pass": 58,
+                "shot_power": 44,
+                "slide_tackle": 72,
+                "stand_tackle": 78,
+                "volleys": 34
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-04T01:52:36",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 14500,
                 "market_value": 2700000,
                 "contract_length": 3,
@@ -3524,6 +5142,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -3539,7 +5158,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-02-24T01:29:48.207936",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 80,
@@ -3574,7 +5193,7 @@
             },
             {
                 "datetime": "2026-02-24T01:40:25.998082",
-                "season": "29/30",
+                "in_game_date": "2030-01-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 80,
@@ -3606,12 +5225,47 @@
                 "slide_tackle": 26,
                 "stand_tackle": 26,
                 "volleys": 50
+            },
+            {
+                "datetime": "2026-03-12T02:17:17.264270",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 80,
+                "sprint_speed": 74,
+                "agility": 77,
+                "balance": 70,
+                "jumping": 55,
+                "stamina": 58,
+                "strength": 53,
+                "aggression": 40,
+                "att_position": 71,
+                "composure": 69,
+                "interceptions": 30,
+                "reactions": 59,
+                "vision": 74,
+                "defensive_awareness": 27,
+                "ball_control": 75,
+                "crossing": 71,
+                "curve": 44,
+                "dribbling": 65,
+                "fk_accuracy": 45,
+                "finishing": 54,
+                "heading_accuracy": 43,
+                "long_pass": 66,
+                "long_shots": 62,
+                "penalties": 51,
+                "short_pass": 77,
+                "shot_power": 50,
+                "slide_tackle": 26,
+                "stand_tackle": 26,
+                "volleys": 50
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-02-24T01:41:20.536965",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 15500,
                 "market_value": 1800000,
                 "contract_length": 3,
@@ -3621,6 +5275,7 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
         "loaned": true
     },
     {
@@ -3636,7 +5291,7 @@
         "attribute_history": [
             {
                 "datetime": "2026-03-04T00:46:30.574788",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "position": "LW",
                 "position_type": "Outfield",
                 "acceleration": 87,
@@ -3668,12 +5323,47 @@
                 "slide_tackle": 71,
                 "stand_tackle": 80,
                 "volleys": 76
+            },
+            {
+                "datetime": "2026-03-12T02:15:02.934715",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 90,
+                "sprint_speed": 75,
+                "agility": 84,
+                "balance": 74,
+                "jumping": 80,
+                "stamina": 63,
+                "strength": 77,
+                "aggression": 82,
+                "att_position": 77,
+                "composure": 78,
+                "interceptions": 74,
+                "reactions": 88,
+                "vision": 81,
+                "defensive_awareness": 76,
+                "ball_control": 87,
+                "crossing": 88,
+                "curve": 74,
+                "dribbling": 85,
+                "fk_accuracy": 76,
+                "finishing": 82,
+                "heading_accuracy": 73,
+                "long_pass": 82,
+                "long_shots": 79,
+                "penalties": 75,
+                "short_pass": 82,
+                "shot_power": 80,
+                "slide_tackle": 71,
+                "stand_tackle": 80,
+                "volleys": 76
             }
         ],
         "financial_history": [
             {
                 "datetime": "2026-03-04T00:47:15.435110",
-                "season": "29/30",
+                "in_game_date": "2029-07-01T00:00:00",
                 "wage": 65000,
                 "market_value": 40500000,
                 "contract_length": 4,
@@ -3683,6 +5373,256 @@
         ],
         "injury_history": [],
         "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 57,
+        "name": "Miguel Garcia",
+        "nationality": "Andorra",
+        "age": 18,
+        "height": "5'10\"",
+        "weight": 163,
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-03-09T19:25:15.728369",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 83,
+                "sprint_speed": 82,
+                "agility": 84,
+                "balance": 77,
+                "jumping": 53,
+                "stamina": 64,
+                "strength": 57,
+                "aggression": 46,
+                "att_position": 66,
+                "composure": 65,
+                "interceptions": 35,
+                "reactions": 58,
+                "vision": 62,
+                "defensive_awareness": 30,
+                "ball_control": 76,
+                "crossing": 59,
+                "curve": 50,
+                "dribbling": 67,
+                "fk_accuracy": 46,
+                "finishing": 59,
+                "heading_accuracy": 45,
+                "long_pass": 63,
+                "long_shots": 58,
+                "penalties": 57,
+                "short_pass": 66,
+                "shot_power": 55,
+                "slide_tackle": 35,
+                "stand_tackle": 37,
+                "volleys": 51
+            },
+            {
+                "datetime": "2026-03-12T02:17:39.946125",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 83,
+                "sprint_speed": 82,
+                "agility": 84,
+                "balance": 77,
+                "jumping": 53,
+                "stamina": 64,
+                "strength": 57,
+                "aggression": 46,
+                "att_position": 66,
+                "composure": 65,
+                "interceptions": 35,
+                "reactions": 58,
+                "vision": 62,
+                "defensive_awareness": 30,
+                "ball_control": 76,
+                "crossing": 59,
+                "curve": 50,
+                "dribbling": 67,
+                "fk_accuracy": 46,
+                "finishing": 59,
+                "heading_accuracy": 45,
+                "long_pass": 63,
+                "long_shots": 58,
+                "penalties": 57,
+                "short_pass": 66,
+                "shot_power": 55,
+                "slide_tackle": 35,
+                "stand_tackle": 37,
+                "volleys": 51
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-03-09T19:27:59.192628",
+                "in_game_date": "2030-02-23T00:00:00",
+                "wage": 17500,
+                "market_value": 1800000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 58,
+        "name": "Ricardo Mosquera",
+        "nationality": "Spain",
+        "age": 18,
+        "height": "5'9\"",
+        "weight": 156,
+        "positions": [
+            "CM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-03-09T19:26:28.065361",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CM",
+                "position_type": "Outfield",
+                "acceleration": 70,
+                "sprint_speed": 67,
+                "agility": 69,
+                "balance": 70,
+                "jumping": 54,
+                "stamina": 78,
+                "strength": 47,
+                "aggression": 60,
+                "att_position": 60,
+                "composure": 59,
+                "interceptions": 68,
+                "reactions": 62,
+                "vision": 66,
+                "defensive_awareness": 48,
+                "ball_control": 71,
+                "crossing": 52,
+                "curve": 54,
+                "dribbling": 69,
+                "fk_accuracy": 42,
+                "finishing": 59,
+                "heading_accuracy": 45,
+                "long_pass": 74,
+                "long_shots": 58,
+                "penalties": 52,
+                "short_pass": 66,
+                "shot_power": 62,
+                "slide_tackle": 50,
+                "stand_tackle": 62,
+                "volleys": 45
+            },
+            {
+                "datetime": "2026-03-12T02:10:49.907245",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "CM",
+                "position_type": "Outfield",
+                "acceleration": 70,
+                "sprint_speed": 67,
+                "agility": 69,
+                "balance": 70,
+                "jumping": 54,
+                "stamina": 78,
+                "strength": 47,
+                "aggression": 60,
+                "att_position": 60,
+                "composure": 59,
+                "interceptions": 68,
+                "reactions": 62,
+                "vision": 66,
+                "defensive_awareness": 48,
+                "ball_control": 71,
+                "crossing": 52,
+                "curve": 54,
+                "dribbling": 69,
+                "fk_accuracy": 42,
+                "finishing": 59,
+                "heading_accuracy": 45,
+                "long_pass": 74,
+                "long_shots": 58,
+                "penalties": 52,
+                "short_pass": 66,
+                "shot_power": 62,
+                "slide_tackle": 50,
+                "stand_tackle": 62,
+                "volleys": 45
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-03-09T19:27:24.604838",
+                "in_game_date": "2030-02-23T00:00:00",
+                "wage": 16000,
+                "market_value": 2900000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 59,
+        "name": "Lucas Barrat",
+        "nationality": "Andorra",
+        "age": 18,
+        "height": "5'8\"",
+        "weight": 152,
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-03-12T11:05:38.125904",
+                "in_game_date": "2030-02-23T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 81,
+                "sprint_speed": 83,
+                "agility": 68,
+                "balance": 69,
+                "jumping": 62,
+                "stamina": 78,
+                "strength": 65,
+                "aggression": 67,
+                "att_position": 44,
+                "composure": 51,
+                "interceptions": 72,
+                "reactions": 64,
+                "vision": 39,
+                "defensive_awareness": 66,
+                "ball_control": 53,
+                "crossing": 58,
+                "curve": 46,
+                "dribbling": 55,
+                "fk_accuracy": 35,
+                "finishing": 38,
+                "heading_accuracy": 56,
+                "long_pass": 48,
+                "long_shots": 34,
+                "penalties": 37,
+                "short_pass": 59,
+                "shot_power": 46,
+                "slide_tackle": 64,
+                "stand_tackle": 65,
+                "volleys": 36
+            }
+        ],
+        "financial_history": [],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
         "loaned": false
     }
 ]
