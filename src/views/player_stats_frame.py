@@ -4,6 +4,7 @@ from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion, safe_float_conversion
 from src.exceptions import DuplicateRecordError
+from custom_types import PositionType
 
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import PlayerDropdownMixin, OCRDataMixin
@@ -52,8 +53,8 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
-        for i in range(6):
-            self.grid_rowconfigure(i, weight=1 if i in [0, 5] else 0)
+        for i in range(7):
+            self.grid_rowconfigure(i, weight=1 if i in [0, 6] else 0)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -72,9 +73,34 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
             variable=self.player_list_var,
             width=350,
             dropdown_height=200,
-            placeholder="Click here to select player"
+            placeholder="Click here to select player",
+            command=self._on_player_selected
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
+        
+        # Position select
+        self.position_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.position_frame.grid(row=3, column=0, padx=20, pady=(0, 20), sticky="nsew")
+        self.position_frame.grid_columnconfigure(0, weight=1)
+        self.position_frame.grid_columnconfigure(1, weight=0)
+        self.position_frame.grid_columnconfigure(2, weight=0)
+        self.position_frame.grid_columnconfigure(3, weight=1)
+        self.position_frame.grid_rowconfigure(0, weight=1)
+        self.position_label = ctk.CTkLabel(
+            self.position_frame,
+            text="Position(s) played:",
+            text_color=self.theme["colors"]["primary_text"],
+            font=self.theme["fonts"]["body"],
+        )
+        self.position_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+        self.position_entry = ctk.CTkEntry(
+            self.position_frame,
+            placeholder_text="e.g. RW, LW",
+            font=self.theme["fonts"]["body"],
+            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme["colors"]["entry_fg"]
+        )
+        self.position_entry.grid(row=0, column=2, padx=5, pady=5, sticky="e")
         
         # Info Label
         self.info_label = ctk.CTkLabel(
@@ -82,11 +108,11 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
             font=self.theme["fonts"]["body"],
             text_color=self.theme["colors"]["secondary_text"]
         )
-        self.info_label.grid(row=3, column=1, pady=(0, 20))
+        self.info_label.grid(row=4, column=1, pady=(0, 20))
         
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
-        self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
+        self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
         self.stats_grid.grid_columnconfigure(1, weight=1)
@@ -107,7 +133,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
-        self.direction_frame.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
+        self.direction_frame.grid(row=6, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
         self.direction_frame.grid_columnconfigure(2, weight=1)
@@ -150,6 +176,14 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+    
+    def _on_player_selected(self, name: str) -> None:
+        bio = self.controller.get_player_bio(name)
+        if bio is None:
+            return
+        if positions := bio.get("positions", []):
+            self.position_entry.delete(0, "end")
+            self.position_entry.insert(0, positions[-1])
     
     def collect_data(self) -> bool:
         """Extract inputs, validate them, and buffer the player performance data."""
@@ -211,6 +245,21 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         
         ui_data["player_name"] = player_name
         ui_data["performance_type"] = "Outfield"
+        
+        positions_played = self.position_entry.get().strip()
+        if not positions_played:
+            self.show_warning("Validation Warning", "No positions entered. Please specify at least one position played (e.g. RW, LW).")
+            return False
+        positions = [pos.strip() for pos in positions_played.split(",") if pos.strip()]
+        if not positions:
+            self.show_warning("Validation Warning", "Invalid positions format. Please enter positions separated by commas (e.g. RW, LW).")
+            return False
+        for pos in positions:
+            if pos not in PositionType:
+                self.show_warning("Validation Warning", f"Invalid position '{pos}'. Please enter valid positions (e.g. RW, LW).")
+                return False
+        ui_data["positions_played"] = positions
+        
 
         logger.info(f"Validation passed for {player_name}. Buffering performance data.")
         try:
@@ -272,3 +321,5 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         self._dismissed_warnings.clear()
         self.refresh_player_dropdown(only_outfield=True, remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
+        self.position_entry.delete(0, "end")
+        self.position_entry.configure(placeholder_text="e.g. RW, LW")

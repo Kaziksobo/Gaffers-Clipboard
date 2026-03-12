@@ -301,6 +301,7 @@ class MatchData(BaseModel):
 class OutfieldPlayerPerformance(BaseModel):
     """Represent the performance of an outfield player in a match."""
     performance_type: Literal["Outfield"] = Field(default="Outfield", description="Discriminator for Outfield performance")
+    positions_played: list[PositionType] = Field(min_length=1)
     goals: int = Field(ge=0)
     assists: int = Field(ge=0)
     shots: int = Field(ge=0)
