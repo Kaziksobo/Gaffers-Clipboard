@@ -153,7 +153,7 @@ The goal of this phase is to "harden" the application—improving stability, cle
 	- [x] **Sales and Loans:** Add functionality to mark players as sold or loaned out
 	- [x] **GK Performance Frame:** Create a dedicated UI for entering/OCR-ing Goalkeeper match performance stats.
 	- [x] **Optional Player Stats:** Add a toggle or logic to allow saving a match result *without* needing to enter individual player performances.
-	- [ ] **Position Select:** Add a position select widget (dropdown with checkboxes) to the player performance frames, allowing the user to specify what position a player played in the match.
+	- [x] **Position Select:** Add a position select widget (dropdown with checkboxes) to the player performance frames, allowing the user to specify what position a player played in the match.
 	- [x] **In-Game date**: Add in-game date fields across the app in all screens that need it.
 	- [x] **Update Player**: On the screens to add or update player attributes, next to the entry box to enter the player name, add a player dropdown to select from already saved players to update them easier.
 - [ ] **User Experience & Documentation**
