@@ -79,7 +79,8 @@
                 "minutes_played": 58,
                 "distance_covered": 8.8,
                 "distance_sprinted": 4.8,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -100,7 +101,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.8,
                 "distance_sprinted": 3.5,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -121,7 +123,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.1,
                 "distance_sprinted": 3.0,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -142,7 +145,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.9,
                 "distance_sprinted": 3.3,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -163,7 +167,8 @@
                 "minutes_played": 10,
                 "distance_covered": 9.0,
                 "distance_sprinted": 2.0,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -184,7 +189,8 @@
                 "minutes_played": 66,
                 "distance_covered": 8.6,
                 "distance_sprinted": 2.9,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -205,7 +211,8 @@
                 "minutes_played": 27,
                 "distance_covered": 3.4,
                 "distance_sprinted": 1.2,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -226,7 +233,8 @@
                 "minutes_played": 93,
                 "distance_covered": 12.6,
                 "distance_sprinted": 5.5,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -247,7 +255,8 @@
                 "minutes_played": 66,
                 "distance_covered": 9.6,
                 "distance_sprinted": 4.4,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -268,7 +277,8 @@
                 "minutes_played": 27,
                 "distance_covered": 3.6,
                 "distance_sprinted": 1.1,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -289,7 +299,8 @@
                 "minutes_played": 58,
                 "distance_covered": 7.4,
                 "distance_sprinted": 2.9,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -310,7 +321,8 @@
                 "minutes_played": 15,
                 "distance_covered": 2.4,
                 "distance_sprinted": 1.5,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -331,7 +343,8 @@
                 "minutes_played": 25,
                 "distance_covered": 2.8,
                 "distance_sprinted": 0.6,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -352,7 +365,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.7,
                 "distance_sprinted": 2.4,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -373,7 +387,8 @@
                 "minutes_played": 93,
                 "distance_covered": 12.9,
                 "distance_sprinted": 5.6,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             }
         ]
     },
@@ -442,7 +457,8 @@
                 "minutes_played": 19,
                 "distance_covered": 2.5,
                 "distance_sprinted": 1.1,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -463,7 +479,8 @@
                 "minutes_played": 73,
                 "distance_covered": 10.5,
                 "distance_sprinted": 4.7,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -484,7 +501,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.9,
                 "distance_sprinted": 2.6,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -505,7 +523,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.8,
                 "distance_sprinted": 4.4,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -526,7 +545,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.2,
                 "distance_sprinted": 3.5,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -547,7 +567,8 @@
                 "minutes_played": 69,
                 "distance_covered": 10.5,
                 "distance_sprinted": 4.9,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -568,7 +589,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.4,
                 "distance_sprinted": 4.0,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM", "CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -589,7 +611,8 @@
                 "minutes_played": 23,
                 "distance_covered": 3.0,
                 "distance_sprinted": 1.3,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -610,7 +633,8 @@
                 "minutes_played": 23,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.6,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -631,7 +655,8 @@
                 "minutes_played": 69,
                 "distance_covered": 7.3,
                 "distance_sprinted": 1.9,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -652,7 +677,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.7,
                 "distance_sprinted": 3.3,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -673,7 +699,8 @@
                 "minutes_played": 19,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.6,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -694,7 +721,8 @@
                 "minutes_played": 73,
                 "distance_covered": 7.7,
                 "distance_sprinted": 2.2,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -715,7 +743,8 @@
                 "minutes_played": 92,
                 "distance_covered": 13.8,
                 "distance_sprinted": 7.5,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -799,7 +828,8 @@
                 "minutes_played": 92,
                 "distance_covered": 13.0,
                 "distance_sprinted": 5.9,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -820,7 +850,8 @@
                 "minutes_played": 37,
                 "distance_covered": 4.6,
                 "distance_sprinted": 1.3,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -841,7 +872,8 @@
                 "minutes_played": 55,
                 "distance_covered": 6.1,
                 "distance_sprinted": 1.4,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -862,7 +894,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.4,
                 "distance_sprinted": 5.0,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -883,7 +916,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.2,
                 "distance_sprinted": 0.9,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -904,7 +938,8 @@
                 "minutes_played": 67,
                 "distance_covered": 8.0,
                 "distance_sprinted": 2.0,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -925,7 +960,8 @@
                 "minutes_played": 92,
                 "distance_covered": 13.3,
                 "distance_sprinted": 6.6,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -946,7 +982,8 @@
                 "minutes_played": 12,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.5,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -967,7 +1004,8 @@
                 "minutes_played": 80,
                 "distance_covered": 9.5,
                 "distance_sprinted": 2.5,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -988,7 +1026,8 @@
                 "minutes_played": 25,
                 "distance_covered": 2.6,
                 "distance_sprinted": 0.6,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1009,7 +1048,8 @@
                 "minutes_played": 67,
                 "distance_covered": 6.9,
                 "distance_sprinted": 1.7,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1030,7 +1070,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.1,
                 "distance_sprinted": 2.8,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1051,7 +1092,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.2,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1072,7 +1114,8 @@
                 "minutes_played": 92,
                 "distance_covered": 13.6,
                 "distance_sprinted": 7.4,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "GK",
@@ -1156,7 +1199,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.6,
                 "distance_sprinted": 5.5,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -1177,7 +1221,8 @@
                 "minutes_played": 14,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.5,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -1198,7 +1243,8 @@
                 "minutes_played": 78,
                 "distance_covered": 9.1,
                 "distance_sprinted": 2.1,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -1219,7 +1265,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.5,
                 "distance_sprinted": 3.3,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -1240,7 +1287,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.4,
                 "distance_sprinted": 3.2,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1261,7 +1309,8 @@
                 "minutes_played": 14,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.7,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1282,7 +1331,8 @@
                 "minutes_played": 78,
                 "distance_covered": 11.2,
                 "distance_sprinted": 5.3,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1303,7 +1353,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.9,
                 "distance_sprinted": 3.3,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1324,7 +1375,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.1,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1345,7 +1397,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.0,
                 "distance_sprinted": 2.4,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1366,7 +1419,8 @@
                 "minutes_played": 14,
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.3,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1387,7 +1441,8 @@
                 "minutes_played": 78,
                 "distance_covered": 7.7,
                 "distance_sprinted": 1.7,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1408,7 +1463,8 @@
                 "minutes_played": 14,
                 "distance_covered": 2.1,
                 "distance_sprinted": 1.1,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1429,7 +1485,8 @@
                 "minutes_played": 78,
                 "distance_covered": 10.7,
                 "distance_sprinted": 5.2,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -1513,7 +1570,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.1,
                 "distance_sprinted": 4.9,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -1534,7 +1592,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.2,
                 "distance_sprinted": 1.9,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -1555,7 +1614,8 @@
                 "minutes_played": 36,
                 "distance_covered": 4.5,
                 "distance_sprinted": 1.7,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -1576,7 +1636,8 @@
                 "minutes_played": 55,
                 "distance_covered": 6.9,
                 "distance_sprinted": 1.3,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -1597,7 +1658,8 @@
                 "minutes_played": 91,
                 "distance_covered": 13.7,
                 "distance_sprinted": 6.2,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1618,7 +1680,8 @@
                 "minutes_played": 36,
                 "distance_covered": 4.5,
                 "distance_sprinted": 1.6,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1639,7 +1702,8 @@
                 "minutes_played": 55,
                 "distance_covered": 6.5,
                 "distance_sprinted": 1.6,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1660,7 +1724,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.8,
                 "distance_sprinted": 2.6,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1681,7 +1746,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.8,
                 "distance_sprinted": 2.6,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1702,7 +1768,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.6,
                 "distance_sprinted": 2.4,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1723,7 +1790,8 @@
                 "minutes_played": 36,
                 "distance_covered": 5.4,
                 "distance_sprinted": 2.9,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -1744,7 +1812,8 @@
                 "minutes_played": 55,
                 "distance_covered": 7.3,
                 "distance_sprinted": 3.2,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -1828,7 +1897,8 @@
                 "minutes_played": 14,
                 "distance_covered": 1.7,
                 "distance_sprinted": 0.5,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -1849,7 +1919,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.8,
                 "distance_sprinted": 2.6,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -1870,7 +1941,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.2,
                 "distance_sprinted": 5.1,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -1891,7 +1963,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.7,
                 "distance_sprinted": 5.5,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1912,7 +1985,8 @@
                 "minutes_played": 58,
                 "distance_covered": 7.4,
                 "distance_sprinted": 1.9,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1933,7 +2007,8 @@
                 "minutes_played": 34,
                 "distance_covered": 4.8,
                 "distance_sprinted": 2.3,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1954,7 +2029,8 @@
                 "minutes_played": 78,
                 "distance_covered": 11.6,
                 "distance_sprinted": 6.1,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1975,7 +2051,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.3,
                 "distance_sprinted": 3.5,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -1996,7 +2073,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.1,
                 "distance_sprinted": 3.0,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2017,7 +2095,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.4,
                 "distance_sprinted": 3.1,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2038,7 +2117,8 @@
                 "minutes_played": 34,
                 "distance_covered": 3.5,
                 "distance_sprinted": 1.0,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2059,7 +2139,8 @@
                 "minutes_played": 58,
                 "distance_covered": 6.2,
                 "distance_sprinted": 1.8,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2080,7 +2161,8 @@
                 "minutes_played": 92,
                 "distance_covered": 13.5,
                 "distance_sprinted": 7.5,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -2164,7 +2246,8 @@
                 "minutes_played": 91,
                 "distance_covered": 13.2,
                 "distance_sprinted": 6.4,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -2185,7 +2268,8 @@
                 "minutes_played": 18,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.5,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -2206,7 +2290,8 @@
                 "minutes_played": 73,
                 "distance_covered": 8.5,
                 "distance_sprinted": 2.0,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -2227,7 +2312,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.0,
                 "distance_sprinted": 5.2,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -2248,7 +2334,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.9,
                 "distance_sprinted": 3.3,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2269,7 +2356,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.7,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2290,7 +2378,8 @@
                 "minutes_played": 81,
                 "distance_covered": 12.2,
                 "distance_sprinted": 6.3,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2311,7 +2400,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.6,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2332,7 +2422,8 @@
                 "minutes_played": 81,
                 "distance_covered": 11.1,
                 "distance_sprinted": 4.9,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2353,7 +2444,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.9,
                 "distance_sprinted": 3.1,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2374,7 +2466,8 @@
                 "minutes_played": 18,
                 "distance_covered": 2.4,
                 "distance_sprinted": 0.9,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2395,7 +2488,8 @@
                 "minutes_played": 73,
                 "distance_covered": 8.6,
                 "distance_sprinted": 2.8,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2416,7 +2510,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.9,
                 "distance_sprinted": 3.0,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2437,7 +2532,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.5,
                 "distance_sprinted": 1.0,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2458,7 +2554,8 @@
                 "minutes_played": 81,
                 "distance_covered": 12.3,
                 "distance_sprinted": 6.7,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -2542,7 +2639,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.3,
                 "distance_sprinted": 4.6,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -2563,7 +2661,8 @@
                 "minutes_played": 47,
                 "distance_covered": 5.3,
                 "distance_sprinted": 1.4,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -2584,7 +2683,8 @@
                 "minutes_played": 45,
                 "distance_covered": 5.2,
                 "distance_sprinted": 1.2,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -2605,7 +2705,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.6,
                 "distance_sprinted": 4.4,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -2626,7 +2727,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.9,
                 "distance_sprinted": 2.5,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2647,7 +2749,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.6,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2668,7 +2771,8 @@
                 "minutes_played": 77,
                 "distance_covered": 11.4,
                 "distance_sprinted": 5.4,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2689,7 +2793,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.4,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2710,7 +2815,8 @@
                 "minutes_played": 77,
                 "distance_covered": 9.4,
                 "distance_sprinted": 2.8,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -2731,7 +2837,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.9,
                 "distance_sprinted": 3.0,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2752,7 +2859,8 @@
                 "minutes_played": 26,
                 "distance_covered": 2.8,
                 "distance_sprinted": 0.8,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2773,7 +2881,8 @@
                 "minutes_played": 66,
                 "distance_covered": 7.7,
                 "distance_sprinted": 2.3,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2794,7 +2903,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.0,
                 "distance_sprinted": 2.8,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2815,7 +2925,8 @@
                 "minutes_played": 26,
                 "distance_covered": 3.6,
                 "distance_sprinted": 1.9,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -2836,7 +2947,8 @@
                 "minutes_played": 66,
                 "distance_covered": 9.6,
                 "distance_sprinted": 5.3,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -2920,7 +3032,8 @@
                 "minutes_played": 11,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.4,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -2941,7 +3054,8 @@
                 "minutes_played": 80,
                 "distance_covered": 11.7,
                 "distance_sprinted": 5.8,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -2962,7 +3076,8 @@
                 "minutes_played": 25,
                 "distance_covered": 2.8,
                 "distance_sprinted": 0.5,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -2983,7 +3098,8 @@
                 "minutes_played": 66,
                 "distance_covered": 7.9,
                 "distance_sprinted": 1.9,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -3004,7 +3120,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.1,
                 "distance_sprinted": 0.8,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -3025,7 +3142,8 @@
                 "minutes_played": 66,
                 "distance_covered": 8.4,
                 "distance_sprinted": 3.0,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -3046,7 +3164,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.8,
                 "distance_sprinted": 6.0,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3067,7 +3186,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.0,
                 "distance_sprinted": 3.2,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3088,7 +3208,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.6,
                 "distance_sprinted": 2.4,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3109,7 +3230,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.5,
                 "distance_sprinted": 3.1,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3130,7 +3252,8 @@
                 "minutes_played": 11,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.3,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3151,7 +3274,8 @@
                 "minutes_played": 80,
                 "distance_covered": 8.0,
                 "distance_sprinted": 1.8,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3172,7 +3296,8 @@
                 "minutes_played": 91,
                 "distance_covered": 13.6,
                 "distance_sprinted": 7.6,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -3256,7 +3381,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.7,
                 "distance_sprinted": 4.5,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -3277,7 +3403,8 @@
                 "minutes_played": 5,
                 "distance_covered": 0.5,
                 "distance_sprinted": 0.1,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -3298,7 +3425,8 @@
                 "minutes_played": 86,
                 "distance_covered": 9.4,
                 "distance_sprinted": 1.6,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -3319,7 +3447,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.6,
                 "distance_sprinted": 2.2,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -3340,7 +3469,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.2,
                 "distance_sprinted": 2.8,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3361,7 +3491,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.7,
                 "distance_sprinted": 1.2,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3382,7 +3513,8 @@
                 "minutes_played": 71,
                 "distance_covered": 9.7,
                 "distance_sprinted": 3.9,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3403,7 +3535,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.8,
                 "distance_sprinted": 2.5,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3424,7 +3557,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.9,
                 "distance_sprinted": 2.7,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3445,7 +3579,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.4,
                 "distance_sprinted": 1.0,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3466,7 +3601,8 @@
                 "minutes_played": 71,
                 "distance_covered": 7.7,
                 "distance_sprinted": 1.7,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3487,7 +3623,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.5,
                 "distance_sprinted": 2.2,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3508,7 +3645,8 @@
                 "minutes_played": 5,
                 "distance_covered": 0.8,
                 "distance_sprinted": 0.5,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3529,7 +3667,8 @@
                 "minutes_played": 86,
                 "distance_covered": 12.3,
                 "distance_sprinted": 6.3,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -3613,7 +3752,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.2,
                 "distance_sprinted": 3.6,
-                "player_id": 43
+                "player_id": 43,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -3634,7 +3774,8 @@
                 "minutes_played": 46,
                 "distance_covered": 5.2,
                 "distance_sprinted": 1.0,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -3655,7 +3796,8 @@
                 "minutes_played": 45,
                 "distance_covered": 5.0,
                 "distance_sprinted": 1.1,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -3676,7 +3818,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.2,
                 "distance_sprinted": 2.7,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -3697,7 +3840,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.5,
                 "distance_sprinted": 3.1,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3718,7 +3862,8 @@
                 "minutes_played": 32,
                 "distance_covered": 4.8,
                 "distance_sprinted": 2.4,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3739,7 +3884,8 @@
                 "minutes_played": 59,
                 "distance_covered": 8.6,
                 "distance_sprinted": 3.8,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3760,7 +3906,8 @@
                 "minutes_played": 12,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.4,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3781,7 +3928,8 @@
                 "minutes_played": 79,
                 "distance_covered": 9.7,
                 "distance_sprinted": 3.2,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -3802,7 +3950,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.7,
                 "distance_sprinted": 2.8,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3823,7 +3972,8 @@
                 "minutes_played": 32,
                 "distance_covered": 3.4,
                 "distance_sprinted": 0.8,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3844,7 +3994,8 @@
                 "minutes_played": 59,
                 "distance_covered": 7.0,
                 "distance_sprinted": 2.3,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3865,7 +4016,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.9,
                 "distance_sprinted": 2.9,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3886,7 +4038,8 @@
                 "minutes_played": 12,
                 "distance_covered": 1.9,
                 "distance_sprinted": 1.0,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -3907,7 +4060,8 @@
                 "minutes_played": 79,
                 "distance_covered": 11.3,
                 "distance_sprinted": 5.9,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -3991,7 +4145,8 @@
                 "minutes_played": 21,
                 "distance_covered": 3.0,
                 "distance_sprinted": 1.5,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4012,7 +4167,8 @@
                 "minutes_played": 71,
                 "distance_covered": 9.1,
                 "distance_sprinted": 2.5,
-                "player_id": 43
+                "player_id": 43,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4033,7 +4189,8 @@
                 "minutes_played": 71,
                 "distance_covered": 8.0,
                 "distance_sprinted": 1.5,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -4054,7 +4211,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.4,
                 "distance_sprinted": 5.3,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM", "ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -4075,7 +4233,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.5,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4096,7 +4255,8 @@
                 "minutes_played": 82,
                 "distance_covered": 10.1,
                 "distance_sprinted": 2.4,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4117,7 +4277,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.6,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4138,7 +4299,8 @@
                 "minutes_played": 82,
                 "distance_covered": 9.7,
                 "distance_sprinted": 2.3,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4159,7 +4321,8 @@
                 "minutes_played": 21,
                 "distance_covered": 3.0,
                 "distance_sprinted": 1.8,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4180,7 +4343,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.7,
                 "distance_sprinted": 2.9,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4201,7 +4365,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.0,
                 "distance_sprinted": 3.1,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4222,7 +4387,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.3,
                 "distance_sprinted": 3.1,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4243,7 +4409,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.5,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4264,7 +4431,8 @@
                 "minutes_played": 92,
                 "distance_covered": 13.0,
                 "distance_sprinted": 6.6,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -4348,7 +4516,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.2,
                 "distance_sprinted": 2.8,
-                "player_id": 29
+                "player_id": 29,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4369,7 +4538,8 @@
                 "minutes_played": 18,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.4,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -4390,7 +4560,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.5,
                 "distance_sprinted": 2.3,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4411,7 +4582,8 @@
                 "minutes_played": 47,
                 "distance_covered": 6.3,
                 "distance_sprinted": 2.8,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4432,7 +4604,8 @@
                 "minutes_played": 45,
                 "distance_covered": 5.8,
                 "distance_sprinted": 1.6,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4453,7 +4626,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.3,
                 "distance_sprinted": 3.4,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4474,7 +4648,8 @@
                 "minutes_played": 74,
                 "distance_covered": 9.7,
                 "distance_sprinted": 3.3,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4495,7 +4670,8 @@
                 "minutes_played": 18,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.4,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4516,7 +4692,8 @@
                 "minutes_played": 74,
                 "distance_covered": 8.5,
                 "distance_sprinted": 1.9,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4537,7 +4714,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.9,
                 "distance_sprinted": 3.0,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4558,7 +4736,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.0,
                 "distance_sprinted": 2.6,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4579,7 +4758,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.0,
                 "distance_sprinted": 1.8,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4600,7 +4780,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.7,
                 "distance_sprinted": 6.2,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -4684,7 +4865,8 @@
                 "minutes_played": 93,
                 "distance_covered": 12.1,
                 "distance_sprinted": 4.9,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4705,7 +4887,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.2,
                 "distance_sprinted": 1.8,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -4726,7 +4909,8 @@
                 "minutes_played": 56,
                 "distance_covered": 6.9,
                 "distance_sprinted": 1.7,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -4747,7 +4931,8 @@
                 "minutes_played": 56,
                 "distance_covered": 6.5,
                 "distance_sprinted": 2.3,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4768,7 +4953,8 @@
                 "minutes_played": 93,
                 "distance_covered": 11.1,
                 "distance_sprinted": 2.5,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4789,7 +4975,8 @@
                 "minutes_played": 21,
                 "distance_covered": 2.6,
                 "distance_sprinted": 1.3,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4810,7 +4997,8 @@
                 "minutes_played": 2,
                 "distance_covered": 10.2,
                 "distance_sprinted": 4.8,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4831,7 +5019,8 @@
                 "minutes_played": 32,
                 "distance_covered": 3.4,
                 "distance_sprinted": 1.0,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4852,7 +5041,8 @@
                 "minutes_played": 61,
                 "distance_covered": 7.1,
                 "distance_sprinted": 1.9,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -4873,7 +5063,8 @@
                 "minutes_played": 37,
                 "distance_covered": 3.4,
                 "distance_sprinted": 0.7,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4894,7 +5085,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.6,
                 "distance_sprinted": 3.4,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4915,7 +5107,8 @@
                 "minutes_played": 93,
                 "distance_covered": 9.5,
                 "distance_sprinted": 2.7,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4936,7 +5129,8 @@
                 "minutes_played": 21,
                 "distance_covered": 2.6,
                 "distance_sprinted": 1.4,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -4957,7 +5151,8 @@
                 "minutes_played": 72,
                 "distance_covered": 9.8,
                 "distance_sprinted": 4.7,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -5041,7 +5236,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.9,
                 "distance_sprinted": 5.8,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5062,7 +5258,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.9,
                 "distance_sprinted": 1.8,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -5083,7 +5280,8 @@
                 "minutes_played": 36,
                 "distance_covered": 4.4,
                 "distance_sprinted": 1.9,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5104,7 +5302,8 @@
                 "minutes_played": 56,
                 "distance_covered": 7.3,
                 "distance_sprinted": 2.0,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5125,7 +5324,8 @@
                 "minutes_played": 56,
                 "distance_covered": 7.1,
                 "distance_sprinted": 1.5,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5146,7 +5346,8 @@
                 "minutes_played": 92,
                 "distance_covered": 12.9,
                 "distance_sprinted": 5.7,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5167,7 +5368,8 @@
                 "minutes_played": 21,
                 "distance_covered": 3.0,
                 "distance_sprinted": 1.5,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5188,7 +5390,8 @@
                 "minutes_played": 71,
                 "distance_covered": 8.7,
                 "distance_sprinted": 2.5,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5209,7 +5412,8 @@
                 "minutes_played": 36,
                 "distance_covered": 4.2,
                 "distance_sprinted": 1.3,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5230,7 +5434,8 @@
                 "minutes_played": 21,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.6,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5251,7 +5456,8 @@
                 "minutes_played": 71,
                 "distance_covered": 8.2,
                 "distance_sprinted": 2.5,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5272,7 +5478,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.7,
                 "distance_sprinted": 3.3,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5293,7 +5500,8 @@
                 "minutes_played": 92,
                 "distance_covered": 10.1,
                 "distance_sprinted": 3.2,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5314,7 +5522,8 @@
                 "minutes_played": 35,
                 "distance_covered": 5.4,
                 "distance_sprinted": 3.1,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5335,7 +5544,8 @@
                 "minutes_played": 57,
                 "distance_covered": 8.9,
                 "distance_sprinted": 5.1,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -5419,7 +5629,8 @@
                 "minutes_played": 61,
                 "distance_covered": 7.5,
                 "distance_sprinted": 1.7,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5440,7 +5651,8 @@
                 "minutes_played": 93,
                 "distance_covered": 11.4,
                 "distance_sprinted": 3.0,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5461,7 +5673,8 @@
                 "minutes_played": 18,
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.5,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -5482,7 +5695,8 @@
                 "minutes_played": 75,
                 "distance_covered": 7.0,
                 "distance_sprinted": 0.7,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -5503,7 +5717,8 @@
                 "minutes_played": 32,
                 "distance_covered": 3.7,
                 "distance_sprinted": 1.0,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5524,7 +5739,8 @@
                 "minutes_played": 61,
                 "distance_covered": 7.0,
                 "distance_sprinted": 2.4,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5545,7 +5761,8 @@
                 "minutes_played": 32,
                 "distance_covered": 4.1,
                 "distance_sprinted": 1.8,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5566,7 +5783,8 @@
                 "minutes_played": 75,
                 "distance_covered": 10.9,
                 "distance_sprinted": 4.9,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5587,7 +5805,8 @@
                 "minutes_played": 18,
                 "distance_covered": 2.6,
                 "distance_sprinted": 1.4,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5608,7 +5827,8 @@
                 "minutes_played": 93,
                 "distance_covered": 12.0,
                 "distance_sprinted": 4.2,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5629,7 +5849,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.1,
                 "distance_sprinted": 2.7,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5650,7 +5871,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.4,
                 "distance_sprinted": 3.0,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5671,7 +5893,8 @@
                 "minutes_played": 18,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.4,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5692,7 +5915,8 @@
                 "minutes_played": 75,
                 "distance_covered": 7.9,
                 "distance_sprinted": 2.2,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -5713,7 +5937,8 @@
                 "minutes_played": 93,
                 "distance_covered": 13.4,
                 "distance_sprinted": 6.8,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "GK",
@@ -5797,7 +6022,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.9,
                 "distance_sprinted": 5.0,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5818,7 +6044,8 @@
                 "minutes_played": 21,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.4,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -5839,7 +6066,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.8,
                 "distance_sprinted": 1.5,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -5860,7 +6088,8 @@
                 "minutes_played": 28,
                 "distance_covered": 3.9,
                 "distance_sprinted": 1.7,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5881,7 +6110,8 @@
                 "minutes_played": 63,
                 "distance_covered": 7.8,
                 "distance_sprinted": 1.8,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -5902,7 +6132,8 @@
                 "minutes_played": 46,
                 "distance_covered": 5.1,
                 "distance_sprinted": 0.9,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5923,7 +6154,8 @@
                 "minutes_played": 45,
                 "distance_covered": 6.2,
                 "distance_sprinted": 2.3,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5944,7 +6176,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.9,
                 "distance_sprinted": 6.0,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5965,7 +6198,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.3,
                 "distance_sprinted": 2.7,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -5986,7 +6220,8 @@
                 "minutes_played": 28,
                 "distance_covered": 3.1,
                 "distance_sprinted": 0.9,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6007,7 +6242,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.8,
                 "distance_sprinted": 2.4,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6028,7 +6264,8 @@
                 "minutes_played": 63,
                 "distance_covered": 7.5,
                 "distance_sprinted": 2.4,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6049,7 +6286,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.5,
                 "distance_sprinted": 2.3,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6070,7 +6308,8 @@
                 "minutes_played": 21,
                 "distance_covered": 3.2,
                 "distance_sprinted": 1.6,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6091,7 +6330,8 @@
                 "minutes_played": 70,
                 "distance_covered": 10.5,
                 "distance_sprinted": 5.8,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -6190,7 +6430,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.2,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6211,7 +6452,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.0,
                 "distance_sprinted": 2.4,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6232,7 +6474,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.4,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6253,7 +6496,8 @@
                 "minutes_played": 75,
                 "distance_covered": 7.4,
                 "distance_sprinted": 2.0,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6274,7 +6518,8 @@
                 "minutes_played": 65,
                 "distance_covered": 7.4,
                 "distance_sprinted": 1.7,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -6295,7 +6540,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.1,
                 "distance_sprinted": 5.7,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -6316,7 +6562,8 @@
                 "minutes_played": 60,
                 "distance_covered": 6.3,
                 "distance_sprinted": 1.3,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -6337,7 +6584,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.7,
                 "distance_sprinted": 2.2,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -6358,7 +6606,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.8,
                 "distance_sprinted": 1.8,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -6379,7 +6628,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.5,
                 "distance_sprinted": 2.3,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -6400,7 +6650,8 @@
                 "minutes_played": 25,
                 "distance_covered": 2.8,
                 "distance_sprinted": 0.4,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -6421,7 +6672,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.4,
                 "distance_sprinted": 0.4,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -6442,7 +6694,8 @@
                 "minutes_played": 15,
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.8,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6463,7 +6716,8 @@
                 "minutes_played": 25,
                 "distance_covered": 2.7,
                 "distance_sprinted": 0.6,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6484,7 +6738,8 @@
                 "minutes_played": 30,
                 "distance_covered": 2.9,
                 "distance_sprinted": 0.7,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["CM"]
             }
         ]
     },
@@ -6568,7 +6823,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.0,
                 "distance_sprinted": 2.1,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6589,7 +6845,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.9,
                 "distance_sprinted": 1.7,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6610,7 +6867,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.4,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6631,7 +6889,8 @@
                 "minutes_played": 0,
                 "distance_covered": 0.0,
                 "distance_sprinted": 0.0,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6652,7 +6911,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.6,
                 "distance_sprinted": 1.6,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6673,7 +6933,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.5,
                 "distance_sprinted": 4.9,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6694,7 +6955,8 @@
                 "minutes_played": 60,
                 "distance_covered": 7.1,
                 "distance_sprinted": 1.4,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -6715,7 +6977,8 @@
                 "minutes_played": 80,
                 "distance_covered": 8.6,
                 "distance_sprinted": 2.3,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -6736,7 +6999,8 @@
                 "minutes_played": 75,
                 "distance_covered": 9.0,
                 "distance_sprinted": 2.3,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -6757,7 +7021,8 @@
                 "minutes_played": 60,
                 "distance_covered": 6.6,
                 "distance_sprinted": 1.7,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -6778,7 +7043,8 @@
                 "minutes_played": 30,
                 "distance_covered": 2.9,
                 "distance_sprinted": 0.7,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW", "ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -6799,7 +7065,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.5,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -6820,7 +7087,8 @@
                 "minutes_played": 30,
                 "distance_covered": 3.5,
                 "distance_sprinted": 0.8,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -6841,7 +7109,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.4,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -6862,7 +7131,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.0,
                 "distance_sprinted": 0.2,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             }
         ]
     },
@@ -6946,7 +7216,8 @@
                 "minutes_played": 0,
                 "distance_covered": 0.0,
                 "distance_sprinted": 0.0,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6967,7 +7238,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.1,
                 "distance_sprinted": 2.1,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -6988,7 +7260,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.4,
                 "distance_sprinted": 1.7,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7009,7 +7282,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.7,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7030,7 +7304,8 @@
                 "minutes_played": 70,
                 "distance_covered": 6.7,
                 "distance_sprinted": 1.5,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7051,7 +7326,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.8,
                 "distance_sprinted": 3.0,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7072,7 +7348,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.8,
                 "distance_sprinted": 5.4,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7093,7 +7370,8 @@
                 "minutes_played": 75,
                 "distance_covered": 7.6,
                 "distance_sprinted": 1.3,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7114,7 +7392,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.5,
                 "distance_sprinted": 2.1,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7135,7 +7414,8 @@
                 "minutes_played": 65,
                 "distance_covered": 6.7,
                 "distance_sprinted": 1.8,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -7156,7 +7436,8 @@
                 "minutes_played": 25,
                 "distance_covered": 2.7,
                 "distance_sprinted": 0.4,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -7177,7 +7458,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.4,
                 "distance_sprinted": 0.7,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7198,7 +7480,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.5,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7219,7 +7502,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.3,
-                "player_id": 29
+                "player_id": 29,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7240,7 +7524,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.1,
                 "distance_sprinted": 0.3,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["CB"]
             }
         ]
     },
@@ -7324,7 +7609,8 @@
                 "minutes_played": 65,
                 "distance_covered": 9.4,
                 "distance_sprinted": 4.4,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7345,7 +7631,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.7,
                 "distance_sprinted": 1.9,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7366,7 +7653,8 @@
                 "minutes_played": 75,
                 "distance_covered": 8.6,
                 "distance_sprinted": 2.3,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7387,7 +7675,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.6,
                 "distance_sprinted": 2.7,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7408,7 +7697,8 @@
                 "minutes_played": 75,
                 "distance_covered": 8.7,
                 "distance_sprinted": 1.6,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7429,7 +7719,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.6,
                 "distance_sprinted": 4.8,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7450,7 +7741,8 @@
                 "minutes_played": 65,
                 "distance_covered": 7.1,
                 "distance_sprinted": 1.3,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7471,7 +7763,8 @@
                 "minutes_played": 80,
                 "distance_covered": 8.0,
                 "distance_sprinted": 1.2,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7492,7 +7785,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.0,
                 "distance_sprinted": 2.2,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7513,7 +7807,8 @@
                 "minutes_played": 70,
                 "distance_covered": 8.4,
                 "distance_sprinted": 1.6,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -7534,7 +7829,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.6,
                 "distance_sprinted": 1.3,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7555,7 +7851,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.5,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7576,7 +7873,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.3,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7597,7 +7895,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.4,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -7618,7 +7917,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.0,
                 "distance_sprinted": 0.2,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["CB"]
             }
         ]
     },
@@ -7702,7 +8002,8 @@
                 "minutes_played": 75,
                 "distance_covered": 8.5,
                 "distance_sprinted": 2.1,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7723,7 +8024,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.2,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7744,7 +8046,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.7,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7765,7 +8068,8 @@
                 "minutes_played": 65,
                 "distance_covered": 9.2,
                 "distance_sprinted": 3.9,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7786,7 +8090,8 @@
                 "minutes_played": 70,
                 "distance_covered": 6.9,
                 "distance_sprinted": 1.3,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7807,7 +8112,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.1,
                 "distance_sprinted": 2.9,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7828,7 +8134,8 @@
                 "minutes_played": 65,
                 "distance_covered": 9.9,
                 "distance_sprinted": 4.7,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7849,7 +8156,8 @@
                 "minutes_played": 65,
                 "distance_covered": 7.5,
                 "distance_sprinted": 2.1,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7870,7 +8178,8 @@
                 "minutes_played": 80,
                 "distance_covered": 9.8,
                 "distance_sprinted": 2.6,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7891,7 +8200,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.5,
                 "distance_sprinted": 2.0,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -7912,7 +8222,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.4,
                 "distance_sprinted": 1.4,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -7933,7 +8244,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.5,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7954,7 +8266,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.6,
                 "distance_sprinted": 1.6,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -7975,7 +8288,8 @@
                 "minutes_played": 10,
                 "distance_covered": 0.9,
                 "distance_sprinted": 0.2,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -7996,7 +8310,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.3,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             }
         ]
     },
@@ -8080,7 +8395,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.6,
                 "distance_sprinted": 3.0,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["CB", "LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8101,7 +8417,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.6,
                 "distance_sprinted": 3.0,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8122,7 +8439,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.8,
                 "distance_sprinted": 2.2,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8143,7 +8461,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.6,
                 "distance_sprinted": 2.2,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8164,7 +8483,8 @@
                 "minutes_played": 75,
                 "distance_covered": 8.6,
                 "distance_sprinted": 1.9,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8185,7 +8505,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.2,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8206,7 +8527,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.8,
                 "distance_sprinted": 5.1,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8227,7 +8549,8 @@
                 "minutes_played": 80,
                 "distance_covered": 9.3,
                 "distance_sprinted": 2.6,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -8248,7 +8571,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.8,
                 "distance_sprinted": 1.4,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -8269,7 +8593,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.0,
                 "distance_sprinted": 1.4,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -8290,7 +8615,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.4,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8311,7 +8637,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.3,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8332,7 +8659,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.5,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -8353,7 +8681,8 @@
                 "minutes_played": 10,
                 "distance_covered": 0.9,
                 "distance_sprinted": 0.2,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             }
         ]
     },
@@ -8437,7 +8766,8 @@
                 "minutes_played": 65,
                 "distance_covered": 9.0,
                 "distance_sprinted": 3.3,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8458,7 +8788,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.5,
                 "distance_sprinted": 2.2,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8479,7 +8810,8 @@
                 "minutes_played": 25,
                 "distance_covered": 2.5,
                 "distance_sprinted": 0.5,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8500,7 +8832,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.4,
                 "distance_sprinted": 2.5,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8521,7 +8854,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.7,
                 "distance_sprinted": 1.3,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8542,7 +8876,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.2,
                 "distance_sprinted": 2.3,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8563,7 +8898,8 @@
                 "minutes_played": 75,
                 "distance_covered": 10.3,
                 "distance_sprinted": 3.8,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8584,7 +8920,8 @@
                 "minutes_played": 65,
                 "distance_covered": 7.1,
                 "distance_sprinted": 1.7,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8605,7 +8942,8 @@
                 "minutes_played": 80,
                 "distance_covered": 8.5,
                 "distance_sprinted": 2.1,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -8626,7 +8964,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.4,
                 "distance_sprinted": 2.0,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -8647,7 +8986,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.4,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8668,7 +9008,8 @@
                 "minutes_played": 15,
                 "distance_covered": 2.3,
                 "distance_sprinted": 1.0,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8689,7 +9030,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.5,
                 "distance_sprinted": 1.5,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8710,7 +9052,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.3,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             }
         ]
     },
@@ -8794,7 +9137,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.5,
                 "distance_sprinted": 5.3,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8815,7 +9159,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.1,
                 "distance_sprinted": 1.6,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8836,28 +9181,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.0,
                 "distance_sprinted": 1.6,
-                "player_id": 14
-            },
-            {
-                "performance_type": "Outfield",
-                "goals": 0,
-                "assists": 0,
-                "shots": 0,
-                "shot_accuracy": 0,
-                "passes": 23,
-                "pass_accuracy": 83,
-                "dribbles": 1,
-                "dribble_success_rate": 100,
-                "tackles": 3,
-                "tackle_success_rate": 66,
-                "offsides": 0,
-                "fouls_committed": 0,
-                "possession_won": 1,
-                "possession_lost": 1,
-                "minutes_played": 70,
-                "distance_covered": 7.0,
-                "distance_sprinted": 1.4,
-                "player_id": 2
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -8878,7 +9203,8 @@
                 "minutes_played": 70,
                 "distance_covered": 6.7,
                 "distance_sprinted": 1.6,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8899,7 +9225,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.9,
                 "distance_sprinted": 1.7,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8920,7 +9247,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.0,
                 "distance_sprinted": 5.8,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -8941,7 +9269,8 @@
                 "minutes_played": 80,
                 "distance_covered": 8.9,
                 "distance_sprinted": 1.8,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -8962,7 +9291,8 @@
                 "minutes_played": 75,
                 "distance_covered": 8.8,
                 "distance_sprinted": 1.9,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -8983,7 +9313,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.8,
                 "distance_sprinted": 2.8,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -9004,7 +9335,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.6,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9025,7 +9357,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.6,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9046,7 +9379,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.7,
                 "distance_sprinted": 0.5,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9067,7 +9401,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.0,
                 "distance_sprinted": 0.2,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             }
         ]
     },
@@ -9151,7 +9486,8 @@
                 "minutes_played": 65,
                 "distance_covered": 8.8,
                 "distance_sprinted": 3.9,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9172,7 +9508,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.5,
                 "distance_sprinted": 2.4,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9193,7 +9530,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.9,
                 "distance_sprinted": 1.4,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9214,7 +9552,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.6,
                 "distance_sprinted": 2.6,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9235,7 +9574,8 @@
                 "minutes_played": 70,
                 "distance_covered": 8.4,
                 "distance_sprinted": 1.9,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9256,7 +9596,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.7,
                 "distance_sprinted": 2.0,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9277,7 +9618,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.0,
                 "distance_sprinted": 5.5,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9298,7 +9640,8 @@
                 "minutes_played": 80,
                 "distance_covered": 7.6,
                 "distance_sprinted": 1.2,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9319,7 +9662,8 @@
                 "minutes_played": 75,
                 "distance_covered": 8.8,
                 "distance_sprinted": 1.6,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9340,7 +9684,8 @@
                 "minutes_played": 60,
                 "distance_covered": 6.3,
                 "distance_sprinted": 1.0,
-                "player_id": 32
+                "player_id": 32,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -9361,7 +9706,8 @@
                 "minutes_played": 30,
                 "distance_covered": 2.9,
                 "distance_sprinted": 0.5,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -9382,7 +9728,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.8,
                 "distance_sprinted": 1.4,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9403,7 +9750,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.4,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9424,7 +9772,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.4,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9445,7 +9794,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.1,
                 "distance_sprinted": 0.3,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             }
         ]
     },
@@ -9529,7 +9879,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.0,
                 "distance_sprinted": 2.8,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9550,7 +9901,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.6,
                 "distance_sprinted": 2.0,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9571,7 +9923,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.9,
                 "distance_sprinted": 2.0,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9592,7 +9945,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.1,
                 "distance_sprinted": 4.8,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9613,7 +9967,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.9,
                 "distance_sprinted": 1.5,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9634,7 +9989,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.3,
                 "distance_sprinted": 4.7,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9655,7 +10011,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.2,
                 "distance_sprinted": 1.7,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9676,7 +10033,8 @@
                 "minutes_played": 75,
                 "distance_covered": 9.1,
                 "distance_sprinted": 1.9,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9697,7 +10055,8 @@
                 "minutes_played": 75,
                 "distance_covered": 8.0,
                 "distance_sprinted": 1.5,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9718,7 +10077,8 @@
                 "minutes_played": 80,
                 "distance_covered": 11.5,
                 "distance_sprinted": 5.0,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -9739,7 +10099,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.4,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9760,7 +10121,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.5,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -9781,7 +10143,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.1,
                 "distance_sprinted": 0.3,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -9802,7 +10165,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.3,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -9823,7 +10187,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.3,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             }
         ]
     },
@@ -9907,7 +10272,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.0,
                 "distance_sprinted": 5.8,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9928,7 +10294,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.1,
                 "distance_sprinted": 2.5,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9949,7 +10316,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.7,
                 "distance_sprinted": 2.1,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9970,7 +10338,8 @@
                 "minutes_played": 75,
                 "distance_covered": 7.4,
                 "distance_sprinted": 2.0,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -9991,7 +10360,8 @@
                 "minutes_played": 70,
                 "distance_covered": 8.0,
                 "distance_sprinted": 1.7,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10012,7 +10382,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.3,
                 "distance_sprinted": 2.3,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10033,7 +10404,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.3,
                 "distance_sprinted": 4.9,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10054,7 +10426,8 @@
                 "minutes_played": 70,
                 "distance_covered": 8.0,
                 "distance_sprinted": 1.7,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10075,7 +10448,8 @@
                 "minutes_played": 90,
                 "distance_covered": 8.7,
                 "distance_sprinted": 1.8,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10096,7 +10470,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.3,
                 "distance_sprinted": 5.4,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -10117,7 +10492,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.6,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10138,7 +10514,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.4,
                 "distance_sprinted": 0.5,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10159,7 +10536,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.3,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10180,7 +10558,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.3,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             }
         ]
     },
@@ -10264,7 +10643,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.0,
                 "distance_sprinted": 5.3,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10285,7 +10665,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.7,
                 "distance_sprinted": 2.1,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10306,7 +10687,8 @@
                 "minutes_played": 90,
                 "distance_covered": 11.0,
                 "distance_sprinted": 2.8,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10327,7 +10709,8 @@
                 "minutes_played": 75,
                 "distance_covered": 9.0,
                 "distance_sprinted": 2.6,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10348,7 +10731,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.9,
                 "distance_sprinted": 2.2,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10369,7 +10753,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.0,
                 "distance_sprinted": 2.3,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10390,7 +10775,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.6,
                 "distance_sprinted": 5.5,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10411,7 +10797,8 @@
                 "minutes_played": 80,
                 "distance_covered": 9.4,
                 "distance_sprinted": 2.4,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10432,7 +10819,8 @@
                 "minutes_played": 85,
                 "distance_covered": 8.1,
                 "distance_sprinted": 2.1,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10453,7 +10841,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.7,
                 "distance_sprinted": 4.5,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -10474,7 +10863,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.6,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10495,7 +10885,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.1,
                 "distance_sprinted": 0.3,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10516,7 +10907,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.3,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             }
         ]
     },
@@ -10600,7 +10992,8 @@
                 "minutes_played": 90,
                 "distance_covered": 13.2,
                 "distance_sprinted": 5.5,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10621,7 +11014,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.8,
                 "distance_sprinted": 1.7,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10642,7 +11036,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.3,
                 "distance_sprinted": 2.7,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10663,7 +11058,8 @@
                 "minutes_played": 75,
                 "distance_covered": 7.5,
                 "distance_sprinted": 2.2,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10684,7 +11080,8 @@
                 "minutes_played": 90,
                 "distance_covered": 9.7,
                 "distance_sprinted": 2.2,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10705,7 +11102,8 @@
                 "minutes_played": 90,
                 "distance_covered": 10.6,
                 "distance_sprinted": 2.7,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10726,7 +11124,8 @@
                 "minutes_played": 65,
                 "distance_covered": 7.4,
                 "distance_sprinted": 2.1,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10747,7 +11146,8 @@
                 "minutes_played": 80,
                 "distance_covered": 8.2,
                 "distance_sprinted": 1.3,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10768,7 +11168,8 @@
                 "minutes_played": 70,
                 "distance_covered": 7.8,
                 "distance_sprinted": 2.2,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10789,7 +11190,8 @@
                 "minutes_played": 90,
                 "distance_covered": 12.7,
                 "distance_sprinted": 5.2,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -10810,7 +11212,8 @@
                 "minutes_played": 25,
                 "distance_covered": 3.4,
                 "distance_sprinted": 1.5,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -10831,7 +11234,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.6,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10852,7 +11256,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.4,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -10873,7 +11278,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.1,
                 "distance_sprinted": 0.3,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10894,7 +11300,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.5,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             }
         ]
     },
@@ -10963,7 +11370,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.5,
                 "distance_sprinted": 1.0,
-                "player_id": 56
+                "player_id": 56,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -10984,7 +11392,8 @@
                 "minutes_played": 71,
                 "distance_covered": 10.8,
                 "distance_sprinted": 5.4,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11005,7 +11414,8 @@
                 "minutes_played": 87,
                 "distance_covered": 10.9,
                 "distance_sprinted": 2.7,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -11026,7 +11436,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.2,
                 "distance_sprinted": 3.2,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11047,7 +11458,8 @@
                 "minutes_played": 4,
                 "distance_covered": 0.4,
                 "distance_sprinted": 0.2,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11068,7 +11480,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.2,
                 "distance_sprinted": 3.2,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11089,7 +11502,8 @@
                 "minutes_played": 4,
                 "distance_covered": 0.4,
                 "distance_sprinted": 0.2,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11110,7 +11524,8 @@
                 "minutes_played": 87,
                 "distance_covered": 14.1,
                 "distance_sprinted": 8.0,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11131,7 +11546,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.7,
                 "distance_sprinted": 4.1,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11152,7 +11568,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.5,
                 "distance_sprinted": 3.3,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11173,7 +11590,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.9,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11194,7 +11612,8 @@
                 "minutes_played": 71,
                 "distance_covered": 9.2,
                 "distance_sprinted": 3.4,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11215,7 +11634,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.6,
                 "distance_sprinted": 3.8,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11236,7 +11656,8 @@
                 "minutes_played": 20,
                 "distance_covered": 2.8,
                 "distance_sprinted": 1.6,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11257,7 +11678,8 @@
                 "minutes_played": 71,
                 "distance_covered": 12.3,
                 "distance_sprinted": 8.1,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -11341,7 +11763,8 @@
                 "minutes_played": 26,
                 "distance_covered": 2.9,
                 "distance_sprinted": 0.8,
-                "player_id": 33
+                "player_id": 33,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11362,7 +11785,8 @@
                 "minutes_played": 26,
                 "distance_covered": 2.6,
                 "distance_sprinted": 0.5,
-                "player_id": 56
+                "player_id": 56,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11383,7 +11807,8 @@
                 "minutes_played": 67,
                 "distance_covered": 7.5,
                 "distance_sprinted": 1.5,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -11404,7 +11829,8 @@
                 "minutes_played": 93,
                 "distance_covered": 11.5,
                 "distance_sprinted": 4.6,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11425,7 +11851,8 @@
                 "minutes_played": 93,
                 "distance_covered": 11.3,
                 "distance_sprinted": 3.0,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11446,7 +11873,8 @@
                 "minutes_played": 9,
                 "distance_covered": 1.1,
                 "distance_sprinted": 0.6,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11467,7 +11895,8 @@
                 "minutes_played": 84,
                 "distance_covered": 10.8,
                 "distance_sprinted": 4.4,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11488,7 +11917,8 @@
                 "minutes_played": 67,
                 "distance_covered": 8.8,
                 "distance_sprinted": 3.3,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11509,7 +11939,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.7,
                 "distance_sprinted": 3.1,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11530,7 +11961,8 @@
                 "minutes_played": 9,
                 "distance_covered": 0.9,
                 "distance_sprinted": 0.3,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11551,7 +11983,8 @@
                 "minutes_played": 84,
                 "distance_covered": 8.8,
                 "distance_sprinted": 2.4,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11572,7 +12005,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.3,
                 "distance_sprinted": 3.1,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11593,7 +12027,8 @@
                 "minutes_played": 26,
                 "distance_covered": 2.7,
                 "distance_sprinted": 0.8,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11614,7 +12049,8 @@
                 "minutes_played": 67,
                 "distance_covered": 6.6,
                 "distance_sprinted": 1.6,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11635,7 +12071,8 @@
                 "minutes_played": 93,
                 "distance_covered": 12.8,
                 "distance_sprinted": 6.7,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -11719,7 +12156,8 @@
                 "minutes_played": 32,
                 "distance_covered": 4.2,
                 "distance_sprinted": 1.9,
-                "player_id": 56
+                "player_id": 56,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11740,7 +12178,8 @@
                 "minutes_played": 60,
                 "distance_covered": 8.0,
                 "distance_sprinted": 3.3,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11761,7 +12200,8 @@
                 "minutes_played": 19,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.5,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -11782,7 +12222,8 @@
                 "minutes_played": 73,
                 "distance_covered": 8.1,
                 "distance_sprinted": 1.8,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -11803,7 +12244,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.6,
                 "distance_sprinted": 4.6,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -11824,7 +12266,8 @@
                 "minutes_played": 92,
                 "distance_covered": 11.3,
                 "distance_sprinted": 2.8,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11845,7 +12288,8 @@
                 "minutes_played": 19,
                 "distance_covered": 2.7,
                 "distance_sprinted": 1.3,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11866,7 +12310,8 @@
                 "minutes_played": 73,
                 "distance_covered": 10.0,
                 "distance_sprinted": 4.6,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11887,7 +12332,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.8,
                 "distance_sprinted": 2.3,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -11908,7 +12354,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.8,
                 "distance_sprinted": 2.6,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11929,7 +12376,8 @@
                 "minutes_played": 41,
                 "distance_covered": 4.0,
                 "distance_sprinted": 1.0,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11950,7 +12398,8 @@
                 "minutes_played": 51,
                 "distance_covered": 6.2,
                 "distance_sprinted": 2.3,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11971,7 +12420,8 @@
                 "minutes_played": 92,
                 "distance_covered": 9.1,
                 "distance_sprinted": 2.2,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -11992,7 +12442,8 @@
                 "minutes_played": 41,
                 "distance_covered": 5.7,
                 "distance_sprinted": 3.1,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12013,7 +12464,8 @@
                 "minutes_played": 51,
                 "distance_covered": 7.4,
                 "distance_sprinted": 3.9,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -12097,7 +12549,8 @@
                 "minutes_played": 93,
                 "distance_covered": 12.2,
                 "distance_sprinted": 4.9,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12118,7 +12571,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.2,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -12139,7 +12593,8 @@
                 "minutes_played": 83,
                 "distance_covered": 8.8,
                 "distance_sprinted": 1.5,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -12160,7 +12615,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.9,
                 "distance_sprinted": 3.6,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12181,7 +12637,8 @@
                 "minutes_played": 24,
                 "distance_covered": 2.6,
                 "distance_sprinted": 0.5,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12202,7 +12659,8 @@
                 "minutes_played": 64,
                 "distance_covered": 8.9,
                 "distance_sprinted": 3.1,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12223,7 +12681,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.6,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12244,7 +12703,8 @@
                 "minutes_played": 83,
                 "distance_covered": 10.9,
                 "distance_sprinted": 4.3,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12265,7 +12725,8 @@
                 "minutes_played": 93,
                 "distance_covered": 11.0,
                 "distance_sprinted": 3.0,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12286,7 +12747,8 @@
                 "minutes_played": 93,
                 "distance_covered": 9.9,
                 "distance_sprinted": 2.7,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12307,7 +12769,8 @@
                 "minutes_played": 93,
                 "distance_covered": 10.8,
                 "distance_sprinted": 3.0,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12328,7 +12791,8 @@
                 "minutes_played": 10,
                 "distance_covered": 0.9,
                 "distance_sprinted": 0.2,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12349,7 +12813,8 @@
                 "minutes_played": 83,
                 "distance_covered": 8.7,
                 "distance_sprinted": 2.3,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12370,7 +12835,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.6,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12391,7 +12857,8 @@
                 "minutes_played": 83,
                 "distance_covered": 10.5,
                 "distance_sprinted": 4.4,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -12475,7 +12942,8 @@
                 "minutes_played": 23,
                 "distance_covered": 3.3,
                 "distance_sprinted": 1.6,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12496,7 +12964,8 @@
                 "minutes_played": 68,
                 "distance_covered": 9.0,
                 "distance_sprinted": 3.7,
-                "player_id": 56
+                "player_id": 56,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12517,7 +12986,8 @@
                 "minutes_played": 62,
                 "distance_covered": 7.1,
                 "distance_sprinted": 1.3,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -12538,7 +13008,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.6,
                 "distance_sprinted": 2.1,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW", "ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -12559,7 +13030,8 @@
                 "minutes_played": 29,
                 "distance_covered": 3.6,
                 "distance_sprinted": 1.7,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12580,7 +13052,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.7,
                 "distance_sprinted": 2.8,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12601,7 +13074,8 @@
                 "minutes_played": 11,
                 "distance_covered": 1.7,
                 "distance_sprinted": 0.9,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12622,7 +13096,8 @@
                 "minutes_played": 80,
                 "distance_covered": 11.4,
                 "distance_sprinted": 4.9,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12643,7 +13118,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.7,
                 "distance_sprinted": 3.2,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB", "CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12664,7 +13140,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.8,
                 "distance_sprinted": 3.9,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12685,7 +13162,8 @@
                 "minutes_played": 29,
                 "distance_covered": 3.5,
                 "distance_sprinted": 1.2,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12706,7 +13184,8 @@
                 "minutes_played": 11,
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.5,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12727,7 +13206,8 @@
                 "minutes_played": 80,
                 "distance_covered": 8.6,
                 "distance_sprinted": 2.3,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -12748,7 +13228,8 @@
                 "minutes_played": 62,
                 "distance_covered": 7.7,
                 "distance_sprinted": 2.1,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12769,7 +13250,8 @@
                 "minutes_played": 62,
                 "distance_covered": 8.7,
                 "distance_sprinted": 4.2,
-                "player_id": 20
+                "player_id": 20,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -12853,7 +13335,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.7,
-                "player_id": 56
+                "player_id": 56,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12874,7 +13357,8 @@
                 "minutes_played": 76,
                 "distance_covered": 9.9,
                 "distance_sprinted": 3.7,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12895,7 +13379,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.5,
                 "distance_sprinted": 2.2,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -12916,7 +13401,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.5,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12937,7 +13423,8 @@
                 "minutes_played": 76,
                 "distance_covered": 8.9,
                 "distance_sprinted": 3.5,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -12958,7 +13445,8 @@
                 "minutes_played": 12,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.9,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -12979,7 +13467,8 @@
                 "minutes_played": 79,
                 "distance_covered": 9.4,
                 "distance_sprinted": 2.0,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13000,7 +13489,8 @@
                 "minutes_played": 10,
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.5,
-                "player_id": 23
+                "player_id": 23,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13021,7 +13511,8 @@
                 "minutes_played": 79,
                 "distance_covered": 11.2,
                 "distance_sprinted": 5.1,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13042,7 +13533,8 @@
                 "minutes_played": 15,
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.5,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13063,7 +13555,8 @@
                 "minutes_played": 91,
                 "distance_covered": 10.5,
                 "distance_sprinted": 3.2,
-                "player_id": 4
+                "player_id": 4,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13084,7 +13577,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.6,
                 "distance_sprinted": 3.8,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13105,7 +13599,8 @@
                 "minutes_played": 76,
                 "distance_covered": 8.2,
                 "distance_sprinted": 2.2,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13126,7 +13621,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.6,
                 "distance_sprinted": 2.6,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13147,7 +13643,8 @@
                 "minutes_played": 91,
                 "distance_covered": 13.3,
                 "distance_sprinted": 6.9,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
@@ -13231,7 +13728,8 @@
                 "minutes_played": 91,
                 "distance_covered": 12.1,
                 "distance_sprinted": 5.1,
-                "player_id": 40
+                "player_id": 40,
+                "positions_played": ["LW"]
             },
             {
                 "performance_type": "Outfield",
@@ -13252,7 +13750,8 @@
                 "minutes_played": 24,
                 "distance_covered": 2.7,
                 "distance_sprinted": 0.5,
-                "player_id": 48
+                "player_id": 48,
+                "positions_played": ["ST"]
             },
             {
                 "performance_type": "Outfield",
@@ -13273,7 +13772,8 @@
                 "minutes_played": 24,
                 "distance_covered": 2.9,
                 "distance_sprinted": 0.9,
-                "player_id": 45
+                "player_id": 45,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -13294,7 +13794,8 @@
                 "minutes_played": 67,
                 "distance_covered": 8.7,
                 "distance_sprinted": 2.3,
-                "player_id": 44
+                "player_id": 44,
+                "positions_played": ["RW"]
             },
             {
                 "performance_type": "Outfield",
@@ -13315,7 +13816,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.2,
                 "distance_sprinted": 2.8,
-                "player_id": 31
+                "player_id": 31,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13336,7 +13838,8 @@
                 "minutes_played": 91,
                 "distance_covered": 11.7,
                 "distance_sprinted": 4.6,
-                "player_id": 24
+                "player_id": 24,
+                "positions_played": ["ST", "CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13357,7 +13860,8 @@
                 "minutes_played": 67,
                 "distance_covered": 9.4,
                 "distance_sprinted": 4.2,
-                "player_id": 41
+                "player_id": 41,
+                "positions_played": ["CM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13378,7 +13882,8 @@
                 "minutes_played": 24,
                 "distance_covered": 3.0,
                 "distance_sprinted": 0.9,
-                "player_id": 22
+                "player_id": 22,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13399,7 +13904,8 @@
                 "minutes_played": 67,
                 "distance_covered": 7.9,
                 "distance_sprinted": 2.2,
-                "player_id": 28
+                "player_id": 28,
+                "positions_played": ["CDM"]
             },
             {
                 "performance_type": "Outfield",
@@ -13420,7 +13926,8 @@
                 "minutes_played": 91,
                 "distance_covered": 9.7,
                 "distance_sprinted": 2.5,
-                "player_id": 12
+                "player_id": 12,
+                "positions_played": ["LB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13441,7 +13948,8 @@
                 "minutes_played": 46,
                 "distance_covered": 5.6,
                 "distance_sprinted": 1.9,
-                "player_id": 13
+                "player_id": 13,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13462,7 +13970,8 @@
                 "minutes_played": 45,
                 "distance_covered": 4.8,
                 "distance_sprinted": 1.4,
-                "player_id": 11
+                "player_id": 11,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13483,7 +13992,8 @@
                 "minutes_played": 9,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.5,
-                "player_id": 14
+                "player_id": 14,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13504,7 +14014,8 @@
                 "minutes_played": 82,
                 "distance_covered": 8.7,
                 "distance_sprinted": 2.4,
-                "player_id": 53
+                "player_id": 53,
+                "positions_played": ["CB"]
             },
             {
                 "performance_type": "Outfield",
@@ -13525,7 +14036,8 @@
                 "minutes_played": 91,
                 "distance_covered": 13.5,
                 "distance_sprinted": 7.4,
-                "player_id": 52
+                "player_id": 52,
+                "positions_played": ["RB"]
             },
             {
                 "performance_type": "GK",
