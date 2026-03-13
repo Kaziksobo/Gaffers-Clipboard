@@ -156,8 +156,11 @@ The goal of this phase is to "harden" the application—improving stability, cle
 	- [x] **Position Select:** Add a position select widget (dropdown with checkboxes) to the player performance frames, allowing the user to specify what position a player played in the match.
 	- [x] **In-Game date**: Add in-game date fields across the app in all screens that need it.
 	- [x] **Update Player**: On the screens to add or update player attributes, next to the entry box to enter the player name, add a player dropdown to select from already saved players to update them easier.
+	- [ ] **Performance Sidebar:** Add a scrollable UI pane to the `PlayerStatsFrame` and `GKStatsFrame` that acts as a visual staging buffer. As player performances are captured, they populate this sidebar, displaying the player's name, assigned position(s), and a dedicated "Remove" button to allow users to correct mistakes before committing the final save.
+	- [ ] **Theme & UX Flourishes:** Integrate the application's defined accent colour to improve visual feedback. Implement active focus borders for `CTkEntry` widgets (highlighting the box currently being typed in), update button hover states, and explore any other theming changes.
 - [ ] **User Experience & Documentation**
 	- [x] Add an "Instructions" or "Help" tab/modal within the app explaining how to capture data. 
+	- [ ] Thoroughly review all docstrings, annotations and comments for pep compliance and readability
 	- [ ] Write a comprehensive `README.md` for the GitHub repository detailing installation and usage. 
 
 **End Goal for Phase 7:** The application is stable, resolution-independent, self-cleaning, and user-friendly enough for someone other than the developer to use without crashing. 
