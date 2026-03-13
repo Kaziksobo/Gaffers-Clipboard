@@ -101,6 +101,8 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
         placeholder_text = "dd/mm/yy" if data_key == "in_game_date" else ""
+        is_time_out_row = data_key == "time_out"
+        entry_width = 145 if is_time_out_row else 300
         
         data_entry = ctk.CTkEntry(
             self.data_frame,
@@ -108,23 +110,26 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"],
             placeholder_text=placeholder_text,
-            width=300
+            width=entry_width
         )
-        data_entry.grid(row=index, column=2, padx=5, pady=5, sticky="ew")
+        if is_time_out_row:
+            data_entry.grid(row=index, column=2, padx=(5, 0), pady=5, sticky="w")
+        else:
+            data_entry.grid(row=index, column=2, columnspan=2, padx=5, pady=5, sticky="ew")
         self.data_vars[data_key] = data_entry
         
-        if data_key == "time_out":
+        if is_time_out_row:
             # Drop down to select between days, weeks, months, in a third column next to the entry
             time_out_unit_dropdown = ScrollableDropdown(
                 self.data_frame,
                 theme=self.theme,
                 variable=self.time_out_unit_var,
                 values=["Days", "Weeks", "Months"],
-                width=150,
+                width=145,
                 dropdown_height=150,
                 placeholder="Select unit"
             )
-            time_out_unit_dropdown.grid(row=index, column=3, padx=5, pady=5)
+            time_out_unit_dropdown.grid(row=index, column=3, padx=(0, 5), pady=5)
     
     def on_done_button_press(self):
         """Validates inputs, formats the date safely, and routes to the Controller."""
@@ -182,7 +187,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
 
         self.time_out_unit_var.set("Select unit")
         
-        self.refresh_player_dropdown()
+        self.refresh_player_dropdown(remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
         
         # Ensure placeholder visibility by moving focus away from entries
