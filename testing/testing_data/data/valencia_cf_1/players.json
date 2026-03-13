@@ -2799,6 +2799,13 @@
                 "injury_detail": "Sprained Knee",
                 "time_out": 4,
                 "time_out_unit": "Weeks"
+            },
+            {
+                "datetime": "2026-03-13T02:40:08.177059",
+                "in_game_date": "2030-03-09T00:00:00",
+                "injury_detail": "Sprained Knee",
+                "time_out": 4,
+                "time_out_unit": "Weeks"
             }
         ],
         "sold": false,
@@ -4272,6 +4279,13 @@
                 "injury_detail": "Bruised Shoulder",
                 "time_out": 5,
                 "time_out_unit": "Days"
+            },
+            {
+                "datetime": "2026-03-13T02:07:48.284952",
+                "in_game_date": "2030-03-06T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
             }
         ],
         "sold": false,
@@ -4958,6 +4972,13 @@
                 "injury_detail": "Bruised Elbow",
                 "time_out": 5,
                 "time_out_unit": "Days"
+            },
+            {
+                "datetime": "2026-03-13T02:40:28.410871",
+                "in_game_date": "2030-03-09T00:00:00",
+                "injury_detail": "Sprained Knee",
+                "time_out": 4,
+                "time_out_unit": "Weeks"
             }
         ],
         "sold": false,
