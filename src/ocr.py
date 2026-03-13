@@ -12,7 +12,6 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.append(str(PROJECT_ROOT))
 
 STANDARD_SIZE = (30, 35)
-CONFIDENCE_THRESHOLD = 0.5
 
 
 def load_ocr_model() -> cv.ml.KNearest:
@@ -93,8 +92,8 @@ def preprocess_roi(
     x1, y1, x2, y2 = roi
     h_img, w_img = full_screenshot.shape[:2]
     if not (0 <= x1 < x2 <= w_img and 0 <= y1 < y2 <= h_img):
-        logger.warning(f"ROI {roi} out of bounds for image {w_img}x{h_img}")
-        raise InvalidImageError(f"ROI {roi} out of bounds for image shape {(w_img, h_img)}")
+        logger.warning(f"ROI {roi} out of bounds for image {h_img}x{w_img}")
+        raise InvalidImageError(f"ROI {roi} out of bounds for image shape {(h_img, w_img)}")
 
     roi_image = full_screenshot[y1:y2, x1:x2]
     if roi_image.size == 0 or roi_image.shape[0] == 0 or roi_image.shape[1] == 0:
