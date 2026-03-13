@@ -885,7 +885,15 @@
                 "sell_on_clause": 0
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-03-12T20:56:24.456377",
+                "in_game_date": "2030-02-23T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            }
+        ],
         "sold": false,
         "date_sold": null,
         "loaned": false
@@ -3830,6 +3838,13 @@
                 "injury_detail": "Broken Toe",
                 "time_out": 3,
                 "time_out_unit": "Months"
+            },
+            {
+                "datetime": "2026-03-12T20:56:00.937659",
+                "in_game_date": "2030-02-23T00:00:00",
+                "injury_detail": "Sprained Knee",
+                "time_out": 4,
+                "time_out_unit": "Weeks"
             }
         ],
         "sold": false,
