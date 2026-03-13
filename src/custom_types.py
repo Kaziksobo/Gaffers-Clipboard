@@ -184,13 +184,6 @@ class Player(BaseModel):
     financial_history: list[FinancialSnapshot] = Field(default_factory=list)
     injury_history: list[InjuryRecord] = Field(default_factory=list)
     
-    @model_validator(mode='after')
-    def ensure_injury_history(self):
-        """Ensure injury_history is initialized (handles migration of existing players)."""
-        if self.injury_history is None:
-            self.injury_history = []
-        return self
-    
     sold: bool = False
     date_sold: Optional[DatetimeType] = None
     loaned: bool = False
