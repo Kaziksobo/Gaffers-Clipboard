@@ -4,12 +4,14 @@ from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion, safe_float_conversion
 from src.exceptions import DuplicateRecordError
-from custom_types import PositionType
 
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import PlayerDropdownMixin, OCRDataMixin
 
 logger = logging.getLogger(__name__)
+
+# Valid positions that match PositionType from custom_types
+VALID_POSITIONS = {"GK", "LB", "RB", "CB", "LWB", "RWB", "CDM", "CM", "CAM", "LM", "RM", "LW", "RW", "ST", "CF"}
 
 class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
     """Frame for displaying and adding individual outfield player match statistics."""
@@ -80,7 +82,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         
         # Position select
         self.position_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
-        self.position_frame.grid(row=3, column=0, padx=20, pady=(0, 20), sticky="nsew")
+        self.position_frame.grid(row=3, column=1, padx=20, pady=(0, 20), sticky="nsew")
         self.position_frame.grid_columnconfigure(0, weight=1)
         self.position_frame.grid_columnconfigure(1, weight=0)
         self.position_frame.grid_columnconfigure(2, weight=0)
@@ -250,12 +252,12 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         if not positions_played:
             self.show_warning("Validation Warning", "No positions entered. Please specify at least one position played (e.g. RW, LW).")
             return False
-        positions = [pos.strip() for pos in positions_played.split(",") if pos.strip()]
+        positions = [pos.strip().upper() for pos in positions_played.split(",") if pos.strip()]
         if not positions:
             self.show_warning("Validation Warning", "Invalid positions format. Please enter positions separated by commas (e.g. RW, LW).")
             return False
         for pos in positions:
-            if pos not in PositionType:
+            if pos not in VALID_POSITIONS:
                 self.show_warning("Validation Warning", f"Invalid position '{pos}'. Please enter valid positions (e.g. RW, LW).")
                 return False
         ui_data["positions_played"] = positions
@@ -321,5 +323,6 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         self._dismissed_warnings.clear()
         self.refresh_player_dropdown(only_outfield=True, remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
+        
         self.position_entry.delete(0, "end")
         self.position_entry.configure(placeholder_text="e.g. RW, LW")
