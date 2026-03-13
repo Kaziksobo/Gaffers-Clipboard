@@ -521,7 +521,7 @@ class App(ctk.CTk):
         try:
             self._capture_screenshot()
 
-            stats: Dict[str, Any] = self.detect_stats(is_it_player=False)
+            stats: Dict[str, Any] = self._detect_stats(is_it_player=False)
 
             match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
             logger.info("Populating MatchStatsFrame with detected stats.")
@@ -557,7 +557,7 @@ class App(ctk.CTk):
         try:
             self._capture_screenshot()
             
-            stats: Dict[str, Any] = self.detect_stats(is_it_player=True, gk=gk)
+            stats: Dict[str, Any] = self._detect_stats(is_it_player=True, gk=gk)
             
             if gk:
                 logger.info("Populating GKStatsFrame with detected stats.")
@@ -595,7 +595,7 @@ class App(ctk.CTk):
         try:
             self._capture_screenshot()
             
-            stats: Dict[str, Any] = self.detect_player_attributes(gk=gk, first=first)
+            stats: Dict[str, Any] = self._detect_player_attributes(gk=gk, first=first)
             
             if gk:
                 logger.info("Populating AddGKFrame with detected attributes.")
