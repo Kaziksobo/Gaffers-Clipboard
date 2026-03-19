@@ -2,18 +2,19 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.scrollable_sidebar import ScrollableSidebar
 from src.utils import safe_int_conversion, safe_float_conversion
 from src.exceptions import DuplicateRecordError
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import PlayerDropdownMixin, OCRDataMixin
+from src.views.mixins import PlayerDropdownMixin, OCRDataMixin, PerformanceSidebarMixin
 
 logger = logging.getLogger(__name__)
 
 # Valid positions that match PositionType from custom_types
 VALID_POSITIONS = {"GK", "LB", "RB", "CB", "LWB", "RWB", "CDM", "CM", "CAM", "LM", "RM", "LW", "RW", "ST", "CF"}
 
-class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
+class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, PerformanceSidebarMixin):
     """Frame for displaying and adding individual outfield player match statistics."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
@@ -178,6 +179,16 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+        
+        self.performance_sidebar = ScrollableSidebar(
+            parent=self,
+            theme=self.theme,
+            display_keys=["player_name", "positions_played"],
+            remove_button=True,
+            remove_callback=self.remove_player_from_buffer,
+            title="Buffered Players",
+        )
+        self.performance_sidebar.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)
     
     def _on_player_selected(self, name: str) -> None:
         bio = self.controller.get_player_bio(name)
@@ -323,6 +334,8 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin):
         self._dismissed_warnings.clear()
         self.refresh_player_dropdown(only_outfield=True, remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
+        
+        self.refresh_performance_sidebar()
         
         self.position_entry.delete(0, "end")
         self.position_entry.configure(placeholder_text="e.g. RW, LW")

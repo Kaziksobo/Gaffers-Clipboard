@@ -59,3 +59,15 @@ class OCRDataMixin:
                 # Case B: Flat dict (e.g. stats["possession"])
                 elif not prefix and key in stats:
                     var.set(str(stats[key]))
+
+class PerformanceSidebarMixin:
+    def remove_player_from_buffer(self, player_name: str) -> None:
+        self.controller.remove_player_from_buffer(player_name)
+        self.refresh_performance_sidebar()
+    
+    def refresh_performance_sidebar(self) -> None:
+        buffered_players = self.controller.get_buffered_player_performances(
+            display_keys=["player_name", "positions_played"],
+             id_key="player_name"
+        )
+        self.performance_sidebar.populate(buffered_players)

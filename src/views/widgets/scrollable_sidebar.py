@@ -5,11 +5,16 @@ from typing import Callable, Any, Optional, List, Dict
 logger = logging.getLogger(__name__)
 
 class ScrollableSidebar(ctk.CTkScrollableFrame):
-    """A generic, resuable scrollable sidebar widget for siaplying buffered items.
+    """A reusable, scrollable sidebar widget for displaying lists of items with optional deletion.
 
-    This widget dynamically generates row labels based on a provided list of keys.
-    It supports optional titles and optional deletion callbacks, maintaining strict 
-    MVC separation by relying purely on Controller-formatted string data.
+    This generic widget renders rows of pre-formatted data by displaying specified dictionary keys
+    as columns in each row. It supports an optional unique identifier field (id_key) for tracking
+    and callback purposes, which can be displayed as a column or hidden from view. An optional
+    Remove button can be added to each row, firing a callback with the item's unique identifier.
+
+    The widget maintains strict MVC separation: it only renders controller-prepared string data
+    and emits item-id callbacks on user actions. All data transformation, business logic, and
+    state management remain in the controller layer.
     """
     def __init__(
         self,
@@ -23,17 +28,19 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
         height: int = 400,
         title: Optional[str] = None,
     ) -> None:
-        """Initialise the ScollableSidebar
+        """Initialise the ScrollableSidebar.
 
         Args:
-            parent (ctk.CTkFrame): The parent container widget
-            display_keys (List[str]): The exact dictionary keys from the data to display as labels
-            remove_button (bool, optional): Whether to display a remove button for each item. Defaults to False.
-            remove_callback (Optional[Callable[[str], None]], optional): The callback function to call when an item is removed (required if remove_button is True). Defaults to None.
-            id_key (str, optional): The dictionary key to use as the unique identifier for each item. Defaults to "id".
-            width (int, optional): The width of the sidebar. Defaults to 200.
-            height (int, optional): The height of the sidebar. Defaults to 400.
-            title (Optional[str], optional): The title of the sidebar. Defaults to None.
+            parent (ctk.CTkFrame): The parent container widget.
+            display_keys (List[str]): Dictionary keys to render as display columns in each row.
+            remove_button (bool, optional): Whether to display a Remove button for each row. Defaults to False.
+            remove_callback (Optional[Callable[[str], None]], optional): Callback invoked when Remove is pressed, 
+                receiving the item_id as argument. Required if remove_button is True. Defaults to None.
+            id_key (str, optional): Dictionary key used as the unique item identifier. If present in display_keys, 
+                it will be shown as a column; otherwise it is hidden but still used for deletion callbacks. Defaults to "id".
+            width (int, optional): Width of the sidebar in pixels. Defaults to 200.
+            height (int, optional): Height of the sidebar in pixels. Defaults to 400.
+            title (Optional[str], optional): Optional title label displayed at the top of the sidebar. Defaults to None.
         """
         super().__init__(parent, width=width, height=height, fg_color=theme["colors"]["background"], label_text=title)
         self.parent = parent
@@ -50,15 +57,17 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
             raise ValueError("remove_callback must be provided if remove_button is True")
     
     def populate(self, data: List[Dict[str, str]]) -> None:
-        """Populate the sidebar dynamically based on the configured keys
+        """Populate the sidebar with rows, rendering specified keys and handling the unique identifier.
+
+        The id_key is always extracted for callback use (if remove_button is True),
+        and is rendered as a display column if present in display_keys, otherwise hidden.
+        Rows with missing required keys are logged and skipped; rendering continues for valid rows.
 
         Args:
-            data (List[Dict[str, str]]): A list of dictionaries containing the data to display.
-                Each dictionary should contain the keys specified in display_keys and id_key.
-                The controller MUST ensure all data values are pre-formatted strings ready for display.
+            data (List[Dict[str, str]]): List of dictionaries to render as sidebar rows.
+                Each dict must contain all keys in display_keys and id_key (when remove_button is enabled).
+                The controller MUST ensure all values are pre-formatted strings ready for display.
         """
-        # Check if every dict has self._display_keys. if  not, remove the offending dict and log a warning
-
         # remove keys not in self._display_keys
         cleaned_data = []
         for item in data:
@@ -74,7 +83,16 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
         # call _add_dynamic_row with the corrected dict for each dict in the list
         self._clear_rows()
         for item in cleaned_data:
-            item_id = item.pop(self._id_key, None) if self._remove_button else None
+            # Extract id_key if it's NOT in display_keys; otherwise keep it for display
+            if self._id_key not in self._display_keys:
+                item_id = item.pop(self._id_key, None)
+            else:
+                item_id = item.get(self._id_key, None)
+            
+            # Only pass item_id for callback if remove_button is enabled
+            if not self._remove_button:
+                item_id = None
+            
             self._add_dynamic_row(item, item_id)
 
     def _clear_rows(self) -> None:
@@ -84,11 +102,20 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
         self._rows.clear()
     
     def _add_dynamic_row(self, data: Dict[str, str], item_id: Optional[str] = None) -> None:
-        """Contruct a row with dynamic labels and an optional delete button.
+        """Construct and render a single row with labels for each display key and optional remove button.
+
+        Creates a grid-based row frame, renders one label per display key from the provided data,
+        and appends an optional Remove button if remove_button is enabled. The row is then packed
+        into the sidebar and tracked for future cleanup.
 
         Args:
-            data (Dict[str, str]): The data dict containing only the keys specified in display_keys
-            item_id (Optional[str]): The unique ID for the callback, required if remove_button is True
+            data (Dict[str, str]): Dictionary containing display-key-only data for rendering.
+                Must include a value for each key in display_keys.
+            item_id (Optional[str]): Unique identifier passed to the remove callback if
+                remove_button is True. Defaults to None.
+
+        Raises:
+            ValueError: If remove_button is True but item_id is None or falsy.
         """
         if self._remove_button and not item_id:
             raise ValueError("A non-null value for item_id must be given when a remove button is required")

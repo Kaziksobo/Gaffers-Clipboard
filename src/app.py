@@ -1014,6 +1014,64 @@ class App(ctk.CTk):
                 
         self.player_performances_buffer.append(performance_data)
     
+    def get_buffered_player_performances(self, display_keys: List[str], id_key: str = "player_name", default: str = "-") -> List[Dict[str, str]]:
+        """Format the buffered player performance data for display in the UI, ensuring all required keys are present.
+
+        Produces display-ready dictionaries from ``player_performances_buffer``.
+        Includes ``id_key`` plus keys in ``display_keys``; all values become strings.
+        Lists are joined with ", ", missing/falsy values use ``default``.
+        Entries missing ``id_key`` are skipped; GK entries set ``positions_played`` to "GK".
+
+        Args:
+            display_keys (List[str]): The list of keys to include in the formatted output for the UI. This should match the columns expected by the display component.
+            id_key (str, optional): The key to use as the identifier for each player's performance. Defaults to "player_name".
+            default (str, optional): The default value to use if a required key is missing. Defaults to "-".
+
+        Returns:
+            List[Dict[str, str]]: A list of dictionaries, each representing a player's performance with stringified values for display. 
+                Only entries that contain the required id_key will be included; others will be logged and skipped.
+        """
+        formatted_performances = []
+        for performance in self.player_performances_buffer:
+            formatted_performance = {id_key: str(performance.get(id_key, default=default))}
+            if formatted_performance[id_key] == default:
+                logger.warning(f"Buffered performance data is missing the required id_key '{id_key}'. This entry will be skipped in display. Data: {performance}")
+                continue
+            for key in display_keys:
+                if key == id_key:
+                    continue
+                if performance.get("performance_type") == "gk" and key == "positions_played":
+                    formatted_performance[key] = "GK"
+                    continue
+                value = performance.get(key, default) or default
+                if isinstance(value, list):
+                    formatted_performance[key] = ", ".join(str(v) for v in value)
+                else:
+                    formatted_performance[key] = str(value)
+            formatted_performances.append(formatted_performance)
+        
+        return formatted_performances
+    
+    def remove_player_from_buffer(self, player_name: str) -> None:
+        """Remove a player's performance data from the buffer based on their name.
+
+        This is used when a user decides to delete a buffered performance entry 
+        before saving the match. It identifies the entry by the player's name 
+        and removes it from the list of buffered performances.
+
+        Args:
+            player_name (str): The name of the player whose performance data should be removed from the buffer.
+        """
+        original_count = len(self.player_performances_buffer)
+        self.player_performances_buffer = [
+            performance for performance in self.player_performances_buffer 
+            if performance.get("player_name") != player_name
+        ]
+        if len(self.player_performances_buffer) < original_count:
+            logger.info(f"Removed buffered performance for player: {player_name}")
+        else:
+            logger.warning(f"No buffered performance found for player: {player_name}. No entries removed.")
+    
     def save_buffered_match(self) -> None:
         """Commit the buffered match overview and player performances to persistent storage.
 
