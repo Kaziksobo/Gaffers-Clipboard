@@ -24,7 +24,7 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
         remove_button: bool = False,
         remove_callback: Optional[Callable[[str], None]] = None,
         id_key: str = "id",
-        width: int = 200,
+        width: int = 375,
         height: int = 400,
         title: Optional[str] = None,
     ) -> None:
@@ -38,7 +38,7 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
                 receiving the item_id as argument. Required if remove_button is True. Defaults to None.
             id_key (str, optional): Dictionary key used as the unique item identifier. If present in display_keys, 
                 it will be shown as a column; otherwise it is hidden but still used for deletion callbacks. Defaults to "id".
-            width (int, optional): Width of the sidebar in pixels. Defaults to 200.
+            width (int, optional): Width of the sidebar in pixels. Defaults to 375.
             height (int, optional): Height of the sidebar in pixels. Defaults to 400.
             title (Optional[str], optional): Optional title label displayed at the top of the sidebar. Defaults to None.
         """
@@ -140,7 +140,7 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
             label = ctk.CTkLabel(
                 master=row,
                 text=data.get(key, ""),
-                font=self.theme["fonts"]["body"],
+                font=self.theme["fonts"]["sidebar_body"],
                 text_color=self.theme["colors"]["primary_text"]
             )
             label.grid(row=0, column=col, sticky="w")
@@ -151,13 +151,13 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
                 text="Remove",
                 fg_color=self.theme["colors"]["button_fg"],
                 text_color=self.theme["colors"]["primary_text"],
-                font=self.theme["fonts"]["button"],
+                font=self.theme["fonts"]["sidebar_button"],
                 command=lambda current_id=item_id: self._on_delete_pressed(current_id)
             )
             remove_button.grid(row=0, column=len(self._display_keys))
 
         self._rows.append(row)
-        row.pack(fill="x", padx=4, pady=2)
+        row.pack(fill="both", padx=4, pady=2)
     
     def _on_delete_pressed(self, item_id: str) -> None:
         """Trigger the injected remove calback if one exists.

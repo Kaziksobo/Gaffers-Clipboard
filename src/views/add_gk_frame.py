@@ -7,11 +7,11 @@ from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.views.widgets.scrollable_sidebar import ScrollableSidebar
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin
+from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
 
 logger = logging.getLogger(__name__)
 
-class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin):
+class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
     """A data entry frame for processing and saving Goalkeeper attributes."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
         """Initialize the AddGKFrame layout and input fields.
@@ -167,16 +167,6 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, PerformanceSi
             command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=4, column=1, pady=(0, 20), sticky="ew")
-        
-        self.performance_sidebar = ScrollableSidebar(
-            parent=self,
-            theme=self.theme,
-            display_keys=["player_name", "positions_played"],
-            remove_button=True,
-            remove_callback=self.remove_player_from_buffer,
-            title="Buffered Players",
-        )
-        self.performance_sidebar.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)
     
     def _on_player_selected(self, name: str) -> None:
         """Auto-fill bio fields when an existing player is selected."""
@@ -285,8 +275,6 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, PerformanceSi
         
         self.refresh_player_dropdown(only_gk=True)
         self.player_dropdown.set_value("Or select existing player")
-        
-        self.refresh_performance_sidebar()
         
         self.name_entry.delete(0, 'end')
         self.name_entry.configure(placeholder_text="Enter name here")

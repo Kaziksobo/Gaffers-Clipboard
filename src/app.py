@@ -1033,7 +1033,7 @@ class App(ctk.CTk):
         """
         formatted_performances = []
         for performance in self.player_performances_buffer:
-            formatted_performance = {id_key: str(performance.get(id_key, default=default))}
+            formatted_performance = {id_key: str(performance.get(id_key, default))}
             if formatted_performance[id_key] == default:
                 logger.warning(f"Buffered performance data is missing the required id_key '{id_key}'. This entry will be skipped in display. Data: {performance}")
                 continue

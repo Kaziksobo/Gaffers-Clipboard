@@ -2,15 +2,16 @@ import customtkinter as ctk
 import logging
 from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+from src.views.widgets.scrollable_sidebar import ScrollableSidebar
 from src.utils import safe_int_conversion, safe_float_conversion
 from src.exceptions import DuplicateRecordError
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
+from src.views.mixins import OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin
 
 logger = logging.getLogger(__name__)
 
-class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
+class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin):
     """Frame for displaying and adding individual goalkeeper match statistics."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
@@ -145,6 +146,17 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+        
+        self.performance_sidebar = ScrollableSidebar(
+            parent=self,
+            theme=self.theme,
+            display_keys=["player_name", "positions_played"],
+            remove_button=True,
+            remove_callback=self.remove_player_from_buffer,
+            id_key="player_name",
+            title="Buffered Players",
+        )
+        self.performance_sidebar.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)
     
     def collect_data(self) -> bool:
         """Extract inputs, validate them, and buffer the player performance data."""
@@ -275,3 +287,5 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         
         self.refresh_player_dropdown(only_gk=True, remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
+        
+        self.refresh_performance_sidebar()

@@ -186,6 +186,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
             display_keys=["player_name", "positions_played"],
             remove_button=True,
             remove_callback=self.remove_player_from_buffer,
+            id_key="player_name",
             title="Buffered Players",
         )
         self.performance_sidebar.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)

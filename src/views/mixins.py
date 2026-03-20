@@ -68,6 +68,6 @@ class PerformanceSidebarMixin:
     def refresh_performance_sidebar(self) -> None:
         buffered_players = self.controller.get_buffered_player_performances(
             display_keys=["player_name", "positions_played"],
-             id_key="player_name"
+            id_key="player_name"
         )
         self.performance_sidebar.populate(buffered_players)
