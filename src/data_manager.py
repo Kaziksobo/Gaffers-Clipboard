@@ -11,7 +11,6 @@ from src.custom_types import (
     FinancialSnapshot,
     InjuryRecord,
     Player,
-    MatchStats,
     MatchData,
     OutfieldPlayerPerformance,
     GoalkeeperPerformance,

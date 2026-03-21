@@ -3,7 +3,7 @@ import numpy as np
 import logging
 import sys
 from pathlib import Path
-from typing import Tuple, Dict, Any, Optional, Union
+from typing import Tuple, Any, Union
 from src.exceptions import OCRError, ModelLoadError, InvalidImageError, NoDigitsFoundError
 
 logger = logging.getLogger(__name__)
