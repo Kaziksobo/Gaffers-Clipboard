@@ -1,10 +1,8 @@
 import customtkinter as ctk
 import logging
-import re
 from typing import Dict, Any
 from src.utils import safe_int_conversion
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
-from src.views.widgets.scrollable_sidebar import ScrollableSidebar
 
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
@@ -35,7 +33,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         ]
         
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
         for i in range(6):
             self.grid_rowconfigure(i, weight=1 if i in [0, 5] else 0)
@@ -54,7 +52,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.name_entry = ctk.CTkEntry(
             self.name_and_date_frame,
             placeholder_text="Enter name here",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"],
             width=200
@@ -65,6 +63,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.player_dropdown = ScrollableDropdown(
             self.name_and_date_frame,
             theme=self.theme,
+            fonts=self.fonts,
             variable=self.player_dropdown_var,
             width=200,
             dropdown_height=150,
@@ -76,14 +75,14 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.in_game_date_label = ctk.CTkLabel(
             self.name_and_date_frame,
             text="In-game date:",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.in_game_date_label.grid(row=2, column=1, padx=(20, 10), pady=(10, 5), sticky="w")
         self.in_game_date_entry = ctk.CTkEntry(
             self.name_and_date_frame,
             placeholder_text="dd/mm/yy",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"]
         )
@@ -102,7 +101,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.age_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Age",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"],
             width=160
@@ -112,7 +111,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.height_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Height (ft'in\")",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"],
             width=160
@@ -122,7 +121,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.weight_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Weight (lbs)",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"],
             width=160
@@ -132,7 +131,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.country_entry = ctk.CTkEntry(
             self.base_attr_row,
             placeholder_text="Country",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"],
             width=160
@@ -161,7 +160,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
             command=lambda: self.on_done_button_press()

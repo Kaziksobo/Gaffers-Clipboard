@@ -20,6 +20,7 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
         self,
         parent: ctk.CTkFrame,
         theme: Dict[str, Any],
+        fonts: Dict[str, ctk.CTkFont],
         display_keys: List[str],
         remove_button: bool = False,
         remove_callback: Optional[Callable[[str], None]] = None,
@@ -45,6 +46,7 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
         super().__init__(parent, width=width, height=height, fg_color=theme["colors"]["background"], label_text=title)
         self.parent = parent
         self.theme = theme
+        self.fonts = fonts
         self._display_keys = display_keys
         self._remove_button = remove_button
         self._remove_callback = remove_callback
@@ -140,7 +142,7 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
             label = ctk.CTkLabel(
                 master=row,
                 text=data.get(key, ""),
-                font=self.theme["fonts"]["sidebar_body"],
+                font=self.fonts["sidebar_body"],
                 text_color=self.theme["colors"]["primary_text"]
             )
             label.grid(row=0, column=col, sticky="w")
@@ -151,7 +153,7 @@ class ScrollableSidebar(ctk.CTkScrollableFrame):
                 text="Remove",
                 fg_color=self.theme["colors"]["button_fg"],
                 text_color=self.theme["colors"]["primary_text"],
-                font=self.theme["fonts"]["sidebar_button"],
+                font=self.fonts["sidebar_button"],
                 command=lambda current_id=item_id: self._on_delete_pressed(current_id)
             )
             remove_button.grid(row=0, column=len(self._display_keys))

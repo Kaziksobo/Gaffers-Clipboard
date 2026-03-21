@@ -31,29 +31,31 @@ class AddMatchFrame(BaseViewFrame):
         self.label = ctk.CTkLabel(
             self.container, 
             text="Navigate to the match stats screen", 
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=self.theme["colors"]["primary_text"],
             anchor="center",
         )
         self.label.pack()
+        self.register_wrapping_widget(self.label, width_ratio=0.8)
 
         # Use the controller's configured screenshot delay so the label is not hardcoded
         delay_seconds = getattr(self.controller, "screenshot_delay", 3)
         self.sub_label = ctk.CTkLabel(
             self.container,
             text=f"Once you click done, you have {delay_seconds} seconds to switch to the game and correct screen.",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["secondary_text"],
             anchor="center",
         )
         self.sub_label.pack()
+        self.register_wrapping_widget(self.sub_label, width_ratio=0.8)
 
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )
         self.done_button.pack(pady=10)

@@ -5,16 +5,15 @@ import json
 import cv2 as cv
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Type, TypeVar, Any
-from pydantic import ValidationError, TypeAdapter, BaseModel
+from typing import Dict, List, Optional, Type, Any
 
 # Internal imports
 from src import ocr
 from src.theme import THEME
 from src.utils import get_screen_resolution, scale_coordinates
-from src.exceptions import GUIError, ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError, DuplicateRecordError
+from src.exceptions import ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError, DuplicateRecordError
 from src.data_manager import DataManager
-from src.custom_types import CareerMetadata, Player, Match, CareerDetail, DifficultyLevel, PlayerBioDict
+from src.custom_types import CareerMetadata, DifficultyLevel, PlayerBioDict
 
 # View imports
 from src.views.career_select_frame import CareerSelectFrame
@@ -64,8 +63,14 @@ class App(ctk.CTk):
         
         # Window configuration
         self.title("Gaffer's Clipboard")
-        self.geometry("800x600")
-        self.minsize(600, 400)
+        self.geometry("1000x700")
+        self.minsize(width=1000, height=700)
+        
+        self.theme = THEME
+        
+        self.dynamic_fonts: Dict[str, ctk.CTkFont] = self._initialize_dynamic_fonts()
+        self.bind("<Configure>", self._on_window_resize)
+        self.fonts = self.dynamic_fonts
         
         # Initialize the data manager
         data_path = App.PROJECT_ROOT / "data"
@@ -100,7 +105,7 @@ class App(ctk.CTk):
                   AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, 
                   LeftPlayerFrame, GKStatsFrame, AddInjuryFrame):
             try:
-                frame = F(container, self, THEME)
+                frame = F(container, self, self.theme)
                 self.frames[F] = frame
                 frame.grid(row=0, column=0, sticky="nsew")
             except Exception as e:
@@ -154,6 +159,28 @@ class App(ctk.CTk):
         # Trigger on_show lifecycle method if it exists for the frame
         if hasattr(frame, "on_show"):
             frame.on_show()
+    
+    def _initialize_dynamic_fonts(self) -> Dict[str, ctk.CTkFont]:
+        live_fonts = {}
+        for font_name, font_config in self.theme["fonts"].items():
+            family = font_config[0]
+            base_size = font_config[1]
+            weight = font_config[2] if len(font_config) > 2 else "normal"
+            
+            live_fonts[font_name] = ctk.CTkFont(family=family, size=base_size, weight=weight)
+            
+        return live_fonts
+    
+    def _on_window_resize(self, event: Any) -> None:
+        if event.widget == self and event.width > 100:
+            scale_factor = max(0, (event.width - 800) / 40)
+            
+            self.dynamic_fonts["title"].configure(size=int(max(24, min(32 + scale_factor * 1.5, 64))))
+            self.dynamic_fonts["button"].configure(size=int(max(14, min(16 + scale_factor * 0.5, 24))))
+            self.dynamic_fonts["body"].configure(size=int(max(14, min(16 + scale_factor * 0.5, 22))))
+            self.dynamic_fonts["sidebar_button"].configure(size=int(max(12, min(14 + scale_factor * 0.3, 18))))
+            self.dynamic_fonts["sidebar_body"].configure(size=int(max(12, min(14 + scale_factor * 0.3, 18))))
+
     def has_unsaved_work(self) -> bool:
         """Check if there are any unsaved changes in the session buffers.
         
@@ -673,7 +700,7 @@ class App(ctk.CTk):
         """
         
         # Create a borderless popup window
-        overlay = ctk.CTkToplevel(self, fg_color=THEME["colors"]["background"])
+        overlay = ctk.CTkToplevel(self, fg_color=self.theme["colors"]["background"])
         overlay.overrideredirect(True)
         
         # Center the popup over the main app
@@ -691,7 +718,7 @@ class App(ctk.CTk):
         border_frame = ctk.CTkFrame(
             overlay, 
             border_width=2, 
-            border_color=THEME["colors"]["accent"], 
+            border_color=self.theme["colors"]["accent"], 
             corner_radius=0, 
             fg_color="transparent"
         )
@@ -701,8 +728,8 @@ class App(ctk.CTk):
         label = ctk.CTkLabel(
             border_frame, 
             text=message, 
-            font=THEME["fonts"]["body"], 
-            text_color=THEME["colors"]["primary_text"]
+            font=self.fonts["body"], 
+            text_color=self.theme["colors"]["primary_text"]
         )
         label.pack(pady=(30, 15))
         
@@ -711,7 +738,7 @@ class App(ctk.CTk):
             border_frame, 
             mode="indeterminate", 
             width=250, 
-            progress_color=THEME["colors"]["accent"]
+            progress_color=self.theme["colors"]["accent"]
         )
         spinner.pack(pady=(0, 30))
         spinner.start()

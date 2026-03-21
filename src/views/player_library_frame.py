@@ -21,7 +21,7 @@ class PlayerLibraryFrame(BaseViewFrame):
         logger.info("Initializing PlayerLibraryFrame")
 
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
         for i in range(7):
             self.grid_rowconfigure(i, weight=1 if i in [0, 6] else 0)
@@ -29,19 +29,21 @@ class PlayerLibraryFrame(BaseViewFrame):
         self.title = ctk.CTkLabel(
             self,
             text="Welcome to your player library",
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.title.grid(row=1, column=1, pady=(20, 10))
+        self.register_wrapping_widget(self.title, width_ratio=0.8)
 
         self.delay_seconds = getattr(self.controller, "screenshot_delay", 3)
         self.info_label = ctk.CTkLabel(
             self,
             text="Manage your roster below. Use the 'Auto-Fill' buttons to auto-capture attributes directly from your game.",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["secondary_text"],
         )
         self.info_label.grid(row=2, column=1, pady=(10, 20))
+        self.register_wrapping_widget(self.info_label, width_ratio=0.6)
 
         # Add-player-buttons subgrid
         self.ocr_buttons_grid = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
@@ -59,7 +61,7 @@ class PlayerLibraryFrame(BaseViewFrame):
             text="Auto-Fill Goalkeeper Profile",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.on_add_gk_button_press()
         )
         self.add_gk_button.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
@@ -69,7 +71,7 @@ class PlayerLibraryFrame(BaseViewFrame):
             text="Auto-Fill Outfield Player Profile",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.on_add_outfield_button_press()
         )
         self.add_outfield_button.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
@@ -90,7 +92,7 @@ class PlayerLibraryFrame(BaseViewFrame):
             text="Update Player Financials",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddFinancialFrame"))
         )
         self.add_financial_button.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
@@ -100,7 +102,7 @@ class PlayerLibraryFrame(BaseViewFrame):
             text="Log Player Injury",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddInjuryFrame"))
         )
         self.add_injury_button.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
@@ -110,7 +112,7 @@ class PlayerLibraryFrame(BaseViewFrame):
             text="Manage Transfers and Loans",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("LeftPlayerFrame"))
         )
         self.leave_button.grid(row=1, column=3, padx=10, pady=5, sticky="ew")
@@ -121,7 +123,7 @@ class PlayerLibraryFrame(BaseViewFrame):
             text="Return to Main Menu",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
         )
         self.home_button.grid(row=5, column=1, padx=10, pady=5, sticky="ew")

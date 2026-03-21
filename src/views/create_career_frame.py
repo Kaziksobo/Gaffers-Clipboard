@@ -24,7 +24,7 @@ class CreateCareerFrame(BaseViewFrame):
         logger.info("Initializing CreateCareerFrame")
         
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
@@ -36,7 +36,7 @@ class CreateCareerFrame(BaseViewFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Create New Career",
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1)
@@ -63,13 +63,13 @@ class CreateCareerFrame(BaseViewFrame):
         self.club_name_label = ctk.CTkLabel(
             self.entry_frame,
             text="Club Name:",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.club_name_label.grid(row=1, column=1, sticky="e", pady=5, padx=(0,10))
         self.club_name_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
             width=200
@@ -80,13 +80,13 @@ class CreateCareerFrame(BaseViewFrame):
         self.manager_name_label = ctk.CTkLabel(
             self.entry_frame,
             text="Manager Name:",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.manager_name_label.grid(row=2, column=1, sticky="e", pady=5, padx=(0,10))
         self.manager_name_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
             width=200
@@ -97,13 +97,13 @@ class CreateCareerFrame(BaseViewFrame):
         self.starting_season_label = ctk.CTkLabel(
             self.entry_frame,
             text="Starting Season:",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.starting_season_label.grid(row=3, column=1, sticky="e", pady=5, padx=(0,10))
         self.starting_season_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
             width=200,
@@ -115,13 +115,13 @@ class CreateCareerFrame(BaseViewFrame):
         self.half_length_label = ctk.CTkLabel(
             self.entry_frame,
             text="Half Length (mins):",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.half_length_label.grid(row=4, column=1, sticky="e", pady=5, padx=(0,10))
         self.half_length_entry = ctk.CTkEntry(
             self.entry_frame,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"],
             width=200
@@ -132,7 +132,7 @@ class CreateCareerFrame(BaseViewFrame):
         self.match_difficulty_label = ctk.CTkLabel(
             self.entry_frame,
             text="Match Difficulty:",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.match_difficulty_label.grid(row=5, column=1, sticky="e", pady=5, padx=(0,10))
@@ -142,7 +142,7 @@ class CreateCareerFrame(BaseViewFrame):
             self.entry_frame,
             variable=self.match_difficulty_var,
             values=["Beginner", "Amateur", "Semi-Pro", "Professional", "World Class", "Legendary", "Ultimate"],
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             fg_color=self.theme["colors"]["dropdown_fg"],
             text_color=self.theme["colors"]["primary_text"],
             button_color=self.theme["colors"]["button_fg"],
@@ -171,7 +171,7 @@ class CreateCareerFrame(BaseViewFrame):
             text="Return to Career Selection",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["background"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             text_color=self.theme["colors"]["primary_text"],
             hover_color=self.theme["colors"]["accent"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("CareerSelectFrame"))
@@ -184,7 +184,7 @@ class CreateCareerFrame(BaseViewFrame):
             text="Start Career",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["button_bg"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             text_color=self.theme["colors"]["primary_text"],
             command=self.on_create_career_button_press
         )

@@ -24,7 +24,7 @@ class MatchAddedFrame(BaseViewFrame):
         self.label = ctk.CTkLabel(
             self, 
             text="Match successfully recorded", 
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=self.theme["colors"]["primary_text"],
             anchor="center",
         )
@@ -35,7 +35,7 @@ class MatchAddedFrame(BaseViewFrame):
             text="Return to Main Menu",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
         )
         self.done_button.pack(pady=10)

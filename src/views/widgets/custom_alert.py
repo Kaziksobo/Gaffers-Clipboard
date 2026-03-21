@@ -19,6 +19,7 @@ class CustomAlert(ctk.CTkToplevel):
         self,
         parent: ctk.CTkFrame,
         theme: Dict[str, Any],
+        fonts: Dict[str, ctk.CTkFont],
         title: str,
         message: str,
         alert_type: str = "warning",
@@ -39,6 +40,7 @@ class CustomAlert(ctk.CTkToplevel):
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.parent = parent
         self.theme = theme
+        self.fonts = fonts
         self.title_text = title
         self.message_text = message
         self.alert_type = alert_type
@@ -142,7 +144,7 @@ class CustomAlert(ctk.CTkToplevel):
         title = ctk.CTkLabel(
             main_container,
             text=self.title_text,
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=accent_color,
         )
         title.pack(pady=10)
@@ -150,7 +152,7 @@ class CustomAlert(ctk.CTkToplevel):
         # Message textbox (uses CTkTextbox's built-in scrollbar)
         message_textbox = ctk.CTkTextbox(
             main_container,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=colors.get("primary_text", "white"),
             fg_color=background_color,
             border_width=0,
@@ -175,7 +177,7 @@ class CustomAlert(ctk.CTkToplevel):
             button = ctk.CTkButton(
                 buttons_frame,
                 text=option,
-                font=self.theme["fonts"]["button"],
+                font=self.fonts["button"],
                 fg_color=self.theme["colors"]["button_fg"],
                 bg_color=self.theme["colors"]["button_bg"],
                 hover_color=accent_color,

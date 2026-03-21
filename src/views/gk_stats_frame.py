@@ -3,7 +3,7 @@ import logging
 from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.views.widgets.scrollable_sidebar import ScrollableSidebar
-from src.utils import safe_int_conversion, safe_float_conversion
+from src.utils import safe_int_conversion
 from src.exceptions import DuplicateRecordError
 
 from src.views.base_view_frame import BaseViewFrame
@@ -42,7 +42,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         ]
         
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
@@ -55,7 +55,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.main_heading = ctk.CTkLabel(
             self,
             text="Review Goalkeeper Stats",
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
@@ -65,6 +65,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.player_dropdown = ScrollableDropdown(
             self,
             theme=self.theme,
+            fonts=self.fonts,
             variable=self.player_list_var,
             width=350,
             dropdown_height=200,
@@ -75,10 +76,11 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         # Info Label
         self.info_label = ctk.CTkLabel(
             self, text="Empty stats couldn't be recognised and require manual entry.\n Please review and update player attributes as necessary.",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["secondary_text"]
         )
         self.info_label.grid(row=3, column=1, pady=(0, 20))
+        self.register_wrapping_widget(self.info_label, width_ratio=0.8)
         
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
@@ -113,16 +115,17 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             self.direction_frame,
             text="To scan another player, navigate to their in-game stats:",
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        self.register_wrapping_widget(self.direction_label, width_ratio=0.8)
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
             text="Scan an Outfield Player",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.on_next_outfield_player_button_press()
         )
         self.next_player_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
@@ -132,7 +135,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             text="Scan a Goalkeeper",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.on_next_goalkeeper_button_press()
         )
         self.next_goalkeeper_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
@@ -142,7 +145,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             text="Save all and Finish Match",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
@@ -150,6 +153,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.performance_sidebar = ScrollableSidebar(
             parent=self,
             theme=self.theme,
+            fonts=self.fonts,
             display_keys=["player_name", "positions_played"],
             remove_button=True,
             remove_callback=self.remove_player_from_buffer,

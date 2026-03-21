@@ -24,7 +24,7 @@ class MainMenuFrame(BaseViewFrame):
 
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
         for i in range(5):
             self.grid_rowconfigure(i, weight=1 if i in [0, 4] else 0)
@@ -33,24 +33,28 @@ class MainMenuFrame(BaseViewFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text=self.get_career_welcome_text(),
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
-        self.main_heading.grid(row=1, column=1, pady=(0, 60))
+        self.main_heading.grid(row=1, column=1, sticky="s", pady=(0, 60))
+        self.register_wrapping_widget(self.main_heading, width_ratio=0.85)
+        
         # Question Label
         self.question_label = ctk.CTkLabel(
             self, text="What would you like to do?",
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["secondary_text"]
         )
-        self.question_label.grid(row=2, column=1, pady=10)
+        self.question_label.grid(row=2, column=1, sticky="s", pady=(0, 20))
 
         # Buttons Frame
         self.button_frame = ctk.CTkFrame(
             self,
             fg_color=self.theme["colors"]["background"]
         )
-        self.button_frame.grid(row=3, column=1, pady=20)
+        self.button_frame.grid(row=3, column=1, sticky="nsew")
+        self.button_frame.grid_columnconfigure((0, 1), weight=1)
+        self.button_frame.grid_rowconfigure(0, weight=1)
 
         # Player Update Button
         self.player_update_button = ctk.CTkButton(
@@ -58,12 +62,12 @@ class MainMenuFrame(BaseViewFrame):
             text="Enter Player Library",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["button_bg"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             text_color=self.theme["colors"]["primary_text"],
             hover_color=self.theme["colors"]["accent"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         )
-        self.player_update_button.pack(side="left", padx=(0, 10), pady=10)
+        self.player_update_button.grid(row=0, column=0, sticky="ew", padx=(0, 10), ipady=15)
 
         # Add Match Button
         self.add_match_button = ctk.CTkButton(
@@ -71,12 +75,12 @@ class MainMenuFrame(BaseViewFrame):
             text="Add New Match",
             fg_color=self.theme["colors"]["button_fg"],
             bg_color=self.theme["colors"]["button_bg"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             text_color=self.theme["colors"]["primary_text"],
             hover_color=self.theme["colors"]["accent"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddMatchFrame"))
         )
-        self.add_match_button.pack(side="right", padx=(10, 0), pady=10)
+        self.add_match_button.grid(row=0, column=1, sticky="ew", padx=(10, 0), ipady=15)
     
     def get_career_welcome_text(self) -> str:
         """Generate a personalized welcome message based on the active career.

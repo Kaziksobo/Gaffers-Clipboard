@@ -23,9 +23,15 @@ class BaseViewFrame(ctk.CTkFrame):
         super().__init__(parent, fg_color=theme["colors"]["background"])
         self.controller = controller
         self.theme = theme
+        self.fonts = self.controller.dynamic_fonts
         
         self.data_vars: Dict[str, ctk.StringVar] = {}
         self._dismissed_warnings: List[Tuple[str, Any]] = []
+        
+        # Stores tuples of (widget_instance, width_ratio)
+        self._wrapping_widgets: List[Tuple[ctk.CTkLabel, float]] = []
+        
+        self.bind("<Configure>", self._apply_dynamic_wraps)
         
         if self._show_main_menu_nav:
             self._main_menu_button = ctk.CTkButton(
@@ -37,6 +43,19 @@ class BaseViewFrame(ctk.CTkFrame):
                 command=self._on_main_menu_press
             )
             self._main_menu_button.place(x=10, y=10)
+    
+    # --- Dynamic Wrapping for Responsiveness ---
+    def register_wrapping_widget(self, widget: ctk.CTkLabel, width_ratio: float = 0.8) -> None:
+        self._wrapping_widgets.append((widget, width_ratio))
+    
+    def _apply_dynamic_wraps(self, event: Any) -> None:
+        if event.width > 100 and self._wrapping_widgets:
+            for widget, ratio in self._wrapping_widgets:
+                try:
+                    dynamic_limit = int(event.width * ratio)
+                    widget.configure(wraplength=dynamic_limit)
+                except Exception as e:
+                    logger.debug(f"Error applying dynamic wrap to widget {widget}: {e}")
     
     # --- Navigation ---
     def _on_main_menu_press(self) -> None:
@@ -58,6 +77,7 @@ class BaseViewFrame(ctk.CTkFrame):
         alert = CustomAlert(
             parent=self,
             theme=self.theme,
+            fonts=self.fonts,
             title=title,
             message=message,
             alert_type="info",
@@ -70,6 +90,7 @@ class BaseViewFrame(ctk.CTkFrame):
         CustomAlert(
             parent=self,
             theme=self.theme,
+            fonts=self.fonts,
             title=title,
             message=message,
             alert_type="error"
@@ -80,6 +101,7 @@ class BaseViewFrame(ctk.CTkFrame):
         CustomAlert(
             parent=self,
             theme=self.theme,
+            fonts=self.fonts,
             title=title,
             message=message,
             alert_type="success",
@@ -91,6 +113,7 @@ class BaseViewFrame(ctk.CTkFrame):
         alert = CustomAlert(
             parent=self,
             theme=self.theme,
+            fonts=self.fonts,
             title=title,
             message=message,
             alert_type="warning",
@@ -107,7 +130,8 @@ class BaseViewFrame(ctk.CTkFrame):
         stat_label: str,
         target_dict: Dict[str, ctk.StringVar],
         label_col: int = 1,
-        entry_col: int = 2) -> None:
+        entry_col: int = 2,
+        entry_width: int = 140) -> None:
         """Create a row in the UI for a specific stat, with a label and entry field.
         
         Args:
@@ -119,7 +143,7 @@ class BaseViewFrame(ctk.CTkFrame):
         label = ctk.CTkLabel(
             parent_widget,
             text=stat_label,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         label.grid(row=index, column=label_col, sticky="w", padx=5, pady=5)
@@ -129,7 +153,8 @@ class BaseViewFrame(ctk.CTkFrame):
         entry = ctk.CTkEntry(
             parent_widget,
             textvariable=entry_var,
-            font=self.theme["fonts"]["body"],
+            width=entry_width,
+            font=self.fonts["body"],
             fg_color=self.theme["colors"]["entry_fg"],
             text_color=self.theme["colors"]["primary_text"]
         )

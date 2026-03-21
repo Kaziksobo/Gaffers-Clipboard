@@ -3,7 +3,6 @@ import logging
 from typing import Dict, Any, List, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion
-from datetime import datetime
 
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import PlayerDropdownMixin
@@ -34,7 +33,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.time_out_unit_var = ctk.StringVar(value="Select unit")
 
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
         for i in range(5):
             self.grid_rowconfigure(i, weight=1 if i in [0, 4] else 0)
@@ -43,7 +42,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Log Player Injury",
-            font=self.theme["fonts"]["title"],
+            font=self.fonts["title"],
             text_color=self.theme["colors"]["primary_text"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
@@ -53,6 +52,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.player_dropdown = ScrollableDropdown(
             self,
             theme=self.theme,
+            fonts=self.fonts,
             variable=self.player_dropdown_var,
             width=350,
             dropdown_height=200,
@@ -85,7 +85,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             text="Save Record",
             fg_color=self.theme["colors"]["button_fg"],
             text_color=self.theme["colors"]["primary_text"],
-            font=self.theme["fonts"]["button"],
+            font=self.fonts["button"],
             command=self.on_done_button_press
         )
         self.done_button.grid(row=4, column=1)
@@ -95,7 +95,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         data_label = ctk.CTkLabel(
             self.data_frame,
             text=data_name,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"]
         )
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
@@ -106,7 +106,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         
         data_entry = ctk.CTkEntry(
             self.data_frame,
-            font=self.theme["fonts"]["body"],
+            font=self.fonts["body"],
             text_color=self.theme["colors"]["primary_text"],
             fg_color=self.theme["colors"]["entry_fg"],
             placeholder_text=placeholder_text,
@@ -123,6 +123,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             time_out_unit_dropdown = ScrollableDropdown(
                 self.data_frame,
                 theme=self.theme,
+                fonts=self.fonts,
                 variable=self.time_out_unit_var,
                 values=["Days", "Weeks", "Months"],
                 width=145,
