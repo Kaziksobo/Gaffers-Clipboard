@@ -359,8 +359,8 @@
             }
         ],
         "injury_history": [],
-        "sold": false,
-        "date_sold": null,
+        "sold": true,
+        "date_sold": "2030-03-28T00:00:00",
         "loaned": false
     },
     {
@@ -889,6 +889,13 @@
             {
                 "datetime": "2026-03-12T20:56:24.456377",
                 "in_game_date": "2030-02-23T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            },
+            {
+                "datetime": "2026-03-22T01:57:17.834278",
+                "in_game_date": "2030-04-27T00:00:00",
                 "injury_detail": "Bruised Elbow",
                 "time_out": 5,
                 "time_out_unit": "Days"
@@ -1919,7 +1926,15 @@
                 "sell_on_clause": 0
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-03-17T01:05:11.569309",
+                "in_game_date": "2030-03-30T00:00:00",
+                "injury_detail": "Broken Toe",
+                "time_out": 3,
+                "time_out_unit": "Months"
+            }
+        ],
         "sold": false,
         "date_sold": null,
         "loaned": false
@@ -2928,6 +2943,13 @@
                 "injury_detail": "Broken Toe",
                 "time_out": 3,
                 "time_out_unit": "Months"
+            },
+            {
+                "datetime": "2026-03-20T00:55:19.395510",
+                "in_game_date": "2030-04-10T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
             }
         ],
         "sold": false,
@@ -4283,6 +4305,13 @@
             {
                 "datetime": "2026-03-13T02:07:48.284952",
                 "in_game_date": "2030-03-06T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            },
+            {
+                "datetime": "2026-03-19T13:02:39.190878",
+                "in_game_date": "2030-04-06T00:00:00",
                 "injury_detail": "Bruised Elbow",
                 "time_out": 5,
                 "time_out_unit": "Days"
@@ -5653,6 +5682,59 @@
                 "slide_tackle": 64,
                 "stand_tackle": 65,
                 "volleys": 36
+            }
+        ],
+        "financial_history": [],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 60,
+        "name": "Nicholas Stephens",
+        "nationality": "Gibraltar",
+        "age": 18,
+        "height": "5'10\"",
+        "weight": 176,
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-03-17T01:06:45.053807",
+                "in_game_date": "2030-03-31T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 68,
+                "sprint_speed": 69,
+                "agility": 76,
+                "balance": 64,
+                "jumping": 66,
+                "stamina": 59,
+                "strength": 71,
+                "aggression": 55,
+                "att_position": 73,
+                "composure": 53,
+                "interceptions": 42,
+                "reactions": 64,
+                "vision": 62,
+                "defensive_awareness": 25,
+                "ball_control": 62,
+                "crossing": 48,
+                "curve": 45,
+                "dribbling": 58,
+                "fk_accuracy": 44,
+                "finishing": 69,
+                "heading_accuracy": 61,
+                "long_pass": 41,
+                "long_shots": 57,
+                "penalties": 54,
+                "short_pass": 61,
+                "shot_power": 65,
+                "slide_tackle": 28,
+                "stand_tackle": 29,
+                "volleys": 57
             }
         ],
         "financial_history": [],
