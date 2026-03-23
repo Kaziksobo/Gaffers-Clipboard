@@ -37,7 +37,7 @@ class CustomAlert(ctk.CTkToplevel):
             options (Optional[List[str]]): Additional options for the alert (e.g., buttons).
             success_timeout (int): The timeout in seconds for success alerts (0 means no timeout).
         """
-        super().__init__(parent, fg_color=theme.colors.background)
+        super().__init__(parent)
         self.parent = parent
         self.theme = theme
         self.fonts = fonts
@@ -111,25 +111,21 @@ class CustomAlert(ctk.CTkToplevel):
     def _build_ui(self) -> None:
         """Build the UI elements of the alert popup based on the theme and alert type.
         
-        This method should create a top title label (coloured according to the alert type), 
-        a CTkTextbox to show the message which can use a scrollbar if the message is too long, 
-        and iterates through the options list to create a CTkButton for each option,
-        placing them dynamically at the bottom of the popup
+        This method creates a top title label (colored according to the alert type), 
+        a CTkTextbox to show the message with scrollbar support, and creates CTkButtons 
+        for each option, placing them dynamically at the bottom of the popup.
         """
-        colors = vars(self.theme.colors)
+        semantic_colors = vars(self.theme.semantic_colors)
         default_accent_color = (
-            colors.get("warning")
-            or colors.get("error")
-            or colors.get("primary")
-            or colors.get("primary_text")
-            or "white"
+            semantic_colors.get(self.alert_type)
+            or semantic_colors.get("info")
+            or "#2196f3"
         )
-        accent_color = colors.get(self.alert_type, default_accent_color)
-        background_color = colors.get("background", "transparent")
+        accent_color = default_accent_color
         
+        # Default background from CTk theme (will use JSON theme's CTk.fg_color)
         main_container = ctk.CTkFrame(
             self,
-            fg_color=background_color,
             border_width=2,              # Thickness of the border
             border_color=accent_color,   # Ties the border to the error/warning/success color
             corner_radius=0              # Set to 0 for sharp edges, or match your theme
@@ -153,8 +149,6 @@ class CustomAlert(ctk.CTkToplevel):
         message_textbox = ctk.CTkTextbox(
             main_container,
             font=self.fonts["body"],
-            text_color=colors.get("primary_text", "white"),
-            fg_color=background_color,
             border_width=0,
             wrap="word",
         )
@@ -167,8 +161,8 @@ class CustomAlert(ctk.CTkToplevel):
         self._message_textbox = message_textbox
         self.after(50, self._toggle_scrollbar)
         
-        # Buttons frame
-        buttons_frame = ctk.CTkFrame(main_container, fg_color=background_color)
+        # Buttons frame (will use CTk theme default background)
+        buttons_frame = ctk.CTkFrame(main_container)
         buttons_frame.pack(pady=10)
 
         self._buttons: Dict[str, ctk.CTkButton] = {}
@@ -178,8 +172,6 @@ class CustomAlert(ctk.CTkToplevel):
                 buttons_frame,
                 text=option,
                 font=self.fonts["button"],
-                fg_color=self.theme.colors.button_fg,
-                bg_color=self.theme.colors.button_bg,
                 hover_color=accent_color,
                 command=lambda opt=option: self._button_callback(opt)
             )

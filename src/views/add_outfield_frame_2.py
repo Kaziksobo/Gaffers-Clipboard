@@ -57,12 +57,11 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin):
         self.title = ctk.CTkLabel(
             self,
             text="Page 2 - Technical Attributes",
-            font=self.fonts["title"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["title"]
         )
         self.title.grid(row=1, column=1, pady=(20, 10))
         
-        self.attributes_grid = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
+        self.attributes_grid = ctk.CTkFrame(self)
         self.attributes_grid.grid(row=2, column=1, pady=(10, 20), sticky="nsew")
 
         for i in range(6):
@@ -89,8 +88,6 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin):
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=self.theme.colors.button_fg,
-            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )

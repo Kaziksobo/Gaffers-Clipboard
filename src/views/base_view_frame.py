@@ -20,7 +20,7 @@ class BaseViewFrame(ctk.CTkFrame):
             controller (Any): The main application controller.
             theme (Any): The application's theme configuration.
         """
-        super().__init__(parent, fg_color=theme.colors.background)
+        super().__init__(parent)
         self.controller = controller
         self.theme = theme
         self.fonts = self.controller.dynamic_fonts
@@ -37,8 +37,6 @@ class BaseViewFrame(ctk.CTkFrame):
             self._main_menu_button = ctk.CTkButton(
                 self,
                 text="← Main Menu",
-                fg_color=self.theme.colors.button_fg,
-                text_color=self.theme.colors.primary_text,
                 font=self.fonts["button"],
                 command=self._on_main_menu_press
             )
@@ -143,8 +141,7 @@ class BaseViewFrame(ctk.CTkFrame):
         label = ctk.CTkLabel(
             parent_widget,
             text=stat_label,
-            font=self.fonts["body"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["body"]
         )
         label.grid(row=index, column=label_col, sticky="w", padx=5, pady=5)
         
@@ -154,9 +151,7 @@ class BaseViewFrame(ctk.CTkFrame):
             parent_widget,
             textvariable=entry_var,
             width=entry_width,
-            font=self.fonts["body"],
-            fg_color=self.theme.colors.entry_fg,
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["body"]
         )
         entry.grid(row=index, column=entry_col, sticky="ew", pady=5, padx=5)
     

@@ -33,8 +33,7 @@ class MainMenuFrame(BaseViewFrame):
         self.main_heading = ctk.CTkLabel(
             self,
             text=self.get_career_welcome_text(),
-            font=self.fonts["title"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["title"]
         )
         self.main_heading.grid(row=1, column=1, sticky="s", pady=(0, 60))
         self.register_wrapping_widget(self.main_heading, width_ratio=0.85)
@@ -42,16 +41,12 @@ class MainMenuFrame(BaseViewFrame):
         # Question Label
         self.question_label = ctk.CTkLabel(
             self, text="What would you like to do?",
-            font=self.fonts["body"],
-            text_color=self.theme.colors.secondary_text
+            font=self.fonts["body"]
         )
         self.question_label.grid(row=2, column=1, sticky="s", pady=(0, 20))
 
         # Buttons Frame
-        self.button_frame = ctk.CTkFrame(
-            self,
-            fg_color=self.theme.colors.background
-        )
+        self.button_frame = ctk.CTkFrame(self)
         self.button_frame.grid(row=3, column=1, sticky="nsew")
         self.button_frame.grid_columnconfigure((0, 1), weight=1)
         self.button_frame.grid_rowconfigure(0, weight=1)
@@ -60,11 +55,7 @@ class MainMenuFrame(BaseViewFrame):
         self.player_update_button = ctk.CTkButton(
             self.button_frame,
             text="Enter Player Library",
-            fg_color=self.theme.colors.button_fg,
-            bg_color=self.theme.colors.button_bg,
             font=self.fonts["button"],
-            text_color=self.theme.colors.primary_text,
-            hover_color=self.theme.colors.accent,
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("PlayerLibraryFrame"))
         )
         self.player_update_button.grid(row=0, column=0, sticky="ew", padx=(0, 10), ipady=15)
@@ -73,11 +64,7 @@ class MainMenuFrame(BaseViewFrame):
         self.add_match_button = ctk.CTkButton(
             self.button_frame, 
             text="Add New Match",
-            fg_color=self.theme.colors.button_fg,
-            bg_color=self.theme.colors.button_bg,
             font=self.fonts["button"],
-            text_color=self.theme.colors.primary_text,
-            hover_color=self.theme.colors.accent,
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddMatchFrame"))
         )
         self.add_match_button.grid(row=0, column=1, sticky="ew", padx=(10, 0), ipady=15)

@@ -42,8 +42,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Log Player Injury",
-            font=self.fonts["title"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["title"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
 
@@ -61,10 +60,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
 
         # Data subgrid
-        self.data_frame = ctk.CTkFrame(
-            self,
-            fg_color=self.theme.colors.background
-        )
+        self.data_frame = ctk.CTkFrame(self)
         self.data_frame.grid(row=3, column=1, pady=(0, 20))
 
         self.data_frame.grid_columnconfigure(0, weight=1)
@@ -83,8 +79,6 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.done_button = ctk.CTkButton(
             self,
             text="Save Record",
-            fg_color=self.theme.colors.button_fg,
-            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=self.on_done_button_press
         )
@@ -95,8 +89,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         data_label = ctk.CTkLabel(
             self.data_frame,
             text=data_name,
-            font=self.fonts["body"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["body"]
         )
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
@@ -107,8 +100,6 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         data_entry = ctk.CTkEntry(
             self.data_frame,
             font=self.fonts["body"],
-            text_color=self.theme.colors.primary_text,
-            fg_color=self.theme.colors.entry_fg,
             placeholder_text=placeholder_text,
             width=entry_width
         )

@@ -37,8 +37,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         self.main_heading = ctk.CTkLabel(
             self,
             text="Sell/Loan Player",
-            font=self.fonts["title"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["title"]
         )
         self.main_heading.grid(row=1, column=1, pady=(10, 5))
         
@@ -56,10 +55,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
         
         # In-game Date mini frame
-        self.in_game_date_frame = ctk.CTkFrame(
-            self,
-            fg_color=self.theme.colors.background
-        )
+        self.in_game_date_frame = ctk.CTkFrame(self)
         self.in_game_date_frame.grid(row=3, column=1, padx=(20, 0), pady=(0, 20), sticky="ew")
         self.in_game_date_frame.grid_columnconfigure(0, weight=1)
         self.in_game_date_frame.grid_columnconfigure(1, weight=0)
@@ -72,22 +68,19 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         self.in_game_date_label = ctk.CTkLabel(
             self.in_game_date_frame,
             text="Enter the in-game date if selling player:",
-            font=self.fonts["body"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["body"]
         )
         self.in_game_date_label.grid(row=1, column=1, padx=(20, 0), sticky="w")
         self.in_game_date_entry = ctk.CTkEntry(
             self.in_game_date_frame,
             font=self.fonts["body"],
-            fg_color=self.theme.colors.entry_fg,
-            text_color=self.theme.colors.primary_text,
             width=200,
             placeholder_text="dd/mm/yy"
         )
         self.in_game_date_entry.grid(row=1, column=2, padx=(20, 0), sticky="e")
         
         # Sell/loan mini frame
-        self.sell_loan_frame = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
+        self.sell_loan_frame = ctk.CTkFrame(self)
         self.sell_loan_frame.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
         self.sell_loan_frame.grid_columnconfigure(0, weight=1)
         self.sell_loan_frame.grid_columnconfigure(1, weight=1)
@@ -98,11 +91,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         self.sell_button = ctk.CTkButton(
             self.sell_loan_frame,
             text="Sell Player",
-            fg_color=self.theme.colors.button_fg,
-            bg_color=self.theme.colors.background,
             font=self.fonts["button"],
-            text_color=self.theme.colors.primary_text,
-            hover_color=self.theme.colors.accent,
             command=self.sell_player
         )
         self.sell_button.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
@@ -111,11 +100,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         self.loan_out_button = ctk.CTkButton(
             self.sell_loan_frame,
             text="Loan Out Player",
-            fg_color=self.theme.colors.button_fg,
-            bg_color=self.theme.colors.background,
             font=self.fonts["button"],
-            text_color=self.theme.colors.primary_text,
-            hover_color=self.theme.colors.accent,
             command=self.loan_out_player
         )
         self.loan_out_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
@@ -123,11 +108,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
         self.return_button = ctk.CTkButton(
             self.sell_loan_frame,
             text="Return From Loan",
-            fg_color=self.theme.colors.button_fg,
-            bg_color=self.theme.colors.background,
             font=self.fonts["button"],
-            text_color=self.theme.colors.primary_text,
-            hover_color=self.theme.colors.accent,
             command=self.return_loan_player
         )
         self.return_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")

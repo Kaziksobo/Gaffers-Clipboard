@@ -63,6 +63,14 @@ class App(ctk.CTk):
         super().__init__()
         logger.info(f"Application starting up. Project root: {App.PROJECT_ROOT}")
         
+        # Load CustomTkinter JSON theme
+        theme_path = str(App.PROJECT_ROOT / "src" / "themes" / "dark.json")
+        ctk.set_default_color_theme(theme_path)
+        logger.info(f"Loaded CTk theme from: {theme_path}")
+        
+        # Set appearance mode
+        ctk.set_appearance_mode("dark")
+        
         # Window configuration
         self.title("Gaffer's Clipboard")
         self.geometry("1000x700")

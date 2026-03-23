@@ -69,8 +69,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.main_heading = ctk.CTkLabel(
             self,
             text="Review Outfield Player Stats",
-            font=self.fonts["title"],
-            text_color=self.theme.colors.primary_text
+            font=self.fonts["title"]
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         
@@ -89,7 +88,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
         
         # Position select
-        self.position_frame = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
+        self.position_frame = ctk.CTkFrame(self)
         self.position_frame.grid(row=3, column=1, padx=20, pady=(0, 20), sticky="nsew")
         self.position_frame.grid_columnconfigure(0, weight=1)
         self.position_frame.grid_columnconfigure(1, weight=0)
@@ -99,30 +98,26 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.position_label = ctk.CTkLabel(
             self.position_frame,
             text="Position(s) played:",
-            text_color=self.theme.colors.primary_text,
             font=self.fonts["body"],
         )
         self.position_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
         self.position_entry = ctk.CTkEntry(
             self.position_frame,
             placeholder_text="e.g. RW, LW",
-            font=self.fonts["body"],
-            text_color=self.theme.colors.primary_text,
-            fg_color=self.theme.colors.entry_fg
+            font=self.fonts["body"]
         )
         self.position_entry.grid(row=0, column=2, padx=5, pady=5, sticky="e")
         
         # Info Label
         self.info_label = ctk.CTkLabel(
             self, text="Please review the captured player performance data.\nFill in any missing fields and correct any inaccuracies.",
-            font=self.fonts["body"],
-            text_color=self.theme.colors.secondary_text
+            font=self.fonts["body"]
         )
         self.info_label.grid(row=4, column=1, pady=(0, 20))
         self.register_wrapping_widget(self.info_label, width_ratio=0.8)
         
         # Stats Grid
-        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme.colors.background)
+        self.stats_grid = ctk.CTkScrollableFrame(self)
         self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew", padx=20)
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
@@ -143,7 +138,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
             )
         
         # Direction subgrid
-        self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
+        self.direction_frame = ctk.CTkFrame(self)
         self.direction_frame.grid(row=6, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
@@ -153,7 +148,6 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
             text="To scan another player, navigate to their in-game stats:",
-            text_color=self.theme.colors.primary_text,
             font=self.fonts["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -162,8 +156,6 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
             text="Scan an Outfield Player",
-            fg_color=self.theme.colors.button_fg,
-            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_next_outfield_player_button_press()
         )
@@ -172,8 +164,6 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
             text="Scan a Goalkeeper",
-            fg_color=self.theme.colors.button_fg,
-            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_next_goalkeeper_button_press()
         )
@@ -182,8 +172,6 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
             text="Save all and Finish Match",
-            fg_color=self.theme.colors.button_fg,
-            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )
