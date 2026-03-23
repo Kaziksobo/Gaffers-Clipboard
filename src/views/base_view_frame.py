@@ -375,15 +375,49 @@ class BaseViewFrame(ctk.CTkFrame):
             )
         return True
     
-    def validate_in_game_date(self, date_str: str) -> bool:
+    def validate_in_game_date(self, date_str: str, disallow_older_than_last: bool = False) -> bool:
+        """Validate the in-game date format and optionally prevent dates older than last saved match.
+
+        Args:
+            date_str: The user-provided date string.
+            disallow_older_than_last: If True, block dates earlier than the latest stored match date.
+
+        Returns:
+            True if valid (and passes chronological check if enabled), False otherwise.
+        """
         date_str = date_str.strip()
-        try:
-            datetime.strptime(date_str, "%d/%m/%y")
-            return True
-        except ValueError:
+        parsed = None
+        for fmt in ("%d/%m/%y", "%d/%m/%Y"):
+            try:
+                parsed = datetime.strptime(date_str, fmt)
+                break
+            except ValueError:
+                continue
+
+        if parsed is None:
             logger.warning(f"Date validation failed for input: {date_str}")
             self.show_warning(
                 title="Invalid Date Format",
-                message="The 'In-game Date' field must be in the format dd/mm/yy. Please correct it before proceeding.",
+                message="The 'In-game Date' field must be in the format dd/mm/yy or dd/mm/yyyy. Please correct it before proceeding.",
             )
             return False
+
+        if disallow_older_than_last:
+            latest = None
+            try:
+                if hasattr(self.controller, "get_latest_match_in_game_date"):
+                    latest = self.controller.get_latest_match_in_game_date()
+            except Exception as e:
+                logger.debug(f"Could not retrieve latest match date for validation: {e}")
+
+            if latest is not None and parsed < latest:
+                self.show_warning(
+                    title="Date Earlier Than Last Match",
+                    message=(
+                        f"The date you entered ({date_str}) is earlier than the most recent stored match ({latest.strftime('%d/%m/%y')}).\n\n"
+                        "Please enter a date on or after the most recent match date."
+                    ),
+                )
+                return False
+
+        return True

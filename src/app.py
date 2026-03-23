@@ -270,6 +270,18 @@ class App(ctk.CTk):
             return None
             
         return self.data_manager.get_career_details(self.current_career)
+
+    def get_latest_match_in_game_date(self) -> Optional[datetime]:
+        """Return the most recent stored match in-game date for the active career.
+
+        This delegates to the DataManager and returns None when no career or
+        matches exist.
+        """
+        try:
+            return self.data_manager.get_latest_match_in_game_date()
+        except Exception as e:
+            logger.debug(f"Failed to get latest match date from DataManager: {e}")
+            return None
     
     def get_all_player_names(self, only_outfield: bool = False, only_gk: bool = False, remove_on_loan: bool = False) -> list[str]:
         """Retrieve a sorted list of active player names for UI dropdowns.

@@ -103,6 +103,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         )
         self.in_game_date_entry.grid(row=0, column=1)
         
+        # Chronological validation for matches will be enforced by the view when collecting data
+        
         # Competition dropdown
         self.competition_var = ctk.StringVar(value="Select Competition")
         self.competition_dropdown = ScrollableDropdown(
@@ -273,7 +275,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             return safe_int_conversion(value)
 
         in_game_date = self.in_game_date_entry.get().strip()
-        if not self.validate_in_game_date(in_game_date):
+        if not self.validate_in_game_date(in_game_date, disallow_older_than_last=True):
             return False
         
         # Ensure team names aren't the default placeholders

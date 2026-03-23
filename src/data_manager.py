@@ -420,6 +420,30 @@ class DataManager:
             return
 
         self.matches = self._load_json(self.matches_path, Match)
+
+    def get_latest_match_in_game_date(self) -> Optional[datetime]:
+        """Return the most recent match's in-game date for the current career.
+
+        The method refreshes the in-memory matches from disk and then returns
+        the maximum `data.in_game_date` value across all stored matches.
+        Returns None when no matches are present or when no career is loaded.
+        """
+        if not self.matches_path:
+            logger.debug("No matches_path set; cannot determine latest match date.")
+            return None
+
+        # Ensure we have the latest view of matches on disk
+        self.refresh_matches()
+
+        if not self.matches:
+            return None
+
+        try:
+            latest = max(self.matches, key=lambda m: m.data.in_game_date)
+            return latest.data.in_game_date
+        except Exception as e:
+            logger.warning(f"Failed to compute latest match date: {e}")
+            return None
     
     def add_or_update_player(
         self, 
