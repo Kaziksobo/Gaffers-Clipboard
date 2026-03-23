@@ -206,7 +206,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryF
 
         # Handle Text fields
         # usage of "or None" ensures empty strings become None for consistent validation
-        invalid_fields = ["Or select existing player", "Enter name here", "dd/mm/yy", "Height (ft'in\")", "Weight (lbs)", "Country", "Age", "No Players Found", "Position", ""]
+        invalid_fields = ["Or select existing player", "Enter name here", "dd/mm/yy", "Height (ft'in\")", "Weight (lbs)", "Country", "Age", "No Players Found", "No Items Found", "Position", ""]
         player_name_dropdown = self.player_dropdown_var.get()
         if player_name_dropdown in invalid_fields:
             player_name_dropdown = None

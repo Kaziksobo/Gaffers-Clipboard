@@ -129,7 +129,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
     def on_done_button_press(self):
         """Validates inputs, formats the date safely, and routes to the Controller."""
         player_name = self.player_dropdown_var.get()
-        if player_name in ["Select Player", "Click here to select player", "No players found"]:
+        if player_name in ["Select Player", "Click here to select player", "No Players Found", "No Items Found"]:
             self.show_warning("Selection Error", "Please select a player before saving.")
             return
 

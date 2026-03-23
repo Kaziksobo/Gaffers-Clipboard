@@ -209,7 +209,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         player_name = self.player_list_var.get()
 
         # Validate Player Name first
-        if player_name in ["", "Click here to select player", "No players found"]:
+        if player_name in ["", "Click here to select player", "No Players Found", "No Items Found"]:
             self.show_warning("Validation Error", "Please select a valid player from the dropdown before proceeding.")
             return False
 

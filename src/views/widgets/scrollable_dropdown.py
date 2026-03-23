@@ -100,7 +100,7 @@ class ScrollableDropdown(ctk.CTkFrame):
             return
 
         try:
-            values = self.values or ["No players found"]
+            values = self.values or ["No items found"]
             logger.debug(f"Resolved dropdown values. rendered_values_count={len(values)}")
 
             self.dropdown_popup = ctk.CTkToplevel(self)

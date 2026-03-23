@@ -129,7 +129,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
     def on_done_button_press(self) -> None:
         """Validates inputs, safely extracts monetary values, and routes to the Controller."""
         player = self.player_dropdown_var.get()
-        if player in ["Click here to select player", "No players found", "Select Player", ""]:
+        if player in ["Click here to select player", "No Players Found", "No Items Found", "No Items Found", "No Items Found", "Select Player", ""]:
             self.show_warning(
                 title="No Player Selected",
                 message="Please select a player from the dropdown before saving.",

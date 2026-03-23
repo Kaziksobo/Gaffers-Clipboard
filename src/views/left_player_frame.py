@@ -136,7 +136,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
         """
         player_name = self.player_list_var.get()
         
-        invalid_states = ["Click here to select player", "No players found", ""]
+        invalid_states = ["Click here to select player", "No Players Found", "No Items Found", ""]
         if player_name in invalid_states:
             self.show_warning("Selection Error", "Please select a player before performing an action.")
             return

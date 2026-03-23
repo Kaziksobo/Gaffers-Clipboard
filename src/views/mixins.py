@@ -15,7 +15,7 @@ class PlayerDropdownMixin:
         )
         if not names or names == ["No Players Found"]:
             self.show_warning(
-                title="No players found",
+                title="No Players Found",
                 message="Add players to the library first",
                 options=["Go to Library"],
             )

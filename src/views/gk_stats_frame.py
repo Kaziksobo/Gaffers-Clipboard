@@ -165,7 +165,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         player_name = self.player_list_var.get()
         
         # Validate Player Name first
-        if player_name in ["", "Click here to select player", "No Players Found"]:
+        if player_name in ["", "Click here to select player", "No Players Found", "No Items Found"]:
             self.show_warning(
                 title="No player selected",
                 message="Please select a player from the dropdown before proceeding."
