@@ -118,31 +118,35 @@ class ScrollableSidebar(ctk.CTkFrame):
         arrow = "▶" if self._is_collapsed else "▼"
         self._title_button.configure(text=f"{self.title} {arrow}")
         
+        # Completely clear existing geometry constraints to prevent merging conflicts
+        self.place_forget()
+        
+        # Base placement arguments that are always applied
+        place_args = {
+            'relx': self._initial_place_geometry.get('relx', 1.0),
+            'rely': self._initial_place_geometry.get('rely', 0.0),
+            'anchor': self._initial_place_geometry.get('anchor', 'ne'),
+            'x': self._initial_place_geometry.get('x', 0),
+            'y': self._initial_place_geometry.get('y', 0)
+        }
+        
+        # Safely re-apply relwidth if it was originally provided
+        if 'relwidth' in self._initial_place_geometry:
+            place_args['relwidth'] = self._initial_place_geometry['relwidth']
+        
         if self._is_collapsed:
             self.content_frame.grid_remove()
-            # Shrink the sidebar to just the button height, keeping all other geometry params
-            self.place(
-                relx=self._initial_place_geometry.get('relx', 1.0),
-                rely=self._initial_place_geometry.get('rely', 0.0),
-                anchor=self._initial_place_geometry.get('anchor', 'ne'),
-                x=self._initial_place_geometry.get('x', 0),
-                y=self._initial_place_geometry.get('y', 0),
-                relwidth=self._initial_place_geometry.get('relwidth', ''),
-                height=self._collapsed_height
-            )
+            # Set the exact absolute height using CTk's approved method
+            self.configure(height=self._collapsed_height)
+            # Re-place the widget (relheight is completely omitted)
+            self.place(**place_args)
         else:
             self.content_frame.grid()
-            # Restore the sidebar to expanded height with original params
-            self.place(
-                relx=self._initial_place_geometry.get('relx', 1.0),
-                rely=self._initial_place_geometry.get('rely', 0.0),
-                anchor=self._initial_place_geometry.get('anchor', 'ne'),
-                x=self._initial_place_geometry.get('x', 0),
-                y=self._initial_place_geometry.get('y', 0),
-                relwidth=self._initial_place_geometry.get('relwidth', ''),
-                relheight=self._initial_place_geometry.get('relheight', 0.85)
-                # Note: NOT setting 'height' when expanding; relheight takes precedence
-            )
+            # Re-apply the relative height constraint for the expanded state
+            if 'relheight' in self._initial_place_geometry:
+                place_args['relheight'] = self._initial_place_geometry['relheight']
+            
+            self.place(**place_args)
     
     def store_place_geometry(self, **kwargs: Any) -> None:
         """Store the initial place geometry for later use during collapse/expand.
