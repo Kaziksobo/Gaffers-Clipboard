@@ -32,6 +32,7 @@ from src.views.add_financial_frame import AddFinancialFrame
 from src.views.left_player_frame import LeftPlayerFrame
 from src.views.gk_stats_frame import GKStatsFrame
 from src.views.add_injury_frame import AddInjuryFrame
+from src.views.widgets.delay_overlay import show_delay_overlay
 
 logger = logging.getLogger(__name__)
 
@@ -727,65 +728,8 @@ class App(ctk.CTk):
             before the application captures a screenshot.
         """
         
-        # Create a borderless popup window
-        overlay = ctk.CTkToplevel(self, fg_color=self.theme["colors"]["background"])
-        overlay.overrideredirect(True)
-        
-        # Center the popup over the main app
-        width, height = 350, 150
-        app_x = self.winfo_rootx()
-        app_y = self.winfo_rooty()
-        app_width = self.winfo_width()
-        app_height = self.winfo_height()
-        
-        center_x = app_x + (app_width // 2) - (width // 2)
-        center_y = app_y + (app_height // 2) - (height // 2)
-        overlay.geometry(f"{width}x{height}+{center_x}+{center_y}")
-        
-        # Add a colored border frame
-        border_frame = ctk.CTkFrame(
-            overlay, 
-            border_width=2, 
-            border_color=self.theme["colors"]["accent"], 
-            corner_radius=0, 
-            fg_color="transparent"
-        )
-        border_frame.pack(fill="both", expand=True)
-        
-        # Add the text message
-        label = ctk.CTkLabel(
-            border_frame, 
-            text=message, 
-            font=self.fonts["body"], 
-            text_color=self.theme["colors"]["primary_text"]
-        )
-        label.pack(pady=(30, 15))
-        
-        # Add animated progress bar
-        spinner = ctk.CTkProgressBar(
-            border_frame, 
-            mode="indeterminate", 
-            width=250, 
-            progress_color=self.theme["colors"]["accent"]
-        )
-        spinner.pack(pady=(0, 30))
-        spinner.start()
-        
-        # Lock UI and force popup to the front
-        overlay.transient(self)
-        overlay.grab_set()
-        self.update_idletasks()
-        
-        # Execute non-blocking delay
-        var = ctk.IntVar()
-        self.after(int(seconds * 1000), lambda: var.set(1))
-        self.wait_variable(var)
-        
-        # Clean up and restore focus to main app
-        spinner.stop()
-        overlay.grab_release()
-        overlay.destroy()
-        self.focus_force()
+        # Delegate to widget helper (keeps behavior unchanged)
+        show_delay_overlay(self, seconds, message)
 
     def _get_latest_screenshot_path(self) -> Path:
         """Retrieve the file path of the most recently captured screenshot.
