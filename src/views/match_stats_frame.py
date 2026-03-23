@@ -5,11 +5,11 @@ from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion, safe_float_conversion
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin
+from src.views.mixins import OCRDataMixin, EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
+class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
     """A data entry frame for validating and saving team match statistics."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
@@ -205,6 +205,9 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+        self.style_submit_button(self.all_players_added_button)
+        
+        self.apply_focus_flourishes(self)
 
     def create_home_away_stat_row(self, row: int, stat_key: str, stat_label: str) -> None:
         """Helper to create a unified Home/Away entry row for a specific statistic."""

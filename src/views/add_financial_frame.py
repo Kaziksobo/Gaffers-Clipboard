@@ -5,11 +5,11 @@ from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import PlayerDropdownMixin
+from src.views.mixins import PlayerDropdownMixin, EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
+class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
     """A data entry frame for updating a player's financial and contract details."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
@@ -122,6 +122,9 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             command=self.on_done_button_press
         )
         self.done_button.grid(row=5, column=1)
+        self.style_submit_button(self.done_button)
+        
+        self.apply_focus_flourishes(self)
     
     def on_done_button_press(self) -> None:
         """Validates inputs, safely extracts monetary values, and routes to the Controller."""

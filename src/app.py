@@ -172,6 +172,9 @@ class App(ctk.CTk):
         
         frame = self.frames[page_class]
         frame.tkraise()
+
+        if hasattr(frame, "refresh_semantic_styles"):
+            frame.refresh_semantic_styles()
         
         # Trigger on_show lifecycle method if it exists for the frame
         if hasattr(frame, "on_show"):

@@ -55,6 +55,7 @@ class AddMatchFrame(BaseViewFrame):
             command=lambda: self.on_done_button_press()
         )
         self.done_button.pack(pady=10)
+        self.style_submit_button(self.done_button)
     
     def on_done_button_press(self) -> None:
         """Handle the done button press event.

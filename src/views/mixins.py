@@ -71,3 +71,44 @@ class PerformanceSidebarMixin:
             id_key="player_name"
         )
         self.performance_sidebar.populate(buffered_players)
+
+class EntryFocusMixin:
+    def _theme_color(self, widget: str, key: str) -> str:
+        value = ctk.ThemeManager.theme[widget][key]
+        if isinstance(value, list):
+            idx = 1 if ctk.get_appearance_mode().lower() == "dark" else 0
+            return value[idx]
+        return value
+
+    def apply_focus_flourishes(self, parent_widget: ctk.CTkBaseClass) -> None:
+        for child in parent_widget.winfo_children():
+            if isinstance(child, ctk.CTkEntry):
+                child.bind(
+                    "<FocusIn>",
+                    lambda event, w=child: w.configure(
+                        border_color=self.theme.semantic_colors.info
+                    ),
+                )
+                child.bind(
+                    "<FocusOut>",
+                    lambda event, w=child: w.configure(
+                        border_color=self._theme_color("CTkEntry", "border_color")
+                    ),
+                )
+            elif isinstance(child, (ctk.CTkFrame, ctk.CTkScrollableFrame)):
+                self.apply_focus_flourishes(child)
+
+    def trigger_success_flash(self, button: ctk.CTkButton, original_text: str) -> None:
+        button.configure(
+            fg_color=self.theme.semantic_colors.success,
+            hover_color=self.theme.semantic_colors.success,
+            text="Added!"
+        )
+        button.after(
+            1000,
+            lambda: button.configure(
+                fg_color=self._theme_color("CTkButton", "fg_color"),
+                hover_color=self._theme_color("CTkButton", "hover_color"),
+                text=original_text,
+            ),
+        )

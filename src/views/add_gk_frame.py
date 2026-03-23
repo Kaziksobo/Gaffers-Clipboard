@@ -5,11 +5,11 @@ from src.utils import safe_int_conversion
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
+from src.views.mixins import OCRDataMixin, PlayerDropdownMixin, EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
+class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMixin):
     """A data entry frame for processing and saving Goalkeeper attributes."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the AddGKFrame layout and input fields.
@@ -151,6 +151,9 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=4, column=1, pady=(0, 20), sticky="ew")
+        self.style_submit_button(self.done_button)
+        
+        self.apply_focus_flourishes(self)
     
     def _on_player_selected(self, name: str) -> None:
         """Auto-fill bio fields when an existing player is selected."""

@@ -5,11 +5,11 @@ from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import PlayerDropdownMixin
+from src.views.mixins import PlayerDropdownMixin, EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
+class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
     """A data entry frame for logging a player's injury record."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
@@ -83,7 +83,10 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             command=self.on_done_button_press
         )
         self.done_button.grid(row=4, column=1)
-    
+        self.style_submit_button(self.done_button)
+        
+        self.apply_focus_flourishes(self)
+
     def create_data_row(self, index: int, data_key: str, data_name: str) -> None:
         """Helper to create a label, entry pair, and optional unit combobox for injury data."""
         data_label = ctk.CTkLabel(

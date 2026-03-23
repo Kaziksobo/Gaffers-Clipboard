@@ -4,11 +4,11 @@ from typing import Dict, Any, Tuple
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin
+from src.views.mixins import OCRDataMixin, EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin):
+class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
     """The outfield player attribute entry frame for the second page.
     
     Sets up input fields for technical attributes and configures the layout.
@@ -92,6 +92,9 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin):
             command=lambda: self.on_done_button_press()
         )
         self.done_button.grid(row=3, column=1, pady=(0, 20), sticky="ew")
+        self.style_submit_button(self.done_button)
+        
+        self.apply_focus_flourishes(self)
     
     def on_done_button_press(self) -> None:
         """Collects attributes, validates them, and routes them to the Controller to save."""

@@ -4,11 +4,11 @@ from typing import Dict, Any, Optional
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import PlayerDropdownMixin
+from src.views.mixins import PlayerDropdownMixin, EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
+class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
     """A management frame for executing player sales and loans."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
@@ -112,6 +112,8 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin):
             command=self.return_loan_player
         )
         self.return_button.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
+        
+        self.apply_focus_flourishes(self)
     
     def get_in_game_date(self) -> Optional[str]:
         """Helper to extract and validate the in-game date from the entry field.

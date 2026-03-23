@@ -9,9 +9,13 @@ theme = SimpleNamespace(
         sidebar_button=("Segoe UI", 14, "bold"),
     ),
     semantic_colors=SimpleNamespace(
+        accent="#00bfff",
         error="#ff4c4c",
         warning="#ffcc00",
         success="#4caf50",
         info="#2196f3",
+        submit_hover="#4caf50",
+        remove_hover="#ff4c4c",
+        unsaved_nav_hover="#ffcc00",
     ),
 )

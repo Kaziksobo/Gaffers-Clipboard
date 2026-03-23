@@ -357,6 +357,7 @@ class ScrollableSidebar(ctk.CTkFrame):
                 text="Remove",
                 font=self.fonts["sidebar_button"],
                 width=self._remove_button_width,
+                hover_color=self.theme.semantic_colors.remove_hover,
                 command=lambda current_id=item_id: self._on_delete_pressed(current_id)
             )
             remove_button.grid(row=0, column=col_idx, sticky="e", padx=(4, 0))

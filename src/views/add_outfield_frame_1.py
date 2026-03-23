@@ -4,12 +4,12 @@ from typing import Dict, Any, Tuple
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin, PlayerDropdownMixin
+from src.views.mixins import OCRDataMixin, PlayerDropdownMixin, EntryFocusMixin
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 logger = logging.getLogger(__name__)
 
-class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
+class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMixin):
     """A data entry frame for the first page of Outfield player attributes."""
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the AddOutfieldFrame1 layout and input fields.
@@ -176,6 +176,9 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             command=lambda: self.on_next_page()
         )
         self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")
+        self.style_submit_button(self.next_page_button)
+        
+        self.apply_focus_flourishes(self)
 
     def _on_player_selected(self, name: str) -> None:
         """Auto-fill bio fields when an existing player is selected."""

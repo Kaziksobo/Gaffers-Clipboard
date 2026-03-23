@@ -4,10 +4,11 @@ from typing import Dict, Any
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
+from src.views.mixins import EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class CreateCareerFrame(BaseViewFrame):
+class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
     """A frame that provides a form for users to create a new FIFA career profile."""
     _show_main_menu_nav = False
     
@@ -157,6 +158,9 @@ class CreateCareerFrame(BaseViewFrame):
             command=self.on_create_career_button_press
         )
         self.create_career_button.grid(row=1, column=2, padx=10)
+        self.style_submit_button(self.create_career_button)
+        
+        self.apply_focus_flourishes(self)
         
     def on_create_career_button_press(self) -> None:
         """Validate input fields and invoke the controller to create a new career profile."""

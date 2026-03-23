@@ -7,11 +7,11 @@ from src.utils import safe_int_conversion
 from src.exceptions import DuplicateRecordError
 
 from src.views.base_view_frame import BaseViewFrame
-from src.views.mixins import OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin
+from src.views.mixins import OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin, EntryFocusMixin
 
 logger = logging.getLogger(__name__)
 
-class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin):
+class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin, EntryFocusMixin):
     """Frame for displaying and adding individual goalkeeper match statistics."""
 
     def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
@@ -140,6 +140,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             command=lambda: self.on_done_button_press()
         )
         self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+        self.style_submit_button(self.all_players_added_button)
         
         self.performance_sidebar = ScrollableSidebar(
             parent=self,
@@ -156,6 +157,8 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.performance_sidebar.store_place_geometry(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.4, anchor="ne", x=-10, y=10)
         initial_state = self.controller.get_sidebar_collapse_state("performance_sidebar")
         self.performance_sidebar.set_collapse_state(initial_state)
+        
+        self.apply_focus_flourishes(self)
     
     def collect_data(self) -> bool:
         """Extract inputs, validate them, and buffer the player performance data."""

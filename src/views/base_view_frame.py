@@ -41,6 +41,27 @@ class BaseViewFrame(ctk.CTkFrame):
                 command=self._on_main_menu_press
             )
             self._main_menu_button.place(x=10, y=10)
+            self._main_menu_button.bind("<Enter>", lambda _event: self._refresh_main_menu_button_style())
+            self._refresh_main_menu_button_style()
+
+    def style_submit_button(self, button: ctk.CTkButton) -> None:
+        button.configure(hover_color=self.theme.semantic_colors.submit_hover)
+
+    def style_remove_button(self, button: ctk.CTkButton) -> None:
+        button.configure(hover_color=self.theme.semantic_colors.remove_hover)
+
+    def _refresh_main_menu_button_style(self) -> None:
+        if not self._show_main_menu_nav or not hasattr(self, "_main_menu_button"):
+            return
+        hover_color = (
+            self.theme.semantic_colors.unsaved_nav_hover
+            if self.controller.has_unsaved_work()
+            else self.theme.semantic_colors.accent
+        )
+        self._main_menu_button.configure(hover_color=hover_color)
+
+    def refresh_semantic_styles(self) -> None:
+        self._refresh_main_menu_button_style()
     
     # --- Dynamic Wrapping for Responsiveness ---
     def register_wrapping_widget(self, widget: ctk.CTkLabel, width_ratio: float = 0.8) -> None:
@@ -64,8 +85,10 @@ class BaseViewFrame(ctk.CTkFrame):
                 options=["Yes, Discard It", "No, Stay Here"]
             )
             if result != "Yes, Discard It":
+                self._refresh_main_menu_button_style()
                 return
             self.controller.clear_session_buffers()
+            self._refresh_main_menu_button_style()
         
         self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
     
