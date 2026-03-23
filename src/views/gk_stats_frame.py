@@ -159,8 +159,12 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             remove_callback=self.remove_player_from_buffer,
             id_key="player_name",
             title="Buffered Players",
+            responsive=True,
         )
-        self.performance_sidebar.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)
+        self.performance_sidebar.place(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.5, anchor="ne", x=-10, y=10)
+        self.performance_sidebar.store_place_geometry(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.5, anchor="ne", x=-10, y=10)
+        initial_state = self.controller.get_sidebar_collapse_state("performance_sidebar")
+        self.performance_sidebar.set_collapse_state(initial_state)
     
     def collect_data(self) -> bool:
         """Extract inputs, validate them, and buffer the player performance data."""
@@ -293,3 +297,5 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.player_dropdown.set_value("Click here to select player")
         
         self.refresh_performance_sidebar()
+        collapsed = self.performance_sidebar.get_collapse_state()
+        self.controller.set_sidebar_collapse_state("performance_sidebar", collapsed)

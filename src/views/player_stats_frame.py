@@ -56,8 +56,14 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
-        for i in range(7):
-            self.grid_rowconfigure(i, weight=1 if i in [0, 6] else 0)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=0) # Title
+        self.grid_rowconfigure(2, weight=0) # Player dropdown
+        self.grid_rowconfigure(3, weight=0) # Position select
+        self.grid_rowconfigure(4, weight=0) # Info label
+        self.grid_rowconfigure(5, weight=1) # Stats grid
+        self.grid_rowconfigure(6, weight=0) # Direction subgrid
+        self.grid_rowconfigure(7, weight=1)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -117,7 +123,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
-        self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
+        self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew", padx=20)
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
         self.stats_grid.grid_columnconfigure(1, weight=1)
@@ -151,7 +157,7 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
             font=self.fonts["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.register_wrapping_widget(self.direction_label, width_ratio=0.8)
+        self.register_wrapping_widget(self.direction_label, width_ratio=0.3)
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
@@ -192,8 +198,12 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
             remove_callback=self.remove_player_from_buffer,
             id_key="player_name",
             title="Buffered Players",
+            responsive=True,
         )
-        self.performance_sidebar.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)
+        self.performance_sidebar.place(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.5, anchor="ne", x=-10, y=10)
+        self.performance_sidebar.store_place_geometry(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.5, anchor="ne", x=-10, y=10)
+        initial_state = self.controller.get_sidebar_collapse_state("performance_sidebar")
+        self.performance_sidebar.set_collapse_state(initial_state)
     
     def _on_player_selected(self, name: str) -> None:
         bio = self.controller.get_player_bio(name)
@@ -341,6 +351,8 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
         self.player_dropdown.set_value("Click here to select player")
         
         self.refresh_performance_sidebar()
+        collapsed = self.performance_sidebar.get_collapse_state()
+        self.controller.set_sidebar_collapse_state("performance_sidebar", collapsed)
         
         self.position_entry.delete(0, "end")
         self.position_entry.configure(placeholder_text="e.g. RW, LW")

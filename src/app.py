@@ -68,9 +68,16 @@ class App(ctk.CTk):
         
         self.theme = THEME
         
+        # Initialize dynamic fonts and bind to window resize for responsive scaling
         self.dynamic_fonts: Dict[str, ctk.CTkFont] = self._initialize_dynamic_fonts()
         self.bind("<Configure>", self._on_window_resize)
         self.fonts = self.dynamic_fonts
+        
+        # Set sidebar states
+        self.sidebar_states = {
+            "player_stats_sidebar": True,      # collapsed by default
+            "gk_stats_sidebar": True,
+        }
         
         # Initialize the data manager
         data_path = App.PROJECT_ROOT / "data"
@@ -180,6 +187,14 @@ class App(ctk.CTk):
             self.dynamic_fonts["body"].configure(size=int(max(14, min(16 + scale_factor * 0.5, 22))))
             self.dynamic_fonts["sidebar_button"].configure(size=int(max(12, min(14 + scale_factor * 0.3, 18))))
             self.dynamic_fonts["sidebar_body"].configure(size=int(max(12, min(14 + scale_factor * 0.3, 18))))
+    
+    def get_sidebar_collapse_state(self, sidebar_id: str) -> bool:
+        """Get collapse state for a sidebar. Defaults to True (collapsed)."""
+        return self.sidebar_states.get(sidebar_id, True)
+
+    def set_sidebar_collapse_state(self, sidebar_id: str, collapsed: bool) -> None:
+        """Save collapse state for a sidebar."""
+        self.sidebar_states[sidebar_id] = collapsed
 
     def has_unsaved_work(self) -> bool:
         """Check if there are any unsaved changes in the session buffers.
