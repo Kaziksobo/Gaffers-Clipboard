@@ -6,6 +6,7 @@ import cv2 as cv
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Type, Any
+from datetime import datetime
 
 # Internal imports
 from src import ocr
