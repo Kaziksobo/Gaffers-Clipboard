@@ -57,12 +57,12 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=0)
-        self.grid_rowconfigure(2, weight=0)
-        self.grid_rowconfigure(3, weight=0)
-        self.grid_rowconfigure(4, weight=0)
-        self.grid_rowconfigure(5, weight=0)
-        self.grid_rowconfigure(6, weight=0)
+        self.grid_rowconfigure(1, weight=0) # Title
+        self.grid_rowconfigure(2, weight=0) # Info label
+        self.grid_rowconfigure(3, weight=0) # Date
+        self.grid_rowconfigure(4, weight=0) # Competition dropdown
+        self.grid_rowconfigure(5, weight=1) # Stats grid
+        self.grid_rowconfigure(6, weight=0) # Direction subgrid
         self.grid_rowconfigure(7, weight=1)
         
         # Main Heading
@@ -193,7 +193,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             font=self.fonts["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.register_wrapping_widget(self.direction_label, width_ratio=0.6)
+        self.register_wrapping_widget(self.direction_label, width_ratio=0.3)
 
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
@@ -274,6 +274,14 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
 
         in_game_date = self.in_game_date_entry.get().strip()
         if not self.validate_in_game_date(in_game_date):
+            return False
+        
+        # Ensure team names aren't the default placeholders
+        if self.home_team_name_var.get().strip() in ["", "Home Team"]:
+            self.show_warning("Missing Home Team Name", "Please enter the home team name before proceeding.")
+            return False
+        if self.away_team_name_var.get().strip() in ["", "Away Team"]:
+            self.show_warning("Missing Away Team Name", "Please enter the away team name before proceeding.")
             return False
 
         # Collect match overview with type conversion
