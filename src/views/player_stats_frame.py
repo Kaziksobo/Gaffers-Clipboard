@@ -200,8 +200,8 @@ class PlayerStatsFrame(BaseViewFrame, PlayerDropdownMixin, OCRDataMixin, Perform
             title="Buffered Players",
             responsive=True,
         )
-        self.performance_sidebar.place(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.5, anchor="ne", x=-10, y=10)
-        self.performance_sidebar.store_place_geometry(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.5, anchor="ne", x=-10, y=10)
+        self.performance_sidebar.place(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.4, anchor="ne", x=-10, y=10)
+        self.performance_sidebar.store_place_geometry(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.4, anchor="ne", x=-10, y=10)
         initial_state = self.controller.get_sidebar_collapse_state("performance_sidebar")
         self.performance_sidebar.set_collapse_state(initial_state)
     
