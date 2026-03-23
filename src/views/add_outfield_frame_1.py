@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
     """A data entry frame for the first page of Outfield player attributes."""
-    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the AddOutfieldFrame1 layout and input fields.
         
         Args:
@@ -48,7 +48,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
         for i in range(7):
             self.grid_rowconfigure(i, weight=1 if i in [0, 6] else 0)
         
-        self.name_and_date_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.name_and_date_frame = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
         self.name_and_date_frame.grid(row=1, column=1, pady=(10, 5), sticky="ew")
         self.name_and_date_frame.grid_columnconfigure(0, weight=1)
         self.name_and_date_frame.grid_columnconfigure(1, weight=0)
@@ -63,8 +63,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.name_and_date_frame,
             placeholder_text="Enter name here",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg,
             width=200
         )
         self.name_entry.grid(row=1, column=1, pady=(10, 5), padx=(0, 10), sticky="e")
@@ -86,19 +86,19 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.name_and_date_frame,
             text="In-game date:",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.in_game_date_label.grid(row=2, column=1, padx=(20, 10), pady=(10, 5), sticky="w")
         self.in_game_date_entry = ctk.CTkEntry(
             self.name_and_date_frame,
             placeholder_text="dd/mm/yy",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.in_game_date_entry.grid(row=2, column=2, pady=(10, 5), padx=(10, 20), sticky="ew")
 
-        self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.base_attr_row = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
         self.base_attr_row.grid(row=3, column=1, pady=(5, 10), sticky="nsew")
         for i in range(7):
             self.base_attr_row.grid_columnconfigure(i, weight=1 if i in [0, 6] else 0)
@@ -108,8 +108,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.base_attr_row,
             placeholder_text="Position",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg,
             width=160
         )
         self.position_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
@@ -118,8 +118,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.base_attr_row,
             placeholder_text="Age",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg,
             width=160
         )
         self.age_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
@@ -128,8 +128,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.base_attr_row,
             placeholder_text="Height (ft'in\")",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg,
             width=160
         )
         self.height_entry.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
@@ -138,8 +138,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.base_attr_row,
             placeholder_text="Weight (lbs)",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg,
             width=160
         )
         self.weight_entry.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
@@ -148,13 +148,13 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self.base_attr_row,
             placeholder_text="Country",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg,
             width=160
         )
         self.country_entry.grid(row=0, column=5, padx=5, pady=5, sticky="ew")
         
-        self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
+        self.attributes_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme.colors.background)
         self.attributes_grid.grid(row=4, column=1, pady=(0, 10), sticky="nsew")
        
         for i in range(6):
@@ -188,8 +188,8 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin):
             self,
             text="Next Page",
             font=self.fonts["button"],
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             command=lambda: self.on_next_page()
         )
         self.next_page_button.grid(row=5, column=1, pady=(5, 10), sticky="ew")

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
     """A data entry frame for validating and saving team match statistics."""
 
-    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the MatchStatsFrame layout and input fields.
         
         Args:
@@ -70,7 +70,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             self,
             text="Review Match Statistics",
             font=self.fonts["title"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         
@@ -79,27 +79,27 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             self, 
             text="Please review the captured match data. Fill in any missing fields and correct any inaccuracies.",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["secondary_text"]
+            text_color=self.theme.colors.secondary_text
         )
         self.info_label.grid(row=2, column=1, pady=(0, 20))
         self.register_wrapping_widget(self.info_label, width_ratio=0.6)
         
         # In-game date entry
-        self.date_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.date_frame = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
         self.date_frame.grid(row=3, column=1, pady=(0, 20))
         self.in_game_date_label = ctk.CTkLabel(
             self.date_frame,
             text="In-game date:",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.in_game_date_label.grid(row=0, column=0, padx=(0, 10))
         self.in_game_date_entry = ctk.CTkEntry(
             self.date_frame,
             placeholder_text="dd/mm/yy",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.in_game_date_entry.grid(row=0, column=1)
         
@@ -120,7 +120,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         self.competition_dropdown.grid(row=4, column=1, pady=(0, 20))
         
         # Stats Grid
-        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
+        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme.colors.background)
         self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
 
         # Configure subgrid
@@ -135,8 +135,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             textvariable=self.home_team_name_var,
             width=200,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.home_team_name.grid(row=0, column=0, padx=5, pady=5)
 
@@ -145,8 +145,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             textvariable=self.home_team_score_var,
             width=80,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.home_team_score.grid(row=0, column=1, padx=5, pady=5)
 
@@ -154,7 +154,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             self.stats_grid,
             text="-",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.score_dash.grid(row=0, column=2, padx=5, pady=5)
         self.away_team_score = ctk.CTkEntry(
@@ -162,8 +162,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             textvariable=self.away_team_score_var,
             width=80,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.away_team_score.grid(row=0, column=3, padx=5, pady=5)
 
@@ -172,8 +172,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             textvariable=self.away_team_name_var,
             width=200,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.away_team_name.grid(row=0, column=4, padx=5, pady=5)
 
@@ -181,7 +181,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             self.create_home_away_stat_row(i + 1, stat_key, stat_label)
         
         # Direction subgrid
-        self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
         self.direction_frame.grid(row=6, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
@@ -191,7 +191,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
             text="To log individual performances, navigate to the in-game player performance screen:",
-            text_color=self.theme["colors"]["primary_text"],
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -200,8 +200,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
             text="Scan Outfield Player",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_next_outfield_player_button_press()
         )
@@ -210,8 +210,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
             text="Scan Goalkeeper",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_next_goalkeeper_button_press()
         )
@@ -220,8 +220,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
             text="Save Match Only",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )
@@ -236,15 +236,15 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             textvariable=home_stat_value,
             width=80,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.home_stat_entry.grid(row=row, column=0, padx=5, pady=5)
         self.stat_label = ctk.CTkLabel(
             self.stats_grid,
             text=stat_label,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.stat_label.grid(row=row, column=2, padx=5, pady=5)
         away_stat_value = ctk.StringVar(value="")
@@ -254,8 +254,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin):
             textvariable=away_stat_value,
             width=80,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"]
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg
         )
         self.away_stat_entry.grid(row=row, column=4, padx=5, pady=5)
         

@@ -12,7 +12,7 @@ class AddMatchFrame(BaseViewFrame):
     Provides basic layout with instructions and a button used to start 
     the match screenshot capture process.
     """
-    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the AddMatchFrame layout and components.
         
         Args:
@@ -32,7 +32,7 @@ class AddMatchFrame(BaseViewFrame):
             self.container, 
             text="Navigate to the match stats screen", 
             font=self.fonts["title"],
-            text_color=self.theme["colors"]["primary_text"],
+            text_color=self.theme.colors.primary_text,
             anchor="center",
         )
         self.label.pack()
@@ -44,7 +44,7 @@ class AddMatchFrame(BaseViewFrame):
             self.container,
             text=f"Once you click done, you have {delay_seconds} seconds to switch to the game and correct screen.",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["secondary_text"],
+            text_color=self.theme.colors.secondary_text,
             anchor="center",
         )
         self.sub_label.pack()
@@ -53,8 +53,8 @@ class AddMatchFrame(BaseViewFrame):
         self.done_button = ctk.CTkButton(
             self,
             text="Done",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )

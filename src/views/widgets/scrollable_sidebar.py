@@ -19,7 +19,7 @@ class ScrollableSidebar(ctk.CTkFrame):
     def __init__(
         self,
         parent: ctk.CTkFrame,
-        theme: Dict[str, Any],
+        theme: Any,
         fonts: Dict[str, ctk.CTkFont],
         display_keys: List[str],
         remove_button: bool = False,
@@ -54,9 +54,9 @@ class ScrollableSidebar(ctk.CTkFrame):
                 Defaults to False.
         """
         if responsive:
-            super().__init__(parent, fg_color=theme["colors"]["background"])
+            super().__init__(parent, fg_color=theme.colors.background)
         else:
-            super().__init__(parent, width=width, height=max_height, fg_color=theme["colors"]["background"])
+            super().__init__(parent, width=width, height=max_height, fg_color=theme.colors.background)
         
         self.parent = parent
         self.theme = theme
@@ -97,15 +97,15 @@ class ScrollableSidebar(ctk.CTkFrame):
             self,
             text=f"{self.title} ▶" if self._is_collapsed else f"{self.title} ▼",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["button_fg"],
-            bg_color=self.theme["colors"]["button_bg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.button_fg,
+            bg_color=self.theme.colors.button_bg,
             command=self._toggle_collapse
         )
         title_button.grid(row=0, column=0, pady=(10, 5))
         self._title_button = title_button
         
-        self.content_frame = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
+        self.content_frame = ctk.CTkScrollableFrame(self, fg_color=self.theme.colors.background)
         self.content_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
         self.content_frame.grid_columnconfigure(0, weight=1)
         
@@ -329,7 +329,7 @@ class ScrollableSidebar(ctk.CTkFrame):
         # Create a container row frame with no internal grid layout
         row = ctk.CTkFrame(
             self.content_frame,
-            fg_color=self.theme["colors"]["background"]
+            fg_color=self.theme.colors.background
         )
         row.grid(row=row_index, column=0, sticky="ew", padx=0, pady=2)
         
@@ -338,7 +338,7 @@ class ScrollableSidebar(ctk.CTkFrame):
         row.grid_columnconfigure(0, weight=1)  # Single column that spans all content
         
         # Create internal frame to hold all cells in a row
-        cells_frame = ctk.CTkFrame(row, fg_color=self.theme["colors"]["background"])
+        cells_frame = ctk.CTkFrame(row, fg_color=self.theme.colors.background)
         cells_frame.grid(row=0, column=0, sticky="ew")
         
         col_idx = 0
@@ -349,7 +349,7 @@ class ScrollableSidebar(ctk.CTkFrame):
                 master=cells_frame,
                 text=data.get(key, ""),
                 font=self.fonts["sidebar_body"],
-                text_color=self.theme["colors"]["primary_text"],
+                text_color=self.theme.colors.primary_text,
                 width=width,
                 anchor="w"
             )
@@ -360,8 +360,8 @@ class ScrollableSidebar(ctk.CTkFrame):
             remove_button = ctk.CTkButton(
                 master=cells_frame,
                 text="Remove",
-                fg_color=self.theme["colors"]["button_fg"],
-                text_color=self.theme["colors"]["primary_text"],
+                fg_color=self.theme.colors.button_fg,
+                text_color=self.theme.colors.primary_text,
                 font=self.fonts["sidebar_button"],
                 width=self._remove_button_width,
                 command=lambda current_id=item_id: self._on_delete_pressed(current_id)

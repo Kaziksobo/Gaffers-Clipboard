@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class MatchAddedFrame(BaseViewFrame):
     """A simple success screen displayed when a match is successfully recorded."""
     
-    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the MatchAddedFrame layout.
         
         Args:
@@ -25,7 +25,7 @@ class MatchAddedFrame(BaseViewFrame):
             self, 
             text="Match successfully recorded", 
             font=self.fonts["title"],
-            text_color=self.theme["colors"]["primary_text"],
+            text_color=self.theme.colors.primary_text,
             anchor="center",
         )
         self.label.pack(expand=True)
@@ -33,8 +33,8 @@ class MatchAddedFrame(BaseViewFrame):
         self.done_button = ctk.CTkButton(
             self,
             text="Return to Main Menu",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
         )

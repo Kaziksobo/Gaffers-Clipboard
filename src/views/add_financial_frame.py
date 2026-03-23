@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
     """A data entry frame for updating a player's financial and contract details."""
 
-    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the AddFinancialFrame layout and input fields.
         
         Args:
@@ -48,14 +48,14 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             self,
             text="Update Player Financials",
             font=self.fonts["title"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.main_heading.grid(row=1, column=1, pady=(80, 10))
         
         # Player and season selection mini-frame
         self.selection_frame = ctk.CTkFrame(
             self,
-            fg_color=self.theme["colors"]["background"]
+            fg_color=self.theme.colors.background
         )
         self.selection_frame.grid(row=2, column=1, pady=(0, 20))
         
@@ -75,7 +75,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         # In-game Date mini frame
         self.in_game_date_frame = ctk.CTkFrame(
             self,
-            fg_color=self.theme["colors"]["background"]
+            fg_color=self.theme.colors.background
         )
         self.in_game_date_frame.grid(row=3, column=1, padx=(20, 0), pady=(0, 20), sticky="ew")
         self.in_game_date_frame.grid_columnconfigure(0, weight=1)
@@ -90,14 +90,14 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
             self.in_game_date_frame,
             text="Enter the in-game date for this update:",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.in_game_date_label.grid(row=1, column=1, padx=(20, 0), sticky="w")
         self.in_game_date_entry = ctk.CTkEntry(
             self.in_game_date_frame,
             font=self.fonts["body"],
-            fg_color=self.theme["colors"]["entry_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.entry_fg,
+            text_color=self.theme.colors.primary_text,
             width=200,
             placeholder_text="dd/mm/yy"
         )
@@ -106,7 +106,7 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         # financial data subgrid
         self.financial_frame = ctk.CTkFrame(
             self,
-            fg_color=self.theme["colors"]["background"]
+            fg_color=self.theme.colors.background
         )
         self.financial_frame.grid(row=4, column=1, pady=(0, 20))
         
@@ -131,8 +131,8 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin):
         self.done_button = ctk.CTkButton(
             self,
             text="Save Financials",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=self.on_done_button_press
         )

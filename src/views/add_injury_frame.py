@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
     """A data entry frame for logging a player's injury record."""
 
-    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the AddInjuryFrame layout and input fields.
         
         Args:
@@ -43,7 +43,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             self,
             text="Log Player Injury",
             font=self.fonts["title"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
 
@@ -63,7 +63,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         # Data subgrid
         self.data_frame = ctk.CTkFrame(
             self,
-            fg_color=self.theme["colors"]["background"]
+            fg_color=self.theme.colors.background
         )
         self.data_frame.grid(row=3, column=1, pady=(0, 20))
 
@@ -83,8 +83,8 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         self.done_button = ctk.CTkButton(
             self,
             text="Save Record",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=self.on_done_button_press
         )
@@ -96,7 +96,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
             self.data_frame,
             text=data_name,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         data_label.grid(row=index, column=1, padx=5, pady=5, sticky="w")
         
@@ -107,8 +107,8 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin):
         data_entry = ctk.CTkEntry(
             self.data_frame,
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["primary_text"],
-            fg_color=self.theme["colors"]["entry_fg"],
+            text_color=self.theme.colors.primary_text,
+            fg_color=self.theme.colors.entry_fg,
             placeholder_text=placeholder_text,
             width=entry_width
         )

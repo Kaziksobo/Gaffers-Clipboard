@@ -18,7 +18,7 @@ class CustomAlert(ctk.CTkToplevel):
     def __init__(
         self,
         parent: ctk.CTkFrame,
-        theme: Dict[str, Any],
+        theme: Any,
         fonts: Dict[str, ctk.CTkFont],
         title: str,
         message: str,
@@ -37,7 +37,7 @@ class CustomAlert(ctk.CTkToplevel):
             options (Optional[List[str]]): Additional options for the alert (e.g., buttons).
             success_timeout (int): The timeout in seconds for success alerts (0 means no timeout).
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
+        super().__init__(parent, fg_color=theme.colors.background)
         self.parent = parent
         self.theme = theme
         self.fonts = fonts
@@ -116,7 +116,7 @@ class CustomAlert(ctk.CTkToplevel):
         and iterates through the options list to create a CTkButton for each option,
         placing them dynamically at the bottom of the popup
         """
-        colors = self.theme.get("colors", {})
+        colors = vars(self.theme.colors)
         default_accent_color = (
             colors.get("warning")
             or colors.get("error")
@@ -178,8 +178,8 @@ class CustomAlert(ctk.CTkToplevel):
                 buttons_frame,
                 text=option,
                 font=self.fonts["button"],
-                fg_color=self.theme["colors"]["button_fg"],
-                bg_color=self.theme["colors"]["button_bg"],
+                fg_color=self.theme.colors.button_fg,
+                bg_color=self.theme.colors.button_bg,
                 hover_color=accent_color,
                 command=lambda opt=option: self._button_callback(opt)
             )

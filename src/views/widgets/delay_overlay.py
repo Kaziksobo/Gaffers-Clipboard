@@ -8,7 +8,7 @@ def show_delay_overlay(parent: Any, seconds: int, message: str = "Please wait...
     It intentionally preserves the same behavior and UI elements.
     """
     # Create a borderless popup window
-    overlay = ctk.CTkToplevel(parent, fg_color=parent.theme["colors"]["background"])
+    overlay = ctk.CTkToplevel(parent, fg_color=parent.theme.colors.background)
     overlay.overrideredirect(True)
 
     # Center the popup over the main app
@@ -26,7 +26,7 @@ def show_delay_overlay(parent: Any, seconds: int, message: str = "Please wait...
     border_frame = ctk.CTkFrame(
         overlay,
         border_width=2,
-        border_color=parent.theme["colors"]["accent"],
+        border_color=parent.theme.colors.accent,
         corner_radius=0,
         fg_color="transparent",
     )
@@ -37,7 +37,7 @@ def show_delay_overlay(parent: Any, seconds: int, message: str = "Please wait...
         border_frame,
         text=message,
         font=parent.fonts["body"],
-        text_color=parent.theme["colors"]["primary_text"],
+        text_color=parent.theme.colors.primary_text,
     )
     label.pack(pady=(30, 15))
 
@@ -46,7 +46,7 @@ def show_delay_overlay(parent: Any, seconds: int, message: str = "Please wait...
         border_frame,
         mode="indeterminate",
         width=250,
-        progress_color=parent.theme["colors"]["accent"],
+        progress_color=parent.theme.colors.accent,
     )
     spinner.pack(pady=(0, 30))
     spinner.start()

@@ -13,7 +13,7 @@ class ScrollableDropdown(ctk.CTkFrame):
     def __init__(
         self,
         parent: ctk.CTkFrame,
-        theme: Dict[str, Any],
+        theme: Any,
         fonts: Dict[str, ctk.CTkFont],
         values: Optional[List[str]] = None,
         variable: Optional[ctk.StringVar] = None,
@@ -34,7 +34,7 @@ class ScrollableDropdown(ctk.CTkFrame):
             placeholder (str): The default text to display when no value is selected.
             command (Optional[Callable[[str], None]]): Callback triggered on selection.
         """
-        super().__init__(parent, fg_color=theme["colors"]["background"])
+        super().__init__(parent, fg_color=theme.colors.background)
         self.theme = theme
         self.fonts = fonts
         self.values: List[str] = values or []
@@ -49,9 +49,9 @@ class ScrollableDropdown(ctk.CTkFrame):
             self,
             text=self.variable.get(),
             font=self.fonts["body"],
-            fg_color=self.theme["colors"]["dropdown_fg"],
-            text_color=self.theme["colors"]["primary_text"],
-            hover_color=self.theme["colors"]["button_fg"],
+            fg_color=self.theme.colors.dropdown_fg,
+            text_color=self.theme.colors.primary_text,
+            hover_color=self.theme.colors.button_fg,
             width=width,
             command=self._open_dropdown
         )

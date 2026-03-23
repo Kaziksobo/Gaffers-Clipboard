@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, PerformanceSidebarMixin):
     """Frame for displaying and adding individual goalkeeper match statistics."""
 
-    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Dict[str, Any]) -> None:
+    def __init__(self, parent: ctk.CTkFrame, controller: Any, theme: Any) -> None:
         """Initialize the GKStatsFrame layout and input fields.
         
         Args:
@@ -56,7 +56,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             self,
             text="Review Goalkeeper Stats",
             font=self.fonts["title"],
-            text_color=self.theme["colors"]["primary_text"]
+            text_color=self.theme.colors.primary_text
         )
         self.main_heading.grid(row=1, column=1, pady=(0, 60))
         
@@ -77,13 +77,13 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.info_label = ctk.CTkLabel(
             self, text="Empty stats couldn't be recognised and require manual entry.\n Please review and update player attributes as necessary.",
             font=self.fonts["body"],
-            text_color=self.theme["colors"]["secondary_text"]
+            text_color=self.theme.colors.secondary_text
         )
         self.info_label.grid(row=3, column=1, pady=(0, 20))
         self.register_wrapping_widget(self.info_label, width_ratio=0.8)
         
         # Stats Grid
-        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme["colors"]["background"])
+        self.stats_grid = ctk.CTkScrollableFrame(self, fg_color=self.theme.colors.background)
         self.stats_grid.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
         # Configure subgrid
         self.stats_grid.grid_columnconfigure(0, weight=1)
@@ -104,7 +104,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             )
         
         # Direction subgrid
-        self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme["colors"]["background"])
+        self.direction_frame = ctk.CTkFrame(self, fg_color=self.theme.colors.background)
         self.direction_frame.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
@@ -114,7 +114,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
             text="To scan another player, navigate to their in-game stats:",
-            text_color=self.theme["colors"]["primary_text"],
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["body"],
         )
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -123,8 +123,8 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.next_player_button = ctk.CTkButton(
             self.direction_frame,
             text="Scan an Outfield Player",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_next_outfield_player_button_press()
         )
@@ -133,8 +133,8 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.next_goalkeeper_button = ctk.CTkButton(
             self.direction_frame,
             text="Scan a Goalkeeper",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_next_goalkeeper_button_press()
         )
@@ -143,8 +143,8 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
             text="Save all and Finish Match",
-            fg_color=self.theme["colors"]["button_fg"],
-            text_color=self.theme["colors"]["primary_text"],
+            fg_color=self.theme.colors.button_fg,
+            text_color=self.theme.colors.primary_text,
             font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )

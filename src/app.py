@@ -10,7 +10,7 @@ from datetime import datetime
 
 # Internal imports
 from src import ocr
-from src.theme import THEME
+from src.theme import theme
 from src.utils import get_screen_resolution, scale_coordinates
 from src.exceptions import ScreenshotError, FrameNotFoundError, ConfigurationError, UIPopulationError, IncompleteDataError, DataPersistenceError, DuplicateRecordError
 from src.data_manager import DataManager
@@ -68,7 +68,7 @@ class App(ctk.CTk):
         self.geometry("1000x700")
         self.minsize(width=1000, height=700)
         
-        self.theme = THEME
+        self.theme = theme
         
         # Initialize dynamic fonts and bind to window resize for responsive scaling
         self.dynamic_fonts: Dict[str, ctk.CTkFont] = self._initialize_dynamic_fonts()
@@ -171,11 +171,11 @@ class App(ctk.CTk):
     
     def _initialize_dynamic_fonts(self) -> Dict[str, ctk.CTkFont]:
         live_fonts = {}
-        for font_name, font_config in self.theme["fonts"].items():
+        for font_name, font_config in vars(self.theme.fonts).items():
             family = font_config[0]
             base_size = font_config[1]
             weight = font_config[2] if len(font_config) > 2 else "normal"
-            
+
             live_fonts[font_name] = ctk.CTkFont(family=family, size=base_size, weight=weight)
             
         return live_fonts
