@@ -397,31 +397,11 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self._dismissed_warnings.clear()
-        
-        # If a buffered overview exists (coming from AddMatchFrame), prefill those values.
-        buffered = getattr(self.controller, "match_overview_buffer", None) or {}
-
-        # Competition
-        if buffered.get("competition"):
-            try:
-                self.competition_dropdown.set_values(self.controller.get_current_career_details().competitions or [])
-            except Exception:
-                # fallback to existing controller list if available
-                pass
-            self.competition_var.set(buffered.get("competition"))
-            self.competition_dropdown.set_value(buffered.get("competition"))
-        else:
-            self.competition_var.set("Select Competition")
-            self.competition_dropdown.set_value("Select Competition")
-
-        # In-game date
-        if buffered.get("in_game_date"):
-            self.in_game_date_entry.delete(0, 'end')
-            self.in_game_date_entry.insert(0, buffered.get("in_game_date"))
-        else:
-            self.in_game_date_entry.delete(0, 'end')
-            self.in_game_date_entry.configure(placeholder_text="dd/mm/yy")
-                
+        # Clear fields to defaults; this frame should not directly manage buffered overview
+        self.competition_var.set("Select Competition")
+        self.competition_dropdown.set_value("Select Competition")
+        self.in_game_date_entry.delete(0, 'end')
+        self.in_game_date_entry.configure(placeholder_text="dd/mm/yy")
         # Reset team names
         self.home_team_name_var.set("Home Team")
         self.away_team_name_var.set("Away Team")

@@ -1,3 +1,4 @@
+import contextlib
 import customtkinter as ctk
 import logging
 from typing import Dict, Any
@@ -5,6 +6,8 @@ from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import EntryFocusMixin
+from src.views.widgets.scrollable_dropdown import ScrollableDropdown
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +132,78 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
             font=self.fonts["body"]
         )
         self.match_difficulty_dropdown.grid(row=5, column=2, sticky="w", pady=5)
+
+        # League selection (required)
+        self.league_label = ctk.CTkLabel(
+            self.entry_frame,
+            text="League:",
+            font=self.fonts["body"]
+        )
+        self.league_label.grid(row=6, column=1, sticky="e", pady=5, padx=(0,10))
+
+        # Attempt to load league defaults from config
+        leagues = []
+        try:
+            config_path = self.controller.PROJECT_ROOT / "config" / "league_competitions.json"
+            if config_path.exists():
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    defaults = json.load(f)
+                    # Support two formats: either {"League Name": [...]} or {"leagues": { ... }}
+                    if isinstance(defaults, dict):
+                        if "leagues" in defaults and isinstance(defaults["leagues"], dict):
+                            defaults = defaults["leagues"]
+                        leagues = sorted(list(defaults.keys()))
+        except Exception:
+            leagues = []
+
+        self.league_var = ctk.StringVar(value="Select League")
+        # Create a small ScrollableDropdown and allow adding a custom league
+        if leagues:
+            dropdown_values = leagues + ["Add custom league..."]
+            self.league_dropdown = ScrollableDropdown(
+                self.entry_frame,
+                theme=self.theme,
+                fonts=self.fonts,
+                variable=self.league_var,
+                values=dropdown_values,
+                width=250,
+                dropdown_height=150,
+                placeholder="Select League",
+                command=self._on_league_selected
+            )
+            self.league_dropdown.grid(row=6, column=2, sticky="w", pady=5)
+            # Hidden custom entry (only shown when user selects Add custom league...)
+            self.custom_league_entry = ctk.CTkEntry(
+                self.entry_frame,
+                font=self.fonts["body"],
+                width=200,
+                placeholder_text="Enter custom league name"
+            )
+        else:
+            # Fallback to free-text entry if no defaults available
+            self.league_entry = ctk.CTkEntry(
+                self.entry_frame,
+                font=self.fonts["body"],
+                width=200,
+                placeholder_text="Enter league name"
+            )
+            self.league_entry.grid(row=6, column=2, sticky="w", pady=5)
+
+    def _on_league_selected(self, value: str) -> None:
+        """Handle selection from the ScrollableDropdown.
+
+        If the user selects the 'Add custom league...' option, show the
+        custom entry field beneath the dropdown so they can type a name.
+        """
+        with contextlib.suppress(Exception):
+            if value == "Add custom league...":
+                # show custom entry under the dropdown
+                self.custom_league_entry.grid(row=7, column=2, sticky="w", pady=(4, 8))
+                self.custom_league_entry.focus()
+                # set variable to empty so validation forces custom input
+                self.league_var.set("")
+            elif hasattr(self, 'custom_league_entry') and self.custom_league_entry.winfo_ismapped():
+                self.custom_league_entry.grid_forget()
         
         # Button subgrid (return to main menu, create career)
         button_subgrid = ctk.CTkFrame(self)
@@ -140,7 +215,7 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
         button_subgrid.grid_rowconfigure(0, weight=1)
         button_subgrid.grid_rowconfigure(1, weight=0)
         button_subgrid.grid_rowconfigure(2, weight=1)
-        
+
         # Return to Main Menu Button
         self.return_button = ctk.CTkButton(
             button_subgrid,
@@ -159,7 +234,7 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
         )
         self.create_career_button.grid(row=1, column=2, padx=10)
         self.style_submit_button(self.create_career_button)
-        
+
         self.apply_focus_flourishes(self)
         
     def on_create_career_button_press(self) -> None:
@@ -181,6 +256,18 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
         if not season: missing_fields.append("Starting Season")
         if not length: missing_fields.append("Half Length")
         if difficulty in ["Select Difficulty", ""]: missing_fields.append("Difficulty")
+        # League required
+        if hasattr(self, 'league_var'):
+            league_value = self.league_var.get()
+            # If user selected Add custom league..., the var may be empty and custom entry shown
+            if league_value == "" and hasattr(self, 'custom_league_entry') and self.custom_league_entry.winfo_ismapped():
+                league_value = self.custom_league_entry.get().strip()
+            if league_value in ["Select League", ""]:
+                missing_fields.append("League")
+        else:
+            league_value = self.league_entry.get().strip()
+            if not league_value:
+                missing_fields.append("League")
 
         if missing_fields:
             logger.warning(f"Career creation blocked. Missing fields: {', '.join(missing_fields)}")
@@ -189,12 +276,19 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
 
         try:
             # Difficulty is cast to the DifficultyLevel literal type
+            # Normalize league to title case before saving to ensure consistent storage
+            try:
+                league_to_save = league_value.title() if isinstance(league_value, str) else league_value
+            except Exception:
+                league_to_save = league_value
+
             self.controller.save_new_career(
                 club_name=club,
                 manager_name=manager,
                 starting_season=season,
                 half_length=length,
-                match_difficulty=difficulty # type: ignore
+                match_difficulty=difficulty, # type: ignore
+                league=league_to_save
             )
             
             logger.info(f"Successfully created career for {club}. Navigating to Main Menu.")
@@ -213,3 +307,12 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
         self.starting_season_entry.configure(placeholder_text="e.g. 24/25")
         self.half_length_entry.delete(0, 'end')
         self.match_difficulty_var.set("Select Difficulty")
+        # Reset league widgets
+        if hasattr(self, 'league_var'):
+            with contextlib.suppress(Exception):
+                self.league_var.set("Select League")
+                if hasattr(self, 'custom_league_entry') and self.custom_league_entry.winfo_ismapped():
+                    self.custom_league_entry.grid_forget()
+        if hasattr(self, 'league_entry'):
+            with contextlib.suppress(Exception):
+                self.league_entry.delete(0, 'end')

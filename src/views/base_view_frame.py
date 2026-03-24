@@ -41,7 +41,19 @@ class BaseViewFrame(ctk.CTkFrame):
                 command=self._on_main_menu_press
             )
             self._main_menu_button.place(x=10, y=10)
-            self._main_menu_button.bind("<Enter>", lambda _event: self._refresh_main_menu_button_style())
+            # Capture defaults so we can temporarily toggle visible fg on hover
+            try:
+                self._main_menu_button_default_fg = self._main_menu_button.cget("fg_color")
+            except Exception:
+                self._main_menu_button_default_fg = None
+            try:
+                self._main_menu_button_default_hover = self._main_menu_button.cget("hover_color")
+            except Exception:
+                self._main_menu_button_default_hover = None
+
+            # Ensure hover state is always set; refresh on enter/leave
+            self._main_menu_button.bind("<Enter>", self._on_main_menu_enter)
+            self._main_menu_button.bind("<Leave>", self._on_main_menu_leave)
             self._refresh_main_menu_button_style()
 
     def style_submit_button(self, button: ctk.CTkButton) -> None:
@@ -53,12 +65,42 @@ class BaseViewFrame(ctk.CTkFrame):
     def _refresh_main_menu_button_style(self) -> None:
         if not self._show_main_menu_nav or not hasattr(self, "_main_menu_button"):
             return
-        hover_color = (
-            self.theme.semantic_colors.unsaved_nav_hover
-            if self.controller.has_unsaved_work()
-            else self.theme.semantic_colors.accent
-        )
-        self._main_menu_button.configure(hover_color=hover_color)
+        # Resolve safe color fallbacks in case theme entries are missing
+        sc = self.theme.semantic_colors
+        accent = getattr(sc, "accent", "#00bfff")
+        unsaved = getattr(sc, "unsaved_nav_hover", getattr(sc, "warning", "#ffcc00"))
+
+        hover_color = unsaved if self.controller.has_unsaved_work() else accent
+        # Ensure a non-empty hover color is always applied
+        if not hover_color:
+            hover_color = accent
+
+        try:
+            self._main_menu_button.configure(hover_color=hover_color)
+        except Exception:
+            # Best-effort: ignore if widget doesn't accept hover_color on this platform
+            logger.debug("Could not configure main menu button hover color", exc_info=True)
+
+    def _on_main_menu_enter(self, _event=None) -> None:
+        """Apply a visible foreground color on hover so the effect is noticeable."""
+        sc = self.theme.semantic_colors
+        accent = getattr(sc, "accent", "#00bfff")
+        unsaved = getattr(sc, "unsaved_nav_hover", getattr(sc, "warning", "#ffcc00"))
+        fg = unsaved if self.controller.has_unsaved_work() else accent
+        if not fg:
+            fg = accent
+        try:
+            self._main_menu_button.configure(fg_color=fg)
+        except Exception:
+            logger.debug("Could not set main menu button fg_color on enter", exc_info=True)
+
+    def _on_main_menu_leave(self, _event=None) -> None:
+        """Restore the button fg_color to default when mouse leaves."""
+        try:
+            if getattr(self, "_main_menu_button_default_fg", None) is not None:
+                self._main_menu_button.configure(fg_color=self._main_menu_button_default_fg)
+        except Exception:
+            logger.debug("Could not restore main menu button fg_color on leave", exc_info=True)
 
     def refresh_semantic_styles(self) -> None:
         self._refresh_main_menu_button_style()

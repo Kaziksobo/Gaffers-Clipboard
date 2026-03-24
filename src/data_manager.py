@@ -232,7 +232,8 @@ class DataManager:
         manager_name: str, 
         starting_season: str, 
         half_length: int, 
-        difficulty: DifficultyLevel) -> None:
+        difficulty: DifficultyLevel,
+        league: str) -> None:
         """Create a new career for the given club and starting season.
 
         Sets up the career's storage structure (using a unique folder name), 
@@ -260,7 +261,28 @@ class DataManager:
         self.players_path = career_path / "players.json"
         self.matches_path = career_path / "matches.json"
 
+        # Seed competitions for this league from the bundled config (if available)
+        competitions: list[str] = []
+        # Normalize league provided to title case for consistent lookup
+        league_title = league.title() if isinstance(league, str) else league
+        try:
+            project_root = Path(__file__).parent.parent
+            config_path = project_root / "config" / "league_competitions.json"
+            if config_path.exists():
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    defaults = json.load(f)
+                    # Support both {"league": [...]} and {"leagues": { ... }} formats
+                    if isinstance(defaults, dict) and "leagues" in defaults and isinstance(defaults["leagues"], dict):
+                        defaults = defaults["leagues"]
+                    if isinstance(defaults, dict) and league_title in defaults:
+                        competitions = defaults.get(league_title) or []
+        except Exception as e:
+            logger.debug(f"Failed to load league defaults from config: {e}")
+
         # Create a metadata file for the career
+        # Normalize competitions to title case as well
+        competitions = [c.title() for c in competitions]
+
         metadata = CareerMetadata(
             career_id=career_id,
             club_name=club_name,
@@ -270,6 +292,8 @@ class DataManager:
             starting_season=starting_season,
             half_length=half_length,
             difficulty=difficulty,
+            league=league_title,
+            competitions=competitions,
         )
         self._save_json(career_path / "metadata.json", metadata)
         
@@ -699,6 +723,82 @@ class DataManager:
             int: The next available ID (starting at 1 if empty).
         """
         return max((item.id for item in collection), default=0) + 1
+
+    def add_competition(self, competition: str) -> None:
+        """Add a competition to the current career's metadata (idempotent).
+
+        The competition name will be title-cased. Raises RuntimeError if no
+        career is loaded.
+        """
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+
+        meta_path = self.data_folder / self.current_career / "metadata.json"
+        metadata = self._load_json(meta_path, CareerMetadata, is_list=False)
+        if metadata is None:
+            raise RuntimeError("Career metadata missing")
+
+        comp_title = competition.strip().title()
+        if comp_title in (metadata.competitions or []):
+            return
+
+        metadata.competitions.append(comp_title)
+        self._save_json(meta_path, metadata)
+
+    def remove_competition(self, competition: str) -> None:
+        """Remove a competition from the current career, blocking if referenced by any match.
+
+        Raises ValueError if any saved match references the competition.
+        """
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+
+        # Ensure we have latest matches
+        self.refresh_matches()
+        # Check references
+        for m in self.matches:
+            try:
+                if m.data.competition == competition:
+                    raise ValueError(f"Competition '{competition}' is referenced by existing matches and cannot be removed.")
+            except Exception:
+                # If match structure unexpected, continue conservative path
+                continue
+
+        meta_path = self.data_folder / self.current_career / "metadata.json"
+        metadata = self._load_json(meta_path, CareerMetadata, is_list=False)
+        if metadata is None:
+            raise RuntimeError("Career metadata missing")
+
+        comps = [c for c in (metadata.competitions or []) if c != competition]
+        metadata.competitions = comps
+        self._save_json(meta_path, metadata)
+
+    def update_career_metadata(self, updates: dict) -> None:
+        """Update the current career's metadata with the provided fields.
+
+        Loads the existing metadata, applies the updates, validates via the
+        CareerMetadata model, and persists the result atomically.
+        """
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+
+        meta_path = self.data_folder / self.current_career / "metadata.json"
+        metadata = self._load_json(meta_path, CareerMetadata, is_list=False)
+        if metadata is None:
+            raise RuntimeError("Career metadata missing")
+
+        # Merge and validate by constructing a new CareerMetadata
+        base = metadata.model_dump()
+        base.update(updates)
+
+        try:
+            new_meta = CareerMetadata(**base)
+        except ValidationError as e:
+            logger.error(f"Metadata validation failed: {e}")
+            raise
+
+        # Save atomically
+        self._save_json(meta_path, new_meta)
     
     def _find_player_by_name(self, name: str) -> Optional[Player]:
         """Find a player by their name (case-insensitive).

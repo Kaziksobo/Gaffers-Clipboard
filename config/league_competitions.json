@@ -1,0 +1,50 @@
+{
+    "leagues": {
+        "Premier League": [
+            "Premier League",
+            "FA Cup",
+            "EFL Cup",
+            "Community Shield",
+            "UEFA Champions League",
+            "UEFA Europa League",
+            "UEFA Europa Conference League",
+            "UEFA Super Cup"
+        ],
+        "La Liga": [
+            "La Liga",
+            "Copa del Rey",
+            "Supercopa de España",
+            "UEFA Champions League",
+            "UEFA Europa League",
+            "UEFA Europa Conference League",
+            "UEFA Super Cup"
+        ],
+        "Ligue 1": [
+            "Ligue 1",
+            "Coupe de France",
+            "Trophée des Champions",
+            "UEFA Champions League",
+            "UEFA Europa League",
+            "UEFA Europa Conference League",
+            "UEFA Super Cup"
+        ],
+        "Bundesliga": [
+            "Bundesliga",
+            "DFB-Pokal",
+            "DFL-Supercup",
+            "UEFA Champions League",
+            "UEFA Europa League",
+            "UEFA Europa Conference League",
+            "UEFA Super Cup"
+        ],
+        "Serie A": [
+            "Serie A",
+            "Coppa Italia",
+            "Supercoppa Italiana",
+            "UEFA Champions League",
+            "UEFA Europa League",
+            "UEFA Europa Conference League",
+            "UEFA Super Cup"
+        ]
+    }
+}

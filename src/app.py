@@ -32,6 +32,7 @@ from src.views.add_financial_frame import AddFinancialFrame
 from src.views.left_player_frame import LeftPlayerFrame
 from src.views.gk_stats_frame import GKStatsFrame
 from src.views.add_injury_frame import AddInjuryFrame
+from src.views.career_config_frame import CareerConfigFrame
 from src.views.widgets.delay_overlay import show_delay_overlay
 
 logger = logging.getLogger(__name__)
@@ -85,7 +86,7 @@ class App(ctk.CTk):
         
         # Set sidebar states
         self.sidebar_states = {
-            "player_stats_sidebar": True,      # collapsed by default
+            "player_stats_sidebar": True,
             "gk_stats_sidebar": True,
         }
         
@@ -117,16 +118,16 @@ class App(ctk.CTk):
         
         self.frames: Dict[Type[ctk.CTkFrame], ctk.CTkFrame] = {}
         
-        for F in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, 
+        for frame_cls in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, 
                   MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, 
                   AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, 
-                  LeftPlayerFrame, GKStatsFrame, AddInjuryFrame):
+                  LeftPlayerFrame, GKStatsFrame, AddInjuryFrame, CareerConfigFrame):
             try:
-                frame = F(container, self, self.theme)
-                self.frames[F] = frame
+                frame = frame_cls(container, self, self.theme)
+                self.frames[frame_cls] = frame
                 frame.grid(row=0, column=0, sticky="nsew")
             except Exception as e:
-                logger.critical(f"Failed to initialize frame {F.__name__}: {e}")
+                logger.critical(f"Failed to initialize frame {frame_cls.__name__}: {e}")
                 raise
         
         logger.info("Application initialized. Showing CareerSelectFrame.")
@@ -253,7 +254,8 @@ class App(ctk.CTk):
         manager_name: str, 
         starting_season: str, 
         half_length: int, 
-        match_difficulty: DifficultyLevel) -> None:
+        match_difficulty: DifficultyLevel,
+        league: str) -> None:
         """Create a new career profile and immediately activate it.
 
         This routes the initial settings to the DataManager for persistence,
@@ -267,7 +269,7 @@ class App(ctk.CTk):
             match_difficulty (DifficultyLevel): The strict difficulty level applied.
         """
         self.data_manager.create_new_career(
-            club_name, manager_name, starting_season, half_length, match_difficulty
+            club_name, manager_name, starting_season, half_length, match_difficulty, league
         )
         self.set_current_career_by_name(club_name)
     
@@ -337,6 +339,29 @@ class App(ctk.CTk):
             )
         else:
             return ["No players found"]
+
+    # --- Career / Competitions API for Views (Controller wrappers) ---
+    def get_all_career_names(self) -> list[str]:
+        """Controller wrapper to retrieve all career display names."""
+        return self.data_manager.get_all_career_names()
+
+    def add_competition(self, competition: str) -> None:
+        """Add a competition to the current career via the DataManager."""
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+        self.data_manager.add_competition(competition)
+
+    def remove_competition(self, competition: str) -> None:
+        """Remove a competition from the current career via the DataManager."""
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+        self.data_manager.remove_competition(competition)
+
+    def update_career_metadata(self, updates: dict) -> None:
+        """Update current career metadata via the DataManager."""
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+        self.data_manager.update_career_metadata(updates)
 
     def get_player_bio(self, name: str) -> Optional[PlayerBioDict]:
         """Retrieve the high-level details of a player by name for display in the UI.

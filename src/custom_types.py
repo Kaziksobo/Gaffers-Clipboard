@@ -372,6 +372,40 @@ class CareerMetadata(BaseModel):
     starting_season: str = Field(pattern=r'^\d{2}/\d{2}$', description="Season in format yy/yy (e.g., 23/24)")
     half_length: int = Field(ge=4, le=20, description="IRL length of each half in minutes")
     difficulty: DifficultyLevel
+    # League name chosen at career creation. Required for new careers.
+    # Existing on-disk metadata without this field will need migration.
+    league: str
+    # The active competition list for this career. Seeded from config defaults for preset
+    # leagues at career creation time; can be modified by the user per-career.
+    competitions: list[str] = Field(default_factory=list, description="Career-specific active competitions")
+
+    @field_validator('league', mode='before')
+    @classmethod
+    def ensure_league_title_case(cls, value: Any) -> str:
+        """Ensure the league value is a title-cased string before validation."""
+        if not isinstance(value, str):
+            raise ValueError('league must be a string')
+        v = value.strip()
+        if not v:
+            raise ValueError('league must not be empty')
+        return v.title()
+
+    @field_validator('competitions', mode='before')
+    @classmethod
+    def ensure_competitions_title_case(cls, value: Any) -> list[str]:
+        """Ensure all competitions are title-cased strings before validation."""
+        if value is None:
+            return []
+        if not isinstance(value, list):
+            raise ValueError('competitions must be a list of strings')
+        cleaned: list[str] = []
+        for item in value:
+            if not isinstance(item, str):
+                raise ValueError('each competition must be a string')
+            s = item.strip()
+            if s:
+                cleaned.append(s.title())
+        return cleaned
 
 class CareerDetail(BaseModel):
     """Represents the basic details of a career"""

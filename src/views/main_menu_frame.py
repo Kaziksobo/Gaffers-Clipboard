@@ -1,3 +1,4 @@
+import contextlib
 import customtkinter as ctk
 import logging
 from typing import Dict, Any
@@ -36,7 +37,7 @@ class MainMenuFrame(BaseViewFrame):
             font=self.fonts["title"]
         )
         self.main_heading.grid(row=1, column=1, sticky="s", pady=(0, 60))
-        self.register_wrapping_widget(self.main_heading, width_ratio=0.85)
+        self.register_wrapping_widget(self.main_heading, width_ratio=0.6)
         
         # Question Label
         self.question_label = ctk.CTkLabel(
@@ -65,9 +66,18 @@ class MainMenuFrame(BaseViewFrame):
             self.button_frame, 
             text="Add New Match",
             font=self.fonts["button"],
-            command=lambda: self.controller.show_frame(self.controller.get_frame_class("AddMatchFrame"))
+            command=self._on_add_match
         )
         self.add_match_button.grid(row=0, column=1, sticky="ew", padx=(10, 0), ipady=15)
+
+        # Career Settings Button
+        self.career_settings_button = ctk.CTkButton(
+            self,
+            text="Career Settings",
+            font=self.fonts["button"],
+            command=lambda: self.controller.show_frame(self.controller.get_frame_class("CareerConfigFrame"))
+        )
+        self.career_settings_button.grid(row=4, column=1, pady=(10, 0), ipady=10)
     
     def get_career_welcome_text(self) -> str:
         """Generate a personalized welcome message based on the active career.
@@ -85,3 +95,36 @@ class MainMenuFrame(BaseViewFrame):
         """Lifecycle hook triggered when the frame is displayed to refresh content."""
         welcome_text = self.get_career_welcome_text()
         self.main_heading.configure(text=welcome_text)
+        # If current career has no competitions, make Career Settings button use the accent color
+        meta = self.controller.get_current_career_details()
+        with contextlib.suppress(Exception):
+            if meta and (not getattr(meta, "competitions", []) or len(getattr(meta, "competitions", [])) == 0):
+                # Use accent for both background and hover when emphasizing Career Settings
+                self.career_settings_button.configure(fg_color=self.theme.semantic_colors.accent, hover_color=self.theme.semantic_colors.accent)
+            else:
+                # restore defaults
+                cfg = {}
+                if self._career_settings_default_fg is not None:
+                    cfg["fg_color"] = self._career_settings_default_fg
+                if self._career_settings_default_hover is not None:
+                    cfg["hover_color"] = self._career_settings_default_hover
+                if cfg:
+                    self.career_settings_button.configure(**cfg)
+
+    def _on_add_match(self) -> None:
+        """Guard navigation to AddMatchFrame when the current career has no competitions."""
+        meta = self.controller.get_current_career_details()
+        if not meta:
+            self.show_warning("No Career", "Please load a career before adding a match.")
+            return
+
+        comps = getattr(meta, "competitions", []) or []
+        if len(comps) == 0:
+            self.show_warning(
+                "No Competitions",
+                "This career has no competitions configured. Please add at least one competition in Career Settings before adding a match."
+            )
+            return
+
+        # Safe to navigate
+        self.controller.show_frame(self.controller.get_frame_class("AddMatchFrame"))

@@ -65,7 +65,7 @@ class CareerSelectFrame(BaseViewFrame):
             theme=self.theme,
             fonts=self.fonts,
             variable=self.careers_list_var,
-            values=self.controller.data_manager.get_all_career_names(),
+            values=self.controller.get_all_career_names(),
             width=350,
             dropdown_height=200,
             placeholder="Select existing career"
@@ -100,7 +100,7 @@ class CareerSelectFrame(BaseViewFrame):
     
     def refresh_careers_dropdown(self) -> None:
         """Fetch the latest career list from the database and update the custom dropdown."""
-        names = self.controller.data_manager.get_all_career_names()
+        names = self.controller.get_all_career_names()
         self.careers_dropdown.set_values(names)
         
         prev = self.careers_list_var.get()

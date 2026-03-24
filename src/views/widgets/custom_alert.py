@@ -167,16 +167,30 @@ class CustomAlert(ctk.CTkToplevel):
 
         self._buttons: Dict[str, ctk.CTkButton] = {}
 
-        for index, option in enumerate(self.options):
+        for index, opt in enumerate(self.options):
+            # Support option entries as either a string, a (label, hover_color) tuple, or a dict
+            opt_label = opt
+            opt_hover = accent_color
+            if isinstance(opt, (list, tuple)) and len(opt) >= 1:
+                opt_label = opt[0]
+                if len(opt) >= 2 and opt[1]:
+                    opt_hover = opt[1]
+            elif isinstance(opt, dict):
+                opt_label = opt.get("label", opt_label)
+                opt_hover = opt.get("hover_color", opt_hover)
+
             button = ctk.CTkButton(
                 buttons_frame,
-                text=option,
+                text=opt_label,
                 font=self.fonts["button"],
-                hover_color=accent_color,
-                command=lambda opt=option: self._button_callback(opt)
+                hover_color=opt_hover,
+                command=lambda opt_text=opt_label: self._button_callback(opt_text)
             )
             button.pack(side="left", padx=10)
-            self._buttons[option.lower()] = button
+            try:
+                self._buttons[str(opt_label).lower()] = button
+            except Exception:
+                pass
 
             if index == 0:
                 try:
