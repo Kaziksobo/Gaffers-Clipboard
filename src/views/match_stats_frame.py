@@ -1,7 +1,6 @@
 import customtkinter as ctk
 import logging
 from typing import Dict, Any, List, Tuple
-from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion, safe_float_conversion
 
 from src.views.base_view_frame import BaseViewFrame
@@ -59,11 +58,9 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0) # Title
         self.grid_rowconfigure(2, weight=0) # Info label
-        self.grid_rowconfigure(3, weight=0) # Date
-        self.grid_rowconfigure(4, weight=0) # Competition dropdown
-        self.grid_rowconfigure(5, weight=1) # Stats grid
-        self.grid_rowconfigure(6, weight=0) # Direction subgrid
-        self.grid_rowconfigure(7, weight=1)
+        self.grid_rowconfigure(3, weight=1) # Stats grid
+        self.grid_rowconfigure(4, weight=0) # Direction subgrid
+        self.grid_rowconfigure(5, weight=1)
         
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -82,41 +79,9 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         self.info_label.grid(row=2, column=1, pady=(0, 20))
         self.register_wrapping_widget(self.info_label, width_ratio=0.6)
         
-        # In-game date entry
-        self.date_frame = ctk.CTkFrame(self)
-        self.date_frame.grid(row=3, column=1, pady=(0, 20))
-        self.in_game_date_label = ctk.CTkLabel(
-            self.date_frame,
-            text="In-game date:",
-            font=self.fonts["body"]
-        )
-        self.in_game_date_label.grid(row=0, column=0, padx=(0, 10))
-        self.in_game_date_entry = ctk.CTkEntry(
-            self.date_frame,
-            placeholder_text="dd/mm/yy",
-            font=self.fonts["body"]
-        )
-        self.in_game_date_entry.grid(row=0, column=1)
-        
-        # Chronological validation for matches will be enforced by the view when collecting data
-        
-        # Competition dropdown
-        self.competition_var = ctk.StringVar(value="Select Competition")
-        self.competition_dropdown = ScrollableDropdown(
-            self,
-            theme=self.theme,
-            fonts=self.fonts,
-            variable=self.competition_var,
-            values=self.controller.full_competitions_list,
-            width=350,
-            dropdown_height=200,
-            placeholder="Select Competition"
-        )
-        self.competition_dropdown.grid(row=4, column=1, pady=(0, 20))
-        
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self)
-        self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew")
+        self.stats_grid.grid(row=3, column=1, pady=(0, 20), sticky="nsew")
 
         # Configure subgrid
         for col in range(5):
@@ -168,7 +133,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         
         # Direction subgrid
         self.direction_frame = ctk.CTkFrame(self)
-        self.direction_frame.grid(row=6, column=1, pady=(0, 20), sticky="nsew")
+        self.direction_frame.grid(row=4, column=1, pady=(0, 20), sticky="nsew")
         self.direction_frame.grid_columnconfigure(0, weight=1)
         self.direction_frame.grid_columnconfigure(1, weight=1)
         self.direction_frame.grid_columnconfigure(2, weight=1)
@@ -250,10 +215,6 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             if key == "xG":
                 return safe_float_conversion(value)
             return safe_int_conversion(value)
-
-        in_game_date = self.in_game_date_entry.get().strip()
-        if not self.validate_in_game_date(in_game_date, disallow_older_than_last=True):
-            return False
         
         # Ensure team names aren't the default placeholders
         if self.home_team_name_var.get().strip() in ["", "Home Team"]:
@@ -265,8 +226,6 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
 
         # Collect match overview with type conversion
         ui_data = {
-            "in_game_date": in_game_date,
-            "competition": self.competition_var.get(),
             "home_team_name": self.home_team_name_var.get().strip() or None,
             "away_team_name": self.away_team_name_var.get().strip() or None,
             "home_score": safe_int_conversion(self.home_team_score_var.get()),
@@ -276,7 +235,6 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         }
 
         validation_dict = {
-            "Competition": ui_data["competition"],
             "Home Team Name": ui_data["home_team_name"],
             "Away Team Name": ui_data["away_team_name"],
             "Home Score": ui_data["home_score"],
@@ -349,9 +307,16 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             if not self.validate_stat_max(ui_data, stat_key, stat_label, max_val):
                 return False
 
-        # Buffer match overview
+        # Buffer match overview — preserve any previously buffered fields
         logger.info("Match overview validation passed. Buffering data.")
         try:
+            existing = getattr(self.controller, "match_overview_buffer", {}) or {}
+            # Preserve in_game_date and competition if they were set earlier (e.g., in AddMatchFrame)
+            for key in ("in_game_date", "competition"):
+                if key not in ui_data or ui_data.get(key) is None:
+                    if key in existing and existing.get(key) is not None:
+                        ui_data[key] = existing[key]
+
             self.controller.buffer_match_overview(ui_data)
             logger.debug("Match overview buffered successfully.")
             self.show_success("Data Saved", "Match overview data Saved successfully! Proceed to add player stats.")
@@ -397,11 +362,6 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
     def on_show(self) -> None:
         """Lifecycle hook to clear the UI fields when the frame is displayed."""
         self._dismissed_warnings.clear()
-        # Clear fields to defaults; this frame should not directly manage buffered overview
-        self.competition_var.set("Select Competition")
-        self.competition_dropdown.set_value("Select Competition")
-        self.in_game_date_entry.delete(0, 'end')
-        self.in_game_date_entry.configure(placeholder_text="dd/mm/yy")
         # Reset team names
         self.home_team_name_var.set("Home Team")
         self.away_team_name_var.set("Away Team")
