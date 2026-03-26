@@ -1,6 +1,6 @@
 import contextlib
 from pydantic import BaseModel, Field, ConfigDict, model_validator, Discriminator, field_validator
-from typing import List, Optional, Literal, Union, Annotated, TypedDict, Any
+from typing import Optional, Literal, Union, Annotated, TypedDict, Any
 from datetime import datetime as DatetimeType
 from abc import ABC
 
@@ -385,10 +385,10 @@ class CareerMetadata(BaseModel):
         """Ensure the league value is a title-cased string before validation."""
         if not isinstance(value, str):
             raise ValueError('league must be a string')
-        v = value.strip()
-        if not v:
+        if v := value.strip():
+            return v.title()
+        else:
             raise ValueError('league must not be empty')
-        return v.title()
 
     @field_validator('competitions', mode='before')
     @classmethod
@@ -402,8 +402,7 @@ class CareerMetadata(BaseModel):
         for item in value:
             if not isinstance(item, str):
                 raise ValueError('each competition must be a string')
-            s = item.strip()
-            if s:
+            if s := item.strip():
                 cleaned.append(s.title())
         return cleaned
 
@@ -421,4 +420,4 @@ class PlayerBioDict(TypedDict):
     height: str
     weight: int
     country: str
-    positions: List[PositionType]
+    positions: list[PositionType]

@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, List, Optional, Callable
+from typing import Any, Optional, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +14,8 @@ class ScrollableDropdown(ctk.CTkFrame):
         self,
         parent: ctk.CTkFrame,
         theme: Any,
-        fonts: Dict[str, ctk.CTkFont],
-        values: Optional[List[str]] = None,
+        fonts: dict[str, ctk.CTkFont],
+        values: Optional[list[str]] = None,
         variable: Optional[ctk.StringVar] = None,
         width: int = 350,
         dropdown_height: int = 200,
@@ -26,8 +26,8 @@ class ScrollableDropdown(ctk.CTkFrame):
 
         Args:
             parent (ctk.CTkFrame): The parent container widget.
-            theme (Dict[str, Any]): The application theme configuration.
-            values (Optional[List[str]]): The list of strings to display.
+            theme (dict[str, Any]): The application theme configuration.
+            values (Optional[list[str]]): The list of strings to display.
             variable (Optional[ctk.StringVar]): A Tkinter string variable to sync with.
             width (int): The width of the dropdown button and popup.
             dropdown_height (int): The maximum height of the scrollable popup.
@@ -37,7 +37,7 @@ class ScrollableDropdown(ctk.CTkFrame):
         super().__init__(parent)
         self.theme = theme
         self.fonts = fonts
-        self.values: List[str] = values or []
+        self.values: list[str] = values or []
         self.variable = variable or ctk.StringVar(value=placeholder)
         self.placeholder = placeholder
         self.command = command
@@ -59,11 +59,11 @@ class ScrollableDropdown(ctk.CTkFrame):
             f"values_count={len(self.values)}, dropdown_height={self.dropdown_height}"
         )
 
-    def set_values(self, values: List[str]) -> None:
+    def set_values(self, values: list[str]) -> None:
         """Update the list of available options in the dropdown.
         
         Args:
-            values (List[str]): The new list of string options.
+            values (list[str]): The new list of string options.
         """
         self.values = values or []
         logger.debug(f"Dropdown values updated. values_count={len(self.values)}")

@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.utils import safe_int_conversion
 
@@ -24,7 +24,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
 
         logger.info("Initializing AddInjuryFrame")
 
-        self.stat_definitions: List[Tuple[str, str]] = [
+        self.stat_definitions: list[Tuple[str, str]] = [
             ("in_game_date", "In-game Date"),
             ("injury_detail", "Injury Detail"),
             ("time_out", "Time Out")

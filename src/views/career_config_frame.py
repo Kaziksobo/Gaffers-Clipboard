@@ -1,7 +1,7 @@
 import contextlib
 import customtkinter as ctk
 import logging
-from typing import Any, List
+from typing import Any
 
 from src.views.base_view_frame import BaseViewFrame
 from src.utils import safe_int_conversion
@@ -103,7 +103,7 @@ class CareerConfigFrame(BaseViewFrame):
             lbl.grid(row=0, column=0)
             return
 
-        comps: List[str] = getattr(meta, "competitions", []) or []
+        comps: list[str] = getattr(meta, "competitions", []) or []
         for i, comp in enumerate(comps):
             row_frame = ctk.CTkFrame(self.list_frame)
             row_frame.grid(row=i, column=0, sticky="ew", pady=4, padx=4)

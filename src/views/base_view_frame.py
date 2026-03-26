@@ -2,7 +2,7 @@ import customtkinter as ctk
 import logging
 import re
 from datetime import datetime
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Any, Tuple, Optional
 from src.views.widgets.custom_alert import CustomAlert
 
 logger = logging.getLogger(__name__)
@@ -25,11 +25,11 @@ class BaseViewFrame(ctk.CTkFrame):
         self.theme = theme
         self.fonts = self.controller.dynamic_fonts
         
-        self.data_vars: Dict[str, ctk.StringVar] = {}
-        self._dismissed_warnings: List[Tuple[str, Any]] = []
+        self.data_vars: dict[str, ctk.StringVar] = {}
+        self._dismissed_warnings: list[Tuple[str, Any]] = []
         
         # Stores tuples of (widget_instance, width_ratio)
-        self._wrapping_widgets: List[Tuple[ctk.CTkLabel, float]] = []
+        self._wrapping_widgets: list[Tuple[ctk.CTkLabel, float]] = []
         
         self.bind("<Configure>", self._apply_dynamic_wraps)
         
@@ -70,10 +70,7 @@ class BaseViewFrame(ctk.CTkFrame):
         accent = getattr(sc, "accent", "#00bfff")
         unsaved = getattr(sc, "unsaved_nav_hover", getattr(sc, "warning", "#ffcc00"))
 
-        hover_color = unsaved if self.controller.has_unsaved_work() else accent
-        # Ensure a non-empty hover color is always applied
-        if not hover_color:
-            hover_color = accent
+        hover_color = (unsaved if self.controller.has_unsaved_work() else accent) or accent
 
         try:
             self._main_menu_button.configure(hover_color=hover_color)
@@ -86,9 +83,7 @@ class BaseViewFrame(ctk.CTkFrame):
         sc = self.theme.semantic_colors
         accent = getattr(sc, "accent", "#00bfff")
         unsaved = getattr(sc, "unsaved_nav_hover", getattr(sc, "warning", "#ffcc00"))
-        fg = unsaved if self.controller.has_unsaved_work() else accent
-        if not fg:
-            fg = accent
+        fg = (unsaved if self.controller.has_unsaved_work() else accent) or accent
         try:
             self._main_menu_button.configure(fg_color=fg)
         except Exception:
@@ -135,7 +130,7 @@ class BaseViewFrame(ctk.CTkFrame):
         self.controller.show_frame(self.controller.get_frame_class("MainMenuFrame"))
     
     # --- Popup Managers ---
-    def show_info(self, title: str, message: str, options: Optional[List[str]] = None) -> Optional[str]:
+    def show_info(self, title: str, message: str, options: Optional[list[str]] = None) -> Optional[str]:
         """Show an informational popup with the given title and message."""
         alert = CustomAlert(
             parent=self,
@@ -171,7 +166,7 @@ class BaseViewFrame(ctk.CTkFrame):
             success_timeout=timeout
         )
     
-    def show_warning(self, title: str, message: str, options: Optional[List[str]] = None) -> Optional[str]:
+    def show_warning(self, title: str, message: str, options: Optional[list[str]] = None) -> Optional[str]:
         """Show a warning popup with the given title and message."""
         alert = CustomAlert(
             parent=self,
@@ -191,7 +186,7 @@ class BaseViewFrame(ctk.CTkFrame):
         index: int, 
         stat_key: str, 
         stat_label: str,
-        target_dict: Dict[str, ctk.StringVar],
+        target_dict: dict[str, ctk.StringVar],
         label_col: int = 1,
         entry_col: int = 2,
         entry_width: int = 140) -> None:
@@ -223,10 +218,10 @@ class BaseViewFrame(ctk.CTkFrame):
     # --- Validation Helpers ---
     def check_missing_fields(
         self,
-        data: Dict[str, Any],
-        key_to_label: Dict[str, str],
-        required_keys: Optional[List[str]] = None,
-        zero_invalid_keys: Optional[List[str]] = None,
+        data: dict[str, Any],
+        key_to_label: dict[str, str],
+        required_keys: Optional[list[str]] = None,
+        zero_invalid_keys: Optional[list[str]] = None,
     ) -> bool:
         """Validate that required keys are present and non-empty.
 
@@ -272,8 +267,8 @@ class BaseViewFrame(ctk.CTkFrame):
             return False
         return True
     
-    def validate_attr_range(self, data: Dict[str, Any], data_definitions: List[Tuple[str, str]], min_val: int = 1, max_val: int = 99) -> bool:
-        invalid_attrs: List[str] = []
+    def validate_attr_range(self, data: dict[str, Any], data_definitions: list[Tuple[str, str]], min_val: int = 1, max_val: int = 99) -> bool:
+        invalid_attrs: list[str] = []
 
         for key, value in data.items():
             if value is None:
@@ -405,8 +400,8 @@ class BaseViewFrame(ctk.CTkFrame):
     
     def validate_pair_hard(
         self,
-        data: Dict[str, Any],
-        constraints: List[Tuple[str, str, str, str]]) -> bool:
+        data: dict[str, Any],
+        constraints: list[Tuple[str, str, str, str]]) -> bool:
         violations = []
         for key_a, label_a, key_b, label_b in constraints:
             val_a = data.get(key_a)
@@ -424,7 +419,7 @@ class BaseViewFrame(ctk.CTkFrame):
             return False
         return True
     
-    def validate_stat_max(self, data: Dict[str, Any], stat_key: str, stat_label: str, max_value: int) -> bool:
+    def validate_stat_max(self, data: dict[str, Any], stat_key: str, stat_label: str, max_value: int) -> bool:
         value = data.get(stat_key)
         if value is not None and value > max_value:
             return self.soft_validate(

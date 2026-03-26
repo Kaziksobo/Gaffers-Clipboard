@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Any
 import logging
 import customtkinter as ctk
 from src.exceptions import UIPopulationError
@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class PlayerDropdownMixin:
     """A feature pack that adds player dropdown functionality to any frame"""
-    def enforce_player_database(self, only_gk: bool = False, only_outfield: bool = False, remove_on_loan: bool = False) -> List[str]:
+    def enforce_player_database(self, only_gk: bool = False, only_outfield: bool = False, remove_on_loan: bool = False) -> list[str]:
         names = self.controller.get_all_player_names(
             only_gk=only_gk,
             only_outfield=only_outfield,
@@ -33,7 +33,7 @@ class PlayerDropdownMixin:
 
 class OCRDataMixin:
     """A feature pack that adds OCR data validation and processing to any frame"""
-    def get_ocr_mapping(self) -> Dict[str, Dict[str, ctk.StringVar]]:
+    def get_ocr_mapping(self) -> dict[str, dict[str, ctk.StringVar]]:
         if hasattr(self, "attr_vars"):
             return {"": self.attr_vars}
         if hasattr(self, "stats_vars"):
@@ -41,7 +41,7 @@ class OCRDataMixin:
         
         return {}
     
-    def populate_stats(self, stats: Dict[str, Any]) -> None:
+    def populate_stats(self, stats: dict[str, Any]) -> None:
         if not stats:
             raise UIPopulationError("No stats data provided for population")
         

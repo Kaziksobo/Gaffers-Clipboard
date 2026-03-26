@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 import logging
-from typing import List, Optional, Union, Type, TypeVar, Any
+from typing import Optional, Union, Type, TypeVar, Any
 from pydantic import ValidationError, TypeAdapter, BaseModel
 from datetime import datetime
 
@@ -56,7 +56,7 @@ class DataManager:
         path: Path, 
         model_class: Type[T], 
         is_list: bool = True, 
-        default: Any = None) -> Union[T, List[T], Any]:
+        default: Any = None) -> Union[T, list[T], Any]:
         """Load JSON data from the specified file path and validate against a model.
 
         Args:
@@ -68,7 +68,7 @@ class DataManager:
                 Defaults to [] if is_list is True, else None.
 
         Returns:
-            Union[T, List[T], Any]: The validated model(s) or the default value.
+            Union[T, list[T], Any]: The validated model(s) or the default value.
         """
         if default is None:
             default = [] if is_list else None
@@ -83,7 +83,7 @@ class DataManager:
             logger.error(f"Error loading JSON from {path}: {e}", exc_info=True)
             return default
 
-        adapter = TypeAdapter(List[model_class] if is_list else model_class)
+        adapter = TypeAdapter(list[model_class] if is_list else model_class)
 
         try:
             return adapter.validate_python(raw_data)
@@ -108,7 +108,7 @@ class DataManager:
             logger.warning(f"Partial recovery: {len(recovered)} valid, {skipped} skipped from {path}.")
             return recovered
     
-    def _save_json(self, path: Path, data: Union[T, List[T], None] = None) -> None:
+    def _save_json(self, path: Path, data: Union[T, list[T], None] = None) -> None:
         """Save the provided data as JSON to the specified file path.
 
         Automatically handles serialization for both single Pydantic models 
@@ -116,7 +116,7 @@ class DataManager:
 
         Args:
             path (Path): The path to the JSON file.
-            data (Union[T, List[T], None]): The data to save. 
+            data (Union[T, list[T], None]): The data to save. 
                 If None, an empty list is saved to clear the file.
         """
         if data is None:
@@ -167,7 +167,7 @@ class DataManager:
             )
 
         try:
-            adapter = TypeAdapter(List[Match])
+            adapter = TypeAdapter(list[Match])
             return adapter.validate_python(raw_data)
         except ValidationError as e:
             raise ValueError(
@@ -199,14 +199,14 @@ class DataManager:
             )
 
         try:
-            adapter = TypeAdapter(List[Player])
+            adapter = TypeAdapter(list[Player])
             return adapter.validate_python(raw_data)
         except ValidationError as e:
             raise ValueError(
                 f"Refusing to save: players.json failed strict validation with {len(e.errors())} errors."
             ) from e
 
-    def _save_json_atomic_or_raise(self, path: Path, data: Union[T, List[T], None] = None) -> None:
+    def _save_json_atomic_or_raise(self, path: Path, data: Union[T, list[T], None] = None) -> None:
         """Atomically save JSON and raise on failure instead of swallowing errors."""
         if data is None:
             data = []
@@ -489,7 +489,7 @@ class DataManager:
 
         # Check if player already exists based on name to update them
         player_name = player_ui_data.get("name")
-        existing_player = self._find_player_by_name(player_name)
+        existing_player = self.find_player_by_name(player_name)
         
         top_level_keys = ["name", "age", "height", "weight", "country", "in_game_date"]
         
@@ -574,7 +574,7 @@ class DataManager:
             in_game_date (str): The in-game date for the financial snapshot (e.g., "24/11/24").
         """
         self.players = self._load_players_strict_or_raise()
-        existing_player = self._find_player_by_name(player_name)
+        existing_player = self.find_player_by_name(player_name)
 
         if not existing_player:
             logger.warning(f"Player '{player_name}' not found. Cannot add financial data.")
@@ -619,7 +619,7 @@ class DataManager:
                                 'injury_detail', 'time_out', etc.
         """
         self.players = self._load_players_strict_or_raise()
-        existing_player = self._find_player_by_name(player_name)
+        existing_player = self.find_player_by_name(player_name)
         
         if not existing_player:
             logger.warning(f"Player '{player_name}' not found. Cannot add injury record.")
@@ -684,7 +684,7 @@ class DataManager:
             in_game_date (Optional[str]): The in-game date for the status change, only needed for 'sold' status to set the date_sold field.
         """
         self.players = self._load_players_strict_or_raise()
-        existing_player = self._find_player_by_name(player_name)
+        existing_player = self.find_player_by_name(player_name)
 
         if not existing_player:
             logger.warning(
@@ -800,7 +800,7 @@ class DataManager:
         # Save atomically
         self._save_json(meta_path, new_meta)
     
-    def _find_player_by_name(self, name: str) -> Optional[Player]:
+    def find_player_by_name(self, name: str) -> Optional[Player]:
         """Find a player by their name (case-insensitive).
 
         Args:
@@ -830,7 +830,7 @@ class DataManager:
         Returns:
             Optional[int]: The player's ID if found, else None.
         """
-        player = self._find_player_by_name(name)
+        player = self.find_player_by_name(name)
         return player.id if player else None
     
     def add_match(self, match_data: dict, player_performances: list[dict]):

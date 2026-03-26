@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, Optional
+from typing import Any, Optional
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 from src.views.base_view_frame import BaseViewFrame

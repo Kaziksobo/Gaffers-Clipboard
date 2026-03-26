@@ -2,7 +2,7 @@ import contextlib
 import customtkinter as ctk
 import logging
 import tkinter as tk
-from typing import Dict, Any, List, Optional
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +19,11 @@ class CustomAlert(ctk.CTkToplevel):
         self,
         parent: ctk.CTkFrame,
         theme: Any,
-        fonts: Dict[str, ctk.CTkFont],
+        fonts: dict[str, ctk.CTkFont],
         title: str,
         message: str,
         alert_type: str = "warning",
-        options: Optional[List[str]] = None,
+        options: Optional[list[str]] = None,
         success_timeout: int = 0
     ) -> None:
         """Initialize the custom alert popup.
@@ -34,7 +34,7 @@ class CustomAlert(ctk.CTkToplevel):
             title (str): The title of the alert popup.
             message (str): The message to display in the alert.
             alert_type (str): The type of alert ("error", "warning", "success", "info").
-            options (Optional[List[str]]): Additional options for the alert (e.g., buttons).
+            options (Optional[list[str]]): Additional options for the alert (e.g., buttons).
             success_timeout (int): The timeout in seconds for success alerts (0 means no timeout).
         """
         super().__init__(parent)
@@ -122,7 +122,7 @@ class CustomAlert(ctk.CTkToplevel):
             or "#2196f3"
         )
         accent_color = default_accent_color
-        
+
         # Default background from CTk theme (will use JSON theme's CTk.fg_color)
         main_container = ctk.CTkFrame(
             self,
@@ -131,11 +131,11 @@ class CustomAlert(ctk.CTkToplevel):
             corner_radius=0              # Set to 0 for sharp edges, or match your theme
         )
         main_container.pack(fill="both", expand=True)
-        
+
         # Thin accent line at the top
         accent_line = ctk.CTkFrame(main_container, height=5, fg_color=accent_color)
         accent_line.pack(fill="x", side="top")
-        
+
         # Title label
         title = ctk.CTkLabel(
             main_container,
@@ -160,12 +160,12 @@ class CustomAlert(ctk.CTkToplevel):
         # Hide the built-in scrollbar if all content is visible
         self._message_textbox = message_textbox
         self.after(50, self._toggle_scrollbar)
-        
+
         # Buttons frame (will use CTk theme default background)
         buttons_frame = ctk.CTkFrame(main_container)
         buttons_frame.pack(pady=10)
 
-        self._buttons: Dict[str, ctk.CTkButton] = {}
+        self._buttons: dict[str, ctk.CTkButton] = {}
 
         for index, opt in enumerate(self.options):
             # Support option entries as either a string, a (label, hover_color) tuple, or a dict
@@ -187,11 +187,8 @@ class CustomAlert(ctk.CTkToplevel):
                 command=lambda opt_text=opt_label: self._button_callback(opt_text)
             )
             button.pack(side="left", padx=10)
-            try:
+            with contextlib.suppress(Exception):
                 self._buttons[str(opt_label).lower()] = button
-            except Exception:
-                pass
-
             if index == 0:
                 try:
                     button.focus_set()

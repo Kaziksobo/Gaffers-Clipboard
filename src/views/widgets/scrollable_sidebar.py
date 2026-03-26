@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Callable, Any, Optional, List, Dict, Tuple
+from typing import Callable, Any, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -20,14 +20,14 @@ class ScrollableSidebar(ctk.CTkFrame):
         self,
         parent: ctk.CTkFrame,
         theme: Any,
-        fonts: Dict[str, ctk.CTkFont],
-        display_keys: List[str],
+        fonts: dict[str, ctk.CTkFont],
+        display_keys: list[str],
         remove_button: bool = False,
         remove_callback: Optional[Callable[[str], None]] = None,
         id_key: str = "id",
         width: int = 375,
         max_height: int = 400,
-        column_proportions: Optional[List[float]] = None,
+        column_proportions: Optional[list[float]] = None,
         min_column_width: int = 60,
         remove_button_width: int = 92,
         responsive: bool = False,
@@ -38,7 +38,7 @@ class ScrollableSidebar(ctk.CTkFrame):
         Args:
             parent (ctk.CTkFrame): The parent container widget.
             title (str, optional): Title label displayed at the top of the sidebar. Defaults to None.
-            display_keys (List[str]): Dictionary keys to render as display columns in each row.
+            display_keys (list[str]): Dictionary keys to render as display columns in each row.
             remove_button (bool, optional): Whether to display a Remove button for each row. Defaults to False.
             remove_callback (Optional[Callable[[str], None]], optional): Callback invoked when Remove is pressed, 
                 receiving the item_id as argument. Required if remove_button is True. Defaults to None.
@@ -46,7 +46,7 @@ class ScrollableSidebar(ctk.CTkFrame):
                 it will be shown as a column; otherwise it is hidden but still used for deletion callbacks. Defaults to "id".
             width (int, optional): Width of the sidebar in pixels. Ignored if responsive=True. Defaults to 375.
             max_height (int, optional): Maximum height of the sidebar in pixels. Ignored if responsive=True. Defaults to 400.
-            column_proportions (Optional[List[float]], optional): Proportional widths for each display column 
+            column_proportions (Optional[list[float]], optional): Proportional widths for each display column 
                 (must sum to ~1.0). If None, all columns get equal width. Defaults to None.
             min_column_width (int, optional): Minimum pixel width enforced for display columns. Defaults to 60.
             remove_button_width (int, optional): Fixed pixel width for the remove button column. Defaults to 92.
@@ -76,11 +76,11 @@ class ScrollableSidebar(ctk.CTkFrame):
         if self._column_proportions is not None and abs(sum(self._column_proportions) - 1.0) > 0.001:
             raise ValueError("Values in column_proportions must sum to ~1.0 for proportional widths")
 
-        self._rows: List[Tuple[ctk.CTkFrame, ctk.CTkFrame]] = []
-        self._computed_column_widths: List[int] = []
+        self._rows: list[Tuple[ctk.CTkFrame, ctk.CTkFrame]] = []
+        self._computed_column_widths: list[int] = []
         self._collapsed_height = 50  # Height when collapsed (just button)
         self._expanded_relheight = 0.85  # Height when expanded (relative)
-        self._initial_place_geometry: Dict[str, Any] = {}  # Store initial place() params for collapse/expand
+        self._initial_place_geometry: dict[str, Any] = {}  # Store initial place() params for collapse/expand
         
         if self._remove_button and not self._remove_callback:
             raise ValueError("remove_callback must be provided if remove_button is True")
@@ -111,13 +111,13 @@ class ScrollableSidebar(ctk.CTkFrame):
     
     def _toggle_collapse(self) -> None:
         self._is_collapsed = not self._is_collapsed
-        
+
         arrow = "▶" if self._is_collapsed else "▼"
         self._title_button.configure(text=f"{self.title} {arrow}")
-        
+
         # Completely clear existing geometry constraints to prevent merging conflicts
         self.place_forget()
-        
+
         # Base placement arguments that are always applied
         place_args = {
             'relx': self._initial_place_geometry.get('relx', 1.0),
@@ -126,24 +126,24 @@ class ScrollableSidebar(ctk.CTkFrame):
             'x': self._initial_place_geometry.get('x', 0),
             'y': self._initial_place_geometry.get('y', 0)
         }
-        
+
         # Safely re-apply relwidth if it was originally provided
         if 'relwidth' in self._initial_place_geometry:
             place_args['relwidth'] = self._initial_place_geometry['relwidth']
-        
+
         if self._is_collapsed:
             self.content_frame.grid_remove()
             # Set the exact absolute height using CTk's approved method
             self.configure(height=self._collapsed_height)
-            # Re-place the widget (relheight is completely omitted)
-            self.place(**place_args)
         else:
             self.content_frame.grid()
             # Re-apply the relative height constraint for the expanded state
             if 'relheight' in self._initial_place_geometry:
                 place_args['relheight'] = self._initial_place_geometry['relheight']
-            
-            self.place(**place_args)
+
+
+        # Re-place the widget (relheight is completely omitted)
+        self.place(**place_args)
     
     def store_place_geometry(self, **kwargs: Any) -> None:
         """Store the initial place geometry for later use during collapse/expand.
@@ -199,7 +199,7 @@ class ScrollableSidebar(ctk.CTkFrame):
             space_for_cols -= self._remove_button_width + COL_GAP
 
         # Compute widths based on proportions or equal distribution
-        widths: List[int] = []
+        widths: list[int] = []
         if self._column_proportions:
             widths.extend(
                 max(int(space_for_cols * proportion), self._min_column_width)
@@ -245,7 +245,7 @@ class ScrollableSidebar(ctk.CTkFrame):
             remove_widget = cell_widgets[label_count]
             remove_widget.configure(width=self._remove_button_width)
         
-    def populate(self, data: List[Dict[str, str]]) -> None:
+    def populate(self, data: list[dict[str, str]]) -> None:
         """Populate the sidebar with rows, rendering specified keys and handling the unique identifier.
 
         The id_key is always extracted for callback use (if remove_button is True),
@@ -253,7 +253,7 @@ class ScrollableSidebar(ctk.CTkFrame):
         Rows with missing required keys are logged and skipped; rendering continues for valid rows.
 
         Args:
-            data (List[Dict[str, str]]): List of dictionaries to render as sidebar rows.
+            data (list[Dict[str, str]]): List of dictionaries to render as sidebar rows.
                 Each dict must contain all keys in display_keys and id_key (when remove_button is enabled).
                 The controller MUST ensure all values are pre-formatted strings ready for display.
         """
@@ -297,7 +297,7 @@ class ScrollableSidebar(ctk.CTkFrame):
             row.destroy()
         self._rows.clear()
     
-    def _add_dynamic_row(self, data: Dict[str, str], item_id: Optional[str] = None, row_index: int = 0) -> None:
+    def _add_dynamic_row(self, data: dict[str, str], item_id: Optional[str] = None, row_index: int = 0) -> None:
         """Construct and render a single row with labels for each display key and optional remove button.
 
         Creates widgets for each display column with explicit computed widths, and places them on
