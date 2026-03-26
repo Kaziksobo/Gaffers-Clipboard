@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any
+from typing import Any
 
 from src.views.base_view_frame import BaseViewFrame
 

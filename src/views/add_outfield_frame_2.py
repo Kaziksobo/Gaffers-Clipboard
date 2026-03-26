@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, Tuple
+from typing import Any, Tuple
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
@@ -25,7 +25,7 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         
         logger.info("Initializing AddOutfieldFrame2")
         
-        self.attr_vars: Dict[str, ctk.StringVar] = {}
+        self.attr_vars: dict[str, ctk.StringVar] = {}
         self.attr_definitions: list[Tuple[str, str]] = [
             ("ball_control", "Ball Control"),
             ("crossing", "Crossing"),
@@ -113,7 +113,7 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             logger.info("Validation passed. Buffering Outfield Page 2 and initiating final save.")
             
             # Step 1: Push Page 2 data to the buffer
-            self.controller.buffer_player_attributes(ui_data, gk=False, first=False)
+            self.controller.buffer_player_attributes(ui_data, is_goalkeeper=False, is_first_page=False)
             
             # Step 2: Tell the Controller to cross the Pydantic boundary
             self.controller.save_player()

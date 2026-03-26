@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Tuple
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 from src.views.widgets.scrollable_sidebar import ScrollableSidebar
 from src.utils import safe_int_conversion
@@ -26,8 +26,8 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         
         logger.info("Initializing GKStatsFrame")
         
-        self.stats_vars: Dict[str, ctk.StringVar] = {}
-        self.stat_definitions: List[Tuple[str, str]] = [
+        self.stats_vars: dict[str, ctk.StringVar] = {}
+        self.stat_definitions: list[Tuple[str, str]] = [
             ("shots_against", "Shots Against"),
             ("shots_on_target", "Shots On Target"),
             ("saves", "Saves"),
@@ -173,7 +173,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             return False
 
         # Convert all stats to integers
-        ui_data: Dict[str, Any] = {stat_key: safe_int_conversion(var.get()) for stat_key, var in self.stats_vars.items()}
+        ui_data: dict[str, Any] = {stat_key: safe_int_conversion(var.get()) for stat_key, var in self.stats_vars.items()}
         
         if not self.check_missing_fields(ui_data, dict(self.stat_definitions)):
             return False
@@ -249,7 +249,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             return
         try:
             # Trigger the controller OCR logic for the next player
-            self.controller.process_player_stats(gk=False)
+            self.controller.process_player_stats(is_goalkeeper=False)
             self.controller.show_frame(self.controller.get_frame_class("PlayerStatsFrame"))
         except Exception as e:
             logger.error(f"Failed to process next outfield player stats: {e}", exc_info=True)
@@ -262,7 +262,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             return
         try:
             # Trigger the controller OCR logic for the goalkeeper
-            self.controller.process_player_stats(gk=True)
+            self.controller.process_player_stats(is_goalkeeper=True)
             self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
         except Exception as e:
             logger.error(f"Failed to process next goalkeeper stats: {e}", exc_info=True)

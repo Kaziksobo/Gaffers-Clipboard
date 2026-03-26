@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any
+from typing import Any
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
 from src.views.base_view_frame import BaseViewFrame
@@ -126,7 +126,7 @@ class CareerSelectFrame(BaseViewFrame):
         
         logger.info(f"User validated and selected career: {selected_career}")
         try:
-            self.controller.set_current_career_by_name(selected_career)
+            self.controller.activate_career(selected_career)
             target_class = self.controller.get_frame_class("MainMenuFrame")
             self.controller.show_frame(target_class)
         except Exception as e:

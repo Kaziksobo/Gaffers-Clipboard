@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Tuple
 from src.utils import safe_int_conversion, safe_float_conversion
 
 from src.views.base_view_frame import BaseViewFrame
@@ -24,10 +24,10 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         logger.info("Initializing MatchStatsFrame")
         
         # Attributes to store stat variables
-        self.home_stats_vars: Dict[str, ctk.StringVar] = {}
-        self.away_stats_vars: Dict[str, ctk.StringVar] = {}
+        self.home_stats_vars: dict[str, ctk.StringVar] = {}
+        self.away_stats_vars: dict[str, ctk.StringVar] = {}
         
-        self.stat_definitions: List[Tuple[str, str]] = [
+        self.stat_definitions: list[Tuple[str, str]] = [
             ("possession", "Possession (%)"),
             ("ball_recovery", "Ball Recovery Time (seconds)"),
             ("shots", "Shots"),
@@ -201,7 +201,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         )
         self.away_stat_entry.grid(row=row, column=4, padx=5, pady=5)
         
-    def get_ocr_mapping(self) -> Dict[str, Dict[str, ctk.StringVar]]:
+    def get_ocr_mapping(self) -> dict[str, dict[str, ctk.StringVar]]:
         """Override OCRDataMixin mapping to handle nested dictionaries cleanly."""
         return {
             "home_team": self.home_stats_vars,
@@ -313,9 +313,8 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             existing = getattr(self.controller, "match_overview_buffer", {}) or {}
             # Preserve in_game_date and competition if they were set earlier (e.g., in AddMatchFrame)
             for key in ("in_game_date", "competition"):
-                if key not in ui_data or ui_data.get(key) is None:
-                    if key in existing and existing.get(key) is not None:
-                        ui_data[key] = existing[key]
+                if (key not in ui_data or ui_data.get(key) is None) and (key in existing and existing.get(key) is not None):
+                    ui_data[key] = existing[key]
 
             self.controller.buffer_match_overview(ui_data)
             logger.debug("Match overview buffered successfully.")
@@ -342,7 +341,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         if not self.collect_data():
             return
         try:
-            self.controller.process_player_stats(gk=True)
+            self.controller.process_player_stats(is_goalkeeper=True)
             self.controller.show_frame(self.controller.get_frame_class("GKStatsFrame"))
         except Exception as e:
             logger.error(f"Error during transition to GKStatsFrame: {e}", exc_info=True)

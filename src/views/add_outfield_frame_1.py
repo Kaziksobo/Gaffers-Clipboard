@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any, Tuple
+from typing import Any, Tuple
 from src.utils import safe_int_conversion
 
 from src.views.base_view_frame import BaseViewFrame
@@ -23,7 +23,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryF
         
         logger.info("Initializing AddOutfieldFrame1")
         
-        self.attr_vars: Dict[str, ctk.StringVar] = {}
+        self.attr_vars: dict[str, ctk.StringVar] = {}
         self.attr_definitions_physical: list[Tuple[str, str]] = [
             ("acceleration", "Acceleration"),
             ("agility", "Agility"),
@@ -33,7 +33,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryF
             ("stamina", "Stamina"),
             ("strength", "Strength"),
         ]
-        self.attr_definitions_mental: list[Tuple[str, str]] = [
+        self.attr_definitions_mental: list[tuple[str, str]] = [
             ("aggression", "Aggression"),
             ("att_position", "Att. Position"),
             ("composure", "Composure"),
@@ -199,7 +199,7 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryF
     def on_next_page(self) -> None:
         """Extracts data, validates completeness, buffers it, and transitions to Page 2."""
         # Convert attributes to int immediately
-        ui_data: Dict[str, Any] = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
+        ui_data: dict[str, Any] = {key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()}
 
         if not self.validate_attr_range(ui_data, self.attr_definitions_physical + self.attr_definitions_mental):
             return
@@ -274,10 +274,10 @@ class AddOutfieldFrame1(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryF
         try:
             logger.info("Validation passed. Buffering Outfield Page 1 and triggering Page 2 OCR.")
             # Buffer the current page's data
-            self.controller.buffer_player_attributes(ui_data, gk=False, first=True)
+            self.controller.buffer_player_attributes(ui_data, is_goalkeeper=False, is_first_page=True)
             self.show_success("Page 1 Saved", "Outfield Page 1 data saved successfully! Moving to Page 2...")
             # Trigger OCR for the next page
-            self.controller.process_player_attributes(gk=False, first=False)
+            self.controller.process_player_attributes(is_goalkeeper=False, is_first_page=False)
             self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame2"))
         except Exception as e:
             # Safely catch OCR or buffering failures so the app doesn't crash on transition

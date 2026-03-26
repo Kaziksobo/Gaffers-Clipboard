@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any
+from typing import Any
 from src.utils import safe_int_conversion
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
 
@@ -23,7 +23,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMix
         
         logger.info("Initializing AddGKFrame")
         
-        self.attr_vars: Dict[str, ctk.StringVar] = {}
+        self.attr_vars: dict[str, ctk.StringVar] = {}
         self.attr_definitions = [
             ("diving", "Diving"),
             ("handling", "Handling"),
@@ -172,7 +172,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMix
     def on_done_button_press(self) -> None:
         """Extract inputs, validate them, and route them to the Controller for saving."""
         # Convert attributes to integers using helper
-        ui_data: Dict[str, Any] = {
+        ui_data: dict[str, Any] = {
             key: safe_int_conversion(var.get()) for key, var in self.attr_vars.items()
         }
 
@@ -244,7 +244,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMix
 
         try:
             # Buffer the data and attempt the persistent save
-            self.controller.buffer_player_attributes(ui_data, gk=True, first=True)
+            self.controller.buffer_player_attributes(ui_data, is_goalkeeper=True, is_first_page=True)
             self.controller.save_player()
 
             logger.info(f"Successfully saved GK {ui_data['name']}. Navigating to Library.")

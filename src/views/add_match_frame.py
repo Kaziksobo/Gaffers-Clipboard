@@ -1,7 +1,7 @@
 import contextlib
 import customtkinter as ctk
 import logging
-from typing import Dict, Any
+from typing import Any
 
 from src.views.base_view_frame import BaseViewFrame
 from src.views.widgets.scrollable_dropdown import ScrollableDropdown
@@ -115,7 +115,7 @@ class AddMatchFrame(BaseViewFrame):
 
         # Validate in-game date
         in_game_date = self.in_game_date_entry.get().strip()
-        if not self.validate_in_game_date(in_game_date):
+        if not self.validate_in_game_date(in_game_date, disallow_older_than_last=True):
             return
 
         # Validate competition selection

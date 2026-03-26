@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import logging
-from typing import Dict, Any
+from typing import Any
 
 from src.views.base_view_frame import BaseViewFrame
 
@@ -124,7 +124,7 @@ class PlayerLibraryFrame(BaseViewFrame):
         if not check or check == "Cancel":
             return
         try:
-            self.controller.process_player_attributes(gk=True, first=True)
+            self.controller.process_player_attributes(is_goalkeeper=True, is_first_page=True)
             self.controller.show_frame(self.controller.get_frame_class("AddGKFrame"))
         except Exception as e:
             # Catch the UIPopulationError from the Controller to prevent navigating to a broken frame
@@ -142,7 +142,7 @@ class PlayerLibraryFrame(BaseViewFrame):
         if not check or check == "Cancel":
             return
         try:
-            self.controller.process_player_attributes(gk=False, first=True)
+            self.controller.process_player_attributes(is_goalkeeper=False, is_first_page=True)
             self.controller.show_frame(self.controller.get_frame_class("AddOutfieldFrame1"))
         except Exception as e:
             logger.error(f"Outfield OCR process aborted. Navigation cancelled: {e}")

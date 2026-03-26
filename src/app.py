@@ -5,7 +5,7 @@ import json
 import cv2 as cv
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Type, Any
+from typing import Optional, Type, Any
 from datetime import datetime
 
 # Internal imports
@@ -49,17 +49,11 @@ class App(ctk.CTk):
     PROJECT_ROOT = Path(__file__).parent.parent
 
     def __init__(self) -> None:
-        """The main application controller and root window for Gaffer's Clipboard.
-    
-        This class acts as the central orchestrator (the Controller in MVC) for the 
-        entire application. It manages three primary responsibilities:
-        
-        1.  **Window Management:** Controls the root Tkinter window geometry and theming.
-        2.  **View Routing:** Acts as a router holding all initialized UI frames in memory,
-            allowing seamless switching between screens via `show_frame`.
-        3.  **State & Data Orchestration:** Holds the active instance of the `DataManager` 
-            and maintains temporary session buffers. It bridges the gap between raw UI 
-            inputs (dictionaries) and the strict data layer (Pydantic models).
+        """Initialize the application controller and main window.
+
+        Creates the root CustomTkinter window, applies the app theme and appearance mode,
+        initializes responsive fonts and sidebar state, sets up the data manager and
+        session buffers, and instantiates the application frames.
         """
         super().__init__()
         logger.info(f"Application starting up. Project root: {App.PROJECT_ROOT}")
@@ -80,7 +74,7 @@ class App(ctk.CTk):
         self.theme = theme
         
         # Initialize dynamic fonts and bind to window resize for responsive scaling
-        self.dynamic_fonts: Dict[str, ctk.CTkFont] = self._initialize_dynamic_fonts()
+        self.dynamic_fonts: dict[str, ctk.CTkFont] = self._initialize_dynamic_fonts()
         self.bind("<Configure>", self._on_window_resize)
         self.fonts = self.dynamic_fonts
         
@@ -96,19 +90,11 @@ class App(ctk.CTk):
         
         self.current_career: Optional[str] = None
         
-        # Buffers to allow data to be collected by multiple frames before entering into data manager
-        self.player_attributes_buffer: Dict[str, Any] = {}
-        self.match_overview_buffer: Dict[str, Any] = {}
-        self.player_performances_buffer: list[Dict[str, Any]] = []
-        
-        self.full_competitions_list: list[str] = [
-            "Premier League", "FA Cup", "EFL Cup", "Community Shield",
-            "Ligue 1", "Coupe de France", "Trophée des Champions",
-            "La Liga", "Copa del Rey", "Supercopa de España",
-            "Bundesliga", "DFB-Pokal", "DFL-Supercup",
-            "Serie A", "Coppa Italia", "Supercoppa Italiana",
-            "UEFA Champions League", "UEFA Europa League", "UEFA Europa Conference League", "UEFA Super Cup"
-        ]
+        # Buffers to allow data to be collected by multiple frames 
+        # before entering into data manager
+        self.player_attributes_buffer: dict[str, Any] = {}
+        self.match_overview_buffer: dict[str, Any] = {}
+        self.player_performances_buffer: list[dict[str, Any]] = []
 
         # Frame configuration
         container = ctk.CTkFrame(self)
@@ -116,12 +102,15 @@ class App(ctk.CTk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         
-        self.frames: Dict[Type[ctk.CTkFrame], ctk.CTkFrame] = {}
+        self.frames: dict[Type[ctk.CTkFrame], ctk.CTkFrame] = {}
         
-        for frame_cls in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, AddMatchFrame, 
-                  MatchStatsFrame, PlayerStatsFrame, MatchAddedFrame, PlayerLibraryFrame, 
-                  AddGKFrame, AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, 
-                  LeftPlayerFrame, GKStatsFrame, AddInjuryFrame, CareerConfigFrame):
+        for frame_cls in (CareerSelectFrame, CreateCareerFrame, MainMenuFrame, 
+                          AddMatchFrame, MatchStatsFrame, PlayerStatsFrame, 
+                          MatchAddedFrame, PlayerLibraryFrame, AddGKFrame, 
+                          AddOutfieldFrame1, AddOutfieldFrame2, AddFinancialFrame, 
+                          LeftPlayerFrame, GKStatsFrame, AddInjuryFrame, 
+                          CareerConfigFrame
+                         ):
             try:
                 frame = frame_cls(container, self, self.theme)
                 self.frames[frame_cls] = frame
@@ -154,7 +143,7 @@ class App(ctk.CTk):
         raise FrameNotFoundError(f"No frame class named '{name}' found.")
     
     def show_frame(self, page_class: Type[ctk.CTkFrame]) -> None:
-        """Bring the specified frame class to the front of the UI stack.
+        """Raise the requested frame and run its lifecycle hooks.
 
         If the target frame implements an `on_show` method, it will be executed
         after the frame is raised. This acts as a lifecycle hook for views to 
@@ -174,6 +163,7 @@ class App(ctk.CTk):
         frame = self.frames[page_class]
         frame.tkraise()
 
+        # Trigger a refresh of semantic styles if the frame supports it
         if hasattr(frame, "refresh_semantic_styles"):
             frame.refresh_semantic_styles()
         
@@ -181,26 +171,62 @@ class App(ctk.CTk):
         if hasattr(frame, "on_show"):
             frame.on_show()
     
-    def _initialize_dynamic_fonts(self) -> Dict[str, ctk.CTkFont]:
-        live_fonts = {}
+    def _initialize_dynamic_fonts(self) -> dict[str, ctk.CTkFont]:
+        """Create live, resizable font instances from the theme configuration.
+
+        This converts the static font settings defined in the theme into
+        `CTkFont` objects that can be dynamically adjusted at runtime.
+
+        Returns:
+            dict[str, ctk.CTkFont]: A mapping of theme font keys to live `CTkFont` instances.
+        """
+        live_fonts: dict[str, ctk.CTkFont] = {}
+        # We expect the theme fonts to be defined as tuples: (family, size, [weight])
         for font_name, font_config in vars(self.theme.fonts).items():
             family = font_config[0]
             base_size = font_config[1]
             weight = font_config[2] if len(font_config) > 2 else "normal"
 
-            live_fonts[font_name] = ctk.CTkFont(family=family, size=base_size, weight=weight)
+            live_fonts[font_name] = ctk.CTkFont(
+                family=family, 
+                size=base_size, 
+                weight=weight
+                )
             
         return live_fonts
     
     def _on_window_resize(self, event: Any) -> None:
-        if event.widget == self and event.width > 100:
-            scale_factor = max(0, (event.width - 800) / 40)
-            
-            self.dynamic_fonts["title"].configure(size=int(max(24, min(32 + scale_factor * 1.5, 64))))
-            self.dynamic_fonts["button"].configure(size=int(max(14, min(16 + scale_factor * 0.5, 24))))
-            self.dynamic_fonts["body"].configure(size=int(max(14, min(16 + scale_factor * 0.5, 22))))
-            self.dynamic_fonts["sidebar_button"].configure(size=int(max(12, min(14 + scale_factor * 0.3, 18))))
-            self.dynamic_fonts["sidebar_body"].configure(size=int(max(12, min(14 + scale_factor * 0.3, 18))))
+        """Dynamically adjust application font sizes in response to window resizing.
+
+        This keeps text readable and proportionally scaled across different window 
+        widths while enforcing sensible minimum and maximum font sizes.
+
+        Args:
+            event (Any): The Tkinter event object containing the new window dimensions.
+        """
+        MINIMUM_WINDOW_WIDTH = 100
+
+        if event.widget == self and event.width > MINIMUM_WINDOW_WIDTH:
+            WINDOW_BASE_WIDTH = 800
+            SCALE_FACTOR_DIVISOR = 40
+            # Calculate a scale factor based on how much wider the window is than the base width.
+            scale_factor = max(0, (event.width - WINDOW_BASE_WIDTH) / SCALE_FACTOR_DIVISOR)
+
+            # Define font scaling configurations: (base_size, scale_multiplier, min_size, max_size)
+            font_configs = {
+                "title": (24, 1.5, 24, 64),
+                "button": (16, 0.5, 14, 24),
+                "body": (16, 0.5, 14, 22),
+                "sidebar_button": (14, 0.3, 12, 18),
+                "sidebar_body": (14, 0.3, 12, 18),
+            }
+
+            for font_name, (base_size, multiplier, min_size, max_size) in font_configs.items():
+                # Calculate the new font size based on the window width, 
+                # then clamp it within the defined min and max sizes.
+                new_size = base_size + (scale_factor * multiplier)
+                clamped_size = max(min_size, min(new_size, max_size))
+                self.dynamic_fonts[font_name].configure(size=int(clamped_size))
     
     def get_sidebar_collapse_state(self, sidebar_id: str) -> bool:
         """Get collapse state for a sidebar. Defaults to True (collapsed)."""
@@ -211,10 +237,13 @@ class App(ctk.CTk):
         self.sidebar_states[sidebar_id] = collapsed
 
     def has_unsaved_work(self) -> bool:
-        """Check if there are any unsaved changes in the session buffers.
-        
+        """Determine whether the current session holds any unsaved data.
+
+        Treats any non-empty player attributes, match overview, or player 
+        performance buffers as indicators of unsaved work.
+
         Returns:
-            bool: True if any of the buffers contain data, indicating potential unsaved work.
+            bool: True if any of the session buffers contain data, otherwise False.
         """
         return bool(
             self.player_attributes_buffer
@@ -229,16 +258,14 @@ class App(ctk.CTk):
         self.match_overview_buffer = {}
         self.player_performances_buffer = []
 
-    def set_current_career_by_name(self, career_name: str) -> None:
-        """Load the specified career and set it as the active context.
+    def activate_career(self, career_name: str) -> None:
+        """Switch the active application context to the specified career.
 
-        This method orchestrates the DataManager to read the specific career's
-        files, hydrates the player and match lists in memory, and updates the 
-        application's active state.
+        Loads the selected career's data into memory and refreshes related 
+        player and match collections before marking it as the current career.
 
         Args:
-            career_name (str): The display name of the career (e.g., "Arsenal" 
-                               or "Arsenal (Arteta)").
+            career_name (str): The unique name of the career to activate.
         """
         logger.info(f"Setting current career to: {career_name}")
         
@@ -256,29 +283,38 @@ class App(ctk.CTk):
         half_length: int, 
         match_difficulty: DifficultyLevel,
         league: str) -> None:
-        """Create a new career profile and immediately activate it.
+        """Create and immediately activate a new career in the application.
 
-        This routes the initial settings to the DataManager for persistence,
-        before setting the newly created career as the active context.
+        Delegates persistence to the DataManager, then switches the active context
+        so subsequent operations target the newly created career.
 
         Args:
-            club_name (str): The club associated with the new career.
-            manager_name (str): The manager controlling the career.
-            starting_season (str): The season in which the career begins.
-            half_length (int): The duration of each half in minutes.
-            match_difficulty (DifficultyLevel): The strict difficulty level applied.
+            club_name (str): The display name of the club for the new career.
+            manager_name (str): The manager's name associated with the career.
+            starting_season (str): The starting season label (e.g., "2024/25").
+            half_length (int): The in-game match half length, in minutes.
+            match_difficulty (DifficultyLevel): The difficulty setting for the career.
+            league (str): The league in which the club competes.
         """
         self.data_manager.create_new_career(
-            club_name, manager_name, starting_season, half_length, match_difficulty, league
+            club_name, 
+            manager_name, 
+            starting_season, 
+            half_length, 
+            match_difficulty, 
+            league
         )
-        self.set_current_career_by_name(club_name)
+        self.activate_career(club_name)
     
     def get_current_career_details(self) -> Optional[CareerMetadata]:
-        """Retrieve the metadata model for the currently active career.
+        """Return metadata for the currently active career, if one is selected.
+
+        Acts as a safe accessor for the DataManager, gracefully handling the case
+        where no career is active by returning None instead of raising errors.
 
         Returns:
-            Optional[CareerMetadata]: The strictly typed Pydantic model containing 
-                                      career details, or None if no career is loaded.
+            Optional[CareerMetadata]: The metadata for the active career, or None if
+                                      no career is currently selected.
         """
         if not self.current_career:
             logger.warning("Attempted to get career details, but no career is active.")
@@ -287,10 +323,13 @@ class App(ctk.CTk):
         return self.data_manager.get_career_details(self.current_career)
 
     def get_latest_match_in_game_date(self) -> Optional[datetime]:
-        """Return the most recent stored match in-game date for the active career.
+        """Fetch the in-game date of the most recently recorded match.
 
-        This delegates to the DataManager and returns None when no career or
-        matches exist.
+        Provides a safe wrapper around the DataManager, returning None instead of
+        propagating errors if the lookup fails or no matches are available.
+
+        Returns:
+            Optional[datetime]: The in-game date of the latest match, or None on failure.
         """
         try:
             return self.data_manager.get_latest_match_in_game_date()
@@ -299,19 +338,19 @@ class App(ctk.CTk):
             return None
     
     def get_all_player_names(self, only_outfield: bool = False, only_gk: bool = False, remove_on_loan: bool = False) -> list[str]:
-        """Retrieve a sorted list of active player names for UI dropdowns.
+        """Return an alphabetized list of active player names with optional filtering.
 
-        Filters out players marked as 'sold'. Can optionally filter by 
-        goalkeepers or outfield players using the Player model's properties.
+        Syncs player data from disk, removes sold (and optionally loaned-out) players,
+        applies positional filters, and formats names for display in the UI.
 
         Args:
-            only_outfield (bool): If True, excludes goalkeepers.
-            only_gk (bool): If True, strictly returns goalkeepers.
-            remove_on_loan (bool): If True, excludes players marked as on loan.
+            only_outfield (bool, optional): If True, include only outfield players.
+            only_gk (bool, optional): If True, include only goalkeepers.
+            remove_on_loan (bool, optional): If True, exclude players currently on loan.
 
         Returns:
-            List[str]: Alphabetically sorted list of player names (by surname). 
-                       Returns ["No players found"] if the filtered list is empty.
+            list[str]: A list of player names sorted by surname, or a single-item list
+                       with the message "No players found" when no players match the criteria.
         """
         # Ensure memory is synced with disk before building the list
         self.data_manager.refresh_players()
@@ -324,6 +363,12 @@ class App(ctk.CTk):
             player for player in self.data_manager.players
             if not player.sold and not (remove_on_loan and player.loaned)
         ]
+        
+        # Make sure only_outfield and only_gk can't both be true
+        if only_outfield and only_gk:
+            logger.warning("Both only_outfield and only_gk flags are True. Defaulting to no positional filter.")
+            only_outfield = False
+            only_gk = False
 
         # Apply positional filters using the Player model's `is_goalkeeper` property
         if only_outfield:
@@ -337,8 +382,7 @@ class App(ctk.CTk):
                 [player.name.title() for player in active_players], 
                 key=lambda name: name.split()[-1]
             )
-        else:
-            return ["No players found"]
+        return ["No players found"]
 
     # --- Career / Competitions API for Views (Controller wrappers) ---
     def get_all_career_names(self) -> list[str]:
@@ -364,15 +408,19 @@ class App(ctk.CTk):
         self.data_manager.update_career_metadata(updates)
 
     def get_player_bio(self, name: str) -> Optional[PlayerBioDict]:
-        """Retrieve the high-level details of a player by name for display in the UI.
+        """Retrieve core biographical details for a specific player, if available.
+
+        Provides a lightweight dictionary of basic player attributes for use in 
+        UI displays or summary panels, returning None when the player cannot be found.
 
         Args:
-            name (str): The full name of the player (e.g., "John Doe") to look up.
+            name (str): The full name of the player to look up.
 
         Returns:
-            Optional[PlayerBioDict]: A dictionary containing the player's high-level details, or None if the player is not found.
+            Optional[PlayerBioDict]: A dictionary of player bio fields, or None if 
+                                     no matching player exists in the current career.
         """
-        player = self.data_manager._find_player_by_name(name)
+        player = self.data_manager.find_player_by_name(name)
         if player is None:
             return None
         return {
@@ -383,7 +431,7 @@ class App(ctk.CTk):
             "positions": player.positions,
         }
 
-    def buffer_player_attributes(self, data: dict[str, Any], gk: bool, first: bool = True) -> None:
+    def buffer_player_attributes(self, data: dict[str, Any], is_goalkeeper: bool, is_first_page: bool = True) -> None:
         """Store captured player attribute data during multi-step entry flows.
 
         This method routes raw data from goalkeeper and outfield pages into 
@@ -392,19 +440,53 @@ class App(ctk.CTk):
         the DataManager.
 
         Args:
-            data (Dict[str, Any]): The raw attribute values collected from the UI or OCR.
-            gk (bool): Indicates whether the data belongs to a goalkeeper.
-            first (bool, optional): Distinguishes between the first and second 
+            data (dict[str, Any]): The raw attribute values collected from the UI or OCR.
+            is_goalkeeper (bool): Indicates whether the data belongs to a goalkeeper.
+            is_first_page (bool, optional): Distinguishes between the first and second 
                                     outfield attribute pages. Defaults to True.
         """
-        logger.info(f"Buffering player data. GK: {gk}, First Page: {first}")
-        
-        if gk:
+        logger.info(f"Buffering player data. GK: {is_goalkeeper}, First Page: {is_first_page}")
+
+        if is_first_page and is_goalkeeper:
+            message = (
+                "Invalid player attribute state: data cannot be both goalkeeper "
+                "and first-page outfield (is_goalkeeper=True, is_first_page=True)."
+            )
+            logger.error(message)
+            raise ValueError(message)
+        if is_goalkeeper:
             self.player_attributes_buffer['gk_attr'] = data
-        elif first:
+        elif is_first_page:
             self.player_attributes_buffer['outfield_attr_1'] = data
         else:
             self.player_attributes_buffer['outfield_attr_2'] = data
+
+    def _extract_goalkeeper_player_buffer(
+        self,
+        buffered_data: dict[str, Any],
+    ) -> tuple[str, str, str, dict[str, Any]]:
+        """Extract normalized save data from a goalkeeper attribute buffer."""
+        gk_data = buffered_data['gk_attr']
+        return (
+            gk_data.get('name', '').strip(),
+            'GK',
+            gk_data.get('in_game_date', '').strip(),
+            gk_data,
+        )
+
+    def _extract_outfield_player_buffer(
+        self,
+        buffered_data: dict[str, Any],
+    ) -> tuple[str, str | None, str, dict[str, Any]]:
+        """Extract normalized save data from a two-page outfield attribute buffer."""
+        outfield_page_1 = buffered_data['outfield_attr_1']
+        outfield_page_2 = buffered_data['outfield_attr_2']
+        return (
+            outfield_page_1.get('name', '').strip(),
+            outfield_page_1.get('position') or None,
+            outfield_page_1.get('in_game_date', '').strip(),
+            {**outfield_page_1, **outfield_page_2},
+        )
     
     def save_player(self) -> None:
         """Commit buffered attribute data to persistent storage.
@@ -421,52 +503,36 @@ class App(ctk.CTk):
         """
         if not self.player_attributes_buffer:
             raise IncompleteDataError("Cannot save: No player data found in buffer.")
-        
-        # If gk, then only gk_attr will be present
-        # If outfield first, then outfield_attr_1 and outfield_attr_2 will be present
-        # in_game_date is always in the first page of attributes; season is derived from it
-        
-        player_name = ""
-        position = ""
-        in_game_date = ""
-        attributes: dict[str, Any] = {}
-        
-        if 'gk_attr' in self.player_attributes_buffer:
-            gk_data = self.player_attributes_buffer['gk_attr']
-            player_name = gk_data.get('name', '').strip()
-            position = 'GK'
-            in_game_date = gk_data.get('in_game_date', '').strip()
-            attributes = gk_data
-            
-        elif 'outfield_attr_1' in self.player_attributes_buffer and 'outfield_attr_2' in self.player_attributes_buffer:
-            out_1 = self.player_attributes_buffer['outfield_attr_1']
-            out_2 = self.player_attributes_buffer['outfield_attr_2']
-            player_name = out_1.get('name', '').strip()
-            position = out_1.get('position') or None
-            in_game_date = out_1.get('in_game_date', '').strip()
-            
-            # Safely merge both pages of attributes
-            attributes = {**out_1, **out_2}
-        
-        else:
-            raise IncompleteDataError("Cannot save: Missing page 1 or page 2 of outfield attributes.")
-        
-        if not player_name or not in_game_date:
-            logger.error(f"Save aborted: Missing critical context. Name: '{player_name}', Date: '{in_game_date}'")
-            raise IncompleteDataError("Cannot save: Missing required player context fields (Name or In-game Date).")
-        
-        logger.info(f"Saving player {player_name} at position {position}")
-        
-        is_gk = 'gk_attr' in self.player_attributes_buffer
         try:
+            if 'gk_attr' in self.player_attributes_buffer:
+                player_name, position, in_game_date, attributes = self._extract_goalkeeper_player_buffer(
+                    self.player_attributes_buffer
+                )
+                is_gk = True
+            elif 'outfield_attr_1' in self.player_attributes_buffer and 'outfield_attr_2' in self.player_attributes_buffer:
+                player_name, position, in_game_date, attributes = self._extract_outfield_player_buffer(
+                    self.player_attributes_buffer
+                )
+                is_gk = False
+            else:
+                raise IncompleteDataError("Cannot save: Missing page 1 or page 2 of outfield attributes.")
+
+            if not player_name or not in_game_date:
+                logger.error(f"Save aborted: Missing critical context. Name: '{player_name}', Date: '{in_game_date}'")
+                raise IncompleteDataError("Cannot save: Missing required player context fields (Name or In-game Date).")
+
+            logger.info(f"Saving player {player_name} at position {position}")
+
             self.data_manager.add_or_update_player(
                 player_ui_data=attributes,
                 position=position,
                 in_game_date=in_game_date,
-                is_gk=is_gk
+                is_gk=is_gk,
             )
+        except IncompleteDataError:
+            raise
         except Exception as e:
-            # We catch the generic exception (like a Pydantic ValidationError) 
+            # We catch the generic exception (like a Pydantic ValidationError)
             # and wrap it in our custom DataPersistenceError for the UI to handle.
             logger.error(f"DataManager failed to save player '{player_name}': {e}", exc_info=True)
             raise DataPersistenceError(f"Failed to save player data to the database: {e}") from e
@@ -475,20 +541,20 @@ class App(ctk.CTk):
             self.player_attributes_buffer = {}
     
     def save_financial_data(self, player_name: str, financial_data: dict[str, Any], in_game_date: str) -> None:
-        """Commit the financial data for a specific player to persistent storage.
-        
-        Acts as the gatekeeper for monetary updates, ensuring the UI has provided 
-        the necessary context before passing the raw dictionary to the DataManager 
-        for Pydantic validation.
+        """Controller gatekeeper that validates financial context before persisting data.
+
+        Ensures a player is selected, financial fields are non-empty, and an in-game 
+        date is provided before delegating the save operation to the DataManager.
 
         Args:
-            player_name (str): The name of the player to update.
-            financial_data (Dict[str, Any]): The raw monetary details supplied by the UI.
-            in_game_date (str): The in-game date for the financial snapshot.
-            
+            player_name (str): The name of the player whose financials are being updated.
+            financial_data (dict[str, Any]): The raw financial fields captured from the UI.
+            in_game_date (str): The in-game date associated with the financial snapshot.
+
         Raises:
-            IncompleteDataError: If the player name, in-game date, or data dictionary is missing.
-            DataPersistenceError: If the backend fails to process or save the data.
+            IncompleteDataError: If the player name, financial data, or in-game date is
+                                 missing, blank, or otherwise empty.
+            DataPersistenceError: If the backend fails to validate or persist the financial data.
         """
         # Validate critical context before hitting the DataManager
         if not player_name or not player_name.strip():
@@ -513,70 +579,95 @@ class App(ctk.CTk):
             ) from e
     
     def sell_player(self, player_name: str, in_game_date: str) -> None:
-        """Mark a player as sold, permanently removing them from active squad selection.
+        """Controller gatekeeper that validates context before selling a player.
+
+        Ensures a player is selected and a non-empty in-game date is provided 
+        before delegating the sell operation to the DataManager.
 
         Args:
-            player_name (str): The name of the player to sell.
-            in_game_date (str): The in-game date for the sale.
+            player_name (str): The name of the player to be sold.
+            in_game_date (str): The in-game date on which the sale occurs.
+
         Raises:
-            IncompleteDataError: If the player name or in-game date are missing or empty.
+            IncompleteDataError: If the player name or in-game date is missing, blank, or empty.
+            DataPersistenceError: If the backend fails to update the player's sold status.
         """
         if not player_name or not player_name.strip():
             logger.error("Sell action aborted: No player name provided.")
             raise IncompleteDataError("Cannot sell: No player selected.")
+        
         if not in_game_date or not in_game_date.strip():
             logger.error("Sell action aborted: No in-game date provided.")
             raise IncompleteDataError("Cannot sell: In-game date is required.")
             
         logger.info(f"Routing sell request for player: {player_name}")
-        self.data_manager.sell_player(player_name, in_game_date)
+        try:
+            self.data_manager.sell_player(player_name, in_game_date)
+        except Exception as e:
+            logger.error(f"Failed to sell player '{player_name}': {e}", exc_info=True)
+            raise DataPersistenceError(f"Failed to sell player: {e}") from e
     
     def loan_out_player(self, player_name: str) -> None:
-        """Mark a player as loaned out, temporarily removing them from active squad selection.
+        """Controller gatekeeper that validates context before loaning out a player.
+
+        Ensures a player is selected and the name is non-empty before delegating 
+        the loan-out operation to the DataManager.
 
         Args:
-            player_name (str): The name of the player to loan out.
+            player_name (str): The name of the player to be loaned out.
 
         Raises:
-            IncompleteDataError: If the player name is missing or empty.
+            IncompleteDataError: If the player name is missing, blank, or empty.
+            DataPersistenceError: If the backend fails to save the loan-out record.
         """
         if not player_name or not player_name.strip():
             logger.error("Loan out action aborted: No player name provided.")
             raise IncompleteDataError("Cannot loan out: No player selected.")
 
         logger.info(f"Routing loan out request for player: {player_name}")
-        self.data_manager.loan_out_player(player_name)
-    
+        try:
+            self.data_manager.loan_out_player(player_name)
+        except Exception as e:
+            logger.error(f"Failed to loan out player '{player_name}': {e}", exc_info=True)
+            raise DataPersistenceError(f"Failed to loan out player: {e}") from e
+
     def return_loan_player(self, player_name: str) -> None:
-        """Mark a player as returned from loan, reinstating them to the active squad.
+        """Controller gatekeeper that validates context before returning a player from loan.
+
+        Ensures a player is selected and the name is non-empty before delegating 
+        the return-from-loan operation to the DataManager.
 
         Args:
-            player_name (str): The name of the player returning from loan.
+            player_name (str): The name of the player to be returned from loan.
 
         Raises:
-            IncompleteDataError: If the player name is missing or empty.
+            IncompleteDataError: If the player name is missing, blank, or empty.
+            DataPersistenceError: If the backend fails to update the player's loan status.
         """
         if not player_name or not player_name.strip():
             logger.error("Return loan action aborted: No player name provided.")
             raise IncompleteDataError("Cannot return from loan: No player selected.")
 
         logger.info(f"Routing return from loan request for player: {player_name}")
-        self.data_manager.return_loan_player(player_name)
-    
-    def add_injury_record(self, player_name: str, injury_data: Dict[str, Any]) -> None:
-        """Commit an injury record for a specific player to persistent storage.
-        
-        Acts as the gatekeeper for injury updates, ensuring the UI has provided 
-        the necessary context before passing the raw dictionary to the DataManager 
-        for strict Pydantic validation (which enforces date formats and literal enums).
+        try:
+            self.data_manager.return_loan_player(player_name)
+        except Exception as e:
+            logger.error(f"Failed to return player '{player_name}' from loan: {e}", exc_info=True)
+            raise DataPersistenceError(f"Failed to return player from loan: {e}") from e
+
+    def add_injury_record(self, player_name: str, injury_data: dict[str, Any]) -> None:
+        """Controller gatekeeper that validates injury context before persisting data.
+
+        Ensures a player is selected and non-empty injury fields are provided 
+        before delegating the save operation to the DataManager.
 
         Args:
-            player_name (str): The name of the player who sustained the injury.
-            injury_data (Dict[str, Any]): The raw injury details (date, duration, type) from the UI.
-            
+            player_name (str): The name of the player whose injury record is being saved.
+            injury_data (dict[str, Any]): The raw injury details captured from the UI.
+
         Raises:
-            IncompleteDataError: If the player name or data dictionary is missing.
-            DataPersistenceError: If the backend fails to validate (e.g., bad date format) or save the data.
+            IncompleteDataError: If the player name or injury data are missing, blank, or empty.
+            DataPersistenceError: If the backend fails to validate or persist the injury data.
         """
         # 1. Validate critical context before hitting the DataManager
         if not player_name or not player_name.strip():
@@ -613,7 +704,7 @@ class App(ctk.CTk):
         try:
             self._capture_screenshot()
 
-            stats: Dict[str, Any] = self._detect_stats(is_it_player=False)
+            stats: dict[str, Any] = self._detect_stats(is_player=False)
 
             match_stats_frame = self.frames[self.get_frame_class("MatchStatsFrame")]
             logger.info("Populating MatchStatsFrame with detected stats.")
@@ -632,7 +723,7 @@ class App(ctk.CTk):
                 f"Failed to extract match stats from screen: {e}"
             ) from e
     
-    def process_player_stats(self, gk: bool = False) -> None:
+    def process_player_stats(self, is_goalkeeper: bool = False) -> None:
         """Process individual player match statistics via the OCR workflow.
 
         Captures a screenshot of the active screen, detects the player statistics 
@@ -640,8 +731,8 @@ class App(ctk.CTk):
         to the appropriate UI frame for user validation.
 
         Args:
-            gk (bool): If True, processes stats for the GKStatsFrame. 
-                       If False, processes stats for the PlayerStatsFrame.
+            is_goalkeeper (bool): If True, processes stats for the GKStatsFrame. 
+                                  If False, processes stats for the PlayerStatsFrame.
 
         Raises:
             UIPopulationError: If the screenshot, OCR process, or frame population fails.
@@ -649,9 +740,9 @@ class App(ctk.CTk):
         try:
             self._capture_screenshot()
             
-            stats: Dict[str, Any] = self._detect_stats(is_it_player=True, gk=gk)
+            stats: dict[str, Any] = self._detect_stats(is_player=True, is_goalkeeper=is_goalkeeper)
             
-            if gk:
+            if is_goalkeeper:
                 logger.info("Populating GKStatsFrame with detected stats.")
                 target_frame = self.frames[self.get_frame_class("GKStatsFrame")]
             else:
@@ -666,19 +757,19 @@ class App(ctk.CTk):
         
         except Exception as e:
             # Log the technical trace for the developer
-            logger.error(f"Error processing player stats (GK={gk}): {e}", exc_info=True)
+            logger.error(f"Error processing player stats (GK={is_goalkeeper}): {e}", exc_info=True)
             # Re-raise to trigger a GUI warning popup
             raise UIPopulationError(f"Failed to extract player stats from screen: {e}") from e
         
-    def process_player_attributes(self, gk: bool, first: bool) -> None:
+    def process_player_attributes(self, is_goalkeeper: bool, is_first_page: bool) -> None:
         """Process player attributes by executing the OCR workflow.
 
         Captures a screenshot, detects attribute statistics based on the player's 
         position and page, and populates the corresponding UI frame with the results.
 
         Args:
-            gk (bool): Identifies if the player is a goalkeeper.
-            first (bool): If an outfield player, identifies if it's the first or 
+            is_goalkeeper (bool): Identifies if the player is a goalkeeper.
+            is_first_page (bool): If an outfield player, identifies if it's the first or 
                           second page of attributes.
 
         Raises:
@@ -687,14 +778,14 @@ class App(ctk.CTk):
         try:
             self._capture_screenshot()
             
-            stats: Dict[str, Any] = self._detect_player_attributes(gk=gk, first=first)
+            stats: dict[str, Any] = self._detect_player_attributes(is_goalkeeper=is_goalkeeper, is_first_page=is_first_page)
             
-            if gk:
+            if is_goalkeeper:
                 logger.info("Populating AddGKFrame with detected attributes.")
                 target_frame = self.frames[self.get_frame_class("AddGKFrame")]
             else:
-                logger.info(f"Populating {'AddOutfieldFrame1' if first else 'AddOutfieldFrame2'} with detected attributes.")
-                target_frame = self.frames[self.get_frame_class("AddOutfieldFrame1" if first else "AddOutfieldFrame2")]
+                logger.info(f"Populating {'AddOutfieldFrame1' if is_first_page else 'AddOutfieldFrame2'} with detected attributes.")
+                target_frame = self.frames[self.get_frame_class("AddOutfieldFrame1" if is_first_page else "AddOutfieldFrame2")]
             
             if hasattr(target_frame, "populate_stats"):
                 target_frame.populate_stats(stats)
@@ -704,25 +795,24 @@ class App(ctk.CTk):
         
         except Exception as e:
             # Log the technical trace for the developer
-            logger.error(f"Error processing player attributes (GK={gk}, First={first}): {e}", exc_info=True)
+            logger.error(f"Error processing player attributes (GK={is_goalkeeper}, First={is_first_page}): {e}", exc_info=True)
             # Re-raise to trigger a GUI warning popup
             raise UIPopulationError(f"Failed to extract player attributes from screen: {e}") from e
     
     def _capture_screenshot(self, delay: int | None = None) -> None:
-        """Capture a screenshot of the display after a specified delay.
+        """Capture a timestamped screenshot of the user's screen for OCR processing.
 
-        Temporarily halts execution to allow the user to bring the EA FC 
-        window to the foreground, captures the screen, and stores the resulting 
-        file path in the application state.
+        Presents a brief, user-visible delay to allow focus on the game window, then
+        saves the screenshot into the app's screenshots directory and performs cleanup.
 
         Args:
-            delay (Optional[int]): The delay in seconds before capture. 
-                                   Defaults to App.DEFAULT_SCREENSHOT_DELAY.
-
-        Raises:
-            ScreenshotError: If the screenshot capture or file save fails.
+            delay (int | None, optional): The number of seconds to wait before capturing
+                the screenshot. If None, the application's default delay is used.
         """
         if delay is None:
+            delay = App.DEFAULT_SCREENSHOT_DELAY
+        if delay < 0:
+            logger.warning(f"Negative delay provided for screenshot capture: {delay}s. Defaulting to {App.DEFAULT_SCREENSHOT_DELAY}s.")
             delay = App.DEFAULT_SCREENSHOT_DELAY
 
         logger.info(f"Initiating screenshot (delay: {delay}s)")
@@ -746,38 +836,37 @@ class App(ctk.CTk):
         except Exception as e:
             logger.error(f"Screenshot engine failed: {e}", exc_info=True)
             raise ScreenshotError(f"Failed to capture screenshot: {e}") from e
+        
+        # Ensure the screenshot file is fully written and accessible before proceeding
+        if not self.screenshot_path.exists():
+            logger.error(f"Screenshot file not found after capture: {self.screenshot_path}")
+            raise ScreenshotError("Screenshot file was not created successfully.")
     
     def _non_blocking_delay(self, seconds: int, message: str = "Please wait...") -> None:
-        """Display a modal overlay with a spinner message while the application processes events.
+        """Display a non-blocking countdown overlay instead of freezing the UI.
 
-        Creates a temporary borderless popup window centered over the main application window.
-        The popup shows a custom message and an animated spinner for the specified duration.
-        Unlike a blocking sleep, this method allows the Tkinter event loop to continue processing,
-        keeping the UI responsive (e.g., window repaint, button clicks) while waiting.
+        Provides a user-facing message and timer while long-running operations 
+        (such as screenshot capture delays) are pending, keeping the main window responsive.
 
         Args:
-            seconds (int): The duration to display the overlay, in seconds.
-            message (str, optional): The text message to display. Defaults to "Please wait...".
-
-        Note:
-            This is primarily used to give the user time to switch to the game window
-            before the application captures a screenshot.
+            seconds (int): The number of seconds to display the overlay countdown.
+            message (str, optional): The message shown alongside the countdown. Defaults to "Please wait...".
         """
-        
-        # Delegate to widget helper (keeps behavior unchanged)
         show_delay_overlay(self, seconds, message)
 
     def _get_latest_screenshot_path(self) -> Path:
-        """Retrieve the file path of the most recently captured screenshot.
+        """Locate and return the most recent stats screenshot captured by the application.
 
-        Scans the dedicated screenshots directory and returns the absolute path 
-        to the newest file based on its modification timestamp.
+        Searches the dedicated screenshots directory for files matching the expected
+        naming pattern and surfaces clear, user-facing errors when no directory or
+        screenshots are available.
 
         Raises:
-            ScreenshotError: If the directory does not exist or contains no screenshots.
+            ScreenshotError: If the screenshots directory is missing or contains no
+                             matching screenshot files.
 
         Returns:
-            Path: The absolute path to the latest screenshot file.
+            Path: The filesystem path to the most recently modified screenshot file.
         """
         screenshots_dir = App.PROJECT_ROOT / "screenshots"
         
@@ -796,40 +885,75 @@ class App(ctk.CTk):
     def _cleanup_screenshots(self, max_files: int = 5) -> None:
         """Keep the screenshots directory tidy by retaining only the most recent captures.
 
-        Scans the screenshots directory for files generated by the application 
-        and deletes the oldest files, keeping only the 'max_files' most recent. 
-        Errors during individual file deletion are caught and logged as warnings 
-        to prevent background cleanup from crashing the main application thread.
+        Scans the screenshots directory for files generated by the application
+        and deletes the oldest files, keeping only the ``max_files`` most recent.
+        Deletions are scheduled on a background thread pool so the UI is not
+        blocked; failures to delete individual files are logged but not raised.
 
         Args:
-            max_files (int): The maximum number of recent screenshots to retain. 
+            max_files (int): The maximum number of recent screenshots to retain.
                              Defaults to 5.
         """
         screenshots_dir = App.PROJECT_ROOT / "screenshots"
         if not screenshots_dir.exists():
             return
-        
-        # Get all screenshot files
-        screenshot_files = list(screenshots_dir.glob("stats_capture_*.png"))
-        
+
+        if max_files <= 0:
+            # Nothing to keep; treat as no-op to avoid mass-deletion surprises.
+            logger.debug("max_files <= 0; skipping screenshot cleanup.")
+            return
+
+        # Get all screenshot files and ensure they are regular files
+        screenshot_files = [p for p in screenshots_dir.glob("stats_capture_*.png") if p.is_file()]
+
+        # Safe mtime getter to avoid races if a file disappears between listing and stat()
+        def _safe_mtime(p: Path) -> float:
+            try:
+                return p.stat().st_mtime
+            except OSError:
+                return 0.0
+
         # Sort files by modification time (newest first)
-        screenshot_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
-        
+        screenshot_files.sort(key=_safe_mtime, reverse=True)
+
         # Identify files to delete (everything after the first max_files)
         files_to_delete = screenshot_files[max_files:]
-        
         if not files_to_delete:
             return
-        
+
         logger.info(f"Cleanup: Deleting {len(files_to_delete)} old screenshots.")
-        for file_path in files_to_delete:
+
+        # Delete files on a short-lived background thread pool so we don't block Tk mainloop
+        from concurrent.futures import ThreadPoolExecutor
+
+        def _delete_file(path: Path) -> None:
+            """Attempt to delete a file, logging any issues but not raising exceptions."""
             try:
-                file_path.unlink()
-                logger.debug(f"Deleted old screenshot: {file_path}")
+                # Use missing_ok when available (Python 3.8+)
+                try:
+                    path.unlink(missing_ok=True)  # type: ignore[arg-type]
+                    logger.debug(f"Deleted old screenshot: {path}")
+                except TypeError:
+                    # missing_ok not supported; fall back to guarded unlink
+                    try:
+                        path.unlink()
+                        logger.debug(f"Deleted old screenshot: {path}")
+                    except FileNotFoundError:
+                        logger.debug(f"Screenshot already removed: {path}")
+                    except PermissionError as e:
+                        logger.warning(f"Permission denied deleting screenshot {path}: {e}")
+                    except Exception as e:
+                        logger.warning(f"Failed to delete screenshot {path}: {e}")
             except Exception as e:
-                logger.warning(f"Failed to delete screenshot {file_path}. It may be in use: {e}")
+                logger.warning(f"Unexpected error when deleting screenshot {path}: {e}")
+
+        executor = ThreadPoolExecutor(max_workers=2)
+        for p in files_to_delete:
+            executor.submit(_delete_file, p)
+        # Do not wait for completion; allow background threads to finish asynchronously
+        executor.shutdown(wait=False)
     
-    def _detect_stats(self, is_it_player: bool, gk: bool = False) -> dict[str, Any]:
+    def _detect_stats(self, is_player: bool, is_goalkeeper: bool = False) -> dict[str, Any]:
         """Detect and extract statistics from the latest screenshot using OCR.
 
         Loads ROI (Region of Interest) coordinates from the JSON config, maps 
@@ -837,18 +961,18 @@ class App(ctk.CTk):
         or goalkeeper), and runs the OCR model against the latest screenshot.
 
         Args:
-            is_it_player (bool): True if extracting individual player stats, 
-                                 False for team match overview stats.
-            gk (bool, optional): True if extracting goalkeeper stats. Defaults to False.
+            is_player (bool): True if extracting individual player stats, 
+                              False for team match overview stats.
+            is_goalkeeper (bool, optional): True if extracting goalkeeper stats. Defaults to False.
 
         Raises:
             ConfigurationError: If the coordinates JSON is missing or corrupt.
             ScreenshotError: If the screenshot cannot be loaded by OpenCV.
 
         Returns:
-            Dict[str, Any]: A dictionary containing the strictly typed detected statistics.
+            dict[str, Any]: A dictionary containing the strictly typed detected statistics.
         """
-        logger.info(f"Starting OCR (player mode: {is_it_player})")
+        logger.info(f"Starting OCR (player mode: {is_player})")
         latest_screenshot_path = self._get_latest_screenshot_path()
 
         # --- 1. Load Configurations ---
@@ -875,12 +999,12 @@ class App(ctk.CTk):
 
         decimal_stats = ['xG', 'distance_covered', 'distance_sprinted']
         debug = False
-        results: Dict[str, Any] = {}
+        results: dict[str, Any] = {}
         
         # --- 3. Determine Target Screen ---
-        if not is_it_player:
+        if not is_player:
             target_screen = "match_overview"
-        elif gk:
+        elif is_goalkeeper:
             target_screen = "gk_performance"
         else:
             target_screen = "player_performance"
@@ -893,7 +1017,7 @@ class App(ctk.CTk):
         logger.debug(f"Processing target screen: {target_screen}")
         
         # --- 4. Reusable OCR Execution Engine ---
-        def process_roi_dict(data_dict: Dict[str, Any]) -> Dict[str, Any]:
+        def process_roi_dict(data_dict: dict[str, Any]) -> dict[str, Any]:
             """Helper function to run OCR on a flat dictionary of stat coordinates."""
             parsed_data = {}
             for stat_name, roi in data_dict.items():
@@ -909,8 +1033,9 @@ class App(ctk.CTk):
                 
                 recognised_number = recognised_data[0] if debug else recognised_data
                 
-                # ocr.recognise_number returns number as a string with no decimal point, e.g. 0.5 is returned as 05, 
-                # convert it to a float if in decimal stats otherwise convert to int
+                # ocr.recognise_number returns number as a string with no decimal point, 
+                # e.g. 0.5 is returned as 05, convert it to a float if in decimal stats 
+                # otherwise convert to int
                 if stat_name in decimal_stats:
                     try:
                         parsed_data[stat_name] = float(recognised_number) / 10
@@ -937,7 +1062,7 @@ class App(ctk.CTk):
 
         return results
     
-    def _detect_player_attributes(self, gk: bool = False, first: bool = True) -> dict[str, Any]:
+    def _detect_player_attributes(self, is_goalkeeper: bool = False, is_first_page: bool = True) -> dict[str, Any]:
         """Detect and extract player attribute statistics from the latest screenshot.
 
         Loads coordinates based on player position and page, processes the screenshot 
@@ -945,8 +1070,8 @@ class App(ctk.CTk):
         safely casts all recognized values to integers for Pydantic compatibility.
 
         Args:
-            gk (bool, optional): If True, processes goalkeeper attributes. Defaults to False.
-            first (bool, optional): If True, processes the first page of the outfield 
+            is_goalkeeper (bool, optional): If True, processes goalkeeper attributes. Defaults to False.
+            is_first_page (bool, optional): If True, processes the first page of the outfield 
                                     player's attributes. Defaults to True.
 
         Raises:
@@ -954,9 +1079,9 @@ class App(ctk.CTk):
             ScreenshotError: If the screenshot cannot be loaded by OpenCV.
 
         Returns:
-            Dict[str, Any]: A dictionary mapping attribute names to their parsed integer values.
+            dict[str, Any]: A dictionary mapping attribute names to their parsed integer values.
         """
-        logger.info(f"Starting Attribute OCR (GK: {gk}, First Page: {first})")
+        logger.info(f"Starting Attribute OCR (GK: {is_goalkeeper}, First Page: {is_first_page})")
         latest_screenshot_path = self._get_latest_screenshot_path()
 
         # --- 1. Load Configurations ---
@@ -982,11 +1107,11 @@ class App(ctk.CTk):
             raise ScreenshotError(f"OpenCV failed to decode image at {latest_screenshot_path}. File may be corrupted.")
         
         debug = False
-        results: Dict[str, Any] = {}
+        results: dict[str, Any] = {}
         
         # --- 3. O(1) Dictionary Targeting ---
         # Navigate directly to the required node instead of looping through items
-        target_position = "gk" if gk else "outfield_1" if first else "outfield_2"
+        target_position = "gk" if is_goalkeeper else "outfield_1" if is_first_page else "outfield_2"
         
         # Safely drill down. If 'player_attributes' or the target_position is missing, return empty dict
         target_stats = coordinates.get("player_attributes", {}).get(target_position, {})
@@ -1021,26 +1146,55 @@ class App(ctk.CTk):
         return results
     
     def buffer_match_overview(self, overview_data: dict[str, Any]) -> None:
-        """Store captured match overview data in the temporary session buffer.
+        """Stage validated match overview data in a temporary session buffer.
+
+        Acts as a controller gatekeeper by enforcing basic shape and key checks 
+        on the overview payload before it is accepted for later persistence.
 
         Args:
-            overview_data (Dict[str, Any]): The team statistics and match details 
-                                            collected from the UI or OCR.
+            overview_data (dict[str, Any]): The raw match overview fields collected 
+                                            from the UI or OCR.
         """
+
+        # Validate that the dictionary contains the expected keys
+        expected_keys = {"home_team", "away_team"}
+        missing_keys = expected_keys.difference(overview_data.keys())
+        if missing_keys:
+            logger.error(f"Match overview data is missing required keys: {missing_keys}")
+            raise ValueError(f"Match overview data is missing required keys: {missing_keys}")
+        expected_keys = {"home_team", "away_team"}
+        if not expected_keys.issubset(overview_data.keys()):
+            logger.error("Match overview data is missing required keys.")
+            raise ValueError("Match overview data is missing required keys.")
+
         logger.info("Buffering match overview data.")
         self.match_overview_buffer = overview_data
     
     def buffer_player_performance(self, performance_data: dict[str, Any]) -> None:
-        """Store a single player's match performance in the temporary session buffer.
+        """Stage a single player's performance data in the session buffer after validation.
 
-        This method is designed to be called multiple times per match to build up 
-        a roster of performances before the final save.
+        Acts as a controller gatekeeper by enforcing type checks, required keys, 
+        and duplicate-prevention rules before accepting performance payloads.
 
         Args:
-            performance_data (Dict[str, Any]): The individual player stats collected 
-                                               from the UI or OCR.
+            performance_data (dict[str, Any]): The raw performance statistics for a single 
+                                               player, including at minimum a ``player_name`` key.
+
+        Raises:
+            ValueError: If the payload is not a dictionary or is missing the required ``player_name`` key.
+            DuplicateRecordError: If performance data for the same player has already been buffered this match.
         """
+        # validate that data is a dict and contains expected keys (e.g. player_name)
+        if not isinstance(performance_data, dict):
+            logger.error("Attempted to buffer player performance data that is not a dictionary.")
+            raise ValueError("Player performance data must be a dictionary.")
+        
+        if "player_name" not in performance_data:
+            logger.error("Player performance data is missing the required 'player_name' key.")
+            raise ValueError("Player performance data must include 'player_name' key.")
+        
         logger.info(f"Buffering player performance data for: {performance_data.get('player_name', 'Unknown')}")
+        
         # Check if data for this player has already been buffered
         for dataset in self.player_performances_buffer:
             if dataset.get('player_name') == performance_data.get('player_name'):
@@ -1049,22 +1203,23 @@ class App(ctk.CTk):
                 
         self.player_performances_buffer.append(performance_data)
     
-    def get_buffered_player_performances(self, display_keys: List[str], id_key: str = "player_name", default: str = "-") -> List[Dict[str, str]]:
-        """Format the buffered player performance data for display in the UI, ensuring all required keys are present.
+    def get_buffered_player_performances(self, display_keys: list[str], id_key: str = "player_name", default: str = "-") -> list[dict[str, str]]:
+        """Format buffered player performance data for safe, human-readable display.
 
-        Produces display-ready dictionaries from ``player_performances_buffer``.
-        Includes ``id_key`` plus keys in ``display_keys``; all values become strings.
-        Lists are joined with ", ", missing/falsy values use ``default``.
-        Entries missing ``id_key`` are skipped; GK entries set ``positions_played`` to "GK".
+        Converts the raw internal performance payloads into a list of flat, string-only
+        dictionaries keyed by an identifier and selected display fields, applying
+        sensible defaults and special handling for goalkeepers and missing values.
 
         Args:
-            display_keys (List[str]): The list of keys to include in the formatted output for the UI. This should match the columns expected by the display component.
-            id_key (str, optional): The key to use as the identifier for each player's performance. Defaults to "player_name".
-            default (str, optional): The default value to use if a required key is missing. Defaults to "-".
+            display_keys (list[str]): The ordered list of keys to expose in each formatted record.
+            id_key (str, optional): The key used as the unique identifier column (e.g. ``"player_name"``).
+                                    Entries missing this key are skipped. Defaults to ``"player_name"``.
+            default (str, optional): The placeholder string used when a field is missing, null, or empty.
+                                     Defaults to ``"-"``.
 
         Returns:
-            List[Dict[str, str]]: A list of dictionaries, each representing a player's performance with stringified values for display. 
-                Only entries that contain the required id_key will be included; others will be logged and skipped.
+            list[dict[str, str]]: A list of dictionaries suitable for UI tables, where all values
+                                   are strings and each entry is guaranteed to contain the id_key.
         """
         formatted_performances = []
         for performance in self.player_performances_buffer:
@@ -1078,7 +1233,9 @@ class App(ctk.CTk):
                 if performance.get("performance_type") == "gk" and key == "positions_played":
                     formatted_performance[key] = "GK"
                     continue
-                value = performance.get(key, default) or default
+                value = performance.get(key, default)
+                if value in (None, ""): 
+                    value = default
                 if isinstance(value, list):
                     formatted_performance[key] = ", ".join(str(v) for v in value)
                 else:
@@ -1088,19 +1245,39 @@ class App(ctk.CTk):
         return formatted_performances
     
     def remove_player_from_buffer(self, player_name: str) -> None:
-        """Remove a player's performance data from the buffer based on their name.
+        """Remove a single player's performance entry from the in-memory session buffer.
 
-        This is used when a user decides to delete a buffered performance entry 
-        before saving the match. It identifies the entry by the player's name 
-        and removes it from the list of buffered performances.
+        Acts as a controller gatekeeper by enforcing a non-empty player name and 
+        safely filtering the buffer, logging whether any matching entry was found.
 
         Args:
-            player_name (str): The name of the player whose performance data should be removed from the buffer.
+            player_name (str): The full name of the player whose buffered performance
         """
+        # Normalize the target player name once for robust comparison
+        normalized_target = player_name.strip().casefold()
+
+        def _safe_normalize_name(name: Any) -> Optional[str]:
+            """
+            Safely normalize a player name by stripping whitespace and case-folding.
+
+            Returns None if the provided name is not a non-empty string.
+            """
+            if not isinstance(name, str):
+                return None
+            stripped = name.strip()
+            return stripped.casefold() if stripped else None
+
+        original_count = len(self.player_performances_buffer)
+        self.player_performances_buffer = [
+            performance
+            for performance in self.player_performances_buffer
+            if _safe_normalize_name(performance.get("player_name")) != normalized_target
+        ]
+        
         original_count = len(self.player_performances_buffer)
         self.player_performances_buffer = [
             performance for performance in self.player_performances_buffer 
-            if performance.get("player_name") != player_name
+            if performance.get("player_name").strip().casefold() != player_name.strip().casefold()
         ]
         if len(self.player_performances_buffer) < original_count:
             logger.info(f"Removed buffered performance for player: {player_name}")
@@ -1108,14 +1285,15 @@ class App(ctk.CTk):
             logger.warning(f"No buffered performance found for player: {player_name}. No entries removed.")
     
     def save_buffered_match(self) -> None:
-        """Commit the buffered match overview and player performances to persistent storage.
+        """Controller gatekeeper that validates buffered match data before saving.
 
-        Acts as the gatekeeper for match data, ensuring the core overview exists 
-        before pushing the raw dictionaries across the Pydantic boundary.
+        Ensures a match overview has been staged, delegates persistence of the 
+        overview and all buffered player performances to the DataManager, and
+        then clears the in-memory buffers to avoid cross-match contamination.
 
         Raises:
-            IncompleteDataError: If the match overview buffer is empty.
-            DataPersistenceError: If the DataManager fails to validate or save the match.
+            IncompleteDataError: If no match overview data has been buffered for the session.
+            DataPersistenceError: If the DataManager fails to validate or persist the match.
         """
         if not self.match_overview_buffer:
             logger.error("Match save aborted: Match overview buffer is empty.")
@@ -1135,9 +1313,9 @@ class App(ctk.CTk):
             # Catch backend Pydantic validation errors (e.g., tackles_won > tackles)
             logger.error(f"DataManager failed to save match: {e}", exc_info=True)
             raise DataPersistenceError(f"Failed to save match data: {e}") from e
-        finally:
-            # 3. Always clear the buffers to prevent data leaking into the next match
-            logger.debug("Clearing match buffers.")
+        else:
+            # Clear buffers only after a successful save so the user can retry on failure
+            logger.debug("Clearing match buffers after successful save.")
             self.match_overview_buffer.clear()
             self.player_performances_buffer.clear()
     
