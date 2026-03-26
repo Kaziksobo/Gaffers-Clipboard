@@ -1158,8 +1158,7 @@ class App(ctk.CTk):
 
         # Validate that the dictionary contains the expected keys
         expected_keys = {"home_team", "away_team"}
-        missing_keys = expected_keys.difference(overview_data.keys())
-        if missing_keys:
+        if missing_keys := expected_keys.difference(overview_data.keys()):
             logger.error(f"Match overview data is missing required keys: {missing_keys}")
             raise ValueError(f"Match overview data is missing required keys: {missing_keys}")
         expected_keys = {"home_team", "away_team"}
