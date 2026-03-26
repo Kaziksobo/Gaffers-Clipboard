@@ -38,13 +38,22 @@ class AddMatchFrame(BaseViewFrame):
         # Date + Competition subframe
         self.form_frame = ctk.CTkFrame(self.container)
         self.form_frame.pack(pady=(0, 10))
+        self.form_frame.grid_columnconfigure(1, weight=1)
 
         # In-game date
-        self.in_game_date_label = ctk.CTkLabel(self.form_frame, text="In-game date:", font=self.fonts["body"])
+        self.in_game_date_label = ctk.CTkLabel(
+            self.form_frame, 
+            text="In-game date:", 
+            font=self.fonts["body"]
+        )
         self.in_game_date_label.grid(row=0, column=0, padx=(0, 10), pady=5, sticky="w")
-        self.in_game_date_entry = ctk.CTkEntry(self.form_frame, placeholder_text="dd/mm/yy", font=self.fonts["body"])
+        
+        self.in_game_date_entry = ctk.CTkEntry(
+            self.form_frame, 
+            placeholder_text="dd/mm/yy", 
+            font=self.fonts["body"]
+        )
         self.in_game_date_entry.grid(row=0, column=1, pady=5, sticky="ew")
-        self.form_frame.grid_columnconfigure(1, weight=1)
 
         # Competition dropdown
         self.competition_var = ctk.StringVar(value="Select Competition")
@@ -177,3 +186,7 @@ class AddMatchFrame(BaseViewFrame):
             # Reset to placeholder to force user selection each time
             self.competition_var.set("Select Competition")
             self.competition_dropdown.set_value("Select Competition")
+        
+        # reset in-game date field
+        self.in_game_date_entry.delete(0, 'end')
+        self.in_game_date_entry.configure(placeholder_text="dd/mm/yy")
