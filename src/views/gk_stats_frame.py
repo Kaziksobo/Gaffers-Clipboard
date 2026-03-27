@@ -108,6 +108,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         self.direction_frame.grid_columnconfigure(1, weight=1)
         self.direction_frame.grid_columnconfigure(2, weight=1)
         self.direction_frame.grid_columnconfigure(3, weight=1)
+        self.direction_frame.grid_columnconfigure(4, weight=1)
         
         self.direction_label = ctk.CTkLabel(
             self.direction_frame,
@@ -132,14 +133,22 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             command=lambda: self.on_next_goalkeeper_button_press()
         )
         self.next_goalkeeper_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
-        
+        # Checkbox to control whether the current player's data should be saved
+        self.skip_save_var = ctk.BooleanVar(value=False)
+        self.skip_save_checkbox = ctk.CTkCheckBox(
+            self.direction_frame,
+            text="Skip saving current player",
+            variable=self.skip_save_var
+        )
+        self.skip_save_checkbox.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
             text="Save all and Finish Match",
             font=self.fonts["button"],
             command=lambda: self.on_done_button_press()
         )
-        self.all_players_added_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+        self.all_players_added_button.grid(row=0, column=4, padx=5, pady=5, sticky="e")
         self.style_submit_button(self.all_players_added_button)
         
         self.performance_sidebar = ScrollableSidebar(
@@ -152,6 +161,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
             id_key="player_name",
             title="Buffered Players",
             responsive=True,
+            state_callback=lambda collapsed: self.controller.set_sidebar_collapse_state("performance_sidebar", collapsed),
         )
         self.performance_sidebar.place(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.4, anchor="ne", x=-10, y=10)
         self.performance_sidebar.store_place_geometry(relx=1.0, rely=0.0, relwidth=0.25, relheight=0.4, anchor="ne", x=-10, y=10)
@@ -245,8 +255,10 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
 
     def on_next_outfield_player_button_press(self) -> None:
         """Buffer current stats, trigger OCR for the next outfield player, and refresh."""
-        if not self.collect_data():
-            return
+        # If the user has enabled skipping, bypass validation and buffering
+        if not getattr(self, "skip_save_var", None) or not self.skip_save_var.get():
+            if not self.collect_data():
+                return
         try:
             # Trigger the controller OCR logic for the next player
             self.controller.process_player_stats(is_goalkeeper=False)
@@ -258,8 +270,10 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
     
     def on_next_goalkeeper_button_press(self) -> None:
         """Buffer current stats, trigger OCR for the goalkeeper, and transition view."""
-        if not self.collect_data():
-            return
+        # If the user has enabled skipping, bypass validation and buffering
+        if not getattr(self, "skip_save_var", None) or not self.skip_save_var.get():
+            if not self.collect_data():
+                return
         try:
             # Trigger the controller OCR logic for the goalkeeper
             self.controller.process_player_stats(is_goalkeeper=True)
@@ -289,7 +303,7 @@ class GKStatsFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, Performance
         
         self.refresh_player_dropdown(only_gk=True, remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
-        
+        # Ensure the sidebar visual state follows the controller's stored preference
+        initial_state = self.controller.get_sidebar_collapse_state("performance_sidebar")
+        self.performance_sidebar.set_collapse_state(initial_state)
         self.refresh_performance_sidebar()
-        collapsed = self.performance_sidebar.get_collapse_state()
-        self.controller.set_sidebar_collapse_state("performance_sidebar", collapsed)
