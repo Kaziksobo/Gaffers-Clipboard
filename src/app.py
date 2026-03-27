@@ -80,6 +80,8 @@ class App(ctk.CTk):
         
         # Set sidebar states
         self.sidebar_states = {
+            # Shared performance sidebar used by player/GK stats views
+            "performance_sidebar": True,
             "player_stats_sidebar": True,
             "gk_stats_sidebar": True,
         }
@@ -1181,7 +1183,10 @@ class App(ctk.CTk):
             for key in display_keys:
                 if key == id_key:
                     continue
-                if performance.get("performance_type") == "gk" and key == "positions_played":
+                # Ensure goalkeeper performances are displayed as 'GK' regardless
+                # of how the performance_type string is cased (e.g. 'GK', 'gk').
+                perf_type = performance.get("performance_type")
+                if isinstance(perf_type, str) and perf_type.casefold() == "gk" and key == "positions_played":
                     formatted_performance[key] = "GK"
                     continue
                 value = performance.get(key, default)
