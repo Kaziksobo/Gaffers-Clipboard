@@ -32,6 +32,7 @@ class ScrollableSidebar(ctk.CTkFrame):
         remove_button_width: int = 92,
         responsive: bool = False,
         title: Optional[str] = None,
+        state_callback: Optional[Callable[[bool], None]] = None,
     ) -> None:
         """Initialise the ScrollableSidebar.
 
@@ -61,6 +62,10 @@ class ScrollableSidebar(ctk.CTkFrame):
         self.parent = parent
         self.theme = theme
         self.fonts = fonts
+        # store sizing/responsiveness for later layout adjustments
+        self._responsive = responsive
+        self._width = width
+        self._max_height = max_height
         self._display_keys = display_keys
         self._remove_button = remove_button
         self._remove_callback = remove_callback
@@ -81,6 +86,11 @@ class ScrollableSidebar(ctk.CTkFrame):
         self._collapsed_height = 50  # Height when collapsed (just button)
         self._expanded_relheight = 0.85  # Height when expanded (relative)
         self._initial_place_geometry: dict[str, Any] = {}  # Store initial place() params for collapse/expand
+        # Cache last observed content viewport size to avoid thrashing updates
+        self._last_viewport_size: tuple[int, int] = (0, 0)
+        # Optional callback to notify controller of collapse state changes
+        self._state_callback = state_callback
+        
         
         if self._remove_button and not self._remove_callback:
             raise ValueError("remove_callback must be provided if remove_button is True")
@@ -102,12 +112,36 @@ class ScrollableSidebar(ctk.CTkFrame):
         title_button.grid(row=0, column=0, pady=(10, 5))
         self._title_button = title_button
         
-        self.content_frame = ctk.CTkScrollableFrame(self)
+        # Create the CTkScrollableFrame with an explicit viewport size for
+        # fixed-mode, and dynamic resizing for responsive mode.
+        if self._responsive:
+            self.content_frame = ctk.CTkScrollableFrame(self)
+        else:
+            self.content_frame = ctk.CTkScrollableFrame(self, width=self._width, height=self._max_height)
+
         self.content_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
         self.content_frame.grid_columnconfigure(0, weight=1)
-        
-        # Bind configure event to recompute widths when frame resizes
-        self.content_frame.bind("<Configure>", self._on_content_frame_configure)
+
+        # If the sidebar should start collapsed, hide the content frame now so
+        # the initial visual state matches `self._is_collapsed`.
+        if self._is_collapsed:
+            try:
+                self.content_frame.grid_remove()
+            except Exception:
+                logger.debug("Failed to grid_remove initial content_frame")
+            try:
+                self.configure(height=self._collapsed_height)
+            except Exception:
+                pass
+
+        # Append our resize handler without replacing CTkScrollableFrame's
+        # internal scrollregion binding.
+        self.content_frame.bind("<Configure>", self._on_content_frame_configure, add="+")
+
+        # For responsive sidebars, listen to parent size changes and update
+        # the scrollable viewport so the scrollbar reflects actual content.
+        if self._responsive:
+            self.bind("<Configure>", self._on_self_configure)
     
     def _toggle_collapse(self) -> None:
         self._is_collapsed = not self._is_collapsed
@@ -144,6 +178,12 @@ class ScrollableSidebar(ctk.CTkFrame):
 
         # Re-place the widget (relheight is completely omitted)
         self.place(**place_args)
+        # Notify external observer (controller) about the new collapsed state
+        try:
+            if getattr(self, "_state_callback", None):
+                self._state_callback(self._is_collapsed)
+        except Exception as exc:
+            logger.debug(f"State callback raised an exception: {exc}")
     
     def store_place_geometry(self, **kwargs: Any) -> None:
         """Store the initial place geometry for later use during collapse/expand.
@@ -169,7 +209,67 @@ class ScrollableSidebar(ctk.CTkFrame):
             self._toggle_collapse()
     
     def _on_content_frame_configure(self, event: Any) -> None:
-        """Handle content frame resize by recomputing column widths."""
+        """Handle content frame resize by recomputing column widths.
+
+        This handler prefers the underlying canvas viewport width (when
+        available) and only triggers a recompute when the viewport size
+        actually changes. This avoids repeated widget reconfigure calls
+        during scroll operations which can cause the content to jump back
+        to the top.
+        """
+        # Determine observed viewport size from the event, falling back
+        # to widget queries when needed.
+        try:
+            event_w = int(event.width)
+            event_h = int(event.height)
+        except Exception:
+            event_w = int(self.content_frame.winfo_width() or 0)
+            event_h = int(self.content_frame.winfo_height() or 0)
+
+        # Prefer the canvas width if CTkScrollableFrame exposes it.
+        viewport_w = event_w
+        try:
+            parent_canvas = getattr(self.content_frame, "_parent_canvas", None)
+            if parent_canvas and parent_canvas.winfo_exists():
+                canvas_w = int(parent_canvas.winfo_width() or 0)
+                if canvas_w > 0:
+                    viewport_w = canvas_w
+        except Exception:
+            pass
+
+        viewport_size = (viewport_w, event_h)
+        if viewport_size == self._last_viewport_size:
+            return
+        self._last_viewport_size = viewport_size
+
+        self._compute_column_widths()
+        self._update_row_widths()
+
+    def _on_self_configure(self, event: Any) -> None:
+        """Update the CTkScrollableFrame viewport when the parent frame is resized.
+
+        This keeps the internal canvas viewport in sync with the visible area so
+        the scrollbar length and scrollregion behave correctly in responsive mode.
+        """
+        try:
+            # Title button vertical space (includes pady)
+            header_h = self._title_button.winfo_height()
+        except Exception:
+            header_h = 30
+
+        # Account for title padding and content_frame bottom pady
+        TOP_PADDING = 15  # title pady (10 top + 5 bottom)
+        BOTTOM_PADDING = 10
+
+        desired_height = max(0, event.height - header_h - TOP_PADDING - BOTTOM_PADDING)
+        desired_width = max(0, event.width - 20)
+
+        try:
+            self.content_frame.configure(height=desired_height, width=desired_width)
+        except Exception as exc:
+            logger.debug(f"Failed to configure content_frame size: {exc}")
+
+        # Recompute column widths after viewport change
         self._compute_column_widths()
         self._update_row_widths()
     
@@ -187,9 +287,24 @@ class ScrollableSidebar(ctk.CTkFrame):
         HORIZONTAL_PAD = 20  # padx=10 on content_frame + internal spacing
         COL_GAP = 4  # Small gap between columns
 
-        available_width = self.content_frame.winfo_width() - HORIZONTAL_PAD
-        if available_width <= 0:
-            available_width = 375 - HORIZONTAL_PAD
+        # Prefer the canvas viewport width (more stable inside CTkScrollableFrame)
+        available_width = None
+        try:
+            parent_canvas = getattr(self.content_frame, "_parent_canvas", None)
+            if parent_canvas and parent_canvas.winfo_exists():
+                available_width = parent_canvas.winfo_width() - HORIZONTAL_PAD
+        except Exception:
+            available_width = None
+
+        if available_width is None or available_width <= 0:
+            try:
+                available_width = self.content_frame.winfo_width() - HORIZONTAL_PAD
+            except Exception:
+                available_width = None
+
+        if not available_width or available_width <= 0:
+            # fallback to configured width or a sensible default
+            available_width = (self._width if getattr(self, "_width", None) else 375) - HORIZONTAL_PAD
 
         num_display_cols = len(self._display_keys)
         total_gaps = (num_display_cols - 1) * COL_GAP if num_display_cols > 0 else 0
@@ -238,12 +353,43 @@ class ScrollableSidebar(ctk.CTkFrame):
             if col_idx < len(cell_widgets):
                 widget = cell_widgets[col_idx]
                 width = self._computed_column_widths[col_idx]
-                widget.configure(width=width)
+                # Avoid reconfiguring if the width is already set to reduce
+                # layout churn which can interfere with canvas scrolling.
+                try:
+                    cur_w = widget.cget("width")
+                except Exception:
+                    cur_w = None
+
+                should_set = True
+                if cur_w is not None:
+                    try:
+                        cur_w_int = int(cur_w)
+                        should_set = (cur_w_int != width)
+                    except Exception:
+                        should_set = True
+
+                if should_set:
+                    try:
+                        widget.configure(width=width)
+                    except Exception as exc:
+                        logger.debug(f"Failed to configure widget width: {exc}")
         
         # Update remove button if present
         if self._remove_button and len(cell_widgets) > label_count:
             remove_widget = cell_widgets[label_count]
-            remove_widget.configure(width=self._remove_button_width)
+            try:
+                cur_w = remove_widget.cget("width")
+            except Exception:
+                cur_w = None
+
+            try:
+                if cur_w is None or int(cur_w) != self._remove_button_width:
+                    remove_widget.configure(width=self._remove_button_width)
+            except Exception:
+                try:
+                    remove_widget.configure(width=self._remove_button_width)
+                except Exception as exc:
+                    logger.debug(f"Failed to configure remove button width: {exc}")
         
     def populate(self, data: list[dict[str, str]]) -> None:
         """Populate the sidebar with rows, rendering specified keys and handling the unique identifier.
