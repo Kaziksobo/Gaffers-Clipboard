@@ -145,6 +145,16 @@ class CustomAlert(ctk.CTkToplevel):
         )
         title.pack(pady=10)
 
+        # Register the title label with the parent view's responsive wrapping
+        # so it uses the same dynamic wraplength calculation as other headings.
+        with contextlib.suppress(Exception):
+            with contextlib.suppress(Exception):
+                if hasattr(self.parent, "register_wrapping_widget"):
+                    # Use a high ratio so the heading wraps close to the popup width
+                    self.parent.register_wrapping_widget(title, width_ratio=0.6)
+                    if not hasattr(self, "_parent_registered_wrapping_widgets"):
+                        self._parent_registered_wrapping_widgets = []
+                    self._parent_registered_wrapping_widgets.append(title)
         # Message textbox (uses CTkTextbox's built-in scrollbar)
         message_textbox = ctk.CTkTextbox(
             main_container,
@@ -258,6 +268,15 @@ class CustomAlert(ctk.CTkToplevel):
                 pass
             finally:
                 self._poll_id = None
+
+        # Remove any wrapping widgets we registered on the parent to avoid
+        # leaving stale references in the parent's _wrapping_widgets list.
+        with contextlib.suppress(Exception, AttributeError):
+            if getattr(self, "_parent_registered_wrapping_widgets", None) and hasattr(self.parent, "_wrapping_widgets"):
+                self.parent._wrapping_widgets = [
+                    (w, r) for (w, r) in self.parent._wrapping_widgets
+                    if w not in self._parent_registered_wrapping_widgets
+                ]
 
         super().destroy()
 
