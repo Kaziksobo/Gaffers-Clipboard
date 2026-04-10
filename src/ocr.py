@@ -322,14 +322,14 @@ def recognise_number(
 def save_debug_image(filename: str, image: np.ndarray) -> None:
     """Persist a debug image to the project-level debug images directory.
 
-    Creates ``debug_images`` under the project root if needed and attempts to
-    write the provided image file, logging success or failure.
+    Creates ``logs/ocr_debug`` under the project root if needed and attempts
+    to write the provided image file, logging success or failure.
 
     Args:
         filename (str): Output file name, including extension.
         image (np.ndarray): Image array to write to disk.
     """
-    debug_dir = PROJECT_ROOT / "debug_images"
+    debug_dir = PROJECT_ROOT / "logs" / "ocr_debug"
     debug_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = debug_dir / filename

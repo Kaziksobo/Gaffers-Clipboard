@@ -191,7 +191,7 @@ def main() -> int:
         recognised_number, debug_data = recognised
         print(f"Recognised number: {recognised_number}")
         print(f"Digit ROI count: {len(debug_data['digit_rois'])}")
-        print(f"Debug images saved to: {PROJECT_ROOT / 'debug_images'}")
+        print(f"Debug images saved to: {PROJECT_ROOT / 'logs' / 'ocr_debug'}")
     else:
         print(f"Recognised number: {recognised}")
 
