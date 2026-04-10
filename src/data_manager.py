@@ -1,456 +1,513 @@
-from pathlib import Path
-import json
-import logging
-from typing import Optional, Union, Type, TypeVar, Any
-from pydantic import ValidationError, TypeAdapter, BaseModel
-from datetime import datetime
+"""Filesystem-backed persistence layer for career, player, and match data.
 
-from src.custom_types import (
-    GKAttributeSnapshot,
-    OutfieldAttributeSnapshot,
-    FinancialSnapshot,
-    InjuryRecord,
-    Player,
-    MatchData,
-    OutfieldPlayerPerformance,
-    GoalkeeperPerformance,
-    Match,
-    CareerMetadata,
-    CareerDetail,
-    DifficultyLevel,
-    PositionType
+This module defines DataManager, the central gateway between application
+services and JSON storage on disk. It coordinates career setup, data loading,
+validation, and persistence workflows across players, matches, and metadata.
+
+Primary responsibilities:
+- Create and initialize career folders and seed default files.
+- Load, cache, and refresh players/matches for the active career.
+- Normalize and validate UI payloads into Pydantic schema models.
+- Use atomic writes for strict player/match mutation workflows.
+- Persist bootstrap and metadata updates through standard JSON writes.
+
+Storage layout:
+- data/careers_details.json:
+    Global registry of known careers and folder names.
+- data/<career_folder>/metadata.json:
+    Career configuration, manager identity, and competitions.
+- data/<career_folder>/players.json:
+    Player profiles plus attribute, injury, and financial histories.
+- data/<career_folder>/matches.json:
+    Match records and linked player performance snapshots.
+
+Validation and safety model:
+- Tolerant loaders return safe fallbacks for non-destructive read flows.
+- Strict loaders guard player/match mutation paths and raise on malformed data.
+- Conversion and schema enforcement are delegated to Pydantic models.
+- Atomic writes use temporary files plus replace semantics where fail-closed
+    mutation guarantees are required.
+- Standard writes remain in use for selected bootstrap/metadata operations.
+
+Together, these rules keep persistence behavior deterministic, auditable, and
+resilient across UI workflows and service-layer operations.
+"""
+
+import logging
+from collections.abc import Sequence
+from datetime import datetime
+from pathlib import Path
+from typing import Literal, Protocol, TypeVar
+
+from pydantic import BaseModel
+
+from src.contracts.backend import (
+    CareerCreationArtifacts,
+    CareerMetadataUpdate,
+    FinancialDataPayload,
+    InjuryDataPayload,
+    JsonValue,
+    MatchOverviewPayload,
+    PlayerAttributePayload,
+    PlayerCoreFields,
+    PlayerPerformanceBuffer,
 )
+from src.schemas import (
+    CareerDetail,
+    CareerMetadata,
+    DifficultyLevel,
+    FinancialSnapshot,
+    GKAttributeSnapshot,
+    InjuryRecord,
+    Match,
+    OutfieldAttributeSnapshot,
+    Player,
+    PositionType,
+)
+from src.services import data as data_services
 
 logger = logging.getLogger(__name__)
 
-# Define a generic type variable bound to Pydantic models
 T = TypeVar("T", bound=BaseModel)
 
-class DataManager:
-    def __init__(self, data_folder: Path) -> None:
-        """Initialize the DataManager with the specified root data directory.
 
-        Sets up the base data folder and defines the path for the global
-        careers registry. Specific player and match data are not loaded 
-        until a specific career is selected via `load_career`.
+class SupportsId(Protocol):
+    """Protocol for model instances carrying an integer id field."""
+
+    id: int
+
+
+class DataManager:
+    """Manage persistent storage for careers, players, matches, and metadata.
+
+    This class provides high-level operations for creating, loading, and updating
+    career-related data on disk using JSON files and Pydantic models.
+    """
+
+    # --- Lifecycle and Environment ---
+
+    def __init__(self, project_root: Path) -> None:
+        """Initialize a new DataManager instance with the project root.
+
+        Derives the data folder from the project root and prepares internal
+        paths and caches used to manage careers, players, and matches in JSON
+        form.
 
         Args:
-            data_folder (Path): The root directory where application data is stored.
+            project_root (Path): Root directory of the project.
+
+        Raises:
+            OSError: If the root data directory cannot be created.
         """
-        self.data_folder = data_folder
-        self.data_folder.mkdir(exist_ok=True)
-        
-        self.current_career: Optional[str] = None
-        self.careers_details_path = self.data_folder / "careers_details.json"
-        
+        self.project_root: Path = project_root
+        self.data_folder: Path = self.project_root / "data"
+        self.data_folder.mkdir(parents=True, exist_ok=True)
+        self._career_service = data_services.CareerService()
+        self._match_service = data_services.MatchService()
+        self._player_service = data_services.PlayerService()
+        self._json_service = data_services.JsonService()
+
+        self.current_career: str | None = None
+        self.careers_details_path: Path = self.data_folder / "careers_details.json"
+
         # Paths are initialized as None; they are set when a career is selected
-        self.players_path: Optional[Path] = None
-        self.matches_path: Optional[Path] = None
-        
+        self.players_path: Path | None = None
+        self.matches_path: Path | None = None
+
         # In-memory data caches, initially empty
         self.players: list[Player] = []
         self.matches: list[Match] = []
-    
-    def _load_json(
-        self, 
-        path: Path, 
-        model_class: Type[T], 
-        is_list: bool = True, 
-        default: Any = None) -> Union[T, list[T], Any]:
-        """Load JSON data from the specified file path and validate against a model.
 
-        Args:
-            path (Path): The path to the JSON file.
-            model_class (Type[T]): The Pydantic model class for validation.
-            is_list (bool): Whether the expected data is a list of models. 
-                Defaults to True.
-            default (Any): The value to return if loading fails. 
-                Defaults to [] if is_list is True, else None.
+    # --- Career Selection and Metadata Workflow ---
 
-        Returns:
-            Union[T, list[T], Any]: The validated model(s) or the default value.
-        """
-        if default is None:
-            default = [] if is_list else None
-        if not path.exists():
-            logger.warning(f"File not found at {path}. Returning default value.")
-            return default
-        
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                raw_data = json.load(f)
-        except (json.JSONDecodeError, IOError) as e:
-            logger.error(f"Error loading JSON from {path}: {e}", exc_info=True)
-            return default
-
-        adapter = TypeAdapter(list[model_class] if is_list else model_class)
-
-        try:
-            return adapter.validate_python(raw_data)
-        except ValidationError:
-            if not is_list:
-                logger.error(f"Validation failed for {path}, returning default.")
-                return default
-            if not isinstance(raw_data, list):
-                logger.error(f"Expected list in {path} but got {type(raw_data).__name__}. Returning default.")
-                return default
-            # Partial recovery: validate each item individually
-            logger.warning(f"Full list validation failed for {path}. Attempting partial recovery.")
-            item_adapter = TypeAdapter(model_class)
-            recovered = []
-            skipped = 0
-            for i, item in enumerate(raw_data):
-                try:
-                    recovered.append(item_adapter.validate_python(item))
-                except ValidationError:
-                    skipped += 1
-                    logger.debug(f"Skipped invalid item at index {i} in {path}.")
-            logger.warning(f"Partial recovery: {len(recovered)} valid, {skipped} skipped from {path}.")
-            return recovered
-    
-    def _save_json(self, path: Path, data: Union[T, list[T], None] = None) -> None:
-        """Save the provided data as JSON to the specified file path.
-
-        Automatically handles serialization for both single Pydantic models 
-        and lists of models. Overwrites the file if it already exists.
-
-        Args:
-            path (Path): The path to the JSON file.
-            data (Union[T, list[T], None]): The data to save. 
-                If None, an empty list is saved to clear the file.
-        """
-        if data is None:
-            data = []
-        try:
-            if isinstance(data, list):
-                # Dump each item in the list
-                export_data = [
-                    item.model_dump(mode="json") if isinstance(item, BaseModel) else item
-                    for item in data
-                ]
-            elif isinstance(data, BaseModel):
-                # Dump the single model
-                export_data = data.model_dump(mode="json")
-            else:
-                # Fallback for dicts or primitives (e.g. simple config files)
-                export_data = data
-            
-            # Write to file
-            with open(path, 'w', encoding='utf-8') as f:
-                json.dump(export_data, f, indent=4)
-        
-        except (IOError, TypeError) as e:
-            logger.error(f"Failed to save JSON to {path}: {e}", exc_info=True)
-
-    def _load_matches_strict_or_raise(self) -> list[Match]:
-        """Strictly load matches.json and raise on any ambiguity.
-
-        This is intentionally fail-closed to protect against destructive overwrites.
-        """
-        if not self.matches_path:
-            raise RuntimeError("Cannot load matches: no active career/matches path is set.")
-
-        if not self.matches_path.exists():
-            return []
-
-        try:
-            with open(self.matches_path, 'r', encoding='utf-8') as f:
-                raw_data = json.load(f)
-        except (json.JSONDecodeError, IOError) as e:
-            raise ValueError(
-                f"Refusing to save: unable to read matches.json at {self.matches_path}: {e}"
-            ) from e
-
-        if not isinstance(raw_data, list):
-            raise ValueError(
-                f"Refusing to save: matches.json must contain a list, got {type(raw_data).__name__}."
-            )
-
-        try:
-            adapter = TypeAdapter(list[Match])
-            return adapter.validate_python(raw_data)
-        except ValidationError as e:
-            raise ValueError(
-                f"Refusing to save: matches.json failed strict validation with {len(e.errors())} errors."
-            ) from e
-
-    def _load_players_strict_or_raise(self) -> list[Player]:
-        """Strictly load players.json and raise on any ambiguity.
-
-        This is intentionally fail-closed to protect against destructive overwrites.
-        """
-        if not self.players_path:
-            raise RuntimeError("Cannot load players: no active career/players path is set.")
-
-        if not self.players_path.exists():
-            return []
-
-        try:
-            with open(self.players_path, 'r', encoding='utf-8') as f:
-                raw_data = json.load(f)
-        except (json.JSONDecodeError, IOError) as e:
-            raise ValueError(
-                f"Refusing to save: unable to read players.json at {self.players_path}: {e}"
-            ) from e
-
-        if not isinstance(raw_data, list):
-            raise ValueError(
-                f"Refusing to save: players.json must contain a list, got {type(raw_data).__name__}."
-            )
-
-        try:
-            adapter = TypeAdapter(list[Player])
-            return adapter.validate_python(raw_data)
-        except ValidationError as e:
-            raise ValueError(
-                f"Refusing to save: players.json failed strict validation with {len(e.errors())} errors."
-            ) from e
-
-    def _save_json_atomic_or_raise(self, path: Path, data: Union[T, list[T], None] = None) -> None:
-        """Atomically save JSON and raise on failure instead of swallowing errors."""
-        if data is None:
-            data = []
-
-        if isinstance(data, list):
-            export_data = [
-                item.model_dump(mode="json") if isinstance(item, BaseModel) else item
-                for item in data
-            ]
-        elif isinstance(data, BaseModel):
-            export_data = data.model_dump(mode="json")
-        else:
-            export_data = data
-
-        tmp_path = path.with_suffix(f"{path.suffix}.tmp")
-        with open(tmp_path, 'w', encoding='utf-8') as f:
-            json.dump(export_data, f, indent=4)
-        tmp_path.replace(path)
-    
     def create_new_career(
-        self, 
-        club_name: str, 
-        manager_name: str, 
-        starting_season: str, 
-        half_length: int, 
+        self,
+        club_name: str,
+        manager_name: str,
+        starting_season: str,
+        half_length: int,
         difficulty: DifficultyLevel,
-        league: str) -> None:
-        """Create a new career for the given club and starting season.
+        league: str,
+    ) -> None:
+        """Execute the disk provisioning and state initialization for a new career.
 
-        Sets up the career's storage structure (using a unique folder name), 
-        records its configuration, and initializes empty data files.
+        Creates a dedicated subdirectory within the root data folder and writes
+        the foundational JSON structures (`metadata.json`, `players.json`,
+        `matches.json`). Appends the new career record to the global
+        `careers_details.json` registry.
+
+        Delegates payload mapping and artifact generation to `CareerDataService`,
+        and strictly enforces that disk I/O occurs *before* internal pointer state
+        (`self.current_career`, paths, cached lists) is mutated.
 
         Args:
-            club_name (str): The display name of the club.
-            manager_name (str): The name of the manager.
-            starting_season (str): The season identifier (e.g., "24/25").
-            half_length (int): The match half length in minutes.
-            difficulty (DifficultyLevel): The difficulty level (must match DifficultyLevel type).
+            club_name (str): The chosen club name for directory generation.
+            manager_name (str): The chosen manager name.
+            starting_season (str): The season string (e.g., "24/25").
+            half_length (int): Match half duration in minutes.
+            difficulty (DifficultyLevel): Validated difficulty enum.
+            league (str): League string used by the service to map default competitions.
+
+        Raises:
+            OSError: If permission is denied or the directory
+                     structure cannot be created.
+            ValidationError: If generated career metadata fails schema validation.
         """
-        logger.info(f"Creating new career: {club_name} (Manager: {manager_name})")
+        logger.info("Creating new career: %s (Manager: %s)", club_name, manager_name)
 
         # Generate ID first to use in folder name
-        careers_details = self._load_json(self.careers_details_path, CareerDetail)
-        career_id = self._generate_id(careers_details)
+        careers_details: list[CareerDetail] = self._json_service.load_json(
+            self.careers_details_path, CareerDetail
+        )
+        career_id: int = self._generate_id(careers_details)
 
-        # Create folder name: lowercase team name with underscore and career ID
-        career_folder_name = f"{club_name.replace(' ', '_').lower()}_{career_id}"
-        self.current_career = career_folder_name
-        career_path = self.data_folder / career_folder_name
-        career_path.mkdir(exist_ok=True)
-
-        self.players_path = career_path / "players.json"
-        self.matches_path = career_path / "matches.json"
-
-        # Seed competitions for this league from the bundled config (if available)
-        competitions: list[str] = []
-        # Normalize league provided to title case for consistent lookup
-        league_title = league.title() if isinstance(league, str) else league
-        try:
-            project_root = Path(__file__).parent.parent
-            config_path = project_root / "config" / "league_competitions.json"
-            if config_path.exists():
-                with open(config_path, 'r', encoding='utf-8') as f:
-                    defaults = json.load(f)
-                    # Support both {"league": [...]} and {"leagues": { ... }} formats
-                    if isinstance(defaults, dict) and "leagues" in defaults and isinstance(defaults["leagues"], dict):
-                        defaults = defaults["leagues"]
-                    if isinstance(defaults, dict) and league_title in defaults:
-                        competitions = defaults.get(league_title) or []
-        except Exception as e:
-            logger.debug(f"Failed to load league defaults from config: {e}")
-
-        # Create a metadata file for the career
-        # Normalize competitions to title case as well
-        competitions = [c.title() for c in competitions]
-
-        metadata = CareerMetadata(
-            career_id=career_id,
+        artifacts: CareerCreationArtifacts = self._career_service.prepare_new_career(
+            data_folder=self.data_folder,
+            project_root=self.project_root,
             club_name=club_name,
-            folder_name=career_folder_name,
             manager_name=manager_name,
-            created_at=datetime.now(),
             starting_season=starting_season,
             half_length=half_length,
             difficulty=difficulty,
-            league=league_title,
-            competitions=competitions,
+            league=league,
+            career_id=career_id,
+            created_at=datetime.now(),
         )
-        self._save_json(career_path / "metadata.json", metadata)
-        
-        # Update the global careers details registry
-        new_detail = CareerDetail(
-            id=career_id,
-            club_name=club_name,
-            folder_name=career_folder_name
+
+        # Persist planned artifacts first; only then mutate manager state.
+        artifacts.career_path.mkdir(exist_ok=True)
+        self._json_service.save_json(
+            artifacts.career_path / "metadata.json", artifacts.metadata
         )
-        careers_details.append(new_detail)
-        self._save_json(self.careers_details_path, careers_details)
+
+        careers_details.append(artifacts.new_detail)
+        self._json_service.save_json(self.careers_details_path, careers_details)
 
         # Initialize empty players and matches files
-        self._save_json(self.players_path)
-        self._save_json(self.matches_path)
-        self.players = []
-        self.matches = []
-    
+        self._json_service.save_json(artifacts.players_path)
+        self._json_service.save_json(artifacts.matches_path)
+
+        self.current_career: str = artifacts.career_folder_name
+        self.players_path: Path = artifacts.players_path
+        self.matches_path: Path = artifacts.matches_path
+        self.players: list[Player] = []
+        self.matches: list[Match] = []
+
     def get_all_career_names(self) -> list[str]:
-        """Retrieve display names for all stored careers.
+        """Retrieve and format all career display names from the central registry.
 
-        Smart Deduplication:
-        If multiple careers share the same club name, this method dynamically 
-        loads the specific `metadata.json` for those careers to append the 
-        Manager's name (e.g., 'Arsenal (Arteta)' vs 'Arsenal (User)').
-
-        Returns:
-            list[str]: A list of formatted strings for UI selection.
-        """
-        careers_details = self._load_json(self.careers_details_path, CareerDetail)
-
-        # Identify any duplicate occurrences of club names
-        name_counts = {}
-        for career in careers_details:
-            name_counts[career.club_name] = name_counts.get(career.club_name, 0) + 1
-
-        display_names = []
-
-        # Build list and resolve duplicates
-        for career in careers_details:
-            if name_counts[career.club_name] > 1:
-                # If there are duplicates, include manager name in the display name for clarity
-                meta_path = self.data_folder / career.folder_name / "metadata.json"
-                if metadata := self._load_json(
-                    meta_path, CareerMetadata, is_list=False
-                ):
-                    display_names.append(f"{career.club_name} ({metadata.manager_name})")
-                else:
-                    display_names.append(f"{career.club_name} ({career.id})")
-            else:
-                # If the name is unique, just use the club name
-                display_names.append(career.club_name)
-    
-        return display_names
-    
-    def get_career_details(self, career_name: str) -> Optional[CareerMetadata]:
-        """Retrieve the metadata for a specific career based on its display name.
-
-        Matches the 'Smart Deduplication' logic used in `get_all_career_names`
-        to identify the correct career folder, even if multiple careers exist
-        for the same club.
-
-        Args:
-            career_name (str): The unique display string selected in the UI 
-                                 (e.g., "Arsenal" or "Arsenal (Arteta)").
+        Reads the global `careers_details.json` to get the base list of generated
+        careers. Delegates collision detection to the `CareerDataService` and performs
+        targeted disk reads of specific `metadata.json` files for any directories
+        that share a club name. Finally, delegates the string formatting logic back
+        to the service to guarantee uniqueness.
 
         Returns:
-            Optional[CareerMetadata]: The full metadata object if found, else None.
+            list[str]: A list of unique, formatted career display strings.
         """
-        careers_details = self._load_json(self.careers_details_path, CareerDetail)
-        
-        # Count occurrences of each club name to identify duplicates
-        name_counts = {}
-        for career in careers_details:
-            name_counts[career.club_name] = name_counts.get(career.club_name, 0) + 1
-        
-        for career in careers_details:
-            candidate_name = career.club_name
-            
-            if name_counts[candidate_name] > 1:
-                # If it was a duplicate, we expect the input name to include the manager name in parentheses
-                meta_path = self.data_folder / career.folder_name / "metadata.json"
-                metadata = self._load_json(meta_path, CareerMetadata, is_list=False)
-                
-                if metadata:
-                    candidate_name = f"{career.club_name} ({metadata.manager_name})"
-                else:
-                    candidate_name = f"{career.club_name} ({career.id})"
-            
-            if candidate_name == career_name:
-                # Found match, return full metadata
-                meta_path = self.data_folder / career.folder_name / "metadata.json"
-                return self._load_json(meta_path, CareerMetadata, is_list=False)
-        
-        logger.warning(f"Career details not found for name: {career_name}")
-        return None
-    
-    def load_career(self, career_name: str) -> None:
-        """Load an existing career and prepare it for data operations.
-
-        Updates the current career context and hydrates the player and 
-        match lists from the filesystem into Pydantic models.
-
-        Args:
-            career_name (str): The unique display name of the career to load 
-                               (as returned by get_all_career_names).
-        """
-        logger.info(f"Loading career context: {career_name}")
-        
-        career_metadata = self.get_career_details(career_name)
-        if not career_metadata:
-            logger.warning(f"Career '{career_name}' not found.")
-            return
-        
-        # Set context
-        career_folder_name = career_metadata.folder_name
-        self.current_career = career_folder_name
-        self.players_path = self.data_folder / career_folder_name / "players.json"
-        self.matches_path = self.data_folder / career_folder_name / "matches.json"
-        
-        self.players = self._load_json(self.players_path, Player)
-        self.matches = self._load_json(self.matches_path, Match)
-        
-        logger.info(
-            f"Career '{career_name}' loaded successfully. "
-            f"Players: {len(self.players)}, Matches: {len(self.matches)}"
+        careers_details: list[CareerDetail] = self._json_service.load_json(
+            self.careers_details_path, CareerDetail
         )
 
-    def refresh_players(self) -> None:
-        """Reload the players list from the current career's JSON file.
+        duplicate_club_names: set[str] = self._career_service.get_duplicate_club_names(
+            careers_details
+        )
 
-        Updates self.players with the latest data from disk. 
-        Safe to call even if the file hasn't been written to yet (returns empty list).
+        # Loading stays in DataManager.
+        metadata_by_folder: dict[str, CareerMetadata | None] = (
+            self._load_duplicate_career_metadata(
+                careers_details,
+                duplicate_club_names,
+            )
+        )
+
+        return self._career_service.build_display_names(
+            careers_details=careers_details,
+            duplicate_club_names=duplicate_club_names,
+            metadata_by_folder=metadata_by_folder,
+        )
+
+    def get_career_details(self, career_name: str) -> CareerMetadata | None:
+        """Load the metadata model for a specific career using its display string.
+
+        Reads `careers_details.json` and performs selective `metadata.json` disk reads
+        to map the provided display string back to its specific physical directory.
+        Delegates this resolution logic to the `CareerDataService`. Once the target
+        folder is identified, reads and validates the final `metadata.json` file.
+
+        Args:
+            career_name (str): The unique formatted string
+                               representing the target career.
+
+        Returns:
+            CareerMetadata | None: The parsed Pydantic metadata model, or None if the
+                mapping fails or the underlying file is missing.
+        """
+        careers_details: list[CareerDetail] = self._json_service.load_json(
+            self.careers_details_path, CareerDetail
+        )
+
+        duplicate_club_names: set[str] = self._career_service.get_duplicate_club_names(
+            careers_details
+        )
+
+        # Loading stays in DataManager.
+        metadata_by_folder: dict[str, CareerMetadata | None] = (
+            self._load_duplicate_career_metadata(
+                careers_details,
+                duplicate_club_names,
+            )
+        )
+
+        selected_career: CareerDetail | None = (
+            self._career_service.find_career_by_display_name(
+                careers_details=careers_details,
+                duplicate_club_names=duplicate_club_names,
+                metadata_by_folder=metadata_by_folder,
+                selected_name=career_name,
+            )
+        )
+        if selected_career is None:
+            logger.warning("Career details not found for name: %s", career_name)
+            return None
+
+        if selected_career.club_name in duplicate_club_names:
+            # Reuse preloaded metadata for duplicate-name careers.
+            metadata: CareerMetadata | None = metadata_by_folder.get(
+                selected_career.folder_name
+            )
+            if metadata is not None:
+                return metadata
+
+        # Found match, return full metadata loaded by DataManager.
+        meta_path: Path = (
+            self.data_folder / selected_career.folder_name / "metadata.json"
+        )
+        return self._json_service.load_json(meta_path, CareerMetadata, is_list=False)
+
+    def load_career(self, career_name: str) -> bool:
+        """Update internal instance state to target a specific career directory.
+
+        Resolves the provided display string to a physical directory structure
+        using `get_career_details`. Upon success, it rebinds the internal path
+        pointers (`self.current_career`, `self.players_path`, `self.matches_path`)
+        and populates the in-memory `Player` and `Match` caches by delegating
+        bulk file reads to the `JsonService`.
+
+        Args:
+            career_name (str): The unique formatted string
+                               representing the target career.
+
+        Returns:
+            bool: True if the directory was resolved and internal state was successfully
+                  mutated. False if the directory mapping failed.
+        """
+        logger.info("Loading career context: %s", career_name)
+
+        career_metadata: CareerMetadata | None = self.get_career_details(career_name)
+        if not career_metadata:
+            logger.warning("Career '%s' not found.", career_name)
+            return False
+
+        # Set context
+        career_folder_name: str = career_metadata.folder_name
+        self.current_career: str = career_folder_name
+        self.players_path: Path = self.data_folder / career_folder_name / "players.json"
+        self.matches_path: Path = self.data_folder / career_folder_name / "matches.json"
+
+        self.players: list[Player] = self._json_service.load_json(
+            self.players_path, Player
+        )
+        self.matches: list[Match] = self._json_service.load_json(
+            self.matches_path, Match
+        )
+
+        logger.info(
+            "Career '%s' loaded successfully. Players: %s, Matches: %s",
+            career_name,
+            len(self.players),
+            len(self.matches),
+        )
+        return True
+
+    def get_current_career_metadata(self) -> CareerMetadata | None:
+        """Read and parse the metadata.json file for the currently active directory.
+
+        Relies on the internal `self.current_career` pointer to construct the
+        absolute file path. Delegates the raw disk I/O and strict Pydantic model
+        mapping to `JsonService.load_json`.
+
+        Returns:
+            CareerMetadata | None: The parsed Pydantic model. Returns None if the
+                                   internal state pointer is unset, or if the underlying
+                                   JSON file is missing or corrupted on disk.
+        """
+        if not self.current_career:
+            return None
+
+        meta_path: Path = self.data_folder / self.current_career / "metadata.json"
+        metadata: CareerMetadata | None = self._json_service.load_json(
+            meta_path, CareerMetadata, is_list=False
+        )
+        if metadata is None:
+            logger.warning(
+                "Active career metadata missing or invalid for folder: %s",
+                self.current_career,
+            )
+        return metadata
+
+    def add_competition(self, competition: str) -> None:
+        """Execute a disk write to append a competition to the active metadata.json.
+
+        Enforces that a career context is active, then reads the current `metadata.json`
+        file. Delegates the actual array manipulation and deduplication logic to
+        `CareerDataService`. Writes the updated metadata model back to disk if changes
+        were applied by the service.
+
+        Args:
+            competition (str): The raw competition string to append.
+
+        Raises:
+            RuntimeError: If called without an initialized career context, or if the
+                          target `metadata.json` file is missing/corrupted.
+        """
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+
+        meta_path: Path = self.data_folder / self.current_career / "metadata.json"
+        metadata: CareerMetadata | None = self._json_service.load_json(
+            meta_path, CareerMetadata, is_list=False
+        )
+        if metadata is None:
+            raise RuntimeError("Career metadata missing")
+
+        if self._career_service.add_competition_to_metadata(
+            metadata=metadata,
+            competition=competition,
+        ):
+            self._json_service.save_json(meta_path, metadata)
+
+    def remove_competition(self, competition: str) -> None:
+        """Execute a disk write to remove a competition from the active metadata.json.
+
+        Forces a cache synchronization via `refresh_matches` to ensure the disk state
+        is accurate. Delegates referential integrity checks (ensuring no saved matches
+        actively use the competition) and array mutation to `CareerDataService`. Upon
+        successful validation, reads and updates the target
+        `metadata.json` file on disk.
+
+        Args:
+            competition (str): The exact competition string to remove.
+
+        Raises:
+            RuntimeError: If called without an initialized career context, or if the
+                          target `metadata.json` file is missing/corrupted.
+            ValueError: If `CareerDataService` detects that the competition is actively
+                        referenced by a saved match, aborting the disk write.
+        """
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+
+        # Ensure we have latest matches
+        self.refresh_matches()
+        self._career_service.ensure_competition_not_referenced(
+            matches=self.matches,
+            competition=competition,
+        )
+
+        meta_path: Path = self.data_folder / self.current_career / "metadata.json"
+        metadata: CareerMetadata | None = self._json_service.load_json(
+            meta_path, CareerMetadata, is_list=False
+        )
+        if metadata is None:
+            raise RuntimeError("Career metadata missing")
+
+        self._career_service.remove_competition_from_metadata(
+            metadata=metadata,
+            competition=competition,
+        )
+        self._json_service.save_json(meta_path, metadata)
+
+    def update_career_metadata(self, updates: CareerMetadataUpdate) -> None:
+        """Run a targeted disk write to modify fields within the active metadata.json.
+
+        Validates the presence of an active career context and reads the current
+        metadata from disk. Delegates the Pydantic field merging and validation to
+        `CareerDataService`. Persists the resulting merged model back to the target
+        `metadata.json` file.
+
+        Args:
+            updates (CareerMetadataUpdate): A validated partial Pydantic model
+                                            containing the explicit fields to modify.
+
+        Raises:
+            RuntimeError: If called without an initialized career context, or if the
+                          target `metadata.json` file is missing/corrupted.
+            ValidationError: If the newly merged data fails strict Pydantic
+                             schema validation.
+        """
+        if not self.current_career:
+            raise RuntimeError("No career loaded")
+
+        meta_path: Path = self.data_folder / self.current_career / "metadata.json"
+        metadata: CareerMetadata | None = self._json_service.load_json(
+            meta_path, CareerMetadata, is_list=False
+        )
+        if metadata is None:
+            raise RuntimeError("Career metadata missing")
+
+        new_meta: CareerMetadata = self._career_service.build_updated_metadata(
+            metadata=metadata,
+            updates=updates,
+        )
+
+        # Save atomically
+        self._json_service.save_json(meta_path, new_meta)
+
+    # --- Cache Sync and Read Helpers ---
+
+    def refresh_players(self) -> None:
+        """Read players.json from disk to synchronize the internal instance cache.
+
+        Relies on the internal `self.players_path` pointer. Delegates raw disk I/O
+        and Pydantic model mapping to `JsonService.load_json`. Rebinds the
+        `self.players` attribute with the newly parsed list of models.
         """
         if not self.players_path:
             logger.warning("Attempted to refresh players before loading a career.")
             return
 
-        self.players = self._load_json(self.players_path, Player)
+        self.players: list[Player] = self._json_service.load_json(
+            self.players_path, Player
+        )
 
     def refresh_matches(self) -> None:
-        """Reload the matches list from the current career's JSON file.
+        """Read matches.json from disk to synchronize the internal instance cache.
 
-        Updates self.matches with the latest data from disk.
+        Relies on the internal `self.matches_path` pointer. Delegates raw disk I/O
+        and Pydantic model mapping to `JsonService.load_json`. Rebinds the
+        `self.matches` attribute with the newly parsed list of models.
         """
         if not self.matches_path:
             logger.warning("Attempted to refresh matches before loading a career.")
             return
 
-        self.matches = self._load_json(self.matches_path, Match)
+        self.matches: list[Match] = self._json_service.load_json(
+            self.matches_path, Match
+        )
 
-    def get_latest_match_in_game_date(self) -> Optional[datetime]:
-        """Return the most recent match's in-game date for the current career.
+    def get_latest_match_in_game_date(self) -> datetime | None:
+        """Trigger a disk sync of matches.json and extract the most recent match date.
 
-        The method refreshes the in-memory matches from disk and then returns
-        the maximum `data.in_game_date` value across all stored matches.
-        Returns None when no matches are present or when no career is loaded.
+        Forces an internal state mutation via `refresh_matches` to guarantee the
+        cache perfectly reflects the current disk state. Once synchronized, delegates
+        the chronological sorting and parsing logic to
+        `MatchDataService.get_latest_in_game_date`.
+
+        Returns:
+            datetime | None: The parsed maximum date from the cached match models.
+                             Returns None if the career context is unset or if the
+                             synchronized JSON file contains no match records.
         """
         if not self.matches_path:
             logger.debug("No matches_path set; cannot determine latest match date.")
@@ -458,430 +515,563 @@ class DataManager:
 
         # Ensure we have the latest view of matches on disk
         self.refresh_matches()
+        return self._match_service.get_latest_in_game_date(self.matches)
 
-        if not self.matches:
-            return None
+    def find_player_by_name(self, name: str) -> Player | None:
+        """Query the synchronized internal instance cache to resolve a player record.
 
-        try:
-            latest = max(self.matches, key=lambda m: m.data.in_game_date)
-            return latest.data.in_game_date
-        except Exception as e:
-            logger.warning(f"Failed to compute latest match date: {e}")
-            return None
-    
-    def add_or_update_player(
-        self, 
-        player_ui_data: dict, 
-        position: Optional[PositionType], 
-        in_game_date: str,
-        is_gk: bool = False) -> None:
-        """Add a new player or update an existing one based on their name.
-
-        If the player name exists, appends the new attribute snapshot. 
-        If not, creates a new Player record.
+        Acts as a fast in-memory read operation rather than a direct disk access. Relies
+        on the `self.players` array being accurately synchronized via prior
+        `refresh_players` or mutation calls. Delegates the string matching
+        logic to `PlayerDataService`.
 
         Args:
-            player_ui_data (dict): Dictionary containing player bio and attributes.
-            position (PositionType): The position associated with this snapshot.
-        """
-        # Fail closed: if on-disk players cannot be fully validated, abort before any write.
-        self.players = self._load_players_strict_or_raise()
-
-        # Check if player already exists based on name to update them
-        player_name = player_ui_data.get("name")
-        existing_player = self.find_player_by_name(player_name)
-        
-        top_level_keys = ["name", "age", "height", "weight", "country", "in_game_date"]
-        
-        attributes = {k: v for k, v in player_ui_data.items() if k not in top_level_keys}
-        if is_gk:
-            attributes_snapshot = GKAttributeSnapshot(
-                datetime=datetime.now(),
-                in_game_date=in_game_date,
-                position_type="GK",
-                **attributes
-            )
-        else:
-            attributes_snapshot = OutfieldAttributeSnapshot(
-                datetime=datetime.now(),
-                in_game_date=in_game_date,
-                position_type="Outfield",
-                **attributes
-            )
-        
-        
-        if existing_player:
-            logger.info(f"Updating player: {player_name}")
-            existing_player.attribute_history.append(attributes_snapshot)
-            # Only update base attributes if new values are provided
-            if player_ui_data.get("age") is not None:
-                existing_player.age = int(player_ui_data.get("age"))
-            if player_ui_data.get("height") is not None:
-                existing_player.height = player_ui_data.get("height")
-            if player_ui_data.get("weight") is not None:
-                existing_player.weight = int(player_ui_data.get("weight"))
-            if player_ui_data.get("country") is not None:
-                existing_player.nationality = player_ui_data.get("country").strip()
-            # If position is new, add it
-            if position is not None and position not in existing_player.positions:
-                existing_player.positions.append(position)
-        else:
-            if not all([
-                player_name,
-                player_ui_data.get("country"),
-                player_ui_data.get("age"),
-                player_ui_data.get("height"),
-                player_ui_data.get("weight"),
-                position
-            ]):
-                raise ValueError("New players require name, country, age, height, weight, and position.")
-            logger.info(f"Adding new player: {player_name}")
-            new_id = self._generate_id(self.players)
-            new_player = Player(
-                id=new_id,
-                name=player_name.strip(),
-                nationality=player_ui_data.get("country").strip(),
-                age=int(player_ui_data.get("age")),
-                height=player_ui_data.get("height").strip(),
-                weight=int(player_ui_data.get("weight")),
-                positions=[position],
-                attribute_history=[attributes_snapshot],
-                financial_history=[],
-                injury_history=[],
-                sold=False,
-                date_sold=None,
-                loaned=False
-            )
-            self.players.append(new_player)
-        self._save_json_atomic_or_raise(self.players_path, self.players)
-        # Reload players strictly to ensure consistency
-        self.players = self._load_players_strict_or_raise()
-    
-    def add_financial_data(
-        self, 
-        player_name: str, 
-        financial_data: dict, 
-        in_game_date: str) -> None:
-        """Add a financial snapshot to a specific player's history.
-
-        Cleans currency strings (removes commas) before validating against 
-        the FinancialSnapshot model.
-
-        Args:
-            player_name (str): The name of the player to update.
-            financial_data (dict): Dictionary containing keys like 'wage', 
-                                   'market_value', 'release_clause'.
-            in_game_date (str): The in-game date for the financial snapshot (e.g., "24/11/24").
-        """
-        self.players = self._load_players_strict_or_raise()
-        existing_player = self.find_player_by_name(player_name)
-
-        if not existing_player:
-            logger.warning(f"Player '{player_name}' not found. Cannot add financial data.")
-            return
-
-        logger.info(f"Saving financial snapshot for {player_name}")
-
-        # Clean Data (Remove commas from currency strings)
-        # This ensures "120,000" becomes "120000" so Pydantic can parse it as int
-        cleaned_data = {
-            k: v.replace(",", "") if isinstance(v, str) else v
-            for k, v in financial_data.items()
-        }
-        
-        try:
-            snapshot = FinancialSnapshot(
-                datetime=datetime.now(),
-                in_game_date=in_game_date,
-                **cleaned_data
-            )
-            
-            existing_player.financial_history.append(snapshot)
-            
-            self._save_json_atomic_or_raise(self.players_path, self.players)
-            self.players = self._load_players_strict_or_raise()
-            
-        except ValidationError as e:
-            logger.error(f"Validation failed for financial data: {e}")
-    
-    def add_injury_record(
-        self, 
-        player_name: str, 
-        injury_data: dict) -> None:
-        """Add an injury record to a player's history.
-
-        Validates the injury data (including date formatting) against the 
-        InjuryRecord model before saving.
-
-        Args:
-            player_name (str): The name of the player to update.
-            injury_data (dict): Dictionary containing 'in_game_date', 
-                                'injury_detail', 'time_out', etc.
-        """
-        self.players = self._load_players_strict_or_raise()
-        existing_player = self.find_player_by_name(player_name)
-        
-        if not existing_player:
-            logger.warning(f"Player '{player_name}' not found. Cannot add injury record.")
-            return
-
-        logger.info(f"Saving injury record for {player_name}")
-        
-        try:
-            snapshot = InjuryRecord(
-                datetime=datetime.now(),
-                **injury_data
-            )
-            
-            existing_player.injury_history.append(snapshot)
-            
-            self._save_json_atomic_or_raise(self.players_path, self.players)
-            self.players = self._load_players_strict_or_raise()
-            
-        except (ValidationError, ValueError) as e:
-            logger.error(f"Failed to add injury record: {e}")
-        
-    def sell_player(self, player_name: str, in_game_date: str) -> None:
-        """Mark a player as sold in the database.
-
-        Args:
-            player_name (str): The name of the player to sell.
-            in_game_date (str): The in-game date when the player was sold.
-        """
-        logger.info(f"Action: Selling player {player_name}")
-        self._update_player_status(player_name, status_key="sold", status_value=True, in_game_date=in_game_date)
-    
-    def loan_out_player(self, player_name: str) -> None:
-        """Mark a player as loaned out.
-
-        Args:
-            player_name (str): The name of the player to loan out.
-        """
-        logger.info(f"Action: Loaning out player {player_name}")
-        self._update_player_status(player_name, status_key="loaned", status_value=True)
-    
-    def return_loan_player(self, player_name: str) -> None:
-        """Mark a player as returned from loan (active again).
-
-        Args:
-            player_name (str): The name of the player returning.
-        """
-        logger.info(f"Action: Returning player {player_name} from loan")
-        self._update_player_status(player_name, status_key="loaned", status_value=False)
-        
-    def _update_player_status(
-        self, 
-        player_name: str, 
-        status_key: str, 
-        status_value: bool,
-        in_game_date: Optional[str] = None) -> None:
-        """Helper method to update a boolean status flag on a player.
-
-        Args:
-            player_name (str): The name of the player.
-            status_key (str): The attribute name to update (e.g., 'sold', 'loaned').
-            status_value (bool): The new boolean value.
-            in_game_date (Optional[str]): The in-game date for the status change, only needed for 'sold' status to set the date_sold field.
-        """
-        self.players = self._load_players_strict_or_raise()
-        existing_player = self.find_player_by_name(player_name)
-
-        if not existing_player:
-            logger.warning(
-                f"Player '{player_name}' not found. "
-                f"Cannot update status '{status_key}'."
-            )
-            return
-
-        if not hasattr(existing_player, status_key):
-            logger.error(
-                f"Invalid status key '{status_key}' for Player model. Update aborted."
-            )
-            return
-
-        if status_key == "sold" and status_value:
-            if not in_game_date:
-                logger.error("In-game date is required when marking a player as sold.")
-                return
-            existing_player.date_sold = in_game_date
-
-        setattr(existing_player, status_key, status_value)
-
-        self._save_json_atomic_or_raise(self.players_path, self.players)
-        self.players = self._load_players_strict_or_raise()
-    
-    def _generate_id(self, collection: list[Any]) -> int:
-        """Generate a unique ID for a new item in a collection.
-
-        Calculates the next integer ID based on the maximum existing ID.
-        Assumes every item in the collection is an object with an '.id' attribute.
-
-        Args:
-            collection (list): A list of objects (e.g., Player models).
+            name (str): The string identifier to search for within the active cache.
 
         Returns:
-            int: The next available ID (starting at 1 if empty).
+            Player | None: The Pydantic model reference from memory, or None if
+                           no match exists in the current career context.
+        """
+        return self._player_service.find_player_by_name(self.players, name)
+
+    # --- Player Mutation Workflow ---
+
+    def add_or_update_player(
+        self,
+        player_ui_data: PlayerAttributePayload,
+        position: PositionType | None,
+        in_game_date: str,
+        is_gk: bool = False,
+    ) -> None:
+        """Execute an atomic upsert of a player record to the active players.json file.
+
+        Enforces a strict fail-closed state validation before and after mutation.
+        Delegates the Pydantic model construction—either appending a new temporal
+        snapshot to an existing player or initializing a new player record—to the
+        `PlayerDataService`.
+
+        Writes the mutated list back to disk using a safe atomic operation to prevent
+        file corruption, then immediately forces an internal cache re-sync to guarantee
+        perfect alignment between disk and memory.
+
+        Args:
+            player_ui_data (PlayerAttributePayload): Validated dictionary payload
+                                                     containing the raw biographical
+                                                     and statistical data.
+            position (PositionType | None): The specific position enum
+                                            for this snapshot.
+            in_game_date (str): The EA FC chronological date of the snapshot.
+            is_gk (bool, optional): Boolean flag dictating which Pydantic snapshot
+                                    subclass (Outfield vs. Goalkeeper) should be
+                                    constructed. Defaults to False.
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the current disk state or the resulting mutation fails strict
+                        schema validation.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+            ValidationError: If new player model construction fails validation.
+        """
+        # Fail closed: abort if on-disk players cannot be fully validated.
+        players_path: Path = self._require_players_path()
+        self.players: list[Player] = self._load_players_strict_or_raise()
+
+        core_fields: PlayerCoreFields = self._player_service.extract_player_core_fields(
+            player_ui_data
+        )
+        existing_player: Player | None = self.find_player_by_name(core_fields.name)
+        attributes_snapshot: GKAttributeSnapshot | OutfieldAttributeSnapshot = (
+            self._player_service.build_attribute_snapshot(
+                player_ui_data=player_ui_data,
+                is_gk=is_gk,
+                in_game_date=in_game_date,
+                position=position,
+                player_name=core_fields.name,
+            )
+        )
+
+        if existing_player:
+            self._player_service.update_existing_player(
+                existing_player=existing_player,
+                attributes_snapshot=attributes_snapshot,
+                core_fields=core_fields,
+                position=position,
+            )
+        else:
+            new_id: int = self._generate_id(self.players)
+            self.players.append(
+                self._player_service.create_new_player(
+                    player_id=new_id,
+                    core_fields=core_fields,
+                    position=position,
+                    attributes_snapshot=attributes_snapshot,
+                )
+            )
+
+        self._json_service.save_json_atomic_or_raise(players_path, self.players)
+        # Reload players strictly to ensure consistency
+        self.players: list[Player] = self._load_players_strict_or_raise()
+
+    def add_financial_data(
+        self, player_name: str, financial_data: FinancialDataPayload, in_game_date: str
+    ) -> None:
+        """Execute an atomic append of a financial snapshot to a player's record.
+
+        Enforces strict fail-closed state validation before mutation. Validates the
+        existence of the target player in the active registry and delegates Pydantic
+        snapshot construction to `PlayerDataService`. Appends the resulting model to
+        the player's internal financial history array.
+
+        Writes the mutated list to the active `players.json` file using a safe atomic
+        operation, then immediately forces an internal cache re-sync to guarantee
+        alignment between disk and memory.
+
+        Args:
+            player_name (str): The exact registered name of the target player.
+            financial_data (FinancialDataPayload): Validated dictionary payload
+                                                   containing raw wage, value,
+                                                   and contract details.
+            in_game_date (str): The in-game chronological date of the snapshot.
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the target player is not found, or if the snapshot data
+                        fails strict Pydantic schema validation.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        players_path: Path = self._require_players_path()
+        self.players: list[Player] = self._load_players_strict_or_raise()
+        existing_player: Player = self._player_service.require_existing_player(
+            players=self.players,
+            player_name=player_name,
+            action_description="add financial data",
+        )
+
+        logger.info("Saving financial snapshot for %s", player_name)
+        snapshot: FinancialSnapshot = self._player_service.create_financial_snapshot(
+            player_name=player_name,
+            financial_data=financial_data,
+            in_game_date=in_game_date,
+        )
+        existing_player.financial_history.append(snapshot)
+
+        self._json_service.save_json_atomic_or_raise(players_path, self.players)
+        self.players: list[Player] = self._load_players_strict_or_raise()
+
+    def add_injury_record(
+        self, player_name: str, injury_data: InjuryDataPayload
+    ) -> None:
+        """Execute an atomic append of an injury event to a player's medical history.
+
+        Enforces strict fail-closed state validation prior to mutation. Verifies the
+        target player exists in the current registry and delegates Pydantic model
+        construction to `PlayerDataService`. Appends the resulting injury model to
+        the player's internal injury history array.
+
+        Writes the mutated list to the active `players.json` file using a safe atomic
+        operation, followed by an immediate internal cache re-sync to ensure stability.
+
+        Args:
+            player_name (str): The exact registered name of the target player.
+            injury_data (InjuryDataPayload): Validated dictionary payload containing
+                                             the injury specifics
+                                             (e.g., type, duration).
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the target player does not exist, or if the injury data
+                        fails strict Pydantic schema validation.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        players_path: Path = self._require_players_path()
+        self.players: list[Player] = self._load_players_strict_or_raise()
+        existing_player: Player = self._player_service.require_existing_player(
+            players=self.players,
+            player_name=player_name,
+            action_description="add injury record",
+        )
+
+        logger.info("Saving injury record for %s", player_name)
+        snapshot: InjuryRecord = self._player_service.create_injury_snapshot(
+            player_name=player_name,
+            injury_data=injury_data,
+        )
+
+        existing_player.injury_history.append(snapshot)
+
+        self._json_service.save_json_atomic_or_raise(players_path, self.players)
+        self.players: list[Player] = self._load_players_strict_or_raise()
+
+    def sell_player(self, player_name: str, in_game_date: str) -> None:
+        """Execute a status mutation to permanently mark a player record as sold.
+
+        Delegates the state validation, atomic disk writing to `players.json`,
+        and internal cache synchronization to `_update_player_status`.
+
+        Args:
+            player_name (str): The exact registered name of the target player.
+            in_game_date (str): The chronological date of the transaction to append.
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the target player does not exist, or if the status
+                        update data fails validation.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        logger.info("Action: Selling player %s", player_name)
+        self._update_player_status(
+            player_name, status_key="sold", status_value=True, in_game_date=in_game_date
+        )
+
+    def loan_out_player(self, player_name: str) -> None:
+        """Execute a status mutation to toggle a player record to an active loan state.
+
+        Delegates the state validation, atomic disk writing to `players.json`,
+        and internal cache synchronization to `_update_player_status`.
+
+        Args:
+            player_name (str): The exact registered name of the target player.
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the target player does not exist, or if the status
+                        update data fails validation.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        logger.info("Action: Loaning out player %s", player_name)
+        self._update_player_status(player_name, status_key="loaned", status_value=True)
+
+    def return_loan_player(self, player_name: str) -> None:
+        """Execute a status mutation to reverse a player record's active loan state.
+
+        Delegates the state validation, atomic disk writing to `players.json`,
+        and internal cache synchronization to `_update_player_status`.
+
+        Args:
+            player_name (str): The exact registered name of the target player.
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the target player does not exist, or if the status
+                        update data fails validation.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        logger.info("Action: Returning player %s from loan", player_name)
+        self._update_player_status(player_name, status_key="loaned", status_value=False)
+
+    # --- Match Mutation Workflow ---
+
+    def add_match(
+        self,
+        match_data: MatchOverviewPayload,
+        player_performances: PlayerPerformanceBuffer,
+    ):
+        """Execute an atomic append of a fully constructed match record to matches.json.
+
+        Uses a raw-list append strategy to preserve any historical invalid rows
+        already present on disk, while still validating the newly built match model.
+        Delegates complex relational mapping—including linking raw performance
+        payloads to cached `Player` IDs and resolving polymorphic schemas—to
+        `MatchDataService`.
+
+        Args:
+            match_data (MatchOverviewPayload): Validated dictionary containing global
+                                               match statistics (e.g., score, opponent).
+            player_performances (PlayerPerformanceBuffer): List of raw performance
+                                                           dictionaries extracted
+                                                           from the UI.
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If matches.json cannot be loaded as a raw JSON list.
+            ValidationError: If the newly constructed match model fails
+                             schema validation.
+            KeyError: If expected keys are missing from player performance payloads.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        matches_path: Path = self._require_matches_path()
+        raw_matches: list[JsonValue] = self._json_service.load_raw_list_or_raise(
+            matches_path
+        )
+        match_id: int = self._generate_match_id_from_raw_rows(raw_matches)
+        timestamp: datetime = datetime.now()
+
+        logger.info(
+            "Adding match %s vs %s with %s player performances.",
+            match_id,
+            match_data.get("away_team_name", "Unknown"),
+            len(player_performances),
+        )
+
+        # Get team names from match_data
+        home_raw = match_data.get("home_team_name")
+        away_raw = match_data.get("away_team_name")
+        home_team_name = (
+            home_raw.strip()
+            if isinstance(home_raw, str) and home_raw.strip()
+            else "Unknown"
+        )
+        away_team_name = (
+            away_raw.strip()
+            if isinstance(away_raw, str) and away_raw.strip()
+            else "Unknown"
+        )
+
+        # Get career team name from metadata
+        career_metadata = self.get_current_career_metadata()
+        career_team_name = career_metadata.club_name if career_metadata else None
+
+        if not career_team_name:
+            logger.warning(
+                "Career team name is unknown; normalization may be inaccurate."
+            )
+        normalized_team_names = self._match_service.normalize_team_names(
+            match_names=[home_team_name, away_team_name],
+            full_matches_list=self.matches,
+            career_team_name=career_team_name,
+        )
+
+        # Update match_data with normalized team names
+        match_data["home_team_name"], match_data["away_team_name"] = (
+            normalized_team_names
+        )
+
+        new_match: Match = self._match_service.build_match(
+            match_id=match_id,
+            match_data=match_data,
+            player_performances=player_performances,
+            players=self.players,
+            timestamp=timestamp,
+        )
+
+        self._json_service.append_item_to_json_list_atomic_or_raise(
+            matches_path,
+            new_match,
+        )
+        self.refresh_matches()
+        logger.info(
+            "Match %s persisted successfully. Total cached matches: %s",
+            match_id,
+            len(self.matches),
+        )
+
+    # --- Internal Career Resolution Helpers ---
+
+    def _load_duplicate_career_metadata(
+        self,
+        careers_details: list[CareerDetail],
+        duplicate_club_names: set[str],
+    ) -> dict[str, CareerMetadata | None]:
+        """Load metadata only for careers whose club names are duplicated.
+
+        Performs targeted disk I/O by constructing absolute paths to career
+        subdirectories only if their associated club name appears in the duplicates set.
+        Delegates the raw file reading and Pydantic model mapping to
+        `JsonService.load_json`.
+
+        Args:
+            careers_details (list[CareerDetail]): The global registry of known
+                                                  career profiles.
+            duplicate_club_names (set[str]): The subset of club names requiring deeper
+                                             metadata inspection (e.g.
+                                             fetching manager names).
+
+        Returns:
+            dict[str, CareerMetadata | None]: A mapping of the career's folder name to
+                                              its parsed metadata model. Values may be
+                                              None if the underlying file is missing
+                                              or corrupted.
+        """
+        metadata_by_folder: dict[str, CareerMetadata | None] = {}
+        for career in careers_details:
+            if career.club_name not in duplicate_club_names:
+                continue
+
+            meta_path: Path = self.data_folder / career.folder_name / "metadata.json"
+            metadata_by_folder[career.folder_name] = self._json_service.load_json(
+                meta_path,
+                CareerMetadata,
+                is_list=False,
+            )
+
+        return metadata_by_folder
+
+    # --- Internal Path and Strict-Load Guards ---
+
+    def _require_players_path(self) -> Path:
+        """Validate and retrieve the internal pointer for the active players.json file.
+
+        Acts as a strict pre-flight safety check for disk write operations. Enforces
+        that the global career context has been successfully initialized (via
+        `load_career`) before allowing mutation methods to proceed.
+
+        Returns:
+            Path: The absolute file path to the target players.json file.
+
+        Raises:
+            RuntimeError: If the internal state pointer is unset, indicating that
+                          disk I/O was attempted without an active career context.
+        """
+        players_path: Path | None = self.players_path
+        if players_path is None:
+            raise RuntimeError(
+                "Cannot save players: no active career/players path is set."
+            )
+        return players_path
+
+    def _require_matches_path(self) -> Path:
+        """Validate and retrieve the internal pointer for the active matches.json file.
+
+        Acts as a strict pre-flight safety check for disk write operations. Enforces
+        that the global career context has been successfully initialized (via
+        `load_career`) before allowing mutation methods to proceed.
+
+        Returns:
+            Path: The absolute file path to the target matches.json file.
+
+        Raises:
+            RuntimeError: If the internal state pointer is unset, indicating that
+                          disk I/O was attempted without an active career context.
+        """
+        matches_path: Path | None = self.matches_path
+        if matches_path is None:
+            raise RuntimeError(
+                "Cannot save matches: no active career/matches path is set."
+            )
+        return matches_path
+
+    def _load_players_strict_or_raise(self) -> list[Player]:
+        """Read and validate the active career's players.json file from disk.
+
+        Enforces a strict fail-closed data contract. If the file is missing,
+        malformed, or contains data that violates the Pydantic schema, it refuses
+        to proceed. Delegates the raw disk I/O and parsing to
+        `JsonService.load_list_strict_or_raise`.
+
+        Returns:
+            list[Player]: A fully validated list of Pydantic Player models.
+
+        Raises:
+            RuntimeError: If called before a career context path is initialized.
+            ValueError: If the JSON cannot be decoded or fails schema validation.
+        """
+        if not (players_path := self.players_path):
+            raise RuntimeError(
+                "Cannot load players: no active career/players path is set."
+            )
+
+        return self._json_service.load_list_strict_or_raise(players_path, Player)
+
+    def _load_matches_strict_or_raise(self) -> list[Match]:
+        """Read and validate the active career's matches.json file from disk.
+
+        Enforces a strict fail-closed data contract. If the file is missing,
+        malformed, or contains data that violates the Pydantic schema, it refuses
+        to proceed. Delegates the raw disk I/O and parsing to
+        `JsonService.load_list_strict_or_raise`.
+
+        Returns:
+            list[Match]: A fully validated list of Pydantic Match models.
+
+        Raises:
+            RuntimeError: If called before a career context path is initialized.
+            ValueError: If the JSON cannot be decoded or fails schema validation.
+        """
+        if not (matches_path := self.matches_path):
+            raise RuntimeError(
+                "Cannot load matches: no active career/matches path is set."
+            )
+
+        return self._json_service.load_list_strict_or_raise(matches_path, Match)
+
+    # --- Internal Mutation Utilities ---
+
+    def _update_player_status(
+        self,
+        player_name: str,
+        status_key: Literal["sold", "loaned"],
+        status_value: bool,
+        in_game_date: str | None = None,
+    ) -> None:
+        """Execute a mutation of a specific boolean status flag on a player record.
+
+        Enforces strict fail-closed state validation prior to mutation. Verifies the
+        target player exists in the active registry and delegates the precise field
+        modification to `PlayerDataService`.
+
+        Writes the mutated list to the active `players.json` file using a safe atomic
+        operation, followed by an immediate internal cache re-sync to guarantee
+        alignment between disk and memory.
+
+        Args:
+            player_name (str): The exact registered name of the target player.
+            status_key (Literal["sold", "loaned"]): The specific Pydantic status
+                                                    field to mutate.
+            status_value (bool): The new boolean state to apply to the field.
+            in_game_date (str | None, optional): The chronological date of the mutation,
+                                                 required if processing a sale.
+                                                 Defaults to None.
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the target player does not exist, or if the mutation data
+                        fails strict Pydantic validation (e.g., missing sale date).
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        self.players: list[Player] = self._load_players_strict_or_raise()
+        players_path: Path = self._require_players_path()
+        existing_player: Player = self._player_service.require_existing_player(
+            players=self.players,
+            player_name=player_name,
+            action_description=f"update status '{status_key}'",
+        )
+
+        self._player_service.apply_player_status(
+            existing_player=existing_player,
+            status_key=status_key,
+            status_value=status_value,
+            in_game_date=in_game_date,
+        )
+
+        self._json_service.save_json_atomic_or_raise(players_path, self.players)
+        self.players: list[Player] = self._load_players_strict_or_raise()
+
+    def _generate_id(self, collection: Sequence[SupportsId]) -> int:
+        """Calculate the next sequential integer ID for a data collection.
+
+        Scans the provided sequence of objects (which must expose an `.id` attribute)
+        to determine the current maximum ID, returning the next available integer.
+        Used internally to guarantee unique primary keys
+        before appending models to disk.
+
+        Args:
+            collection (Sequence[SupportsId]): The loaded sequence of data objects.
+
+        Returns:
+            int: The next available ID, defaulting to 1 if the collection is empty.
         """
         return max((item.id for item in collection), default=0) + 1
 
-    def add_competition(self, competition: str) -> None:
-        """Add a competition to the current career's metadata (idempotent).
+    @staticmethod
+    def _generate_match_id_from_raw_rows(raw_rows: list[JsonValue]) -> int:
+        """Calculate the next match ID from raw JSON list entries.
 
-        The competition name will be title-cased. Raises RuntimeError if no
-        career is loaded.
-        """
-        if not self.current_career:
-            raise RuntimeError("No career loaded")
-
-        meta_path = self.data_folder / self.current_career / "metadata.json"
-        metadata = self._load_json(meta_path, CareerMetadata, is_list=False)
-        if metadata is None:
-            raise RuntimeError("Career metadata missing")
-
-        comp_title = competition.strip().title()
-        if comp_title in (metadata.competitions or []):
-            return
-
-        metadata.competitions.append(comp_title)
-        self._save_json(meta_path, metadata)
-
-    def remove_competition(self, competition: str) -> None:
-        """Remove a competition from the current career, blocking if referenced by any match.
-
-        Raises ValueError if any saved match references the competition.
-        """
-        if not self.current_career:
-            raise RuntimeError("No career loaded")
-
-        # Ensure we have latest matches
-        self.refresh_matches()
-        # Check references
-        for m in self.matches:
-            try:
-                if m.data.competition == competition:
-                    raise ValueError(f"Competition '{competition}' is referenced by existing matches and cannot be removed.")
-            except Exception:
-                # If match structure unexpected, continue conservative path
-                continue
-
-        meta_path = self.data_folder / self.current_career / "metadata.json"
-        metadata = self._load_json(meta_path, CareerMetadata, is_list=False)
-        if metadata is None:
-            raise RuntimeError("Career metadata missing")
-
-        comps = [c for c in (metadata.competitions or []) if c != competition]
-        metadata.competitions = comps
-        self._save_json(meta_path, metadata)
-
-    def update_career_metadata(self, updates: dict) -> None:
-        """Update the current career's metadata with the provided fields.
-
-        Loads the existing metadata, applies the updates, validates via the
-        CareerMetadata model, and persists the result atomically.
-        """
-        if not self.current_career:
-            raise RuntimeError("No career loaded")
-
-        meta_path = self.data_folder / self.current_career / "metadata.json"
-        metadata = self._load_json(meta_path, CareerMetadata, is_list=False)
-        if metadata is None:
-            raise RuntimeError("Career metadata missing")
-
-        # Merge and validate by constructing a new CareerMetadata
-        base = metadata.model_dump()
-        base.update(updates)
-
-        try:
-            new_meta = CareerMetadata(**base)
-        except ValidationError as e:
-            logger.error(f"Metadata validation failed: {e}")
-            raise
-
-        # Save atomically
-        self._save_json(meta_path, new_meta)
-    
-    def find_player_by_name(self, name: str) -> Optional[Player]:
-        """Find a player by their name (case-insensitive).
+        Only dictionary rows with an integer `id` are considered. Malformed IDs
+        and non-dict rows are ignored.
 
         Args:
-            name (str): The player's name to search for.
+            raw_rows (list[JsonValue]): Raw decoded entries from matches.json.
 
         Returns:
-            Optional[Player]: The player object if found, else None.
+            int: The next available match ID, defaulting to 1 when none exist.
         """
-        if not name:
-            return None
-        name_norm = name.strip().lower()
-        return next(
-            (
-                player
-                for player in self.players
-                if player.name.strip().lower() == name_norm
-            ),
-            None,
-        )
-    
-    def _find_player_id_by_name(self, name: str) -> int | None:
-        """Find the unique ID of a player by their name (case-insensitive).
-
-        Args:
-            name (str): The player's name to search for.
-
-        Returns:
-            Optional[int]: The player's ID if found, else None.
-        """
-        player = self.find_player_by_name(name)
-        return player.id if player else None
-    
-    def add_match(self, match_data: dict, player_performances: list[dict]):
-        """Add a complete match record to the database.
-
-        Links individual player performances to existing Player IDs.
-        Handles polymorphic creation of Goalkeeper vs Outfield performance objects.
-
-        Args:
-            match_data (dict): General match info (score, opponent, competition, etc.).
-            player_performances (list[dict]): List of raw performance dictionaries 
-                                              from the UI.
-        """
-        # Fail closed: if on-disk matches cannot be fully validated, abort before any write.
-        self.matches = self._load_matches_strict_or_raise()
-        match_id = self._generate_id(self.matches)
-        timestamp = datetime.now()
-
-        logger.info(
-            f"Adding match {match_id} vs {match_data.get('away_team_name', 'Unknown')} "
-            f"with {len(player_performances)} player performances."
-        )
-
-        normalized_performances = []
-        for perf in player_performances:
-            p_name = perf.get("player_name", "")
-            p_id = self._find_player_id_by_name(p_name)
-
-            if not p_id:
-                logger.warning(
-                    f"Skipping stats for '{p_name}' in match {match_id}: "
-                    f"Player not found in database."
-                )
+        max_id = 0
+        for row in raw_rows:
+            if not isinstance(row, dict):
                 continue
 
-            # Remove name, add ID
-            perf_data = {k: v for k, v in perf.items() if k != "player_name"}
-            perf_data["player_id"] = p_id
+            row_id = row.get("id")
+            if type(row_id) is int:
+                max_id = max(max_id, row_id)
 
-            if perf.get("performance_type") == "GK":
-                normalized_performances.append(GoalkeeperPerformance(**perf_data))
-            else:
-                normalized_performances.append(OutfieldPlayerPerformance(**perf_data))
-
-        new_match = Match(
-            id=match_id,
-            datetime=timestamp,
-            data=MatchData(**match_data),
-            player_performances=normalized_performances
-        )
-
-        self.matches.append(new_match)
-        self._save_json_atomic_or_raise(self.matches_path, self.matches)
-        self.matches = self._load_matches_strict_or_raise()
+        return max_id + 1
