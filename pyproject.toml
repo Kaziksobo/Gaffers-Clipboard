@@ -182,7 +182,8 @@ omit = [
     "src/views/*",
     "src/app.py",
     "src/__main__.py",
-    "src/theme.py"
+    "src/theme.py",
+    "src/contracts/ui.py"
 ]
 
 [tool.coverage.report]
