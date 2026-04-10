@@ -11,14 +11,12 @@ more saved examples.
 """
 
 import random
-import sys
 from pathlib import Path
 
 import cv2 as cv
 import numpy as np
 
 project_root = Path(__file__).resolve().parent.parent
-sys.path.append(str(project_root))
 
 TRAINING_IMAGE_SIZE = (30, 35)
 RANDOM_SEED = 42
@@ -66,9 +64,7 @@ def get_digit_directories(training_data_path: Path) -> dict[int, list[Path]]:
     if not digit_files:
         raise ValueError("No digit folders with PNG training samples were found.")
 
-    if empty_digits := [
-        digit for digit, files in digit_files.items() if not files
-    ]:
+    if empty_digits := [digit for digit, files in digit_files.items() if not files]:
         raise ValueError(f"Some digit folders are empty: {empty_digits}")
 
     return digit_files

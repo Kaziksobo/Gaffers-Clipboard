@@ -16,17 +16,16 @@ OCR preprocessing from src.ocr instead of any old template-matching code. That
 keeps the training pipeline aligned with the real inference pipeline.
 """
 
+import time
 from collections import Counter
 from pathlib import Path
-import sys
-import time
+from typing import TypedDict
 
 import cv2 as cv
 
-project_root = Path(__file__).resolve().parent.parent
-sys.path.append(str(project_root))
-
 from src import ocr
+
+project_root = Path(__file__).resolve().parent.parent
 
 # Root folder containing the per-digit training image directories.
 training_data_path = project_root / "model" / "training_data"
@@ -36,7 +35,17 @@ training_data_path = project_root / "model" / "training_data"
 # Each pass starts from one ROI and moves downward by y_increment for a fixed
 # number of rows. Player attributes use lighter erosion because those digits can
 # differ visually from the match overview digits.
-PRESETS = {
+class PassConfig(TypedDict):
+    """Configuration block describing one OCR sampling pass."""
+
+    name: str
+    start_roi: tuple[int, int, int, int]
+    y_increment: int
+    iterations: int
+    preprocess_args: dict[str, int]
+
+
+PRESETS: dict[str, list[PassConfig]] = {
     "match": [
         {
             "name": "left_column",
@@ -83,7 +92,7 @@ def ensure_training_directories() -> None:
         (training_data_path / str(digit)).mkdir(exist_ok=True)
 
 
-def load_screenshot(image_path: Path):
+def load_screenshot(image_path: Path) -> cv.typing.MatLike:
     """Load the screenshot that will be mined for digit samples.
 
     Args:
@@ -101,7 +110,11 @@ def load_screenshot(image_path: Path):
     return screenshot
 
 
-def extract_digit_rois(full_screenshot, roi, preprocess_args=None):
+def extract_digit_rois(
+    full_screenshot: cv.typing.MatLike,
+    roi: tuple[int, int, int, int],
+    preprocess_args: dict[str, int] | None = None,
+) -> list[cv.typing.MatLike]:
     """Extract normalized digit candidate images from a single ROI.
 
     This reuses the current OCR preprocessing path from src.ocr:
@@ -129,13 +142,19 @@ def extract_digit_rois(full_screenshot, roi, preprocess_args=None):
     for _, _x, _y, _w, _h, roi_img in candidates:
         # Resize each extracted digit to the same dimensions used by the live
         # OCR pipeline and by model/train_knn_model.py.
-        digit_resized = cv.resize(roi_img, ocr.STANDARD_SIZE, interpolation=cv.INTER_CUBIC)
+        digit_resized = cv.resize(
+            roi_img, ocr.STANDARD_SIZE, interpolation=cv.INTER_CUBIC
+        )
         digit_rois.append(digit_resized)
 
     return digit_rois
 
 
-def collect_data_for_pass(full_screenshot, pass_config, saved_counts):
+def collect_data_for_pass(
+    full_screenshot: cv.typing.MatLike,
+    pass_config: PassConfig,
+    saved_counts: Counter[str],
+) -> bool:
     """Run one configured extraction pass over a screenshot column or section.
 
     A "pass" means repeatedly sampling a starting ROI and then shifting it
@@ -160,7 +179,9 @@ def collect_data_for_pass(full_screenshot, pass_config, saved_counts):
 
     for iteration in range(iterations):
         roi = (x1, y1, x2, y2)
-        digit_rois = extract_digit_rois(full_screenshot, roi, preprocess_args=preprocess_args)
+        digit_rois = extract_digit_rois(
+            full_screenshot, roi, preprocess_args=preprocess_args
+        )
 
         print(f"\nROI {iteration + 1}/{iterations}: {roi}")
 
@@ -210,7 +231,7 @@ def collect_data_for_pass(full_screenshot, pass_config, saved_counts):
     return True
 
 
-def choose_preset():
+def choose_preset() -> str:
     """Ask the user which screenshot layout should be processed.
 
     Returns:
@@ -232,7 +253,7 @@ def choose_preset():
     raise ValueError("Invalid preset selection.")
 
 
-def print_summary(saved_counts):
+def print_summary(saved_counts: Counter[str]) -> None:
     """Print a simple per-digit summary of newly saved samples."""
     print("\nSaved contours summary:")
     for digit in map(str, range(10)):
@@ -244,7 +265,9 @@ def main():
     ensure_training_directories()
     print("Training directories set up.")
 
-    image_path = Path(input("Enter the path to the screenshot image: ").strip().strip('"'))
+    image_path = Path(
+        input("Enter the path to the screenshot image: ").strip().strip('"')
+    )
     screenshot = load_screenshot(image_path)
     preset_name = choose_preset()
 
