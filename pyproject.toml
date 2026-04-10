@@ -28,3 +28,170 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.1.0",
+    "pytest-mock>=3.15.1",
+    "ruff>=0.15.8",
+    "ty>=0.0.27",
+]
+
+[tool.ruff]
+# Parse and lint using Python 3.13 syntax and semantics.
+target-version = "py313"
+# Shared max line width for style/lint checks.
+line-length = 88
+# Treat src/ as first-party so absolute src.* imports are classified correctly.
+src = ["src"]
+
+[tool.ruff.lint]
+# Enabled rule families:
+# E/W = pycodestyle errors/warnings.
+# F = Pyflakes correctness checks.
+# I = isort import ordering checks.
+# D = pydocstyle docstring checks.
+# UP = pyupgrade modern Python suggestions.
+# N = pep8-naming checks.
+# C90 = mccabe cyclomatic complexity checks.
+# T20 = print/pprint usage checks.
+# B = flake8-bugbear bug-prone pattern checks.
+# SIM = flake8-simplify logic simplification checks.
+# PTH = pathlib-preference checks.
+# S = security checks (Bandit family).
+# ANN = annotation coverage checks.
+# RUF = Ruff-native extra checks.
+select = ["E", "W", "F", "I", "D", "UP", "N", "C90", "T20", "B", "SIM", "PTH", "S", "ANN", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignoring s101 (rule code blocking assert statements) in the testing files
+"tests/*.py" = ["S101"]
+# Ignoring T201 (rule code blocking print statements in script files
+"scripts/*.py" = ["T201"]
+"model/**/*.py" = ["T201"]
+
+[tool.ruff.lint.flake8-annotations]
+# Allow Any for *args/**kwargs where strict typing is often impractical.
+allow-star-arg-any = true
+# Reduce noise for functions that implicitly return None.
+suppress-none-returning = true
+
+[tool.ruff.lint.isort]
+# Keep src.* imports in first-party groups when sorting imports.
+known-first-party = ["src"]
+
+[tool.ruff.lint.pydocstyle]
+# Enforce PEP 257 docstring conventions.
+convention = "pep257"
+
+[tool.ruff.lint.mccabe]
+# Flag functions whose cyclomatic complexity is above 10.
+max-complexity = 10
+
+[tool.ty.environment]
+# Analyze against Python 3.13 behavior.
+python-version = "3.13"
+
+[tool.ty.src]
+# Restrict analysis to the application source package.
+include = ["src"]
+# Skip cache, environment, logs, and runtime/training data directories.
+exclude = [
+    "**/__pycache__/**",
+    ".venv/**",
+    "logs/**",
+    "data/**",
+    "model/training_data/**",
+]
+# Respect ignore-file patterns when building the analysis file set.
+respect-ignore-files = true
+
+[tool.ty.analysis]
+# Keep explicit type ignore comments meaningful.
+respect-type-ignore-comments = true
+# Accept unresolved imports for known third-party modules with weak typing/stubs.
+allowed-unresolved-imports = [
+    "cv2",
+    "cv2.*",
+    "customtkinter",
+    "customtkinter.*",
+    "pyautogui",
+    "PIL",
+    "PIL.*",
+]
+# Treat the same modules as Any to avoid cascading false positives.
+replace-imports-with-any = [
+    "cv2",
+    "cv2.*",
+    "customtkinter",
+    "customtkinter.*",
+    "pyautogui",
+    "PIL",
+    "PIL.*",
+]
+
+[tool.ty.terminal]
+# Use full diagnostic output for richer context per finding.
+output-format = "full"
+# Warnings are advisory and do not fail the command.
+error-on-warning = false
+
+[tool.ty.rules]
+# Severity legend:
+# - error: fail-check findings for high-confidence/high-impact issues.
+# - warn: advisory findings for iterative cleanup.
+
+# Attribute access may fail on some control paths.
+possibly-missing-attribute = "warn"
+# Name/symbol may not resolve in all contexts.
+possibly-unresolved-reference = "warn"
+
+# Stale type-ignore comments are not allowed.
+unused-type-ignore-comment = "error"
+# Stale generic ignore comments are not allowed.
+unused-ignore-comment = "error"
+# Ignore comments must reference valid rule names.
+ignore-comment-unknown-rule = "error"
+
+# Import target may be missing at runtime.
+possibly-missing-import = "error"
+# Statically detectable divide-by-zero path.
+division-by-zero = "error"
+# Awaitable created but never awaited/consumed.
+unused-awaitable = "error"
+# Referenced global name cannot be resolved.
+unresolved-global = "error"
+
+# Deprecated API usage (tracked as warning for staged migration).
+deprecated = "warn"
+# Imported submodule may not exist in some environments.
+possibly-missing-submodule = "warn"
+# Cast does not change the inferred type.
+redundant-cast = "warn"
+
+[tool.pytest.ini_options]
+# Automatically run coverage against the src/ directory and show missing lines in the terminal
+addopts = "-v"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]
+# Explicitly tell the coverage engine to ignore our UI views and entry points
+omit = [
+    "src/views/*",
+    "src/app.py",
+    "src/__main__.py",
+    "src/theme.py"
+]
+
+[tool.coverage.report]
+# Fail the CI build if the core logic drops below 85% coverage
+fail_under = 85
+# Ignore coverage for abstract methods or defensive code paths
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError"
+]
