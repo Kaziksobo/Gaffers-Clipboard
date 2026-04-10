@@ -1,3 +1,17 @@
+"""Shared UI theme tokens for typography and semantic colors.
+
+This module exposes a single `theme` object (a nested `SimpleNamespace`) used
+across view frames and widgets to keep visual styling consistent.
+
+Sections:
+- `theme.fonts`: Named font tuples for titles, body text, and button labels.
+- `theme.semantic_colors`: Named colors for status feedback and interactive
+    hover states.
+
+Keeping these values centralized avoids hard-coded styles in individual UI
+components and makes global visual updates straightforward.
+"""
+
 from types import SimpleNamespace
 
 theme = SimpleNamespace(
