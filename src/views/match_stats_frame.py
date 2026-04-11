@@ -389,10 +389,7 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         if not self.validate_xg(away_xg):
             return False
 
-        if not self.validate_maximum():
-            return False
-
-        return self.buffer_data()
+        return self._buffer_data() if self._validate_maximum() else False
 
     def _collect_and_convert(self) -> None:
         """Collect form values and normalize them into the overview payload.
@@ -538,10 +535,10 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             ("free_kicks", "Free Kicks", 100),
             ("penalty_kicks", "Penalty Kicks", 20),
         ]
-        for stat_key, stat_label, max_val in stat_max_rules:
-            if not self.validate_stat_max(self.ui_data, stat_key, stat_label, max_val):
-                return False
-        return True
+        return all(
+            self.validate_stat_max(self.ui_data, stat_key, stat_label, max_val)
+            for stat_key, stat_label, max_val in stat_max_rules
+        )
 
     def _buffer_data(self) -> bool:
         """Persist validated match overview data into the controller buffer.
