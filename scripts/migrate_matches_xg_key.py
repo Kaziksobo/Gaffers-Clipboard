@@ -1,4 +1,35 @@
-"""Migrate matches.json files by renaming the key xG -> xg recursively."""
+"""Migrate matches.json files by renaming the JSON key "xG" to "xg" recursively.
+
+Usage:
+        python scripts/migrate_matches_xg_key.py <path> [<path> ...]
+
+Description:
+- Accepts one or more file or directory paths. Files are processed only when
+    their filename is `matches.json` (case-insensitive); directories are scanned
+    recursively for files named `matches.json`.
+- Recursively traverses JSON objects and lists, renaming object keys named
+    "xG" to "xg".
+- If both "xG" and "xg" exist in the same object, the existing "xg" is
+    preserved and the "xG" entry is removed from the output.
+- Writes changed files atomically (writes to a temporary file then replaces
+    the original) and outputs per-file status lines and a final SUMMARY line.
+
+Exit codes:
+- 0: completed with no fatal errors.
+- 1: one or more fatal errors occurred while processing files.
+
+Examples:
+        # Run on a directory (recursive)
+        python scripts/migrate_matches_xg_key.py data/valencia_cf_1
+
+        # Run on a single file
+        python scripts/migrate_matches_xg_key.py data/valencia_cf_1/matches.json
+
+        # Use the project's uv runner
+        uv run python scripts/migrate_matches_xg_key.py data/valencia_cf_1
+
+Use `-h` to show argparse help/usage.
+"""
 
 from __future__ import annotations
 

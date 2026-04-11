@@ -1,3 +1,12 @@
+"""Unit tests for the PlayerService data layer.
+
+This module contains unit tests for
+``src.services.data.player_service.PlayerService``. The tests cover parsing
+and validation of player core fields, building attribute snapshots for
+outfield and goalkeeper players, player lookup utilities, and creating or
+updating player records.
+"""
+
 from __future__ import annotations
 
 import re
