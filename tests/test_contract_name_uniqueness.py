@@ -1,10 +1,7 @@
 """Guardrails for contract naming hygiene across contract modules."""
 
-# ruff: noqa: I001
-
-import pathlib
 import ast
-
+import pathlib
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[1]
 CONTRACTS_DIR = PROJECT_ROOT / "src" / "contracts"
