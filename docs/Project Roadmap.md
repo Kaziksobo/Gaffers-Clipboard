@@ -123,7 +123,7 @@ The goal of this phase is to refactor the application's architecture to support 
 
 ***Status: In Progress***
 
-The goal of this phase is to "harden" the application—improving stability, cleaning up the codebase, and adding essential Quality of Life features for the end user before diving into advanced analytics. 
+The goal of this phase is to "harden" the application by improving stability, formalizing architecture boundaries, and introducing a modern engineering baseline (tooling, typing, and tests) before diving into advanced analytics.
 
 ### To-Do List: 
 - [x] **Codebase Refactoring**
@@ -133,10 +133,19 @@ The goal of this phase is to "harden" the application—improving stability, cle
 	- [x] Look at fixing OCR digit ordering for cases like 0.4 being returned as 4.0.
 	- [x] Implement `pydantic` across the data manager for more rigorous data structuring
 		- [x] Possibly implement across the rest of the application for documentation purposes?
+	- [x] Refactor application orchestration to use service-layer abstractions (`src/services/app` and `src/services/data`) so business logic is less tightly coupled to UI and persistence details.
 - [x] **Synchronisation**
 	- [x] Transition from using `time.sleep` for the screenshot delay to a different method that doesn't freeze the application.
-- [x] **Dependency Management**
-	- [x] Transition from standard `pip` and `requirements.txt` to `Poetry` for deterministic builds and dependency grouping, setting up a clean environment for final `.exe` packaging.
+- [x] **Dependency & Environment Management**
+	- [x] Standardize project setup and dependency management with `uv` (runtime + dev groups in `pyproject.toml`, lockfile-based installs via `uv.lock`).
+	- [x] Move away from legacy `requirements.txt`/ad-hoc `pip` workflows to reproducible, project-level commands.
+- [x] **Linting, Types & Quality Gates**
+	- [x] Configure `ruff` as the primary linting and style gate (imports, docstrings, complexity, naming, annotation coverage, and correctness/security rule families).
+	- [x] Configure `ty` for strict static type analysis over `src/`, with explicit rule severities and managed third-party typing exceptions.
+	- [x] Tighten typing conventions around contracts/service boundaries and enforce cleaner absolute import organization (`src.*`).
+- [x] **Testing Infrastructure**
+	- [x] Expand the `pytest` suite to cover service behavior, data contracts, integration flows, and OCR regression paths.
+	- [x] Add `pytest-cov` + coverage thresholds for core logic to prevent silent quality regressions.
 - [x] **Implement Logging**
 	- [x] Replace all `print()` statements with the Python `logging` module to generate well-formatted, timestamped log files for easier debugging.
 - [x] **Error Handling & Feedback** 
@@ -153,17 +162,17 @@ The goal of this phase is to "harden" the application—improving stability, cle
 	- [x] **Sales and Loans:** Add functionality to mark players as sold or loaned out
 	- [x] **GK Performance Frame:** Create a dedicated UI for entering/OCR-ing Goalkeeper match performance stats.
 	- [x] **Optional Player Stats:** Add a toggle or logic to allow saving a match result *without* needing to enter individual player performances.
-	- [x] **Position Select:** Add a position select widget (dropdown with checkboxes) to the player performance frames, allowing the user to specify what position a player played in the match.
+	- [x] **Position Capture (Match Performance):** Add a dedicated positions-played input for performance frames with comma-separated multi-position support, strict validation against allowed position codes, and auto-fill from selected player bio when available..
 	- [x] **In-Game date**: Add in-game date fields across the app in all screens that need it.
 	- [x] **Update Player**: On the screens to add or update player attributes, next to the entry box to enter the player name, add a player dropdown to select from already saved players to update them easier.
-	- [x] **Performance Sidebar:** Add a scrollable UI pane to the `PlayerStatsFrame` and `GKStatsFrame` that acts as a visual staging buffer. As player performances are captured, they populate this sidebar, displaying the player's name, assigned position(s), and a dedicated "Remove" button to allow users to correct mistakes before committing the final save.
+	- [x] **Performance Sidebar:** Add a scrollable, collapsible staging sidebar to `PlayerStatsFrame` and `GKStatsFrame` that shows buffered players (name + positions played), supports per-row remove actions, and keeps collapse state synchronized while switching between those frames.
 	- [x] **Theme & UX Flourishes:** Integrate the application's defined accent colour to improve visual feedback. Implement active focus borders for `CTkEntry` widgets (highlighting the box currently being typed in), update button hover states, and explore any other theming changes.
 - [ ] **User Experience & Documentation**
 	- [x] Add an "Instructions" or "Help" tab/modal within the app explaining how to capture data. 
-	- [ ] Thoroughly review all docstrings, annotations and comments for pep compliance and readability
-	- [ ] Write a comprehensive `README.md` for the GitHub repository detailing installation and usage. 
+	- [x] Thoroughly review all docstrings, annotations, and comments for PEP compliance and readability.
+	- [ ] Refresh `README.md` so setup and daily workflows match the current stack (`uv`, `ruff`, `ty`, and `pytest`).
 
-**End Goal for Phase 7:** The application is stable, resolution-independent, self-cleaning, and user-friendly enough for someone other than the developer to use without crashing. 
+**End Goal for Phase 7:** The application is stable, resolution-independent, self-cleaning, and user-friendly, with a service-oriented architecture and an enforceable engineering baseline (managed dependencies, strict lint/type checks, and automated tests).
 
 ----
 ## Phase 8: Analytics Engine & Squad Hub
