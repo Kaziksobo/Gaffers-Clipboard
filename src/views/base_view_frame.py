@@ -480,7 +480,7 @@ class BaseViewFrame(ctk.CTkFrame):
         data_definitions: list[tuple[str, str]],
         min_val: int = ATTRIBUTE_RATING_MIN,
         max_val: int = ATTRIBUTE_RATING_MAX,
-    ) -> bool:
+    ) -> bool:  # sourcery skip: extract-method
         """Validate numeric attribute values fall within an allowed range.
 
         Accepts int/float inputs directly and attempts string-to-float parsing
