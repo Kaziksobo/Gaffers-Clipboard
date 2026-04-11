@@ -238,7 +238,7 @@ class GKStatsFrame(
         self.refresh_performance_sidebar()
         self.skip_save_var.set(False)
 
-    def collect_data(self) -> bool:
+    def _collect_data(self) -> bool:
         """Collect, validate, and buffer a single goalkeeper performance row.
 
         Resolves selected player identity, converts stat inputs to integers,
@@ -344,9 +344,9 @@ class GKStatsFrame(
         ui_data["player_name"] = player_name
         ui_data["performance_type"] = "GK"
 
-        return self.buffer_player_performance(ui_data, player_name)
+        return self._buffer_player_performance(ui_data, player_name)
 
-    def buffer_player_performance(
+    def _buffer_player_performance(
         self, ui_data: dict[str, int | str | None], player_name: str
     ) -> bool:
         """Send validated goalkeeper performance data to the controller buffer.
@@ -395,7 +395,7 @@ class GKStatsFrame(
             )
             return False
 
-    def on_next_outfield_player_button_press(self) -> None:
+    def _on_next_outfield_player_button_press(self) -> None:
         """Stage current data and transition to outfield-player OCR flow.
 
         Unless skip-save is enabled, this action validates and buffers current
@@ -423,7 +423,7 @@ class GKStatsFrame(
             )
             return
 
-    def on_next_goalkeeper_button_press(self) -> None:
+    def _on_next_goalkeeper_button_press(self) -> None:
         """Stage current data and transition to next-goalkeeper OCR flow.
 
         Unless skip-save is enabled, this action validates and buffers current
@@ -447,7 +447,7 @@ class GKStatsFrame(
             )
             return
 
-    def on_done_button_press(self) -> None:
+    def _on_done_button_press(self) -> None:
         """Stage current stats and finalize full match persistence.
 
         Unless skip-save is enabled, this action validates and buffers the
@@ -490,4 +490,4 @@ class GKStatsFrame(
             skip_var.set(False)
             return True
 
-        return self.collect_data()
+        return self._collect_data()
