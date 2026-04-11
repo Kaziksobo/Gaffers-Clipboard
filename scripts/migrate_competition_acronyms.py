@@ -1,12 +1,34 @@
-"""One-time migration for league/competition acronym normalization.
+"""One-time migration for league/competition label normalization.
 
-This script updates existing career data files to preserve configured football
-acronyms (FIFA, FA, UEFA, EFL, MLS) in:
-- data/*/metadata.json: league and competitions
-- data/*/matches.json: data.competition per match row
+Usage:
+        python scripts/migrate_competition_acronyms.py [--apply] [<path> ...]
 
-By default, the script runs in dry-run mode and reports what would change.
-Use --apply to write changes.
+Description:
+- Scans career data files and applies the app's current competition/league
+    normalization helper (`src.utils.capitalize_competition_name`).
+- Targets:
+    - data/*/metadata.json: normalizes the `league` value and items in the
+        `competitions` list.
+    - data/*/matches.json: normalizes `data.competition` for each match row.
+- By default the script runs in dry-run mode and reports what would change.
+    Use `--apply` to write changes back to disk; writes are performed atomically.
+- If no paths are supplied the script defaults to scanning `./data`.
+
+Exit codes:
+- 0: completed with no fatal errors.
+- 1: one or more fatal errors occurred while processing files.
+
+Examples:
+        # Dry-run (default) scanning the data directory
+        python scripts/migrate_competition_acronyms.py
+
+        # Dry-run on a specific career directory
+        python scripts/migrate_competition_acronyms.py data/valencia_cf_1
+
+        # Apply changes to the specified path(s)
+        python scripts/migrate_competition_acronyms.py --apply data
+
+Use `-h` for full argparse help/usage.
 """
 
 from __future__ import annotations
@@ -18,7 +40,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from src.contracts.backend import JsonValue
-from src.text_normalization import normalize_label_with_acronyms
+from src.utils import capitalize_competition_name
 
 TARGET_FILE_NAMES: frozenset[str] = frozenset({"metadata.json", "matches.json"})
 
@@ -55,7 +77,7 @@ def _write_json_atomic(path: Path, payload: JsonValue) -> None:
 
 def _normalize_if_non_empty(value: str) -> str:
     """Normalize non-empty text and leave empty/whitespace-only values unchanged."""
-    return normalize_label_with_acronyms(value) if value.strip() else value
+    return capitalize_competition_name(value) if value.strip() else value
 
 
 def _migrate_metadata_payload(value: JsonValue) -> tuple[JsonValue, int]:
@@ -176,8 +198,8 @@ def _process_file(path: Path, apply_changes: bool) -> tuple[bool, int]:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Normalize league/competition labels to preserve football acronyms "
-            "in metadata.json and matches.json files."
+            "Normalize league/competition labels with current app text "
+            "normalization in metadata.json and matches.json files."
         )
     )
     parser.add_argument(
