@@ -480,6 +480,11 @@ class MatchData(BaseModel):
     """
 
     in_game_date: dt.datetime
+    half_length: int = Field(
+        ge=CAREER_HALF_LENGTH_MIN,
+        le=CAREER_HALF_LENGTH_MAX,
+        description="IRL length of each half in minutes for this specific match",
+    )
     competition: str
     home_team_name: str
     away_team_name: str

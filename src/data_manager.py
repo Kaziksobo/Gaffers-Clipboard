@@ -836,6 +836,17 @@ class DataManager:
             normalized_team_names
         )
 
+        # Get half length from metadata and add to match_data
+        half_length = career_metadata.half_length if career_metadata else None
+        if half_length is not None:
+            match_data["half_length"] = half_length
+        else:
+            logger.warning(
+                "Career half length is unknown; "
+                "defaulting to 8 minutes in match record."
+            )
+            match_data["half_length"] = 8
+
         new_match: Match = self._match_service.build_match(
             match_id=match_id,
             match_data=match_data,
