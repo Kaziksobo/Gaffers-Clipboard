@@ -134,10 +134,10 @@ We maintain strict quality control using `pytest`, `pytest-cov`, `pytest-mock`, 
 
 ### Testing
 
-p%):
+Run the full test suite with coverage reporting:
 
 ```bash
-uv run pytest
+uv run pytest --cov=src --cov-report=html
 ```
 
 ### Contributing Standards
@@ -164,7 +164,7 @@ uv run ruff format .
 
 We maintain a detailed, living roadmap for this project.
 
-🔗 **[View the full Project Roadmap here](docs/Project_Roadmap.md)**
+🔗 **[View the full Project Roadmap here](docs/project_roadmap.md)**
 
 > **Tip:** The documentation and roadmap for this project are highly interlinked and specifically formatted as an **[Obsidian Vault](https://obsidian.md/)**. For the best reading and navigation experience, we highly recommend opening the `docs/` directory directly within Obsidian.
 
