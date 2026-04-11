@@ -208,21 +208,6 @@ class PlayerStatsFrame(
         self.direction_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.register_wrapping_widget(self.direction_label, width_ratio=0.3)
 
-        self.next_player_button = ctk.CTkButton(
-            self.direction_frame,
-            text="Scan an Outfield Player",
-            font=self.fonts["button"],
-            command=lambda: self._on_next_outfield_player_button_press(),
-        )
-        self.next_player_button.grid(row=0, column=1, padx=5, pady=5, sticky="e")
-
-        self.next_goalkeeper_button = ctk.CTkButton(
-            self.direction_frame,
-            text="Scan a Goalkeeper",
-            font=self.fonts["button"],
-            command=lambda: self._on_next_goalkeeper_button_press(),
-        )
-        self.next_goalkeeper_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
         # Checkbox to control whether the current player's data should be saved
         self.skip_save_var = ctk.BooleanVar(value=False)
         self.skip_save_checkbox = ctk.CTkCheckBox(
@@ -230,7 +215,23 @@ class PlayerStatsFrame(
             text="Skip saving current player",
             variable=self.skip_save_var,
         )
-        self.skip_save_checkbox.grid(row=0, column=3, padx=5, pady=5, sticky="e")
+        self.skip_save_checkbox.grid(row=0, column=1, padx=5, pady=5, sticky="e")
+
+        self.next_player_button = ctk.CTkButton(
+            self.direction_frame,
+            text="Scan an Outfield Player",
+            font=self.fonts["button"],
+            command=lambda: self._on_next_outfield_player_button_press(),
+        )
+        self.next_player_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
+
+        self.next_goalkeeper_button = ctk.CTkButton(
+            self.direction_frame,
+            text="Scan a Goalkeeper",
+            font=self.fonts["button"],
+            command=lambda: self._on_next_goalkeeper_button_press(),
+        )
+        self.next_goalkeeper_button.grid(row=0, column=3, padx=5, pady=5, sticky="e")
 
         self.all_players_added_button = ctk.CTkButton(
             self.direction_frame,
@@ -284,6 +285,7 @@ class PlayerStatsFrame(
         )
         self.performance_sidebar.set_collapse_state(initial_state)
         self.refresh_performance_sidebar()
+        self.skip_save_var.set(False)
 
         self.position_entry.delete(0, "end")
         self.position_entry.configure(placeholder_text="e.g. RW, LW")
@@ -323,10 +325,7 @@ class PlayerStatsFrame(
         validated and buffered before triggering OCR for the next outfield
         profile and returning to this frame with refreshed data.
         """
-        # If the user has enabled skipping, bypass validation and buffering
-        if (
-            not getattr(self, "skip_save_var", None) or not self.skip_save_var.get()
-        ) and not self._collect_data():
+        if not self._collect_data_unless_skipped():
             return
         try:
             # Trigger the controller OCR logic for the next player
@@ -354,10 +353,7 @@ class PlayerStatsFrame(
         buffered before OCR is run for goalkeeper statistics and navigation
         continues to the goalkeeper review frame.
         """
-        # If the user has enabled skipping, bypass validation and buffering
-        if (
-            not getattr(self, "skip_save_var", None) or not self.skip_save_var.get()
-        ) and not self._collect_data():
+        if not self._collect_data_unless_skipped():
             return
         try:
             # Trigger the controller OCR logic for the goalkeeper
@@ -385,14 +381,14 @@ class PlayerStatsFrame(
     def _on_done_button_press(self) -> None:
         """Validate final data and persist the buffered match payload.
 
-        Collects and buffers the current player's stats, then instructs the
-        controller to save all buffered match records and route to the
-        confirmation frame.
+        Unless skip-save is enabled, this action collects and buffers the
+        current player's stats before instructing the controller to save all
+        buffered match records and route to the confirmation frame.
         """
-        if not self._collect_data():
+        if not self._collect_data_unless_skipped():
             return
         try:
-            logger.info("Initiating final match save from GKStatsFrame.")
+            logger.info("Initiating final match save from PlayerStatsFrame.")
             self.controller.save_buffered_match()
             self.controller.show_frame(
                 self.controller.get_frame_class("MatchAddedFrame")
@@ -410,6 +406,22 @@ class PlayerStatsFrame(
                 ),
             )
             return
+
+    def _collect_data_unless_skipped(self) -> bool:
+        """Collect and buffer current player unless skip-save is enabled.
+
+        Returns:
+            bool: True when processing can continue; False when validation or
+                buffering fails.
+        """
+        skip_var = getattr(self, "skip_save_var", None)
+        if skip_var is not None and bool(skip_var.get()):
+            logger.info("Skipping save for current outfield player by user request.")
+            # Treat skip as a one-shot action for the currently reviewed player.
+            skip_var.set(False)
+            return True
+
+        return self._collect_data()
 
     def _collect_data(self) -> bool:
         """Collect, validate, and buffer outfield player performance input.
@@ -550,10 +562,10 @@ class PlayerStatsFrame(
             ("distance_sprinted", "Distance Sprinted (km)", 10),
         ]
 
-        for key, label, max_val in stat_max_rules:
-            if not self.validate_stat_max(self.ui_data, key, label, max_value=max_val):
-                return False
-        return True
+        return all(
+            self.validate_stat_max(self.ui_data, key, label, max_value=max_val)
+            for key, label, max_val in stat_max_rules
+        )
 
     def _validate_positions(self, positions_played: str) -> bool:
         """Validate and normalize the player positions input.
