@@ -121,7 +121,7 @@ The goal of this phase is to refactor the application's architecture to support 
 ---
 ## Phase 7: Refactoring, Usability & Robustness 
 
-***Status: In Progress***
+**Status: Complete**
 
 The goal of this phase is to "harden" the application by improving stability, formalizing architecture boundaries, and introducing a modern engineering baseline (tooling, typing, and tests) before diving into advanced analytics.
 
@@ -167,17 +167,17 @@ The goal of this phase is to "harden" the application by improving stability, fo
 	- [x] **Update Player**: On the screens to add or update player attributes, next to the entry box to enter the player name, add a player dropdown to select from already saved players to update them easier.
 	- [x] **Performance Sidebar:** Add a scrollable, collapsible staging sidebar to `PlayerStatsFrame` and `GKStatsFrame` that shows buffered players (name + positions played), supports per-row remove actions, and keeps collapse state synchronized while switching between those frames.
 	- [x] **Theme & UX Flourishes:** Integrate the application's defined accent colour to improve visual feedback. Implement active focus borders for `CTkEntry` widgets (highlighting the box currently being typed in), update button hover states, and explore any other theming changes.
-- [ ] **User Experience & Documentation**
+- [x] **User Experience & Documentation**
 	- [x] Add an "Instructions" or "Help" tab/modal within the app explaining how to capture data. 
 	- [x] Thoroughly review all docstrings, annotations, and comments for PEP compliance and readability.
-	- [ ] Refresh `README.md` so setup and daily workflows match the current stack (`uv`, `ruff`, `ty`, and `pytest`).
+	- [x] Refresh `README.md` so setup and daily workflows match the current stack (`uv`, `ruff`, `ty`, and `pytest`).
 
 **End Goal for Phase 7:** The application is stable, resolution-independent, self-cleaning, and user-friendly, with a service-oriented architecture and an enforceable engineering baseline (managed dependencies, strict lint/type checks, and automated tests).
 
 ----
 ## Phase 8: Analytics Engine & Squad Hub
 
-**Status: Not Started**
+**Status: Starting**
 
 The goal of this phase is to transform the application from a raw data-entry tool into a living "Backroom Staff." This involves building a modular analytics engine using pure math, NumPy, and Scikit-Learn to generate actionable insights, and creating immersive UI dashboards to visualize this data.
 
