@@ -6,7 +6,7 @@ player update flow. It intentionally performs no filesystem I/O.
 
 import logging
 from datetime import datetime
-from typing import Literal
+from typing import Literal, cast
 
 from pydantic import ValidationError
 
@@ -69,18 +69,34 @@ class PlayerService:
         """Extract and normalize required top-level player identity/bio fields.
 
         Raises:
-            ValueError: If the player name is missing or empty after normalization.
+            ValueError: If any required field is missing or empty after normalization.
         """
         player_name = self._as_non_empty_str(player_ui_data.get("name"))
         if player_name is None:
-            raise ValueError("Player name is required.")
+            raise ValueError("Player name is required as a non-empty string.")
+
+        country = self._as_non_empty_str(player_ui_data.get("country"))
+        if country is None:
+            raise ValueError("Player country is required as a non-empty string.")
+
+        age = self._as_int(player_ui_data.get("age"))
+        if age is None:
+            raise ValueError("Player age is required as an integer.")
+
+        height = self._as_non_empty_str(player_ui_data.get("height"))
+        if height is None:
+            raise ValueError("Player height is required as a non-empty string.")
+
+        weight = self._as_int(player_ui_data.get("weight"))
+        if weight is None:
+            raise ValueError("Player weight is required as an integer.")
 
         return PlayerCoreFields(
             name=player_name,
-            country=self._as_non_empty_str(player_ui_data.get("country")),
-            age=self._as_int(player_ui_data.get("age")),
-            height=self._as_non_empty_str(player_ui_data.get("height")),
-            weight=self._as_int(player_ui_data.get("weight")),
+            country=country,
+            age=age,
+            height=height,
+            weight=weight,
         )
 
     def find_player_by_name(self, players: list[Player], name: str) -> Player | None:
@@ -89,7 +105,7 @@ class PlayerService:
         This helper is pure and performs no I/O. It mirrors DataManager's
         previous behavior but allows the search logic to be unit-tested.
         """
-        if not name:
+        if not name or not name.strip():
             return None
         name_norm = name.strip().lower()
         return next(
@@ -217,31 +233,34 @@ class PlayerService:
         Returns:
             Player: The newly created player instance.
         """
-        country = core_fields.country
-        age = core_fields.age
-        height = core_fields.height
-        weight = core_fields.weight
+        name = self._as_non_empty_str(core_fields.name)
+        country = self._as_non_empty_str(core_fields.country)
+        age = self._as_int(core_fields.age)
+        height = self._as_non_empty_str(core_fields.height)
+        weight = self._as_int(core_fields.weight)
+        normalized_position = self._as_non_empty_str(position)
 
         if (
-            country is None
+            name is None
+            or country is None
             or age is None
             or height is None
             or weight is None
-            or position is None
+            or normalized_position is None
         ):
             raise ValueError(
                 "New players require name, country, age, height, weight, and position."
             )
 
-        logger.info("Adding new player: %s", core_fields.name)
+        logger.info("Adding new player: %s", name)
         return Player(
             id=player_id,
-            name=core_fields.name,
+            name=name,
             nationality=country,
             age=age,
             height=height,
             weight=weight,
-            positions=[position],
+            positions=[cast(PositionType, normalized_position)],
             attribute_history=[attributes_snapshot],
             financial_history=[],
             injury_history=[],
