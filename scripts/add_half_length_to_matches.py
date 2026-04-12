@@ -6,8 +6,10 @@ Usage:
 
 Description:
 - Scans given career folder for a metadata.json file, and scrapes the half_length value.
-- For each match in matches.json, if half_length is missing, it adds the
-    value from metadata.
+- For each match in matches.json, ensures half_length is stored at
+    match["data"]["half_length"].
+- If a misplaced top-level match["half_length"] exists, it is migrated into
+    match["data"] and removed from the top level.
 - By default, the script runs in "dry-run" mode, printing proposed changes
     without modifying files.
 - Use `--apply` to write changes back to disk; writes are performed atomically.
@@ -71,10 +73,40 @@ def _find_half_length(metadata: dict[str, object]) -> object | None:
     )
 
 
+def _ensure_match_data_half_length(match: dict[str, object], fallback: object) -> bool:
+    """Ensure a match stores `half_length` under `match["data"]`.
+
+    Returns True when the match was modified.
+    """
+    match_data = match.get("data")
+    if not isinstance(match_data, dict):
+        return False
+
+    changed = False
+    top_level_half_length = match.get("half_length")
+
+    if "half_length" not in match_data:
+        match_data["half_length"] = (
+            top_level_half_length if top_level_half_length is not None else fallback
+        )
+        changed = True
+
+    if "half_length" in match:
+        del match["half_length"]
+        changed = True
+
+    return changed
+
+
+def _resolve_match_identifier(match: dict[str, object], idx: int) -> str:
+    match_id = match.get("match_id") or match.get("id") or match.get("date") or str(idx)
+    return str(match_id)
+
+
 def process_career_folder(
     folder: str | Path, apply: bool = False
 ) -> tuple[int, list[tuple[int, str]], str]:
-    """Process a career folder and add missing `half_length` values.
+    """Process a career folder and ensure `data.half_length` is populated.
 
     Returns a tuple: (count_updated, details_list, matches_path)
     """
@@ -105,15 +137,9 @@ def process_career_folder(
     for idx, match in enumerate(matches_list):
         if not isinstance(match, dict):
             continue
-        if "half_length" not in match:
-            match["half_length"] = half_length
-            match_id = (
-                match.get("match_id")
-                or match.get("id")
-                or match.get("date")
-                or str(idx)
-            )
-            updated.append((idx, str(match_id)))
+        if not _ensure_match_data_half_length(match, half_length):
+            continue
+        updated.append((idx, _resolve_match_identifier(match, idx)))
 
     if updated and apply:
         _write_json_atomic(matches_path, container)
