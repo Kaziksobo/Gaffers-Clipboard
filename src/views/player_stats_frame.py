@@ -290,6 +290,9 @@ class PlayerStatsFrame(
         self.position_entry.delete(0, "end")
         self.position_entry.configure(placeholder_text="e.g. RW, LW")
 
+        # Reset scroll position of the stats grid to the top when the frame is shown
+        self.stats_grid._parent_canvas.yview_moveto(0)
+
     def _on_player_selected(self, name: str) -> None:
         """Auto-fill position input from the selected player's bio data.
 
