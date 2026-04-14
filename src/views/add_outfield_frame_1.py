@@ -387,14 +387,12 @@ class AddOutfieldFrame1(
         height_raw: str = self.height_entry.get().strip()
         if height_raw and height_raw not in invalid_fields:
             height: str | None = self.validate_height(height_raw)
-            if height is None:
-                return None
-            return height
+            return None if height is None else height
         return None
 
     def _validate_required_fields(
         self, ui_data: dict[str, str | int | None], is_existing_player: bool
-    ) -> bool:
+    ) -> bool:  # sourcery skip: remove-redundant-constructor-in-dict-union
         """Check whether all required fields are present for the save scenario.
 
         Required fields differ between existing-player and new-player flows.
