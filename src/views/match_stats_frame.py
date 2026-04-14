@@ -348,13 +348,13 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         if self.home_team_name_var.get().strip() in ["", "Home Team"]:
             self.show_warning(
                 "Missing Home Team Name",
-                "Please enter the home team name before proceeding.",
+                "Please enter the home \nteam name before proceeding.",
             )
             return False
         if self.away_team_name_var.get().strip() in ["", "Away Team"]:
             self.show_warning(
                 "Missing Away Team Name",
-                "Please enter the away team name before proceeding.",
+                "Please enter the away \nteam name before proceeding.",
             )
             return False
 
