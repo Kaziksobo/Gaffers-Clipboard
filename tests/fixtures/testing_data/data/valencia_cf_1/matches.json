@@ -42,7 +42,8 @@
                 "free_kicks": 4,
                 "penalty_kicks": 0,
                 "yellow_cards": 4
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -465,7 +466,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -865,7 +867,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 3
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -1264,7 +1267,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -1663,7 +1667,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -2014,7 +2019,8 @@
                 "free_kicks": 6,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -2389,7 +2395,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -2812,7 +2819,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -3235,7 +3243,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 1,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -3610,7 +3619,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -4009,7 +4019,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -4432,7 +4443,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -4832,7 +4844,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -5207,7 +5220,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 2
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -5606,7 +5620,8 @@
                 "free_kicks": 6,
                 "penalty_kicks": 2,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -6029,7 +6044,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -6452,7 +6468,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -6875,7 +6892,8 @@
                 "free_kicks": 7,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -7298,7 +7316,8 @@
                 "free_kicks": 5,
                 "penalty_kicks": 0,
                 "yellow_cards": 2
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -7722,7 +7741,8 @@
                 "free_kicks": 5,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -8145,7 +8165,8 @@
                 "free_kicks": 6,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -8568,7 +8589,8 @@
                 "free_kicks": 4,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -8991,7 +9013,8 @@
                 "free_kicks": 4,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -9391,7 +9414,8 @@
                 "free_kicks": 5,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -9790,7 +9814,8 @@
                 "free_kicks": 6,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -10165,7 +10190,8 @@
                 "free_kicks": 7,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -10588,7 +10614,8 @@
                 "free_kicks": 6,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -11011,7 +11038,8 @@
                 "free_kicks": 5,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -11410,7 +11438,8 @@
                 "free_kicks": 4,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -11785,7 +11814,8 @@
                 "free_kicks": 5,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -12208,7 +12238,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -12631,7 +12662,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -13054,7 +13086,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -13477,7 +13510,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -13900,7 +13934,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -14325,7 +14360,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -14748,7 +14784,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -15172,7 +15209,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -15547,7 +15585,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -15971,7 +16010,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -16372,7 +16412,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -16795,7 +16836,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -17221,7 +17263,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 2
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -17620,7 +17663,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -18044,7 +18088,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 1,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -18468,7 +18513,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -18892,7 +18938,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -19268,7 +19315,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -19667,7 +19715,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -20068,7 +20117,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -20492,7 +20542,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -20915,7 +20966,8 @@
                 "free_kicks": 7,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -21338,7 +21390,8 @@
                 "free_kicks": 6,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -21761,7 +21814,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -22113,7 +22167,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -22562,7 +22617,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -22962,7 +23018,8 @@
                 "free_kicks": 4,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -23386,7 +23443,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 2
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -23786,7 +23844,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -24186,7 +24245,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -24610,7 +24670,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -25010,7 +25071,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -25433,7 +25495,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 1,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -25833,7 +25896,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -26233,7 +26297,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -26657,7 +26722,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -27083,7 +27149,8 @@
                 "free_kicks": 0,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -27506,7 +27573,8 @@
                 "free_kicks": 2,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -27905,7 +27973,8 @@
                 "free_kicks": 1,
                 "penalty_kicks": 1,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -28305,7 +28374,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 1
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -28729,7 +28799,8 @@
                 "free_kicks": 3,
                 "penalty_kicks": 0,
                 "yellow_cards": 0
-            }
+            },
+            "half_length": 10
         },
         "player_performances": [
             {
@@ -29101,6 +29172,4081 @@
                 "save_success_rate": 100,
                 "punch_saves": 0,
                 "rush_saves": 2,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 72,
+        "datetime": "2026-04-11T16:36:20.653296",
+        "data": {
+            "in_game_date": "2030-10-17T00:00:00",
+            "competition": "La Liga",
+            "home_team_name": "Atletico De Madrid",
+            "away_team_name": "Valencia CF",
+            "home_score": 0,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 34,
+                "ball_recovery": 16,
+                "shots": 6,
+                "xg": 1.2,
+                "passes": 163,
+                "tackles": 31,
+                "tackles_won": 16,
+                "interceptions": 15,
+                "saves": 3,
+                "fouls_committed": 2,
+                "offsides": 1,
+                "corners": 1,
+                "free_kicks": 1,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            },
+            "away_stats": {
+                "possession": 66,
+                "ball_recovery": 10,
+                "shots": 8,
+                "xg": 2.3,
+                "passes": 266,
+                "tackles": 33,
+                "tackles_won": 12,
+                "interceptions": 13,
+                "saves": 4,
+                "fouls_committed": 1,
+                "offsides": 0,
+                "corners": 3,
+                "free_kicks": 3,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            },
+            "half_length": 10
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 8,
+                "pass_accuracy": 88,
+                "dribbles": 8,
+                "dribble_success_rate": 88,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 2,
+                "minutes_played": 31,
+                "distance_covered": 4.5,
+                "distance_sprinted": 2.2,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 8,
+                "pass_accuracy": 88,
+                "dribbles": 5,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 60,
+                "distance_covered": 7.7,
+                "distance_sprinted": 2.9,
+                "player_id": 56
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 0,
+                "passes": 11,
+                "pass_accuracy": 91,
+                "dribbles": 12,
+                "dribble_success_rate": 83,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 5,
+                "minutes_played": 91,
+                "distance_covered": 10.3,
+                "distance_sprinted": 2.0,
+                "player_id": 48
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 1,
+                "dribble_success_rate": 0,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 2,
+                "minutes_played": 13,
+                "distance_covered": 1.5,
+                "distance_sprinted": 0.5,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 11,
+                "pass_accuracy": 91,
+                "dribbles": 16,
+                "dribble_success_rate": 75,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 6,
+                "minutes_played": 78,
+                "distance_covered": 8.7,
+                "distance_sprinted": 1.7,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 50,
+                "passes": 41,
+                "pass_accuracy": 85,
+                "dribbles": 38,
+                "dribble_success_rate": 92,
+                "tackles": 1,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 6,
+                "minutes_played": 91,
+                "distance_covered": 11.9,
+                "distance_sprinted": 3.1,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 8,
+                "pass_accuracy": 88,
+                "dribbles": 9,
+                "dribble_success_rate": 78,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 4,
+                "minutes_played": 31,
+                "distance_covered": 4.6,
+                "distance_sprinted": 2.4,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 35,
+                "pass_accuracy": 91,
+                "dribbles": 29,
+                "dribble_success_rate": 93,
+                "tackles": 3,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 5,
+                "minutes_played": 60,
+                "distance_covered": 8.3,
+                "distance_sprinted": 3.5,
+                "player_id": 32
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 40,
+                "passes": 39,
+                "pass_accuracy": 95,
+                "dribbles": 39,
+                "dribble_success_rate": 87,
+                "tackles": 7,
+                "tackle_success_rate": 57,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 4,
+                "possession_lost": 6,
+                "minutes_played": 91,
+                "distance_covered": 12.0,
+                "distance_sprinted": 4.2,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 30,
+                "pass_accuracy": 100,
+                "dribbles": 29,
+                "dribble_success_rate": 93,
+                "tackles": 4,
+                "tackle_success_rate": 75,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 9,
+                "possession_lost": 0,
+                "minutes_played": 91,
+                "distance_covered": 10.1,
+                "distance_sprinted": 3.2,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 7,
+                "pass_accuracy": 100,
+                "dribbles": 6,
+                "dribble_success_rate": 83,
+                "tackles": 3,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 1,
+                "minutes_played": 31,
+                "distance_covered": 3.6,
+                "distance_sprinted": 1.4,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 15,
+                "pass_accuracy": 93,
+                "dribbles": 14,
+                "dribble_success_rate": 100,
+                "tackles": 2,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 2,
+                "possession_lost": 1,
+                "minutes_played": 60,
+                "distance_covered": 7.1,
+                "distance_sprinted": 2.1,
+                "player_id": 62
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 20,
+                "pass_accuracy": 95,
+                "dribbles": 12,
+                "dribble_success_rate": 100,
+                "tackles": 6,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 7,
+                "possession_lost": 0,
+                "minutes_played": 91,
+                "distance_covered": 10.4,
+                "distance_sprinted": 3.5,
+                "player_id": 14
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 24,
+                "pass_accuracy": 88,
+                "dribbles": 17,
+                "dribble_success_rate": 94,
+                "tackles": 6,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 5,
+                "possession_lost": 3,
+                "minutes_played": 91,
+                "distance_covered": 13.1,
+                "distance_sprinted": 7.1,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 6,
+                "shots_on_target": 4,
+                "saves": 4,
+                "goals_conceded": 0,
+                "save_success_rate": 100,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 73,
+        "datetime": "2026-04-12T03:42:12.616688",
+        "data": {
+            "in_game_date": "2030-10-22T00:00:00",
+            "half_length": 10,
+            "competition": "La Liga",
+            "home_team_name": "Valencia CF",
+            "away_team_name": "Olympiacos FC",
+            "home_score": 2,
+            "away_score": 1,
+            "home_stats": {
+                "possession": 51,
+                "ball_recovery": 15,
+                "shots": 15,
+                "xg": 4.8,
+                "passes": 172,
+                "tackles": 57,
+                "tackles_won": 16,
+                "interceptions": 13,
+                "saves": 1,
+                "fouls_committed": 1,
+                "offsides": 2,
+                "corners": 1,
+                "free_kicks": 2,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            },
+            "away_stats": {
+                "possession": 49,
+                "ball_recovery": 15,
+                "shots": 3,
+                "xg": 1.1,
+                "passes": 249,
+                "tackles": 21,
+                "tackles_won": 10,
+                "interceptions": 10,
+                "saves": 5,
+                "fouls_committed": 2,
+                "offsides": 1,
+                "corners": 0,
+                "free_kicks": 3,
+                "penalty_kicks": 0,
+                "yellow_cards": 1
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 20,
+                "pass_accuracy": 75,
+                "dribbles": 20,
+                "dribble_success_rate": 95,
+                "tackles": 8,
+                "tackle_success_rate": 13,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 3,
+                "minutes_played": 92,
+                "distance_covered": 11.6,
+                "distance_sprinted": 3.3,
+                "player_id": 33
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 1,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 1,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 24,
+                "distance_covered": 2.7,
+                "distance_sprinted": 0.6,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 1,
+                "assists": 0,
+                "shots": 4,
+                "shot_accuracy": 50,
+                "passes": 5,
+                "pass_accuracy": 100,
+                "dribbles": 7,
+                "dribble_success_rate": 86,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 3,
+                "minutes_played": 68,
+                "distance_covered": 7.8,
+                "distance_sprinted": 1.6,
+                "player_id": 65
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 1,
+                "assists": 0,
+                "shots": 4,
+                "shot_accuracy": 25,
+                "passes": 9,
+                "pass_accuracy": 67,
+                "dribbles": 16,
+                "dribble_success_rate": 81,
+                "tackles": 2,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 6,
+                "minutes_played": 92,
+                "distance_covered": 11.6,
+                "distance_sprinted": 0.1,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 32,
+                "pass_accuracy": 91,
+                "dribbles": 28,
+                "dribble_success_rate": 93,
+                "tackles": 6,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 3,
+                "minutes_played": 92,
+                "distance_covered": 11.1,
+                "distance_sprinted": 2.7,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 10,
+                "pass_accuracy": 100,
+                "dribbles": 10,
+                "dribble_success_rate": 90,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 26,
+                "distance_covered": 3.6,
+                "distance_sprinted": 1.5,
+                "player_id": 41
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 3,
+                "shot_accuracy": 100,
+                "passes": 17,
+                "pass_accuracy": 94,
+                "dribbles": 20,
+                "dribble_success_rate": 85,
+                "tackles": 3,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 4,
+                "minutes_played": 66,
+                "distance_covered": 9.1,
+                "distance_sprinted": 4.0,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 11,
+                "pass_accuracy": 100,
+                "dribbles": 10,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 54,
+                "distance_covered": 7.2,
+                "distance_sprinted": 2.7,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 10,
+                "pass_accuracy": 100,
+                "dribbles": 11,
+                "dribble_success_rate": 82,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 3,
+                "minutes_played": 38,
+                "distance_covered": 4.5,
+                "distance_sprinted": 1.6,
+                "player_id": 28
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 18,
+                "pass_accuracy": 89,
+                "dribbles": 16,
+                "dribble_success_rate": 100,
+                "tackles": 14,
+                "tackle_success_rate": 43,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 10,
+                "possession_lost": 2,
+                "minutes_played": 92,
+                "distance_covered": 10.4,
+                "distance_sprinted": 3.5,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 11,
+                "pass_accuracy": 91,
+                "dribbles": 14,
+                "dribble_success_rate": 79,
+                "tackles": 10,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 6,
+                "possession_lost": 5,
+                "minutes_played": 92,
+                "distance_covered": 10.3,
+                "distance_sprinted": 3.2,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 2,
+                "pass_accuracy": 100,
+                "dribbles": 2,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 26,
+                "distance_covered": 2.8,
+                "distance_sprinted": 0.9,
+                "player_id": 53
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 7,
+                "pass_accuracy": 100,
+                "dribbles": 6,
+                "dribble_success_rate": 100,
+                "tackles": 2,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 0,
+                "minutes_played": 66,
+                "distance_covered": 6.4,
+                "distance_sprinted": 1.6,
+                "player_id": 14
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 5,
+                "pass_accuracy": 100,
+                "dribbles": 5,
+                "dribble_success_rate": 100,
+                "tackles": 2,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 0,
+                "minutes_played": 24,
+                "distance_covered": 3.2,
+                "distance_sprinted": 1.5,
+                "player_id": 4
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 12,
+                "pass_accuracy": 100,
+                "dribbles": 9,
+                "dribble_success_rate": 100,
+                "tackles": 6,
+                "tackle_success_rate": 33,
+                "offsides": 1,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 68,
+                "distance_covered": 8.4,
+                "distance_sprinted": 3.7,
+                "player_id": 20
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 3,
+                "shots_on_target": 2,
+                "saves": 1,
+                "goals_conceded": 1,
+                "save_success_rate": 50,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 74,
+        "datetime": "2026-04-12T16:19:14.529187",
+        "data": {
+            "in_game_date": "2030-10-27T00:00:00",
+            "half_length": 10,
+            "competition": "La Liga",
+            "home_team_name": "Valencia CF",
+            "away_team_name": "Deportivo Alaves",
+            "home_score": 7,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 66,
+                "ball_recovery": 8,
+                "shots": 18,
+                "xg": 6.4,
+                "passes": 270,
+                "tackles": 56,
+                "tackles_won": 27,
+                "interceptions": 10,
+                "saves": 4,
+                "fouls_committed": 1,
+                "offsides": 1,
+                "corners": 2,
+                "free_kicks": 0,
+                "penalty_kicks": 0,
+                "yellow_cards": 1
+            },
+            "away_stats": {
+                "possession": 34,
+                "ball_recovery": 14,
+                "shots": 4,
+                "xg": 1.1,
+                "passes": 167,
+                "tackles": 21,
+                "tackles_won": 10,
+                "interceptions": 22,
+                "saves": 6,
+                "fouls_committed": 0,
+                "offsides": 0,
+                "corners": 0,
+                "free_kicks": 1,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 7,
+                "pass_accuracy": 86,
+                "dribbles": 7,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 28,
+                "distance_covered": 4.0,
+                "distance_sprinted": 1.8,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 19,
+                "pass_accuracy": 68,
+                "dribbles": 19,
+                "dribble_success_rate": 84,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 4,
+                "minutes_played": 64,
+                "distance_covered": 8.8,
+                "distance_sprinted": 2.6,
+                "player_id": 33
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 67,
+                "dribbles": 3,
+                "dribble_success_rate": 67,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 9,
+                "distance_covered": 1.1,
+                "distance_sprinted": 0.3,
+                "player_id": 65
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 3,
+                "assists": 0,
+                "shots": 6,
+                "shot_accuracy": 100,
+                "passes": 8,
+                "pass_accuracy": 100,
+                "dribbles": 13,
+                "dribble_success_rate": 85,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 1,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 4,
+                "minutes_played": 83,
+                "distance_covered": 10.3,
+                "distance_sprinted": 2.5,
+                "player_id": 48
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 2,
+                "assists": 1,
+                "shots": 4,
+                "shot_accuracy": 100,
+                "passes": 23,
+                "pass_accuracy": 83,
+                "dribbles": 29,
+                "dribble_success_rate": 83,
+                "tackles": 3,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 9,
+                "minutes_played": 92,
+                "distance_covered": 11.0,
+                "distance_sprinted": 2.3,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 53,
+                "pass_accuracy": 94,
+                "dribbles": 43,
+                "dribble_success_rate": 98,
+                "tackles": 8,
+                "tackle_success_rate": 38,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 4,
+                "possession_lost": 3,
+                "minutes_played": 92,
+                "distance_covered": 12.0,
+                "distance_sprinted": 3.2,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 2,
+                "assists": 1,
+                "shots": 3,
+                "shot_accuracy": 100,
+                "passes": 13,
+                "pass_accuracy": 92,
+                "dribbles": 13,
+                "dribble_success_rate": 100,
+                "tackles": 3,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 2,
+                "minutes_played": 38,
+                "distance_covered": 5.6,
+                "distance_sprinted": 2.8,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 3,
+                "shot_accuracy": 33,
+                "passes": 30,
+                "pass_accuracy": 93,
+                "dribbles": 31,
+                "dribble_success_rate": 94,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 7,
+                "minutes_played": 54,
+                "distance_covered": 8.1,
+                "distance_sprinted": 3.9,
+                "player_id": 41
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 2,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 29,
+                "pass_accuracy": 93,
+                "dribbles": 23,
+                "dribble_success_rate": 96,
+                "tackles": 5,
+                "tackle_success_rate": 60,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 7,
+                "possession_lost": 2,
+                "minutes_played": 92,
+                "distance_covered": 12.0,
+                "distance_sprinted": 4.3,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 27,
+                "pass_accuracy": 100,
+                "dribbles": 22,
+                "dribble_success_rate": 100,
+                "tackles": 7,
+                "tackle_success_rate": 86,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 9,
+                "possession_lost": 0,
+                "minutes_played": 92,
+                "distance_covered": 10.2,
+                "distance_sprinted": 2.9,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 1,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 4,
+                "pass_accuracy": 75,
+                "dribbles": 4,
+                "dribble_success_rate": 100,
+                "tackles": 2,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 0,
+                "minutes_played": 28,
+                "distance_covered": 3.0,
+                "distance_sprinted": 0.9,
+                "player_id": 62
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 18,
+                "pass_accuracy": 94,
+                "dribbles": 18,
+                "dribble_success_rate": 100,
+                "tackles": 8,
+                "tackle_success_rate": 25,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 1,
+                "minutes_played": 64,
+                "distance_covered": 8.1,
+                "distance_sprinted": 3.1,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 0,
+                "dribble_success_rate": 0,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 89,
+                "distance_covered": 0.9,
+                "distance_sprinted": 0.2,
+                "player_id": 53
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 9,
+                "pass_accuracy": 89,
+                "dribbles": 7,
+                "dribble_success_rate": 100,
+                "tackles": 11,
+                "tackle_success_rate": 64,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 10,
+                "possession_lost": 1,
+                "minutes_played": 83,
+                "distance_covered": 8.9,
+                "distance_sprinted": 2.8,
+                "player_id": 14
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 25,
+                "pass_accuracy": 84,
+                "dribbles": 25,
+                "dribble_success_rate": 92,
+                "tackles": 6,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 4,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 14.0,
+                "distance_sprinted": 7.9,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 4,
+                "shots_on_target": 4,
+                "saves": 4,
+                "goals_conceded": 0,
+                "save_success_rate": 100,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 75,
+        "datetime": "2026-04-14T13:30:33.291587",
+        "data": {
+            "in_game_date": "2030-11-02T00:00:00",
+            "half_length": 10,
+            "competition": "La Liga",
+            "home_team_name": "Valencia CF",
+            "away_team_name": "Sevilla FC",
+            "home_score": 5,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 42,
+                "ball_recovery": 21,
+                "shots": 10,
+                "xg": 4.1,
+                "passes": 175,
+                "tackles": 47,
+                "tackles_won": 11,
+                "interceptions": 10,
+                "saves": 6,
+                "fouls_committed": 1,
+                "offsides": 1,
+                "corners": 0,
+                "free_kicks": 3,
+                "penalty_kicks": 1,
+                "yellow_cards": 0
+            },
+            "away_stats": {
+                "possession": 58,
+                "ball_recovery": 15,
+                "shots": 9,
+                "xg": 1.8,
+                "passes": 305,
+                "tackles": 14,
+                "tackles_won": 7,
+                "interceptions": 11,
+                "saves": 4,
+                "fouls_committed": 2,
+                "offsides": 2,
+                "corners": 2,
+                "free_kicks": 2,
+                "penalty_kicks": 0,
+                "yellow_cards": 2
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 4,
+                "pass_accuracy": 100,
+                "dribbles": 5,
+                "dribble_success_rate": 80,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 39,
+                "distance_covered": 4.5,
+                "distance_sprinted": 1.0,
+                "player_id": 33
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 11,
+                "pass_accuracy": 73,
+                "dribbles": 12,
+                "dribble_success_rate": 92,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 3,
+                "minutes_played": 53,
+                "distance_covered": 6.6,
+                "distance_sprinted": 2.8,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CAM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 1,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 39,
+                "distance_covered": 4.1,
+                "distance_sprinted": 0.5,
+                "player_id": 32
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 1,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 7,
+                "pass_accuracy": 71,
+                "dribbles": 8,
+                "dribble_success_rate": 75,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 4,
+                "minutes_played": 53,
+                "distance_covered": 5.4,
+                "distance_sprinted": 1.0,
+                "player_id": 48
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 5,
+                "pass_accuracy": 80,
+                "dribbles": 7,
+                "dribble_success_rate": 86,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 1,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 3,
+                "minutes_played": 15,
+                "distance_covered": 1.9,
+                "distance_sprinted": 0.8,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 1,
+                "assists": 1,
+                "shots": 2,
+                "shot_accuracy": 100,
+                "passes": 2,
+                "pass_accuracy": 100,
+                "dribbles": 6,
+                "dribble_success_rate": 50,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 2,
+                "minutes_played": 77,
+                "distance_covered": 8.2,
+                "distance_sprinted": 1.6,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 2,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 24,
+                "pass_accuracy": 100,
+                "dribbles": 21,
+                "dribble_success_rate": 100,
+                "tackles": 6,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 4,
+                "possession_lost": 0,
+                "minutes_played": 92,
+                "distance_covered": 10.7,
+                "distance_sprinted": 2.7,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 2,
+                "assists": 0,
+                "shots": 4,
+                "shot_accuracy": 75,
+                "passes": 23,
+                "pass_accuracy": 100,
+                "dribbles": 23,
+                "dribble_success_rate": 91,
+                "tackles": 5,
+                "tackle_success_rate": 40,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 1,
+                "possession_lost": 4,
+                "minutes_played": 77,
+                "distance_covered": 11.1,
+                "distance_sprinted": 5.4,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB",
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 17,
+                "pass_accuracy": 100,
+                "dribbles": 17,
+                "dribble_success_rate": 100,
+                "tackles": 8,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 5,
+                "possession_lost": 0,
+                "minutes_played": 92,
+                "distance_covered": 10.2,
+                "distance_sprinted": 3.0,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 29,
+                "pass_accuracy": 83,
+                "dribbles": 22,
+                "dribble_success_rate": 95,
+                "tackles": 5,
+                "tackle_success_rate": 20,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 3,
+                "minutes_played": 92,
+                "distance_covered": 11.8,
+                "distance_sprinted": 4.5,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 13,
+                "pass_accuracy": 92,
+                "dribbles": 10,
+                "dribble_success_rate": 100,
+                "tackles": 9,
+                "tackle_success_rate": 11,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 10.0,
+                "distance_sprinted": 3.3,
+                "player_id": 4
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 1,
+                "pass_accuracy": 100,
+                "dribbles": 1,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 15,
+                "distance_covered": 1.7,
+                "distance_sprinted": 0.6,
+                "player_id": 62
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 1,
+                "pass_accuracy": 100,
+                "dribbles": 1,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 4,
+                "distance_covered": 0.4,
+                "distance_sprinted": 0.2,
+                "player_id": 53
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 11,
+                "pass_accuracy": 100,
+                "dribbles": 10,
+                "dribble_success_rate": 90,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 0,
+                "minutes_played": 88,
+                "distance_covered": 9.2,
+                "distance_sprinted": 2.9,
+                "player_id": 14
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 19,
+                "pass_accuracy": 89,
+                "dribbles": 13,
+                "dribble_success_rate": 100,
+                "tackles": 7,
+                "tackle_success_rate": 14,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 5,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 13.0,
+                "distance_sprinted": 6.9,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 9,
+                "shots_on_target": 6,
+                "saves": 6,
+                "goals_conceded": 0,
+                "save_success_rate": 100,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 76,
+        "datetime": "2026-04-14T18:47:35.765335",
+        "data": {
+            "in_game_date": "2030-11-06T00:00:00",
+            "half_length": 10,
+            "competition": "UEFA Champions League",
+            "home_team_name": "Valencia CF",
+            "away_team_name": "Inter Milan",
+            "home_score": 0,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 40,
+                "ball_recovery": 16,
+                "shots": 8,
+                "xg": 3.3,
+                "passes": 165,
+                "tackles": 69,
+                "tackles_won": 15,
+                "interceptions": 17,
+                "saves": 5,
+                "fouls_committed": 2,
+                "offsides": 0,
+                "corners": 1,
+                "free_kicks": 0,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            },
+            "away_stats": {
+                "possession": 60,
+                "ball_recovery": 12,
+                "shots": 6,
+                "xg": 1.6,
+                "passes": 301,
+                "tackles": 12,
+                "tackles_won": 9,
+                "interceptions": 18,
+                "saves": 6,
+                "fouls_committed": 0,
+                "offsides": 0,
+                "corners": 3,
+                "free_kicks": 2,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 33,
+                "dribbles": 1,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 14,
+                "distance_covered": 1.8,
+                "distance_sprinted": 0.6,
+                "player_id": 56
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 17,
+                "pass_accuracy": 82,
+                "dribbles": 14,
+                "dribble_success_rate": 86,
+                "tackles": 5,
+                "tackle_success_rate": 20,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 5,
+                "minutes_played": 77,
+                "distance_covered": 10.9,
+                "distance_sprinted": 5.0,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 1,
+                "pass_accuracy": 100,
+                "dribbles": 2,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 1,
+                "minutes_played": 14,
+                "distance_covered": 1.6,
+                "distance_sprinted": 0.3,
+                "player_id": 65
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 3,
+                "shot_accuracy": 100,
+                "passes": 3,
+                "pass_accuracy": 100,
+                "dribbles": 8,
+                "dribble_success_rate": 63,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 5,
+                "minutes_played": 77,
+                "distance_covered": 8.5,
+                "distance_sprinted": 1.6,
+                "player_id": 32
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 67,
+                "dribbles": 3,
+                "dribble_success_rate": 67,
+                "tackles": 1,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 2,
+                "minutes_played": 17,
+                "distance_covered": 1.8,
+                "distance_sprinted": 0.7,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 16,
+                "pass_accuracy": 94,
+                "dribbles": 13,
+                "dribble_success_rate": 92,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 1,
+                "minutes_played": 74,
+                "distance_covered": 8.2,
+                "distance_sprinted": 1.9,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 100,
+                "dribbles": 3,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 25,
+                "distance_covered": 3.1,
+                "distance_sprinted": 0.7,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 100,
+                "passes": 18,
+                "pass_accuracy": 78,
+                "dribbles": 21,
+                "dribble_success_rate": 81,
+                "tackles": 8,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 10,
+                "minutes_played": 66,
+                "distance_covered": 9.7,
+                "distance_sprinted": 4.4,
+                "player_id": 41
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 50,
+                "passes": 20,
+                "pass_accuracy": 85,
+                "dribbles": 19,
+                "dribble_success_rate": 95,
+                "tackles": 5,
+                "tackle_success_rate": 60,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 5,
+                "minutes_played": 91,
+                "distance_covered": 13.3,
+                "distance_sprinted": 6.4,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 15,
+                "pass_accuracy": 93,
+                "dribbles": 13,
+                "dribble_success_rate": 100,
+                "tackles": 2,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 1,
+                "minutes_played": 66,
+                "distance_covered": 8.3,
+                "distance_sprinted": 2.6,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB",
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 11,
+                "pass_accuracy": 100,
+                "dribbles": 8,
+                "dribble_success_rate": 88,
+                "tackles": 11,
+                "tackle_success_rate": 18,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 8,
+                "possession_lost": 1,
+                "minutes_played": 91,
+                "distance_covered": 10.8,
+                "distance_sprinted": 3.4,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 7,
+                "pass_accuracy": 100,
+                "dribbles": 9,
+                "dribble_success_rate": 78,
+                "tackles": 4,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 91,
+                "distance_covered": 10.0,
+                "distance_sprinted": 2.8,
+                "player_id": 4
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 2,
+                "pass_accuracy": 100,
+                "dribbles": 1,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 25,
+                "distance_covered": 3.0,
+                "distance_sprinted": 0.9,
+                "player_id": 62
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 10,
+                "pass_accuracy": 60,
+                "dribbles": 8,
+                "dribble_success_rate": 88,
+                "tackles": 8,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 6,
+                "possession_lost": 2,
+                "minutes_played": 91,
+                "distance_covered": 10.2,
+                "distance_sprinted": 2.9,
+                "player_id": 53
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 28,
+                "pass_accuracy": 82,
+                "dribbles": 25,
+                "dribble_success_rate": 96,
+                "tackles": 20,
+                "tackle_success_rate": 40,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 7,
+                "possession_lost": 6,
+                "minutes_played": 91,
+                "distance_covered": 12.7,
+                "distance_sprinted": 6.2,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 6,
+                "shots_on_target": 5,
+                "saves": 5,
+                "goals_conceded": 0,
+                "save_success_rate": 100,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 77,
+        "datetime": "2026-04-14T20:10:35.803546",
+        "data": {
+            "in_game_date": "2030-11-10T00:00:00",
+            "half_length": 10,
+            "competition": "La Liga",
+            "home_team_name": "Villarreal CF",
+            "away_team_name": "Valencia CF",
+            "home_score": 3,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 59,
+                "ball_recovery": 24,
+                "shots": 7,
+                "xg": 1.6,
+                "passes": 308,
+                "tackles": 25,
+                "tackles_won": 16,
+                "interceptions": 14,
+                "saves": 2,
+                "fouls_committed": 2,
+                "offsides": 1,
+                "corners": 2,
+                "free_kicks": 5,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            },
+            "away_stats": {
+                "possession": 41,
+                "ball_recovery": 15,
+                "shots": 6,
+                "xg": 2.1,
+                "passes": 159,
+                "tackles": 70,
+                "tackles_won": 14,
+                "interceptions": 9,
+                "saves": 1,
+                "fouls_committed": 4,
+                "offsides": 2,
+                "corners": 1,
+                "free_kicks": 3,
+                "penalty_kicks": 0,
+                "yellow_cards": 3
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 5,
+                "pass_accuracy": 40,
+                "dribbles": 4,
+                "dribble_success_rate": 50,
+                "tackles": 3,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 3,
+                "minutes_played": 32,
+                "distance_covered": 4.3,
+                "distance_sprinted": 2.0,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 7,
+                "pass_accuracy": 57,
+                "dribbles": 8,
+                "dribble_success_rate": 75,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 5,
+                "minutes_played": 60,
+                "distance_covered": 7.8,
+                "distance_sprinted": 3.1,
+                "player_id": 56
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 5,
+                "pass_accuracy": 100,
+                "dribbles": 7,
+                "dribble_success_rate": 57,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 3,
+                "minutes_played": 40,
+                "distance_covered": 4.5,
+                "distance_sprinted": 1.1,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 7,
+                "pass_accuracy": 100,
+                "dribbles": 10,
+                "dribble_success_rate": 50,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 5,
+                "minutes_played": 52,
+                "distance_covered": 6.7,
+                "distance_sprinted": 1.8,
+                "player_id": 65
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 0,
+                "passes": 15,
+                "pass_accuracy": 93,
+                "dribbles": 16,
+                "dribble_success_rate": 94,
+                "tackles": 8,
+                "tackle_success_rate": 13,
+                "offsides": 2,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 11.5,
+                "distance_sprinted": 4.3,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 17,
+                "pass_accuracy": 100,
+                "dribbles": 17,
+                "dribble_success_rate": 82,
+                "tackles": 4,
+                "tackle_success_rate": 75,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 10.9,
+                "distance_sprinted": 2.6,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 12,
+                "pass_accuracy": 67,
+                "dribbles": 11,
+                "dribble_success_rate": 82,
+                "tackles": 4,
+                "tackle_success_rate": 25,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 5,
+                "minutes_played": 40,
+                "distance_covered": 5.5,
+                "distance_sprinted": 2.8,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 15,
+                "pass_accuracy": 100,
+                "dribbles": 17,
+                "dribble_success_rate": 94,
+                "tackles": 5,
+                "tackle_success_rate": 20,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 1,
+                "minutes_played": 52,
+                "distance_covered": 7.4,
+                "distance_sprinted": 3.6,
+                "player_id": 32
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 18,
+                "pass_accuracy": 89,
+                "dribbles": 17,
+                "dribble_success_rate": 94,
+                "tackles": 5,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 1,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 10.9,
+                "distance_sprinted": 3.4,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 12,
+                "pass_accuracy": 100,
+                "dribbles": 13,
+                "dribble_success_rate": 85,
+                "tackles": 10,
+                "tackle_success_rate": 10,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 6,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 10.4,
+                "distance_sprinted": 3.3,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 12,
+                "pass_accuracy": 92,
+                "dribbles": 9,
+                "dribble_success_rate": 100,
+                "tackles": 9,
+                "tackle_success_rate": 22,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 3,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 9.6,
+                "distance_sprinted": 2.4,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 8,
+                "pass_accuracy": 75,
+                "dribbles": 4,
+                "dribble_success_rate": 100,
+                "tackles": 7,
+                "tackle_success_rate": 29,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 5,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 9.4,
+                "distance_sprinted": 2.5,
+                "player_id": 14
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 19,
+                "pass_accuracy": 74,
+                "dribbles": 16,
+                "dribble_success_rate": 94,
+                "tackles": 11,
+                "tackle_success_rate": 9,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 2,
+                "minutes_played": 92,
+                "distance_covered": 12.9,
+                "distance_sprinted": 7.0,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 7,
+                "shots_on_target": 4,
+                "saves": 1,
+                "goals_conceded": 3,
+                "save_success_rate": 25,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 78,
+        "datetime": "2026-04-14T20:57:06.048176",
+        "data": {
+            "in_game_date": "2030-11-22T00:00:00",
+            "half_length": 10,
+            "competition": "La Liga",
+            "home_team_name": "Valencia CF",
+            "away_team_name": "CA Osasuna",
+            "home_score": 1,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 68,
+                "ball_recovery": 7,
+                "shots": 13,
+                "xg": 3.4,
+                "passes": 254,
+                "tackles": 60,
+                "tackles_won": 27,
+                "interceptions": 9,
+                "saves": 2,
+                "fouls_committed": 1,
+                "offsides": 0,
+                "corners": 2,
+                "free_kicks": 1,
+                "penalty_kicks": 0,
+                "yellow_cards": 1
+            },
+            "away_stats": {
+                "possession": 32,
+                "ball_recovery": 14,
+                "shots": 5,
+                "xg": 0.6,
+                "passes": 142,
+                "tackles": 17,
+                "tackles_won": 7,
+                "interceptions": 24,
+                "saves": 1,
+                "fouls_committed": 2,
+                "offsides": 0,
+                "corners": 1,
+                "free_kicks": 1,
+                "penalty_kicks": 0,
+                "yellow_cards": 2
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 28,
+                "pass_accuracy": 96,
+                "dribbles": 28,
+                "dribble_success_rate": 86,
+                "tackles": 4,
+                "tackle_success_rate": 25,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 13.1,
+                "distance_sprinted": 6.1,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 67,
+                "dribbles": 2,
+                "dribble_success_rate": 50,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 2,
+                "minutes_played": 24,
+                "distance_covered": 2.5,
+                "distance_sprinted": 0.4,
+                "player_id": 32
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 3,
+                "shot_accuracy": 0,
+                "passes": 12,
+                "pass_accuracy": 92,
+                "dribbles": 12,
+                "dribble_success_rate": 92,
+                "tackles": 3,
+                "tackle_success_rate": 67,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 2,
+                "possession_lost": 4,
+                "minutes_played": 68,
+                "distance_covered": 8.4,
+                "distance_sprinted": 2.0,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 1,
+                "assists": 0,
+                "shots": 5,
+                "shot_accuracy": 20,
+                "passes": 16,
+                "pass_accuracy": 69,
+                "dribbles": 18,
+                "dribble_success_rate": 94,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 9,
+                "minutes_played": 92,
+                "distance_covered": 11.5,
+                "distance_sprinted": 4.5,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 28,
+                "pass_accuracy": 86,
+                "dribbles": 28,
+                "dribble_success_rate": 86,
+                "tackles": 5,
+                "tackle_success_rate": 20,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 9,
+                "minutes_played": 92,
+                "distance_covered": 11.5,
+                "distance_sprinted": 3.3,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 8,
+                "pass_accuracy": 88,
+                "dribbles": 7,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 15,
+                "distance_covered": 2.0,
+                "distance_sprinted": 0.9,
+                "player_id": 41
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 3,
+                "shot_accuracy": 33,
+                "passes": 37,
+                "pass_accuracy": 95,
+                "dribbles": 37,
+                "dribble_success_rate": 89,
+                "tackles": 6,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 7,
+                "minutes_played": 77,
+                "distance_covered": 11.8,
+                "distance_sprinted": 6.3,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 30,
+                "pass_accuracy": 77,
+                "dribbles": 25,
+                "dribble_success_rate": 96,
+                "tackles": 6,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 4,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 11.5,
+                "distance_sprinted": 4.4,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 19,
+                "pass_accuracy": 95,
+                "dribbles": 15,
+                "dribble_success_rate": 93,
+                "tackles": 10,
+                "tackle_success_rate": 80,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 10,
+                "possession_lost": 2,
+                "minutes_played": 92,
+                "distance_covered": 10.2,
+                "distance_sprinted": 3.3,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 17,
+                "pass_accuracy": 94,
+                "dribbles": 18,
+                "dribble_success_rate": 89,
+                "tackles": 7,
+                "tackle_success_rate": 57,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 7,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 10.7,
+                "distance_sprinted": 3.8,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 1,
+                "dribble_success_rate": 0,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 15,
+                "distance_covered": 1.4,
+                "distance_sprinted": 0.3,
+                "player_id": 53
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 13,
+                "pass_accuracy": 85,
+                "dribbles": 12,
+                "dribble_success_rate": 100,
+                "tackles": 9,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 4,
+                "possession_lost": 1,
+                "minutes_played": 4,
+                "distance_covered": 8.4,
+                "distance_sprinted": 2.6,
+                "player_id": 14
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 35,
+                "pass_accuracy": 80,
+                "dribbles": 30,
+                "dribble_success_rate": 97,
+                "tackles": 7,
+                "tackle_success_rate": 71,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 11,
+                "possession_lost": 6,
+                "minutes_played": 92,
+                "distance_covered": 14.0,
+                "distance_sprinted": 8.2,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 5,
+                "shots_on_target": 2,
+                "saves": 2,
+                "goals_conceded": 0,
+                "save_success_rate": 100,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 79,
+        "datetime": "2026-04-14T21:35:27.793266",
+        "data": {
+            "in_game_date": "2030-11-26T00:00:00",
+            "half_length": 10,
+            "competition": "UEFA Champions League",
+            "home_team_name": "Valencia CF",
+            "away_team_name": "Sporting CP",
+            "home_score": 6,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 48,
+                "ball_recovery": 16,
+                "shots": 17,
+                "xg": 7.7,
+                "passes": 213,
+                "tackles": 49,
+                "tackles_won": 17,
+                "interceptions": 10,
+                "saves": 3,
+                "fouls_committed": 2,
+                "offsides": 1,
+                "corners": 2,
+                "free_kicks": 1,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            },
+            "away_stats": {
+                "possession": 52,
+                "ball_recovery": 13,
+                "shots": 7,
+                "xg": 0.9,
+                "passes": 275,
+                "tackles": 15,
+                "tackles_won": 6,
+                "interceptions": 14,
+                "saves": 8,
+                "fouls_committed": 0,
+                "offsides": 1,
+                "corners": 1,
+                "free_kicks": 3,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 67,
+                "dribbles": 3,
+                "dribble_success_rate": 100,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 1,
+                "minutes_played": 17,
+                "distance_covered": 2.1,
+                "distance_sprinted": 0.8,
+                "player_id": 56
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 2,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 15,
+                "pass_accuracy": 80,
+                "dribbles": 13,
+                "dribble_success_rate": 85,
+                "tackles": 2,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 2,
+                "minutes_played": 75,
+                "distance_covered": 9.5,
+                "distance_sprinted": 3.9,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 3,
+                "assists": 2,
+                "shots": 4,
+                "shot_accuracy": 100,
+                "passes": 9,
+                "pass_accuracy": 89,
+                "dribbles": 13,
+                "dribble_success_rate": 77,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 1,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 10.8,
+                "distance_sprinted": 2.5,
+                "player_id": 65
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 4,
+                "shot_accuracy": 50,
+                "passes": 5,
+                "pass_accuracy": 100,
+                "dribbles": 8,
+                "dribble_success_rate": 88,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 4,
+                "minutes_played": 26,
+                "distance_covered": 2.7,
+                "distance_sprinted": 0.4,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 1,
+                "assists": 0,
+                "shots": 6,
+                "shot_accuracy": 83,
+                "passes": 7,
+                "pass_accuracy": 86,
+                "dribbles": 11,
+                "dribble_success_rate": 91,
+                "tackles": 1,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 6,
+                "minutes_played": 66,
+                "distance_covered": 7.7,
+                "distance_sprinted": 3.2,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 23,
+                "pass_accuracy": 87,
+                "dribbles": 20,
+                "dribble_success_rate": 90,
+                "tackles": 5,
+                "tackle_success_rate": 20,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 10.8,
+                "distance_sprinted": 2.5,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 8,
+                "pass_accuracy": 88,
+                "dribbles": 6,
+                "dribble_success_rate": 100,
+                "tackles": 3,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 1,
+                "minutes_played": 17,
+                "distance_covered": 2.4,
+                "distance_sprinted": 1.2,
+                "player_id": 41
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 2,
+                "assists": 0,
+                "shots": 3,
+                "shot_accuracy": 100,
+                "passes": 28,
+                "pass_accuracy": 93,
+                "dribbles": 24,
+                "dribble_success_rate": 96,
+                "tackles": 8,
+                "tackle_success_rate": 25,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 2,
+                "possession_lost": 1,
+                "minutes_played": 75,
+                "distance_covered": 10.9,
+                "distance_sprinted": 5.3,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 38,
+                "pass_accuracy": 87,
+                "dribbles": 34,
+                "dribble_success_rate": 97,
+                "tackles": 7,
+                "tackle_success_rate": 14,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 0,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 11.6,
+                "distance_sprinted": 4.0,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 6,
+                "pass_accuracy": 100,
+                "dribbles": 6,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 0,
+                "minutes_played": 26,
+                "distance_covered": 2.7,
+                "distance_sprinted": 0.7,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 8,
+                "pass_accuracy": 100,
+                "dribbles": 4,
+                "dribble_success_rate": 100,
+                "tackles": 3,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 66,
+                "distance_covered": 7.0,
+                "distance_sprinted": 2.1,
+                "player_id": 4
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 0,
+                "dribble_success_rate": 0,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 3,
+                "distance_covered": 0.4,
+                "distance_sprinted": 0.2,
+                "player_id": 62
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 22,
+                "pass_accuracy": 100,
+                "dribbles": 17,
+                "dribble_success_rate": 100,
+                "tackles": 5,
+                "tackle_success_rate": 60,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 5,
+                "possession_lost": 0,
+                "minutes_played": 89,
+                "distance_covered": 9.5,
+                "distance_sprinted": 2.7,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 15,
+                "pass_accuracy": 100,
+                "dribbles": 14,
+                "dribble_success_rate": 100,
+                "tackles": 4,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 5,
+                "possession_lost": 0,
+                "minutes_played": 92,
+                "distance_covered": 9.5,
+                "distance_sprinted": 2.8,
+                "player_id": 53
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 21,
+                "pass_accuracy": 95,
+                "dribbles": 20,
+                "dribble_success_rate": 100,
+                "tackles": 6,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 7,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 12.6,
+                "distance_sprinted": 6.1,
+                "player_id": 20
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 7,
+                "shots_on_target": 3,
+                "saves": 3,
+                "goals_conceded": 0,
+                "save_success_rate": 100,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 80,
+        "datetime": "2026-04-14T22:48:30.033282",
+        "data": {
+            "in_game_date": "2030-11-30T00:00:00",
+            "half_length": 10,
+            "competition": "La Liga",
+            "home_team_name": "Girona FC",
+            "away_team_name": "Valencia CF",
+            "home_score": 0,
+            "away_score": 0,
+            "home_stats": {
+                "possession": 52,
+                "ball_recovery": 12,
+                "shots": 7,
+                "xg": 1.4,
+                "passes": 289,
+                "tackles": 24,
+                "tackles_won": 16,
+                "interceptions": 19,
+                "saves": 5,
+                "fouls_committed": 0,
+                "offsides": 0,
+                "corners": 2,
+                "free_kicks": 1,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            },
+            "away_stats": {
+                "possession": 48,
+                "ball_recovery": 14,
+                "shots": 8,
+                "xg": 2.6,
+                "passes": 200,
+                "tackles": 73,
+                "tackles_won": 20,
+                "interceptions": 20,
+                "saves": 3,
+                "fouls_committed": 1,
+                "offsides": 0,
+                "corners": 4,
+                "free_kicks": 0,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 21,
+                "pass_accuracy": 86,
+                "dribbles": 19,
+                "dribble_success_rate": 84,
+                "tackles": 3,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 5,
+                "minutes_played": 91,
+                "distance_covered": 12.6,
+                "distance_sprinted": 5.6,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 3,
+                "shot_accuracy": 67,
+                "passes": 6,
+                "pass_accuracy": 83,
+                "dribbles": 9,
+                "dribble_success_rate": 89,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 40,
+                "possession_lost": 5,
+                "minutes_played": 68,
+                "distance_covered": 7.8,
+                "distance_sprinted": 1.4,
+                "player_id": 65
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 50,
+                "passes": 14,
+                "pass_accuracy": 86,
+                "dribbles": 16,
+                "dribble_success_rate": 100,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 2,
+                "minutes_played": 91,
+                "distance_covered": 10.7,
+                "distance_sprinted": 2.3,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 100,
+                "passes": 3,
+                "pass_accuracy": 67,
+                "dribbles": 5,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 2,
+                "minutes_played": 23,
+                "distance_covered": 2.9,
+                "distance_sprinted": 1.1,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 0,
+                "dribble_success_rate": 0,
+                "tackles": 1,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 2,
+                "distance_covered": 0.3,
+                "distance_sprinted": 0.2,
+                "player_id": 41
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 29,
+                "pass_accuracy": 76,
+                "dribbles": 31,
+                "dribble_success_rate": 81,
+                "tackles": 5,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 13,
+                "minutes_played": 89,
+                "distance_covered": 10.8,
+                "distance_sprinted": 2.6,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 10,
+                "pass_accuracy": 100,
+                "dribbles": 12,
+                "dribble_success_rate": 83,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 2,
+                "minutes_played": 36,
+                "distance_covered": 4.8,
+                "distance_sprinted": 1.2,
+                "player_id": 32
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 16,
+                "pass_accuracy": 81,
+                "dribbles": 14,
+                "dribble_success_rate": 100,
+                "tackles": 5,
+                "tackle_success_rate": 20,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 2,
+                "minutes_played": 55,
+                "distance_covered": 8.6,
+                "distance_sprinted": 4.5,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 60,
+                "passes": 3,
+                "pass_accuracy": 100,
+                "dribbles": 2,
+                "dribble_success_rate": 100,
+                "tackles": 4,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 1,
+                "possession_lost": 0,
+                "minutes_played": 23,
+                "distance_covered": 2.9,
+                "distance_sprinted": 1.1,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 21,
+                "pass_accuracy": 90,
+                "dribbles": 20,
+                "dribble_success_rate": 95,
+                "tackles": 5,
+                "tackle_success_rate": 20,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 5,
+                "possession_lost": 2,
+                "minutes_played": 68,
+                "distance_covered": 9.0,
+                "distance_sprinted": 3.1,
+                "player_id": 28
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 21,
+                "pass_accuracy": 90,
+                "dribbles": 20,
+                "dribble_success_rate": 90,
+                "tackles": 8,
+                "tackle_success_rate": 38,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 8,
+                "possession_lost": 4,
+                "minutes_played": 91,
+                "distance_covered": 10.6,
+                "distance_sprinted": 3.1,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 16,
+                "pass_accuracy": 88,
+                "dribbles": 13,
+                "dribble_success_rate": 100,
+                "tackles": 9,
+                "tackle_success_rate": 22,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 8,
+                "possession_lost": 1,
+                "minutes_played": 91,
+                "distance_covered": 10.3,
+                "distance_sprinted": 3.4,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 11,
+                "pass_accuracy": 100,
+                "dribbles": 9,
+                "dribble_success_rate": 67,
+                "tackles": 18,
+                "tackle_success_rate": 50,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 10,
+                "possession_lost": 3,
+                "minutes_played": 91,
+                "distance_covered": 10.1,
+                "distance_sprinted": 3.3,
+                "player_id": 53
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 25,
+                "pass_accuracy": 96,
+                "dribbles": 26,
+                "dribble_success_rate": 92,
+                "tackles": 11,
+                "tackle_success_rate": 18,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 7,
+                "possession_lost": 2,
+                "minutes_played": 91,
+                "distance_covered": 13.6,
+                "distance_sprinted": 7.3,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 7,
+                "shots_on_target": 3,
+                "saves": 3,
+                "goals_conceded": 0,
+                "save_success_rate": 100,
+                "punch_saves": 0,
+                "rush_saves": 0,
+                "penalty_saves": 0,
+                "penalty_goals_conceded": 0,
+                "shoot_out_saves": 0,
+                "shoot_out_goals_conceded": 0,
+                "player_id": 2
+            }
+        ]
+    },
+    {
+        "id": 81,
+        "datetime": "2026-04-15T11:50:57.780777",
+        "data": {
+            "in_game_date": "2030-12-06T00:00:00",
+            "half_length": 10,
+            "competition": "La Liga",
+            "home_team_name": "Valencia CF",
+            "away_team_name": "FC Barcelona",
+            "home_score": 2,
+            "away_score": 1,
+            "home_stats": {
+                "possession": 62,
+                "ball_recovery": 10,
+                "shots": 8,
+                "xg": 2.7,
+                "passes": 258,
+                "tackles": 49,
+                "tackles_won": 19,
+                "interceptions": 15,
+                "saves": 0,
+                "fouls_committed": 2,
+                "offsides": 2,
+                "corners": 1,
+                "free_kicks": 3,
+                "penalty_kicks": 0,
+                "yellow_cards": 1
+            },
+            "away_stats": {
+                "possession": 38,
+                "ball_recovery": 17,
+                "shots": 5,
+                "xg": 1.0,
+                "passes": 188,
+                "tackles": 41,
+                "tackles_won": 20,
+                "interceptions": 18,
+                "saves": 3,
+                "fouls_committed": 3,
+                "offsides": 0,
+                "corners": 1,
+                "free_kicks": 4,
+                "penalty_kicks": 0,
+                "yellow_cards": 0
+            }
+        },
+        "player_performances": [
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 0,
+                "pass_accuracy": 0,
+                "dribbles": 0,
+                "dribble_success_rate": 0,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 21,
+                "distance_covered": 2.6,
+                "distance_sprinted": 0.9,
+                "player_id": 56
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 24,
+                "pass_accuracy": 96,
+                "dribbles": 28,
+                "dribble_success_rate": 75,
+                "tackles": 1,
+                "tackle_success_rate": 0,
+                "offsides": 1,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 8,
+                "minutes_played": 71,
+                "distance_covered": 10.3,
+                "distance_sprinted": 4.7,
+                "player_id": 40
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 67,
+                "dribbles": 2,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 21,
+                "distance_covered": 2.5,
+                "distance_sprinted": 0.8,
+                "player_id": 65
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 3,
+                "pass_accuracy": 100,
+                "dribbles": 3,
+                "dribble_success_rate": 100,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 9,
+                "distance_covered": 1.1,
+                "distance_sprinted": 0.3,
+                "player_id": 66
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RW"
+                ],
+                "goals": 1,
+                "assists": 0,
+                "shots": 2,
+                "shot_accuracy": 100,
+                "passes": 10,
+                "pass_accuracy": 90,
+                "dribbles": 12,
+                "dribble_success_rate": 83,
+                "tackles": 2,
+                "tackle_success_rate": 0,
+                "offsides": 1,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 3,
+                "minutes_played": 83,
+                "distance_covered": 10.4,
+                "distance_sprinted": 4.2,
+                "player_id": 45
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 1,
+                "pass_accuracy": 100,
+                "dribbles": 2,
+                "dribble_success_rate": 100,
+                "tackles": 1,
+                "tackle_success_rate": 100,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 0,
+                "possession_lost": 0,
+                "minutes_played": 9,
+                "distance_covered": 1.4,
+                "distance_sprinted": 0.6,
+                "player_id": 41
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 0,
+                "passes": 41,
+                "pass_accuracy": 83,
+                "dribbles": 44,
+                "dribble_success_rate": 84,
+                "tackles": 4,
+                "tackle_success_rate": 25,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 10,
+                "minutes_played": 83,
+                "distance_covered": 10.3,
+                "distance_sprinted": 2.5,
+                "player_id": 31
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "ST",
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 1,
+                "shot_accuracy": 100,
+                "passes": 17,
+                "pass_accuracy": 82,
+                "dribbles": 19,
+                "dribble_success_rate": 89,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 4,
+                "minutes_played": 92,
+                "distance_covered": 10.7,
+                "distance_sprinted": 2.3,
+                "player_id": 32
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CM"
+                ],
+                "goals": 0,
+                "assists": 1,
+                "shots": 2,
+                "shot_accuracy": 50,
+                "passes": 28,
+                "pass_accuracy": 96,
+                "dribbles": 32,
+                "dribble_success_rate": 84,
+                "tackles": 0,
+                "tackle_success_rate": 0,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 1,
+                "possession_lost": 7,
+                "minutes_played": 71,
+                "distance_covered": 10.5,
+                "distance_sprinted": 5.2,
+                "player_id": 24
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CDM"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 34,
+                "pass_accuracy": 97,
+                "dribbles": 30,
+                "dribble_success_rate": 100,
+                "tackles": 6,
+                "tackle_success_rate": 67,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 7,
+                "possession_lost": 0,
+                "minutes_played": 92,
+                "distance_covered": 11.7,
+                "distance_sprinted": 4.3,
+                "player_id": 63
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "LB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 24,
+                "pass_accuracy": 92,
+                "dribbles": 18,
+                "dribble_success_rate": 100,
+                "tackles": 12,
+                "tackle_success_rate": 42,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 8,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 10.4,
+                "distance_sprinted": 3.3,
+                "player_id": 64
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 24,
+                "pass_accuracy": 88,
+                "dribbles": 19,
+                "dribble_success_rate": 89,
+                "tackles": 9,
+                "tackle_success_rate": 56,
+                "offsides": 0,
+                "fouls_committed": 1,
+                "possession_won": 8,
+                "possession_lost": 3,
+                "minutes_played": 92,
+                "distance_covered": 10.7,
+                "distance_sprinted": 3.5,
+                "player_id": 11
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "CB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 23,
+                "pass_accuracy": 87,
+                "dribbles": 20,
+                "dribble_success_rate": 95,
+                "tackles": 9,
+                "tackle_success_rate": 33,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 7,
+                "possession_lost": 1,
+                "minutes_played": 92,
+                "distance_covered": 9.7,
+                "distance_sprinted": 3.0,
+                "player_id": 14
+            },
+            {
+                "performance_type": "Outfield",
+                "positions_played": [
+                    "RB"
+                ],
+                "goals": 0,
+                "assists": 0,
+                "shots": 0,
+                "shot_accuracy": 0,
+                "passes": 20,
+                "pass_accuracy": 100,
+                "dribbles": 16,
+                "dribble_success_rate": 88,
+                "tackles": 5,
+                "tackle_success_rate": 60,
+                "offsides": 0,
+                "fouls_committed": 0,
+                "possession_won": 3,
+                "possession_lost": 2,
+                "minutes_played": 92,
+                "distance_covered": 13.4,
+                "distance_sprinted": 7.5,
+                "player_id": 52
+            },
+            {
+                "performance_type": "GK",
+                "shots_against": 5,
+                "shots_on_target": 1,
+                "saves": 0,
+                "goals_conceded": 1,
+                "save_success_rate": 0,
+                "punch_saves": 0,
+                "rush_saves": 1,
                 "penalty_saves": 0,
                 "penalty_goals_conceded": 0,
                 "shoot_out_saves": 0,

@@ -6324,7 +6324,15 @@
                 "sell_on_clause": 13
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-04-14T13:32:29.625363",
+                "in_game_date": "2030-11-03T00:00:00",
+                "injury_detail": "Broken Toe",
+                "time_out": 3,
+                "time_out_unit": "Months"
+            }
+        ],
         "sold": false,
         "date_sold": null,
         "loaned": false
@@ -8480,6 +8488,69 @@
                 "in_game_date": "2030-10-15T00:00:00",
                 "wage": 7800,
                 "market_value": 4700000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 69,
+        "name": "Cristobal Gimenez",
+        "nationality": "Spain",
+        "age": 18,
+        "height": "5'10\"",
+        "weight": 145,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-04-14T20:16:49.868741",
+                "in_game_date": "2030-11-12T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 66,
+                "sprint_speed": 54,
+                "agility": 64,
+                "balance": 70,
+                "jumping": 62,
+                "stamina": 82,
+                "strength": 64,
+                "aggression": 66,
+                "att_position": 44,
+                "composure": 57,
+                "interceptions": 66,
+                "reactions": 73,
+                "vision": 63,
+                "defensive_awareness": 68,
+                "ball_control": 69,
+                "crossing": 51,
+                "curve": 42,
+                "dribbling": 52,
+                "fk_accuracy": 46,
+                "finishing": 46,
+                "heading_accuracy": 48,
+                "long_pass": 59,
+                "long_shots": 54,
+                "penalties": 41,
+                "short_pass": 69,
+                "shot_power": 55,
+                "slide_tackle": 64,
+                "stand_tackle": 69,
+                "volleys": 36
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-04-14T20:17:16.249589",
+                "in_game_date": "2030-11-12T00:00:00",
+                "wage": 8400,
+                "market_value": 3200000,
                 "contract_length": 3,
                 "release_clause": 0,
                 "sell_on_clause": 0
