@@ -16397,7 +16397,7 @@
                 "yellow_cards": 1
             },
             "away_stats": {
-                "possession": 1,
+                "possession": 59,
                 "ball_recovery": 10,
                 "shots": 26,
                 "xg": 10.7,
@@ -25056,7 +25056,7 @@
                 "yellow_cards": 1
             },
             "away_stats": {
-                "possession": 1,
+                "possession": 66,
                 "ball_recovery": 8,
                 "shots": 26,
                 "xg": 10.7,
@@ -26707,7 +26707,7 @@
                 "yellow_cards": 0
             },
             "away_stats": {
-                "possession": 4,
+                "possession": 44,
                 "ball_recovery": 16,
                 "shots": 6,
                 "xg": 2.0,
