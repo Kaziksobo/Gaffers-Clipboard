@@ -962,7 +962,7 @@ class App(ctk.CTk):
             player_name,
         )
 
-    def save_buffered_match(self) -> None:
+    def save_buffered_match(self, force_save: bool = False) -> None:
         """Commit the fully staged match and all associated player performances to disk.
 
         Acts as the final orchestrator for the match-logging UI wizard. It extracts the
@@ -975,6 +975,8 @@ class App(ctk.CTk):
 
         Raises:
             IncompleteDataError: If required buffered match data is missing.
+            DataDiscrepancyError: If stat sums do not match overview totals and
+                ``force_save`` is False.
             DataPersistenceError: If validation or persistence fails while
                 saving the match.
         """
@@ -984,15 +986,17 @@ class App(ctk.CTk):
 
         logger.info(
             "Committing buffered match (competition: %s, opponent: %s, "
-            "performances: %s).",
+            "performances: %s, force_save: %s).",
             match_overview.get("competition", "Unknown"),
             match_overview.get("away_team_name", "Unknown"),
             len(player_performances),
+            force_save,
         )
 
         self._match_service.save_match(
             match_overview=match_overview,
             player_performances=player_performances,
+            force_save=force_save,
         )
 
         logger.info("Buffered match committed successfully.")

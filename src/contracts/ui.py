@@ -314,8 +314,8 @@ class PlayerPerformanceControllerProtocol(Protocol):
 class SaveBufferedMatchControllerProtocol(Protocol):
     """Controller capability for committing buffered match payloads."""
 
-    def save_buffered_match(self) -> None:
-        """Persist staged match overview and player performances."""
+    def save_buffered_match(self, force_save: bool = False) -> None:
+        """Persist staged match data, optionally bypassing discrepancy checks."""
 
 
 @runtime_checkable
@@ -463,8 +463,8 @@ class MatchStatsFrameControllerProtocol(
     def process_player_stats(self, is_goalkeeper: bool = False) -> None:
         """Trigger OCR flow for player performance stats."""
 
-    def save_buffered_match(self) -> None:
-        """Persist staged match overview and player performances."""
+    def save_buffered_match(self, force_save: bool = False) -> None:
+        """Persist staged match data, optionally bypassing discrepancy checks."""
 
 
 @runtime_checkable

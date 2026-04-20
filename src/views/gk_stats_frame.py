@@ -11,7 +11,7 @@ import logging
 import customtkinter as ctk
 
 from src.contracts.ui import BaseViewThemeProtocol, GKStatsFrameControllerProtocol
-from src.exceptions import DuplicateRecordError
+from src.exceptions import DataDiscrepancyError, DuplicateRecordError
 from src.utils import safe_int_conversion
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import (
@@ -462,6 +462,28 @@ class GKStatsFrame(
             self.controller.show_frame(
                 self.controller.get_frame_class("MatchAddedFrame")
             )
+        except DataDiscrepancyError as e:
+            logger.warning("Match discrepancy detected: %s", e.discrepancies)
+            if not self.confirm_discrepancy_force_save(e.discrepancies):
+                return
+            try:
+                self.controller.save_buffered_match(force_save=True)
+                self.controller.show_frame(
+                    self.controller.get_frame_class("MatchAddedFrame")
+                )
+            except Exception as forced_save_error:
+                logger.error(
+                    "Error while force-saving match from GKStatsFrame: %s",
+                    forced_save_error,
+                    exc_info=True,
+                )
+                self.show_error(
+                    "Error Saving Match",
+                    (
+                        "An error occurred while force-saving the match data: "
+                        f"{forced_save_error!s}. Please try again."
+                    ),
+                )
         except Exception as e:
             # Crucial catch for DataPersistenceError to prevent data loss via hard-crash
             logger.error(

@@ -99,3 +99,12 @@ class DuplicateRecordError(DataError):
     """Raised when attempting to save a record that already exists in the database."""
 
     pass
+
+
+class DataDiscrepancyError(Exception):
+    """Raised when player performance sums do not match the overview totals."""
+
+    def __init__(self, message: str, discrepancies: dict[str, dict[str, int]]):
+        """Initialize the exception with a message and info about the discrepancies."""
+        super().__init__(message)
+        self.discrepancies = discrepancies

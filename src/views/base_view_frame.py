@@ -361,6 +361,43 @@ class BaseViewFrame(ctk.CTkFrame):
         )
         return alert.get_result()
 
+    def confirm_discrepancy_force_save(
+        self, discrepancies: dict[str, dict[str, int]]
+    ) -> bool:
+        """Ask whether to force-save when overview and player totals mismatch.
+
+        Args:
+            discrepancies (dict[str, dict[str, int]]): Per-stat discrepancy
+                details collected by match stat cohesion checks.
+
+        Returns:
+            bool: True when the user confirms force-save; otherwise False.
+        """
+        lines: list[str] = []
+        for stat, details in discrepancies.items():
+            expected = details.get("expected", 0)
+            actual = details.get("actual", 0)
+            strict = bool(details.get("strict", True))
+            severity = "strict" if strict else "warning"
+            label = stat.replace("_", " ").title()
+            lines.append(
+                f"- {label}: team total = {expected}, player sum = {actual} ({severity})"
+            )
+
+        discrepancy_block = "\n".join(lines) if lines else "- No details available."
+        result = self.show_warning(
+            title="Stat Discrepancies Found",
+            message=(
+                "Team totals do not match the sum of scanned outfield player "
+                "statistics.\n\n"
+                f"{discrepancy_block}\n\n"
+                "Select 'Force Save Match' to continue anyway, or 'Review Match "
+                "Data' to correct the entries."
+            ),
+            options=["Force Save Match", "Review Match Data"],
+        )
+        return result == "Force Save Match"
+
     # --- UI Generators ---
     def create_data_row(
         self,
