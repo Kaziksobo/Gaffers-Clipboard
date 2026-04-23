@@ -18,7 +18,7 @@ and error-boundary behavior for match workflows.
 
 import logging
 from datetime import datetime
-from typing import cast
+from typing import Literal, cast
 
 from src.contracts.backend import (
     MatchOverviewPayload,
@@ -123,9 +123,32 @@ class MatchService:
     def _check_stat_cohesion(
         self, overview: MatchOverviewPayload, performances: PlayerPerformanceBuffer
     ) -> dict[str, dict[str, int]]:
-        career_name = self.data_manager.current_career
+        """Evaluate consistency between team statistics and player-level aggregates.
+
+        This method cross-checks key match stats from the overview against the
+        sum of outfield player performances, applying stat-specific tolerance
+        rules and returning any detected discrepancies.
+
+        Args:
+            overview (MatchOverviewPayload): Match overview payload containing the
+                user's team stats and scoreline.
+            performances (PlayerPerformanceBuffer): Collection of player
+                performance entries used to calculate aggregated player statistics.
+
+        Returns:
+            dict[str, dict[str, int]]: A mapping of stat names to discrepancy
+                details, including expected team total, actual player sum, and
+                a strictness flag indicating validation severity.
+        """
+        career_meta = self.data_manager.get_current_career_metadata()
+        if not career_meta:
+            logger.debug("No career metadata available for stat cohesion check.")
+            return {}
+        career_name: str = career_meta.club_name
         home_team = overview.get("home_team_name")
-        home_or_away = "home" if home_team == career_name else "away"
+        home_or_away: Literal["home", "away"] = (
+            "home" if home_team == career_name else "away"
+        )
         raw_user_stats = overview.get(f"{home_or_away}_stats", {})
         if isinstance(raw_user_stats, dict):
             user_stats = cast(MatchStatsPayload, raw_user_stats)
@@ -154,9 +177,27 @@ class MatchService:
                 if p.get("performance_type") == "Outfield"
             )
 
+            # Goals need to be processed differently, as they are not stored in
+            # "home_stats"/"away_stats", but rather directly in the overview as
+            # "home_score"/"away_score". We can infer the team total goals from these
+            # fields instead of relying on the user_stats.
+            if stat == "goals":
+                team_total = overview.get(f"{home_or_away}_score", 0)
+
             # Special Case: Own Goals
             if stat == "goals" and team_total > player_sum:
                 # This is likely an own goal, not an error.
+                continue
+
+            # Special Case: Passes tolerance
+            # Allow up to 20 missing player passes vs team total,
+            # to account for passes made by GK, which are not currently tracked
+            # at the player level
+            if (
+                stat == "passes"
+                and team_total >= player_sum
+                and (team_total - player_sum) <= 20
+            ):
                 continue
 
             if team_total != player_sum:
