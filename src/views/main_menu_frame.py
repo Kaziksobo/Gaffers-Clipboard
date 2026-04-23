@@ -49,6 +49,14 @@ class MainMenuFrame(BaseViewFrame):
 
         logger.info("Initializing MainMenuFrame")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the main menu interface.
+
+        Sets up the welcome messaging, primary navigation buttons, and layout
+        grid so users can access core career workflows after loading a save.
+        """
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)

@@ -53,6 +53,14 @@ class CareerSelectFrame(BaseViewFrame):
 
         logger.info("Initializing CareerSelectFrame")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and lay out the startup career-selection widgets.
+
+        Initializes labels, dropdowns, and buttons, wiring them into the
+        controller so users can load an existing career or begin creating a new one.
+        """
         # --- Layout Configuration ---
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
@@ -75,7 +83,7 @@ class CareerSelectFrame(BaseViewFrame):
             font=self.fonts["body"],
         )
         self.info_label.grid(row=2, column=1, pady=10)
-        self.register_wrapping_widget(self.main_heading, width_ratio=0.8)
+        self.register_wrapping_widget(self.info_label, width_ratio=0.8)
 
         # Career select mini-grid
         self.career_select_frame = ctk.CTkFrame(self)

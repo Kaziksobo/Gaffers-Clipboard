@@ -53,6 +53,15 @@ class CareerConfigFrame(BaseViewFrame):
         super().__init__(parent, controller, theme)
         self.controller: CareerConfigFrameControllerProtocol = controller
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the career settings interface.
+
+        Builds metadata editors, competition list controls, add/remove buttons,
+        and navigation actions so users can manage career details and
+        competitions from a single screen.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
@@ -227,7 +236,7 @@ class CareerConfigFrame(BaseViewFrame):
                 )
             delete_btn.grid(row=0, column=1, padx=(8, 0))
 
-    def _on_add_comp(self) -> None:
+    def _on_add_comp(self) -> None:  # sourcery skip: extract-method
         """Validate and add a competition, then optionally undo the action.
 
         Ensures the competition name is present, delegates insertion to the

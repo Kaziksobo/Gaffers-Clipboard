@@ -73,6 +73,15 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             ("volleys", "Volleys"),
         ]
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the technical-attributes page.
+
+        Builds the heading, two-column technical attributes grid, and submit
+        button so users can complete and submit an outfield player's final
+        ratings.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
@@ -122,7 +131,7 @@ class AddOutfieldFrame2(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
 
         self.apply_focus_flourishes(self)
 
-    def _on_done_button_press(self) -> None:
+    def _on_done_button_press(self) -> None:  # sourcery skip: extract-method
         """Validate technical attributes and complete outfield player save.
 
         This method is the submit pipeline for page two. It converts all

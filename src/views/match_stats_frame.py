@@ -79,6 +79,15 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         self.home_team_score_var = ctk.StringVar(value="0")
         self.away_team_score_var = ctk.StringVar(value="0")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the match statistics review view.
+
+        Builds the heading, team name and score row, paired home/away stats
+        grid, and navigation controls so users can correct match overview data
+        and branch into player capture or match-only save flows.
+        """
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)

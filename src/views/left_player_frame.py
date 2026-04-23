@@ -48,6 +48,15 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
 
         logger.info("Initializing LeftPlayerFrame")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for managing player departures.
+
+        Builds player selection, optional sale-date input, and grouped action
+        buttons so users can sell players, loan them out, or register their
+        return from loan within a single interface.
+        """
         # Basic UI, with a player dropdown and a sell button
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)

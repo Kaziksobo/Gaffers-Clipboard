@@ -46,6 +46,15 @@ class PlayerLibraryFrame(BaseViewFrame):
 
         logger.info("Initializing PlayerLibraryFrame")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the player-library navigation view.
+
+        Sets up headings, instructional text, and grouped action buttons so
+        users can launch OCR capture, update player records, and manage
+        transfers from a single hub.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)

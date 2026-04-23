@@ -57,6 +57,14 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
         super().__init__(parent, controller, theme)
         self.controller: CreateCareerFrameControllerProtocol = controller
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the create-career form.
+
+        Sets up headings, input fields, dropdowns, and league selection controls
+        so users can enter all required data to define a new career.
+        """
         logger.info("Initializing CreateCareerFrame")
 
         self.grid_columnconfigure(0, weight=1)
@@ -166,33 +174,7 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
         )
         self.league_label.grid(row=6, column=1, sticky="e", pady=5, padx=(0, 10))
 
-        # Attempt to load league defaults from config
-        leagues: list[str] = []
-        config_path: Path = (
-            self.controller.PROJECT_ROOT / "config" / "league_competitions.json"
-        )
-        try:
-            if config_path.exists():
-                with Path.open(config_path, encoding="utf-8") as f:
-                    defaults: dict[str, list[str] | dict[str, list[str]]] = json.load(f)
-                    # Support two formats: either {"League Name": [...]}
-                    # or {"leagues": { ... }}
-                    if isinstance(defaults, dict):
-                        if "leagues" in defaults and isinstance(
-                            defaults["leagues"], dict
-                        ):
-                            defaults: dict[str, list[str]] = defaults["leagues"]
-                        leagues: list[str] = sorted(
-                            k for k in defaults if isinstance(k, str)
-                        )
-        except Exception as e:
-            logger.debug(
-                "Failed to load league defaults from %s: %s",
-                config_path,
-                e,
-                exc_info=True,
-            )
-            leagues: list[str] = []
+        leagues = self._get_leagues()
 
         self.league_var = ctk.StringVar(value="Select League")
         # Create a small ScrollableDropdown and allow adding a custom league
@@ -226,6 +208,42 @@ class CreateCareerFrame(BaseViewFrame, EntryFocusMixin):
                 placeholder_text="Enter league name",
             )
             self.league_entry.grid(row=6, column=2, sticky="w", pady=5)
+
+    def _get_leagues(self) -> list[str]:
+        """Load available leagues from configuration for use in the form.
+
+        Attempts to read a JSON configuration file, normalizes its layout, and
+        returns a sorted list of league names, falling back to an empty list on error.
+        """
+        # Attempt to load league defaults from config
+        leagues: list[str] = []
+        config_path: Path = (
+            self.controller.PROJECT_ROOT / "config" / "league_competitions.json"
+        )
+        try:
+            if config_path.exists():
+                with Path.open(config_path, encoding="utf-8") as f:
+                    defaults: dict[str, list[str] | dict[str, list[str]]] = json.load(f)
+                    # Support two formats: either {"League Name": [...]}
+                    # or {"leagues": { ... }}
+                    if isinstance(defaults, dict):
+                        if "leagues" in defaults and isinstance(
+                            defaults["leagues"], dict
+                        ):
+                            defaults: dict[str, list[str]] = defaults["leagues"]
+                        leagues: list[str] = sorted(
+                            k for k in defaults if isinstance(k, str)
+                        )
+        except Exception as e:
+            logger.debug(
+                "Failed to load league defaults from %s: %s",
+                config_path,
+                e,
+                exc_info=True,
+            )
+            leagues: list[str] = []
+
+        return leagues
 
     def on_show(self) -> None:
         """Reset form fields whenever the frame becomes active.

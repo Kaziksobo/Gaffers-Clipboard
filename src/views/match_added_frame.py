@@ -45,6 +45,14 @@ class MatchAddedFrame(BaseViewFrame):
 
         logger.info("Initializing MatchAddedFrame")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the match-added confirmation view.
+
+        Builds a centered success message and a single navigation button so
+        users can acknowledge the saved match and return to the main menu.
+        """
         self.label = ctk.CTkLabel(
             self,
             text="Match successfully recorded",

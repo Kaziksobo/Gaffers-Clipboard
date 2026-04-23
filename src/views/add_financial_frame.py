@@ -72,6 +72,15 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
             ("sell_on_clause", "Sell On Clause (%)"),
         ]
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the financial update workflow.
+
+        Builds player selection, in-game date, and financial input controls
+        so users can record contract and valuation changes for an existing
+        player in a single, structured form.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)

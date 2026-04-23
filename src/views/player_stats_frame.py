@@ -106,6 +106,16 @@ class PlayerStatsFrame(
             ("distance_sprinted", "Distance Sprinted (km)"),
         ]
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for outfield player stats review.
+
+        Builds the heading, player selector, position input, editable stats
+        grid, navigation controls, and buffered-performance sidebar so users
+        can review, correct, and stage outfield match data across multiple
+        players before final save.
+        """
         # Setting up grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)

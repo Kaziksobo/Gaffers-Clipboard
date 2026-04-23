@@ -74,6 +74,15 @@ class AddOutfieldFrame1(
             ("vision", "Vision"),
         ]
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the first outfield-entry page.
+
+        Builds name selection, in-game date, bio, and physical/mental attribute
+        inputs so users can capture the initial half of an outfield player's
+        profile before proceeding to technical attributes on page two.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
@@ -436,6 +445,7 @@ class AddOutfieldFrame1(
         )
 
     def _buffer_and_transition(self, ui_data: dict[str, str | int | None]) -> bool:
+        # sourcery skip: extract-method
         """Buffer player data and move on to the next page.
 
         The method stages validated data in the controller buffer and triggers

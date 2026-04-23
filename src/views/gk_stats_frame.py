@@ -79,6 +79,15 @@ class GKStatsFrame(
             ("shoot_out_goals_conceded", "Shoot-out Goals Conceded"),
         ]
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for goalkeeper stats review.
+
+        Builds the player selector, manual stats grid, navigation controls, and
+        buffered-performance sidebar so users can review, correct, and stage
+        goalkeeper match data before moving to other players or final save.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)

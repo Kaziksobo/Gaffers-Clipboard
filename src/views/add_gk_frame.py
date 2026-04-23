@@ -67,6 +67,14 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMix
             ("positioning", "Positioning"),
         ]
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for goalkeeper data entry.
+
+        Builds name selection, in-game date, bio, and attribute input controls
+        so users can create or update goalkeeper profiles in a structured form.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
@@ -346,9 +354,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMix
         height_raw: str = self.height_entry.get().strip()
         if height_raw and height_raw not in invalid_fields:
             height: str | None = self.validate_height(height_raw)
-            if height is None:
-                return None
-            return height
+            return None if height is None else height
         return None
 
     def _validate_required_fields(
@@ -391,6 +397,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMix
         )
 
     def _buffer_and_return(self, ui_data: dict[str, str | int | None]) -> bool:
+        # sourcery skip: extract-method
         """Buffer goalkeeper data, persist it, and return to the library view.
 
         The method stages validated data in the controller buffer and triggers

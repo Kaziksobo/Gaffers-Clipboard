@@ -51,6 +51,15 @@ class AddMatchFrame(BaseViewFrame):
 
         logger.info("Initializing AddMatchFrame")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for pre-match capture setup.
+
+        Builds the centered container, in-game date field, competition dropdown,
+        instructional text, and submit button so users can stage match metadata
+        before OCR-based capture begins.
+        """
         # Center container
         self.container = ctk.CTkFrame(self, fg_color="transparent")
         self.container.pack(expand=True)

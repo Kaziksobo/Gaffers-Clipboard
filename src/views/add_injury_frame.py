@@ -65,6 +65,14 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
 
         self.time_out_unit_var = ctk.StringVar(value="Select unit")
 
+        self._setup_ui()
+
+    def _setup_ui(self) -> None:
+        """Construct and arrange widgets for the injury logging form.
+
+        Builds the heading, player selector, injury detail rows, and submit
+        button so users can record injury events for existing players.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
