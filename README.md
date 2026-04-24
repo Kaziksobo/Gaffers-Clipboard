@@ -128,9 +128,11 @@ graph TD
 * **`src/views/`**: Pure `customtkinter` frontend frames. **No business logic or data manipulation occurs here.**
 * **`src/ocr.py`**: The standalone OpenCV image processing pipeline.
 
+The main application controller is `src/app.py`, which orchestrates interactions between the UI, OCR, and Data layers while maintaining strict separation of concerns. Only this file is allowed to directly interact with the views. Its inner workings are abstracted out to its services (`src/services/app/`) to keep it clean and focused on orchestration, meaning a lot of methods are simply wrappers. Data management is handled by the `DataManager` class directly in `src/data_manager.py`. This is the only class allowed to read/write to disk, with all reads/writes going through its strict, validated Pydantic models. `DataManager` has its own inner workings abstracted out into its own services (`src/services/data/`) to keep it focused solely on data persistence and retrieval, and the instance of `DataManager` is ceated in the app controller's init method and passed around to any service that needs it. This strict separation and interface-driven design allows for maximum maintainability, testability, and future extensibility (e.g., swapping out the OCR engine or adding a new UI framework) without any tight coupling or spaghetti code.
+
 ## Development & Testing
 
-We maintain strict quality control using `pytest`, `pytest-cov`, `pytest-mock`, `ruff`, and `ty`.
+I maintain strict quality control using `pytest`, `pytest-cov`, `pytest-mock`, `ruff`, and `ty`.
 
 ### Testing
 
@@ -142,15 +144,15 @@ uv run pytest --cov=src --cov-report=html
 
 ### Contributing Standards
 
-All code must pass strict type checking, linting, and formatting before merging.
+All code must pass strict type checking, linting, and formatting before merging. It must also adhere to the strict MVC separation of concerns outlined above.
 
-1. **Type Checking:** We use `ty` to enforce rigorous static typing across the project.
+1. **Type Checking:** I use `ty` to enforce rigorous static typing across the project.
 
 ```bash
 uv run ty .
 ```
 
-2. **Linting & Formatting:** We use `ruff` to enforce PEP compliance and maintain a clean codebase.
+2. **Linting & Formatting:** I use `ruff` to enforce PEP compliance and maintain a clean codebase.
 
 ```bash
 # Check for linting errors
@@ -162,11 +164,11 @@ uv run ruff format .
 
 ## Roadmap & Planning
 
-We maintain a detailed, living roadmap for this project.
+I maintain a detailed, living roadmap for this project.
 
 🔗 **[View the full Project Roadmap here](docs/project_roadmap.md)**
 
-> **Tip:** The documentation and roadmap for this project are highly interlinked and specifically formatted as an **[Obsidian Vault](https://obsidian.md/)**. For the best reading and navigation experience, we highly recommend opening the `docs/` directory directly within Obsidian.
+> **Tip:** The documentation and roadmap for this project are highly interlinked and specifically formatted as an **[Obsidian Vault](https://obsidian.md/)**. For the best reading and navigation experience, I highly recommend opening the `docs/` directory directly within Obsidian.
 
 ## Author & Contact
 
