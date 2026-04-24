@@ -361,13 +361,13 @@ class BaseViewFrame(ctk.CTkFrame):
         )
         return alert.get_result()
 
-    def confirm_discrepancy_force_save(
-        self, discrepancies: dict[str, dict[str, int]]
+    def show_discrepancy_alert(
+        self, discrepancies: dict[str, dict[str, int | float]]
     ) -> bool:
         """Ask whether to force-save when overview and player totals mismatch.
 
         Args:
-            discrepancies (dict[str, dict[str, int]]): Per-stat discrepancy
+            discrepancies (dict[str, dict[str, int | float]]): Per-stat discrepancy
                 details collected by match stat cohesion checks.
 
         Returns:
@@ -381,7 +381,8 @@ class BaseViewFrame(ctk.CTkFrame):
             severity = "strict" if strict else "warning"
             label = stat.replace("_", " ").title()
             lines.append(
-                f"- {label}: team total = {expected}, player sum = {actual} ({severity})"
+                f"- {label}: team total = {expected}, "
+                f"player sum = {actual} ({severity})"
             )
 
         discrepancy_block = "\n".join(lines) if lines else "- No details available."

@@ -83,7 +83,7 @@ class MatchService:
             raise IncompleteDataError("Cannot save match: Missing match overview data.")
 
         normalized_performances = player_performances or []
-        discrepancies: dict[str, dict[str, int]] = {}
+        discrepancies: dict[str, dict[str, int | float]] = {}
 
         if (
             not force_save
@@ -122,7 +122,7 @@ class MatchService:
 
     def _check_stat_cohesion(
         self, overview: MatchOverviewPayload, performances: PlayerPerformanceBuffer
-    ) -> dict[str, dict[str, int]]:
+    ) -> dict[str, dict[str, int | float]]:
         """Evaluate consistency between team statistics and player-level aggregates.
 
         This method cross-checks key match stats from the overview against the
@@ -136,7 +136,7 @@ class MatchService:
                 performance entries used to calculate aggregated player statistics.
 
         Returns:
-            dict[str, dict[str, int]]: A mapping of stat names to discrepancy
+            dict[str, dict[str, int | float]]: A mapping of stat names to discrepancy
                 details, including expected team total, actual player sum, and
                 a strictness flag indicating validation severity.
         """

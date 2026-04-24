@@ -20,6 +20,8 @@ Notes:
 """
 
 import logging
+from collections.abc import MutableMapping
+from typing import cast
 
 from src.contracts.backend import (
     BufferedMatch,
@@ -30,11 +32,13 @@ from src.contracts.backend import (
     PlayerAttributesBuffer,
     PlayerPerformanceBuffer,
     PlayerPerformancePayload,
+    RawValue,
 )
 from src.exceptions import (
     DataPersistenceError,
     DuplicateRecordError,
     IncompleteDataError,
+    PlayerNotFoundInBufferError,
 )
 from src.utils import safe_normalize_name
 
@@ -358,6 +362,55 @@ class BufferService:
         )
         self._match_overview_buffer = {}
         self._player_performances_buffer = []
+
+    # ----------------- Match Updating Methods -----------------
+    def update_match_overview(self, updates: MatchOverviewPayload) -> None:
+        """Apply manual corrections to the buffered match overview.
+
+        Args:
+            updates: A partial overview payload containing corrected values,
+                including nested side-stat dictionaries and score fields.
+
+        Raises:
+            IncompleteDataError: If called before a match overview is staged.
+        """
+        if not self._match_overview_buffer:
+            raise IncompleteDataError("Cannot update overview: No match is buffered.")
+
+        # Dictionary update overwrites existing keys or adds new ones safely
+        self._match_overview_buffer.update(updates)
+        logger.debug("Applied manual corrections to match overview: %s", updates)
+
+    def update_player_performance(
+        self, player_name: str, updates: dict[str, int]
+    ) -> None:
+        """Apply manual statistical corrections to a buffered player.
+
+        Args:
+            player_name: The un-normalized name of the player (as displayed in the UI).
+            updates: A dictionary of stat keys and their corrected integer values.
+
+        Raises:
+            PlayerNotFoundInBufferError: If the normalized player name is
+                                         not found in the buffer.
+        """
+        norm_name = safe_normalize_name(player_name)
+
+        for performance in self._player_performances_buffer:
+            if safe_normalize_name(performance.get("player_name")) == norm_name:
+                perf_map = cast(MutableMapping[str, RawValue], performance)
+                for key, value in updates.items():
+                    perf_map[key] = value
+                logger.debug(
+                    "Applied manual corrections to player %s: %s", player_name, updates
+                )
+                return
+        # If we reach here the requested player wasn't found in the buffer
+        logger.warning(
+            "Attempted to apply manual corrections but player not found: %s",
+            player_name,
+        )
+        raise PlayerNotFoundInBufferError(f"Player not found in buffer: {player_name}")
 
     # ----------------- Buffer Display Methods -----------------
 

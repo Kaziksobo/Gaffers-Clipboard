@@ -21,6 +21,7 @@ import logging
 import tkinter as tk
 from datetime import datetime
 from pathlib import Path
+from typing import cast
 
 import customtkinter as ctk
 
@@ -32,6 +33,7 @@ from src.contracts.backend import (
     FinancialDataPayload,
     InjuryDataPayload,
     MatchOverviewPayload,
+    MatchStatsPayload,
     PlayerAttributePayload,
     PlayerBioDict,
     PlayerPerformancePayload,
@@ -46,13 +48,13 @@ from src.contracts.ui import (
     StatsPopulatable,
 )
 from src.data_manager import DataManager
-from src.exceptions import FrameNotFoundError, UIPopulationError
+from src.exceptions import DataDiscrepancyError, FrameNotFoundError, UIPopulationError
 from src.schemas import CareerMetadata, DifficultyLevel
 
 # Service imports
 from src.services import app as app_services
 
-# Internal imports
+# View Imports
 from src.theme import theme
 from src.views.add_financial_frame import AddFinancialFrame
 from src.views.add_gk_frame import AddGKFrame
@@ -61,14 +63,13 @@ from src.views.add_match_frame import AddMatchFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
 from src.views.career_config_frame import CareerConfigFrame
-
-# View imports
 from src.views.career_select_frame import CareerSelectFrame
 from src.views.create_career_frame import CreateCareerFrame
 from src.views.gk_stats_frame import GKStatsFrame
 from src.views.left_player_frame import LeftPlayerFrame
 from src.views.main_menu_frame import MainMenuFrame
 from src.views.match_added_frame import MatchAddedFrame
+from src.views.match_review_frame import MatchReviewFrame
 from src.views.match_stats_frame import MatchStatsFrame
 from src.views.player_library_frame import PlayerLibraryFrame
 from src.views.player_stats_frame import PlayerStatsFrame
@@ -147,6 +148,8 @@ class App(ctk.CTk):
         self._career_service = app_services.CareerService(self._data_manager)
         self._match_service = app_services.MatchService(self._data_manager)
 
+        self._current_discrepancies: dict[str, dict[str, int | float]] = {}
+
         # Frame configuration
         container: ctk.CTkFrame = ctk.CTkFrame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -172,6 +175,7 @@ class App(ctk.CTk):
             GKStatsFrame,
             AddInjuryFrame,
             CareerConfigFrame,
+            MatchReviewFrame,
         ):
             try:
                 frame = frame_cls(container, self, self._theme)
@@ -962,6 +966,101 @@ class App(ctk.CTk):
             player_name,
         )
 
+    def get_match_review_context(
+        self,
+    ) -> tuple[
+        MatchOverviewPayload,
+        list[PlayerPerformancePayload],
+        dict[str, dict[str, int | float]],
+    ]:
+        """Retrieve the current buffered data and discrepancies for manual review.
+
+        This method is called by the `MatchReviewFrame` upon loading to populate
+        its dynamically generated input grid.
+
+        Returns:
+            tuple: A three-item tuple containing the match overview dict,
+                the list of player performance dicts, and the dictionary
+                of currently flagged discrepancies.
+        """
+        buffered_match = self._buffer_service.get_buffered_match()
+        return (
+            buffered_match.match_overview,
+            buffered_match.player_performances,
+            self._current_discrepancies,
+        )
+
+    def submit_match_corrections(
+        self,
+        updated_overview: dict[str, int],
+        updated_performances: dict[str, dict[str, int]],
+    ) -> None:
+        """Update the match buffers with manual corrections and re-attempt save.
+
+        Args:
+            updated_overview: A dictionary of corrected team total stats.
+            updated_performances: A nested dictionary mapping each player's
+                name in the buffer to their corrected stat values.
+
+        Raises:
+            DataDiscrepancyError: If the new manual inputs still do not
+                satisfy the cohesion check.
+        """
+        logger.info("Applying manual corrections from MatchReviewFrame.")
+
+        # Determine which side (home/away) belongs to our career team
+        buffered = self._buffer_service.get_buffered_match()
+        current_overview = buffered.match_overview
+        career_meta = self.get_current_career_details()
+        career_team = getattr(career_meta, "club_name", None)
+
+        # resolve whether our club is home or away for this buffered match
+        home_team = current_overview.get("home_team_name")
+        home_or_away = "home" if home_team == career_team else "away"
+
+        # Build normalized overview updates that match
+        # DataManager/MatchService expectations
+        overview_updates: MatchOverviewPayload = {}
+        # ensure we copy/merge existing stats dict so we don't clobber unrelated stats
+        side_stats_key = f"{home_or_away}_stats"
+        raw_side_stats = current_overview.get(side_stats_key, {})
+        existing_side_stats: dict[str, int | float] = (
+            {
+                key: value
+                for key, value in raw_side_stats.items()
+                if isinstance(key, str) and isinstance(value, (int, float))
+            }
+            if isinstance(raw_side_stats, dict)
+            else {}
+        )
+
+        for stat, val in updated_overview.items():
+            if stat == "goals":
+                # goals map to the _score field
+                overview_updates[f"{home_or_away}_score"] = val
+            else:
+                existing_side_stats[stat] = val
+
+        # attach merged stats dict (only if we changed any stat)
+        if existing_side_stats:
+            overview_updates[side_stats_key] = cast(
+                MatchStatsPayload, existing_side_stats
+            )
+
+        # 1. Update the match overview
+        self._buffer_service.update_match_overview(overview_updates)
+
+        # 2. Update each player using their name as the lookup key
+        for player_name, stats in updated_performances.items():
+            self._buffer_service.update_player_performance(player_name, stats)
+
+        # 3. Re-attempt the save
+        self.save_buffered_match(force_save=False)
+
+    def cancel_match_review(self) -> None:
+        """Abort the review process and return to the standard editing flow."""
+        self._current_discrepancies.clear()
+
     def save_buffered_match(self, force_save: bool = False) -> None:
         """Commit the fully staged match and all associated player performances to disk.
 
@@ -993,14 +1092,22 @@ class App(ctk.CTk):
             force_save,
         )
 
-        self._match_service.save_match(
-            match_overview=match_overview,
-            player_performances=player_performances,
-            force_save=force_save,
-        )
+        try:
+            self._match_service.save_match(
+                match_overview=match_overview,
+                player_performances=player_performances,
+                force_save=force_save,
+            )
 
-        logger.info("Buffered match committed successfully.")
+            logger.info("Buffered match committed successfully.")
 
-        # Clear buffers only after a successful save so the user can retry on failure.
-        logger.debug("Clearing match buffers after successful save.")
-        self._buffer_service.reset_match_buffers()
+            # Clear buffers and state only after a successful save
+            self._current_discrepancies.clear()
+            logger.debug("Clearing match buffers after successful save.")
+            self._buffer_service.reset_match_buffers()
+
+        except DataDiscrepancyError as e:
+            # Cache the discrepancies in app.py so the review frame can fetch them
+            self._current_discrepancies = e.discrepancies
+            # Re-raise so the PlayerStatsFrame can catch it and show the popup
+            raise e

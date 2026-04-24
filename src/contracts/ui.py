@@ -451,6 +451,33 @@ class MatchAddedFrameControllerProtocol(
 
 
 @runtime_checkable
+class MatchReviewControllerProtocol(
+    BaseViewControllerProtocol,
+    Protocol,
+):
+    """Controller capability for match discrepancy review and correction flows."""
+
+    def get_match_review_context(
+        self,
+    ) -> tuple[
+        MatchOverviewPayload,
+        list[PlayerPerformancePayload],
+        dict[str, dict[str, int | float]],
+    ]:
+        """Return (match overview, player performances, discrepancies)."""
+
+    def submit_match_corrections(
+        self,
+        updated_overview: dict[str, int],
+        updated_performances: dict[str, dict[str, int]],
+    ) -> None:
+        """Accept corrected team and player stats for re-validation and saving."""
+
+    def cancel_match_review(self) -> None:
+        """Abort the review without applying changes and restore prior state."""
+
+
+@runtime_checkable
 class MatchStatsFrameControllerProtocol(
     BaseViewControllerProtocol,
     Protocol,

@@ -192,6 +192,47 @@ type PlayerPerformancePayload = (
 type PlayerPerformanceBuffer = list[PlayerPerformancePayload]
 
 
+class PartialPlayerPerformancePayload(TypedDict, total=False):
+    """Partial/patch payload for updating player performances.
+
+    All fields are optional so callers can provide a subset of keys to update.
+    This TypedDict covers both outfield and goalkeeper fields used in
+    `PlayerPerformancePayload`.
+    """
+
+    player_name: str
+    performance_type: Literal["Outfield", "GK"]
+    positions_played: list[PositionType]
+    goals: int
+    assists: int
+    shots: int
+    shot_accuracy: int
+    passes: int
+    pass_accuracy: int
+    dribbles: int
+    dribble_success_rate: int
+    tackles: int
+    tackle_success_rate: int
+    offsides: int
+    fouls_committed: int
+    possession_won: int
+    possession_lost: int
+    minutes_played: int
+    distance_covered: float
+    distance_sprinted: float
+    shots_against: int
+    shots_on_target: int
+    saves: int
+    goals_conceded: int
+    save_success_rate: int
+    punch_saves: int
+    rush_saves: int
+    penalty_saves: int
+    penalty_goals_conceded: int
+    shoot_out_saves: int
+    shoot_out_goals_conceded: int
+
+
 @dataclass(frozen=True, slots=True)
 class BufferedPlayer:
     """Normalized staged player payload ready for persistence."""

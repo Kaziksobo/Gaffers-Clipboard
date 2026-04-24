@@ -334,25 +334,28 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             )
         except DataDiscrepancyError as e:
             logger.warning("Match discrepancy detected: %s", e.discrepancies)
-            if not self.confirm_discrepancy_force_save(e.discrepancies):
-                return
-            try:
-                self.controller.save_buffered_match(force_save=True)
+            if not self.show_discrepancy_alert(e.discrepancies):
+                try:
+                    self.controller.save_buffered_match(force_save=True)
+                    self.controller.show_frame(
+                        self.controller.get_frame_class("MatchAddedFrame")
+                    )
+                except Exception as forced_save_error:
+                    logger.error(
+                        "Error while force-saving match from MatchStatsFrame: %s",
+                        forced_save_error,
+                        exc_info=True,
+                    )
+                    self.show_error(
+                        "Error Saving Match",
+                        (
+                            "An error occurred while force-saving the match data: "
+                            f"\n{forced_save_error!s}. \n\nPlease try again."
+                        ),
+                    )
+            else:
                 self.controller.show_frame(
-                    self.controller.get_frame_class("MatchAddedFrame")
-                )
-            except Exception as forced_save_error:
-                logger.error(
-                    "Error while force-saving match from MatchStatsFrame: %s",
-                    forced_save_error,
-                    exc_info=True,
-                )
-                self.show_error(
-                    "Error Saving Match",
-                    (
-                        "An error occurred while force-saving the match data: "
-                        f"\n{forced_save_error!s}. \n\nPlease try again."
-                    ),
+                    self.controller.get_frame_class("MatchReviewFrame")
                 )
         except Exception as e:
             logger.error(f"Error during finalizing match addition: {e}", exc_info=True)

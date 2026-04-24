@@ -89,6 +89,12 @@ class IncompleteDataError(DataError):
     pass
 
 
+class PlayerNotFoundInBufferError(IncompleteDataError):
+    """Raised when an update targets a player not present in the current buffer."""
+
+    pass
+
+
 class DataPersistenceError(DataError):
     """Raised when the DataManager fails to save a record due to errors."""
 
@@ -104,7 +110,7 @@ class DuplicateRecordError(DataError):
 class DataDiscrepancyError(Exception):
     """Raised when player performance sums do not match the overview totals."""
 
-    def __init__(self, message: str, discrepancies: dict[str, dict[str, int]]):
+    def __init__(self, message: str, discrepancies: dict[str, dict[str, int | float]]):
         """Initialize the exception with a message and info about the discrepancies."""
         super().__init__(message)
         self.discrepancies = discrepancies
