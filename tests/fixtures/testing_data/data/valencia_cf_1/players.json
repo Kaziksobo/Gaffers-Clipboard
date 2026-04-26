@@ -1969,8 +1969,8 @@
             }
         ],
         "injury_history": [],
-        "sold": false,
-        "date_sold": null,
+        "sold": true,
+        "date_sold": "2030-12-27T00:00:00",
         "loaned": false
     },
     {
@@ -4570,8 +4570,8 @@
             }
         ],
         "injury_history": [],
-        "sold": false,
-        "date_sold": null,
+        "sold": true,
+        "date_sold": "2031-01-02T00:00:00",
         "loaned": false
     },
     {
@@ -5155,7 +5155,15 @@
                 "sell_on_clause": 6
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-04-15T12:01:47.187020",
+                "in_game_date": "2030-12-06T00:00:00",
+                "injury_detail": "Sprained Knee",
+                "time_out": 4,
+                "time_out_unit": "Weeks"
+            }
+        ],
         "sold": false,
         "date_sold": null,
         "loaned": false
@@ -8367,7 +8375,15 @@
             }
         ],
         "financial_history": [],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-04-22T23:18:15.881231",
+                "in_game_date": "2031-01-09T00:00:00",
+                "injury_detail": "Bruised Shoulder",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            }
+        ],
         "sold": false,
         "date_sold": null,
         "loaned": false
@@ -8433,7 +8449,7 @@
         "injury_history": [],
         "sold": false,
         "date_sold": null,
-        "loaned": false
+        "loaned": true
     },
     {
         "id": 68,
@@ -8496,7 +8512,7 @@
         "injury_history": [],
         "sold": false,
         "date_sold": null,
-        "loaned": false
+        "loaned": true
     },
     {
         "id": 69,
@@ -8551,6 +8567,132 @@
                 "in_game_date": "2030-11-12T00:00:00",
                 "wage": 8400,
                 "market_value": 3200000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 70,
+        "name": "Matthew Grech",
+        "nationality": "Malta",
+        "age": 17,
+        "height": "5'10\"",
+        "weight": 154,
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-04-22T16:40:44.214287",
+                "in_game_date": "2030-12-27T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 79,
+                "sprint_speed": 71,
+                "agility": 88,
+                "balance": 60,
+                "jumping": 48,
+                "stamina": 59,
+                "strength": 46,
+                "aggression": 37,
+                "att_position": 75,
+                "composure": 71,
+                "interceptions": 28,
+                "reactions": 55,
+                "vision": 78,
+                "defensive_awareness": 33,
+                "ball_control": 78,
+                "crossing": 73,
+                "curve": 49,
+                "dribbling": 56,
+                "fk_accuracy": 35,
+                "finishing": 50,
+                "heading_accuracy": 35,
+                "long_pass": 72,
+                "long_shots": 65,
+                "penalties": 47,
+                "short_pass": 76,
+                "shot_power": 45,
+                "slide_tackle": 27,
+                "stand_tackle": 34,
+                "volleys": 43
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-04-22T16:41:08.103006",
+                "in_game_date": "2030-12-27T00:00:00",
+                "wage": 7800,
+                "market_value": 4400000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 71,
+        "name": "Ismael Crespo",
+        "nationality": "Spain",
+        "age": 18,
+        "height": "5'9\"",
+        "weight": 145,
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-04-23T01:30:49.998690",
+                "in_game_date": "2031-01-13T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 83,
+                "sprint_speed": 89,
+                "agility": 79,
+                "balance": 68,
+                "jumping": 55,
+                "stamina": 63,
+                "strength": 60,
+                "aggression": 50,
+                "att_position": 66,
+                "composure": 56,
+                "interceptions": 40,
+                "reactions": 57,
+                "vision": 57,
+                "defensive_awareness": 34,
+                "ball_control": 70,
+                "crossing": 64,
+                "curve": 55,
+                "dribbling": 69,
+                "fk_accuracy": 45,
+                "finishing": 56,
+                "heading_accuracy": 45,
+                "long_pass": 63,
+                "long_shots": 53,
+                "penalties": 53,
+                "short_pass": 65,
+                "shot_power": 56,
+                "slide_tackle": 32,
+                "stand_tackle": 33,
+                "volleys": 51
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-04-23T01:31:21.734487",
+                "in_game_date": "2030-01-13T00:00:00",
+                "wage": 9300,
+                "market_value": 2500000,
                 "contract_length": 3,
                 "release_clause": 0,
                 "sell_on_clause": 0
