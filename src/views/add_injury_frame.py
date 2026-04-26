@@ -140,6 +140,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
             )
 
         self.time_out_unit_var.set("Select unit")
+        self.time_out_unit_dropdown.set_value("Select Unit")
 
         self.refresh_player_dropdown(remove_on_loan=True)
         self.player_dropdown.set_value("Click here to select player")
@@ -186,7 +187,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
         if is_time_out_row:
             # Drop down to select between days, weeks, months,
             # in a third column next to the entry
-            time_out_unit_dropdown = ScrollableDropdown(
+            self.time_out_unit_dropdown = ScrollableDropdown(
                 self.data_frame,
                 theme=self.theme,
                 fonts=self.fonts,
@@ -196,7 +197,7 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
                 dropdown_height=150,
                 placeholder="Select unit",
             )
-            time_out_unit_dropdown.grid(row=index, column=3, padx=(0, 5), pady=5)
+            self.time_out_unit_dropdown.grid(row=index, column=3, padx=(0, 5), pady=5)
 
     def _on_done_button_press(self) -> None:
         """Validate injury inputs, normalize values, and trigger save flow.
