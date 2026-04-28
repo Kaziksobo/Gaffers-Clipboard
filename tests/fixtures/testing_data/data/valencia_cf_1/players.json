@@ -5947,11 +5947,12 @@
         "id": 41,
         "name": "williot swedburg",
         "nationality": "Sweden",
-        "age": 26,
+        "age": 27,
         "height": "6'2\"",
         "weight": 165,
         "positions": [
-            "LW"
+            "LW",
+            "CM"
         ],
         "attribute_history": [
             {
@@ -6080,6 +6081,41 @@
                 "defensive_awareness": 59,
                 "ball_control": 84,
                 "crossing": 75,
+                "curve": 65,
+                "dribbling": 82,
+                "fk_accuracy": 52,
+                "finishing": 88,
+                "heading_accuracy": 62,
+                "long_pass": 82,
+                "long_shots": 86,
+                "penalties": 61,
+                "short_pass": 84,
+                "shot_power": 73,
+                "slide_tackle": 49,
+                "stand_tackle": 76,
+                "volleys": 67
+            },
+            {
+                "datetime": "2026-04-27T17:28:25.971812",
+                "in_game_date": "2031-02-09T00:00:00",
+                "position": "CM",
+                "position_type": "Outfield",
+                "acceleration": 85,
+                "sprint_speed": 81,
+                "agility": 92,
+                "balance": 68,
+                "jumping": 70,
+                "stamina": 83,
+                "strength": 58,
+                "aggression": 58,
+                "att_position": 87,
+                "composure": 80,
+                "interceptions": 70,
+                "reactions": 79,
+                "vision": 87,
+                "defensive_awareness": 59,
+                "ball_control": 84,
+                "crossing": 74,
                 "curve": 65,
                 "dribbling": 82,
                 "fk_accuracy": 52,
@@ -8779,7 +8815,15 @@
                 "sell_on_clause": 0
             }
         ],
-        "injury_history": [],
+        "injury_history": [
+            {
+                "datetime": "2026-04-28T01:40:10.642588",
+                "in_game_date": "2031-02-15T00:00:00",
+                "injury_detail": "Hyper Extended Knee",
+                "time_out": 4,
+                "time_out_unit": "Weeks"
+            }
+        ],
         "sold": false,
         "date_sold": null,
         "loaned": false
