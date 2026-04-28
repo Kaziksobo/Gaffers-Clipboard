@@ -222,6 +222,9 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         self.home_team_name_var.set("Home Team")
         self.away_team_name_var.set("Away Team")
 
+        # Reset scroll position of the stats grid to the top when the frame is shown
+        self.stats_grid._parent_canvas.yview_moveto(0)
+
         self.apply_focus_flourishes(self)
 
     def _create_home_away_stat_row(

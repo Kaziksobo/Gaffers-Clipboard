@@ -247,6 +247,9 @@ class GKStatsFrame(
         self.refresh_performance_sidebar()
         self.skip_save_var.set(False)
 
+        # Reset scroll position of the stats grid to the top when the frame is shown
+        self.stats_grid._parent_canvas.yview_moveto(0)
+
     def _collect_data(self) -> bool:
         """Collect, validate, and buffer a single goalkeeper performance row.
 
