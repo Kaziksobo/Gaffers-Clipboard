@@ -104,8 +104,13 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
         )
         self.sub_heading.grid(row=2, column=1, pady=(0, 30))
 
-        self.discrepancy_frame = ctk.CTkScrollableFrame(self)
+        self.discrepancy_frame = ctk.CTkFrame(self)
         self.discrepancy_frame.grid(row=3, column=1, pady=(0, 30), sticky="nsew")
+        # Add expanding spacer columns so the inner content sits centered
+        self.discrepancy_frame.grid_columnconfigure(0, weight=1)
+        self.discrepancy_frame.grid_columnconfigure(1, weight=0)
+        self.discrepancy_frame.grid_columnconfigure(2, weight=0)
+        self.discrepancy_frame.grid_columnconfigure(3, weight=1)
 
         self.button_frame = ctk.CTkFrame(self)
         self.button_frame.grid(row=4, column=1, pady=(0, 30), sticky="nsew")
@@ -198,14 +203,14 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
                 font=self.fonts["body"],
             )
             stat_label.grid(
-                row=row_idx, column=0, columnspan=2, pady=(20, 5), sticky="w"
+                row=row_idx, column=1, columnspan=2, pady=(20, 5), sticky="w"
             )
             row_idx += 1
 
             team_label = ctk.CTkLabel(
                 self.discrepancy_frame, text="Team Total:", font=self.fonts["body"]
             )
-            team_label.grid(row=row_idx, column=0, padx=(10, 20), pady=2, sticky="w")
+            team_label.grid(row=row_idx, column=1, padx=(10, 20), pady=2, sticky="w")
 
             expected_total = discrepancies.get(stat, {}).get("expected")
             team_val = str(
@@ -221,7 +226,7 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
                 width=60,
                 font=self.fonts["body"],
             )
-            team_entry.grid(row=row_idx, column=1, pady=2, sticky="w")
+            team_entry.grid(row=row_idx, column=2, pady=2, sticky="w")
             row_idx += 1
 
             self.player_vars[stat] = {}
@@ -235,7 +240,7 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
                     font=self.fonts["body"],
                 )
                 player_label.grid(
-                    row=row_idx, column=0, padx=(20, 20), pady=2, sticky="w"
+                    row=row_idx, column=1, padx=(20, 20), pady=2, sticky="w"
                 )
 
                 p_var = ctk.StringVar(value=player_val)
@@ -247,7 +252,7 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
                     width=60,
                     font=self.fonts["body"],
                 )
-                player_entry.grid(row=row_idx, column=1, pady=2, sticky="w")
+                player_entry.grid(row=row_idx, column=2, pady=2, sticky="w")
                 row_idx += 1
 
             self.apply_focus_flourishes(self.discrepancy_frame)
