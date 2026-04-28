@@ -4376,6 +4376,13 @@
                 "injury_detail": "Bruised elbow",
                 "time_out": 5,
                 "time_out_unit": "Days"
+            },
+            {
+                "datetime": "2026-04-28T22:43:40.607304",
+                "in_game_date": "2031-03-01T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
             }
         ],
         "sold": false,
