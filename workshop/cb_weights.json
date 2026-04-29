@@ -1,0 +1,19 @@
+{
+    "goals_p90": 0.0,
+    "assists_p90": 1.1519678922033368e-16,
+    "shots_p90": 0.009074268228394732,
+    "shot_accuracy": 9.356035956887986e-17,
+    "passes_p90": 0.07719867368213829,
+    "pass_accuracy": 0.09852405848287381,
+    "dribbles_p90": 0.040645026286616946,
+    "dribble_success_rate": 0.021429111516960787,
+    "tackles_p90": 0.16392769452440545,
+    "tackle_success_rate": 0.15062478553049424,
+    "offsides_p90": 6.791648345120505e-18,
+    "fouls_committed_p90": 0.05606360865849748,
+    "possession_won_p90": 0.1368940963000878,
+    "possession_lost_p90": 0.11312671124461986,
+    "distance_covered_p90": 0.02282725747099755,
+    "distance_sprinted_p90": 0.0505421900395356,
+    "xT_bonus_p90": 0.05912251803437723
+}
