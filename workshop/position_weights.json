@@ -16,7 +16,7 @@
         "possession_lost_p90": 0.11209736927120362,
         "distance_covered_p90": 0.021198059031931855,
         "distance_sprinted_p90": 0.048472279618990304,
-        "xT_bonus_p90": 0.05947454872890852
+        "xt_bonus_p90": 0.05947454872890852
     },
     "CM": {
         "goals_p90": 0.041639442976118206,
@@ -35,7 +35,7 @@
         "possession_lost_p90": 0.0898315958862138,
         "distance_covered_p90": 0.051983430776758176,
         "distance_sprinted_p90": 0.06331857929963738,
-        "xT_bonus_p90": 0.06355256792592978
+        "xt_bonus_p90": 0.06355256792592978
     },
     "ST": {
         "goals_p90": 0.12172506408952842,
@@ -54,7 +54,7 @@
         "possession_lost_p90": 0.029368303850688348,
         "distance_covered_p90": 0.03809201372264442,
         "distance_sprinted_p90": 0.03877330945286753,
-        "xT_bonus_p90": 0.04474967182282553
+        "xt_bonus_p90": 0.04474967182282553
     },
     "CDM": {
         "goals_p90": 2.554984827087436e-33,
@@ -73,7 +73,7 @@
         "possession_lost_p90": 0.12185525776060459,
         "distance_covered_p90": 0.011439830896870286,
         "distance_sprinted_p90": 0.01383341326725309,
-        "xT_bonus_p90": 0.014163853311446303
+        "xt_bonus_p90": 0.014163853311446303
     },
     "RWB": {
         "goals_p90": "goals_p90",
@@ -92,7 +92,7 @@
         "possession_lost_p90": "possession_lost_p90",
         "distance_covered_p90": "distance_covered_p90",
         "distance_sprinted_p90": "distance_sprinted_p90",
-        "xT_bonus_p90": "xT_bonus_p90"
+        "xt_bonus_p90": "xt_bonus_p90"
     },
     "LWB": {
         "goals_p90": "goals_p90",
@@ -111,7 +111,7 @@
         "possession_lost_p90": "possession_lost_p90",
         "distance_covered_p90": "distance_covered_p90",
         "distance_sprinted_p90": "distance_sprinted_p90",
-        "xT_bonus_p90": "xT_bonus_p90"
+        "xt_bonus_p90": "xt_bonus_p90"
     },
     "RW": {
         "goals_p90": 0.06839198654570264,
@@ -130,7 +130,7 @@
         "possession_lost_p90": 0.026219051057286467,
         "distance_covered_p90": 0.07283166876033716,
         "distance_sprinted_p90": 0.07266899398694196,
-        "xT_bonus_p90": 0.06967990317682729
+        "xt_bonus_p90": 0.06967990317682729
     },
     "LW": {
         "goals_p90": 0.06839198654570264,
@@ -149,7 +149,7 @@
         "possession_lost_p90": 0.026219051057286467,
         "distance_covered_p90": 0.07283166876033716,
         "distance_sprinted_p90": 0.07266899398694196,
-        "xT_bonus_p90": 0.06967990317682729
+        "xt_bonus_p90": 0.06967990317682729
     },
     "RB": {
         "goals_p90": 0.0,
@@ -168,7 +168,7 @@
         "possession_lost_p90": 0.07551298951524085,
         "distance_covered_p90": 0.07048234059768162,
         "distance_sprinted_p90": 0.06916553847840828,
-        "xT_bonus_p90": 0.0679769853034186
+        "xt_bonus_p90": 0.0679769853034186
     },
     "LB": {
         "goals_p90": 0.0,
@@ -187,7 +187,7 @@
         "possession_lost_p90": 0.07551298951524085,
         "distance_covered_p90": 0.07048234059768162,
         "distance_sprinted_p90": 0.06916553847840828,
-        "xT_bonus_p90": 0.0679769853034186
+        "xt_bonus_p90": 0.0679769853034186
     },
     "RM": {
         "goals_p90": "goals_p90",
@@ -206,7 +206,7 @@
         "possession_lost_p90": "possession_lost_p90",
         "distance_covered_p90": "distance_covered_p90",
         "distance_sprinted_p90": "distance_sprinted_p90",
-        "xT_bonus_p90": "xT_bonus_p90"
+        "xt_bonus_p90": "xt_bonus_p90"
     },
     "LM": {
         "goals_p90": "goals_p90",
@@ -225,6 +225,25 @@
         "possession_lost_p90": "possession_lost_p90",
         "distance_covered_p90": "distance_covered_p90",
         "distance_sprinted_p90": "distance_sprinted_p90",
-        "xT_bonus_p90": "xT_bonus_p90"
+        "xt_bonus_p90": "xt_bonus_p90"
+    },
+    "CAM": {
+        "goals_p90": "goals_p90",
+        "assists_p90": "assists_p90",
+        "shots_p90": "shots_p90",
+        "shot_accuracy": "shot_accuracy",
+        "passes_p90": "passes_p90",
+        "pass_accuracy": "pass_accuracy",
+        "dribbles_p90": "dribbles_p90",
+        "dribble_success_rate": "dribble_success_rate",
+        "tackles_p90": "tackles_p90",
+        "tackle_success_rate": "tackle_success_rate",
+        "offsides_p90": "offsides_p90",
+        "fouls_committed_p90": "fouls_committed_p90",
+        "possession_won_p90": "possession_won_p90",
+        "possession_lost_p90": "possession_lost_p90",
+        "distance_covered_p90": "distance_covered_p90",
+        "distance_sprinted_p90": "distance_sprinted_p90",
+        "xt_bonus_p90": "xt_bonus_p90"
     }
 }
