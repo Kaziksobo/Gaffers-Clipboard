@@ -65,7 +65,6 @@ PositionType = Literal[
     "LW",
     "RW",
     "ST",
-    "CF",
 ]
 
 # Shared numeric bounds
@@ -544,6 +543,9 @@ class OutfieldPlayerPerformance(BaseModel):
     minutes_played: int = Field(ge=0)
     distance_covered: float = Field(ge=0)
     distance_sprinted: float = Field(ge=0)
+    match_rating: float | None = Field(
+        ge=0, le=10, description="The custom analytics rating calculated post-match."
+    )
     player_id: int
 
     @model_validator(mode="after")
@@ -582,6 +584,9 @@ class GoalkeeperPerformance(BaseModel):
     penalty_goals_conceded: int = Field(ge=0)
     shoot_out_saves: int = Field(ge=0)
     shoot_out_goals_conceded: int = Field(ge=0)
+    match_rating: float | None = Field(
+        ge=0, le=10, description="The custom analytics rating calculated post-match."
+    )
     player_id: int
 
     @model_validator(mode="after")

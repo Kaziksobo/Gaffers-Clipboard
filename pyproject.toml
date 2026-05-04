@@ -1,6 +1,6 @@
 [project]
 name = "gaffers-clipboard"
-version = "0.7.0"
+version = "0.7.1"
 description = "Automate your EA FC Career Mode data entry with custom OCR and machine learning analytics"
 license = {text = "MIT"}
 authors = [

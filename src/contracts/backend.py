@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, NotRequired, TypedDict
+from typing import Literal, NotRequired, Protocol, TypedDict
 
 from src.schemas import (
     CareerDetail,
@@ -32,6 +32,14 @@ type OCRFlatStats = dict[str, OCRScalar]
 type OCRTeamStats = dict[str, OCRFlatStats]
 type OCRStatsResult = OCRFlatStats | OCRTeamStats
 type ROIMap = dict[str, ROIBounds]
+type PerformanceMeansStdsMap = dict[str, dict[str, dict[str, float] | float]]
+type PerformanceWeightsMap = dict[str, dict[str, float]]
+
+
+class SupportsId(Protocol):
+    """Protocol for model instances carrying an integer id field."""
+
+    id: int
 
 
 @dataclass(frozen=True, slots=True)

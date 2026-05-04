@@ -25,6 +25,7 @@ from typing import cast
 
 import customtkinter as ctk
 
+from src.analytics_engine import AnalyticsEngine
 from src.contracts.backend import (
     BufferedMatch,
     BufferedPlayer,
@@ -129,6 +130,9 @@ class App(ctk.CTk):
 
         # Initialize the data manager
         self._data_manager: DataManager = DataManager(App.PROJECT_ROOT)
+
+        # Initialise the analytics engine
+        self._analytics_engine: AnalyticsEngine = AnalyticsEngine(App.PROJECT_ROOT)
 
         # Initialize services
         def overlay_callback(seconds: int, message: str) -> None:
@@ -1009,21 +1013,23 @@ class App(ctk.CTk):
         logger.info("Applying manual corrections from MatchReviewFrame.")
 
         # Determine which side (home/away) belongs to our career team
-        buffered = self._buffer_service.get_buffered_match()
-        current_overview = buffered.match_overview
+        buffered: BufferedMatch = self._buffer_service.get_buffered_match()
+        current_overview: MatchOverviewPayload = buffered.match_overview
         career_meta = self.get_current_career_details()
-        career_team = getattr(career_meta, "club_name", None)
+        career_team: str | None = getattr(career_meta, "club_name", None)
 
         # resolve whether our club is home or away for this buffered match
-        home_team = current_overview.get("home_team_name")
-        home_or_away = "home" if home_team == career_team else "away"
+        home_team: str | None = current_overview.get("home_team_name")
+        home_or_away: str = "home" if home_team == career_team else "away"
 
         # Build normalized overview updates that match
         # DataManager/MatchService expectations
         overview_updates: MatchOverviewPayload = {}
         # ensure we copy/merge existing stats dict so we don't clobber unrelated stats
-        side_stats_key = f"{home_or_away}_stats"
-        raw_side_stats = current_overview.get(side_stats_key, {})
+        side_stats_key: str = f"{home_or_away}_stats"
+        raw_side_stats: dict[str, int | float] = current_overview.get(
+            side_stats_key, {}
+        )
         existing_side_stats: dict[str, int | float] = (
             {
                 key: value
@@ -1080,8 +1086,28 @@ class App(ctk.CTk):
                 saving the match.
         """
         buffered_match: BufferedMatch = self._buffer_service.get_buffered_match()
-        match_overview = buffered_match.match_overview
-        player_performances = buffered_match.player_performances
+        match_overview: MatchOverviewPayload = buffered_match.match_overview
+        player_performances: list[PlayerPerformancePayload] = (
+            buffered_match.player_performances
+        )
+        career = self.get_current_career_details()
+        half_length: int = getattr(career, "half_length", 10)
+        team_name: str = getattr(career, "club_name", "Unknown Club")
+
+        # Enrich each performance with our custom match rating before logging/saving
+        for performance in player_performances:
+            # Assuming the engine handles the position routing and returns a float
+            rating = self._analytics_engine.calculate_match_rating(
+                performance=performance,
+                match_overview=match_overview,
+                half_length=half_length,
+                team_name=team_name,
+            )
+            # Append the rating rounded to 1 decimal place (e.g., 7.4)
+            if isinstance(rating, (int, float)):
+                performance["match_rating"] = round(rating, 1)
+            else:
+                performance["match_rating"] = None
 
         logger.info(
             "Committing buffered match (competition: %s, opponent: %s, "
