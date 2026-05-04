@@ -40,7 +40,6 @@ VALID_POSITIONS = {
     "LW",
     "RW",
     "ST",
-    "CF",
 }
 
 
