@@ -37,7 +37,7 @@ import logging
 from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import Literal, Protocol, TypeVar
+from typing import Literal, TypeVar
 
 from pydantic import BaseModel
 
@@ -51,6 +51,7 @@ from src.contracts.backend import (
     PlayerAttributePayload,
     PlayerCoreFields,
     PlayerPerformanceBuffer,
+    SupportsId,
 )
 from src.schemas import (
     CareerDetail,
@@ -69,12 +70,6 @@ from src.services import data as data_services
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=BaseModel)
-
-
-class SupportsId(Protocol):
-    """Protocol for model instances carrying an integer id field."""
-
-    id: int
 
 
 class DataManager:
