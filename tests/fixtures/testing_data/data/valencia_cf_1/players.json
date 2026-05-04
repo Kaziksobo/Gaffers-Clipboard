@@ -2007,8 +2007,8 @@
             }
         ],
         "injury_history": [],
-        "sold": false,
-        "date_sold": null,
+        "sold": true,
+        "date_sold": "2031-03-12T00:00:00",
         "loaned": false
     },
     {
@@ -10530,5 +10530,131 @@
         "sold": false,
         "date_sold": null,
         "loaned": true
+    },
+    {
+        "id": 72,
+        "name": "Sean Benson",
+        "nationality": "Gibraltar",
+        "age": 18,
+        "height": "6'1\"",
+        "weight": 171,
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-04-30T00:45:59.071771",
+                "in_game_date": "2031-03-12T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 66,
+                "sprint_speed": 61,
+                "agility": 54,
+                "balance": 61,
+                "jumping": 73,
+                "stamina": 69,
+                "strength": 85,
+                "aggression": 69,
+                "att_position": 34,
+                "composure": 49,
+                "interceptions": 68,
+                "reactions": 68,
+                "vision": 42,
+                "defensive_awareness": 77,
+                "ball_control": 59,
+                "crossing": 33,
+                "curve": 32,
+                "dribbling": 43,
+                "fk_accuracy": 26,
+                "finishing": 30,
+                "heading_accuracy": 54,
+                "long_pass": 54,
+                "long_shots": 29,
+                "penalties": 36,
+                "short_pass": 55,
+                "shot_power": 50,
+                "slide_tackle": 58,
+                "stand_tackle": 70,
+                "volleys": 30
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-04-30T00:46:21.964373",
+                "in_game_date": "2031-03-12T00:00:00",
+                "wage": 7800,
+                "market_value": 2600000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 73,
+        "name": "Sebastian Cooper",
+        "nationality": "Gibraltar",
+        "age": 18,
+        "height": "6'1\"",
+        "weight": 165,
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-04-30T00:48:18.999837",
+                "in_game_date": "2031-03-12T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 78,
+                "sprint_speed": 72,
+                "agility": 84,
+                "balance": 64,
+                "jumping": 66,
+                "stamina": 62,
+                "strength": 59,
+                "aggression": 63,
+                "att_position": 73,
+                "composure": 54,
+                "interceptions": 45,
+                "reactions": 69,
+                "vision": 59,
+                "defensive_awareness": 29,
+                "ball_control": 62,
+                "crossing": 39,
+                "curve": 49,
+                "dribbling": 57,
+                "fk_accuracy": 45,
+                "finishing": 74,
+                "heading_accuracy": 58,
+                "long_pass": 45,
+                "long_shots": 47,
+                "penalties": 53,
+                "short_pass": 60,
+                "shot_power": 70,
+                "slide_tackle": 21,
+                "stand_tackle": 29,
+                "volleys": 64
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-04-30T00:48:43.003148",
+                "in_game_date": "2031-03-12T00:00:00",
+                "wage": 9300,
+                "market_value": 4100000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
     }
 ]
