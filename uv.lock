@@ -543,7 +543,7 @@ wheels = [
 
 [[package]]
 name = "gaffers-clipboard"
-version = "0.7.0"
+version = "0.7.1"
 source = { editable = "." }
 dependencies = [
     { name = "customtkinter" },
