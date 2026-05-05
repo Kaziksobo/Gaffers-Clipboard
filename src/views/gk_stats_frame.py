@@ -7,10 +7,16 @@ or final match save.
 """
 
 import logging
+from typing import cast
 
 import customtkinter as ctk
 
-from src.contracts.ui import BaseViewThemeProtocol, GKStatsFrameControllerProtocol
+from src.contracts.backend import PlayerPerformancePayload
+from src.contracts.ui import (
+    BaseViewThemeProtocol,
+    GKStatsFrameControllerProtocol,
+    SemanticColorsProtocol,
+)
 from src.exceptions import DataDiscrepancyError, DuplicateRecordError
 from src.utils import safe_int_conversion
 from src.views.base_view_frame import BaseViewFrame
@@ -79,6 +85,11 @@ class GKStatsFrame(
             ("shoot_out_goals_conceded", "Shoot-out Goals Conceded"),
         ]
 
+        self.live_rating_var: ctk.StringVar = ctk.StringVar(value="-")
+
+        self._live_rating_after_id: str | None = None
+        self._live_rating_debounce_ms = 400
+
         self._setup_ui()
 
     def _setup_ui(self) -> None:
@@ -117,17 +128,39 @@ class GKStatsFrame(
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
 
+        self.info_and_rating_grid = ctk.CTkFrame(self)
+        self.info_and_rating_grid.grid(row=3, column=1, pady=(0, 20))
+        self.info_and_rating_grid.grid_columnconfigure(0, weight=1)
+        self.info_and_rating_grid.grid_columnconfigure(1, weight=0)
+        self.info_and_rating_grid.grid_columnconfigure(2, weight=0)
+        self.info_and_rating_grid.grid_columnconfigure(3, weight=0)
+        self.info_and_rating_grid.grid_columnconfigure(4, weight=1)
+        self.info_and_rating_grid.grid_rowconfigure(0, weight=1)
+
         # Info Label
         self.info_label = ctk.CTkLabel(
-            self,
+            self.info_and_rating_grid,
             text=(
                 "Empty stats couldn't be recognised and require manual entry.\n "
                 "Please review and update player attributes as necessary."
             ),
             font=self.fonts["body"],
         )
-        self.info_label.grid(row=3, column=1, pady=(0, 20))
+        self.info_label.grid(row=0, column=1)
         self.register_wrapping_widget(self.info_label, width_ratio=0.8)
+
+        self.rating_label = ctk.CTkLabel(
+            self.info_and_rating_grid,
+            text="Match Rating:",
+            font=self.fonts["body"],
+        )
+        self.rating_label.grid(row=0, column=2, padx=(20, 2))
+        self.live_rating_value_label = ctk.CTkLabel(
+            self.info_and_rating_grid,
+            textvariable=self.live_rating_var,
+            font=self.fonts["body"],
+        )
+        self.live_rating_value_label.grid(row=0, column=3)
 
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self)
@@ -228,6 +261,73 @@ class GKStatsFrame(
 
         self.apply_focus_flourishes(self)
 
+        self._register_live_rating_traces()
+
+    def _register_live_rating_traces(self) -> None:
+        for var in self.stats_vars.values():
+            var.trace_add("write", self._on_live_rating_change)
+
+    def _on_live_rating_change(self, *_: str) -> None:
+        self._schedule_live_rating_update()
+
+    def _schedule_live_rating_update(self) -> None:
+        """Debounce live rating updates triggered by field edits."""
+        if self._live_rating_after_id:
+            self.after_cancel(self._live_rating_after_id)
+            self._live_rating_after_id = None
+
+        self._live_rating_after_id: str | None = self.after(
+            self._live_rating_debounce_ms, self._update_live_rating
+        )
+
+    def _update_live_rating(self) -> None:
+        try:
+            payload: PlayerPerformancePayload | None = self.build_soft_payload()
+            rating: float | None = (
+                self.controller.get_live_match_rating(payload) if payload else None
+            )
+            if rating is None:
+                self.live_rating_var.set("-")
+                self.live_rating_value_label.configure(
+                    text_color=self._theme_color("CTkLabel", "text_color")
+                )
+            else:
+                self.live_rating_var.set(f"{rating:.1f}")
+                # Apply color based on rating thresholds
+                colors: SemanticColorsProtocol = self.theme.semantic_colors
+                if rating < 5.5:
+                    color: str = colors.rating_bad
+                elif rating < 7.0:
+                    color: str = colors.rating_ok
+                elif rating < 8.0:
+                    color: str = colors.rating_good
+                else:
+                    color: str = colors.rating_great
+                self.live_rating_value_label.configure(text_color=color)
+        finally:
+            self._live_rating_after_id = None
+
+    def build_soft_payload(self) -> PlayerPerformancePayload | None:
+        """Build a soft payload for live performance evaluation.
+
+        Attempts to construct a PlayerPerformancePayload from current field
+        values without enforcing full validation rules.
+
+        Returns:
+            PlayerPerformancePayload | None: The constructed payload or None if invalid.
+        """
+        payload: dict[str, int | float | str | list[str] | None] = {}
+        for stat_key, var in self.stats_vars.items():
+            key = str(stat_key)
+            value = var.get()
+            payload[key] = 0 if value.strip() == "" else safe_int_conversion(value)
+        for key, value in payload.items():
+            if value is None:
+                payload[key] = 0
+        payload["performance_type"] = "GK"
+
+        return cast(PlayerPerformancePayload, payload)
+
     def on_show(self) -> None:
         """Refresh frame state whenever the view is raised.
 
@@ -246,6 +346,12 @@ class GKStatsFrame(
         self.performance_sidebar.set_collapse_state(initial_state)
         self.refresh_performance_sidebar()
         self.skip_save_var.set(False)
+
+        # Reset live rating display
+        self.live_rating_var.set("-")
+        # Set the colour back to the normal text color
+        default_color = self._theme_color("CTkLabel", "text_color")
+        self.live_rating_value_label.configure(text_color=default_color)
 
         # Reset scroll position of the stats grid to the top when the frame is shown
         self.stats_grid._parent_canvas.yview_moveto(0)

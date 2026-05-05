@@ -45,6 +45,43 @@ class AnalyticsEngine:
         """
         self.project_root = project_root
 
+        self._performance_weights: PerformanceWeightsMap | None = None
+        self._performance_means_stds: PerformanceMeansStdsMap | None = None
+        self._match_ratings_service: analytics_services.MatchRatingsService | None = (
+            None
+        )
+
+    def _get_match_rating_service(self) -> None:
+        """Initialize and cache the match ratings service.
+
+        This method ensures configuration is loaded and the underlying service is
+        constructed before any rating calculations are performed.
+        """
+        if self._match_ratings_service:
+            return
+        if not self._performance_weights or not self._performance_means_stds:
+            self._load_configuration()
+        if self._performance_weights and self._performance_means_stds:
+            self._match_ratings_service = analytics_services.MatchRatingsService(
+                self._performance_weights, self._performance_means_stds
+            )
+
+    def _load_configuration(self) -> None:
+        """Load performance weights and normalization parameters from config files.
+
+        Raises:
+            FileNotFoundError: If the configuration files are missing.
+            json.JSONDecodeError: If the configuration files contain invalid JSON.
+            OSError: For other I/O errors when reading configuration files.
+        """
+        config_path: Path = self.project_root / "config"
+        weights_path: Path = config_path / "performance_weights.json"
+        means_stds_path: Path = config_path / "performance_means_stds.json"
+        with Path.open(weights_path) as f:
+            self._performance_weights = json.load(f)
+        with Path.open(means_stds_path) as f:
+            self._performance_means_stds = json.load(f)
+
     def calculate_match_rating(
         self,
         performance: PlayerPerformancePayload,
@@ -75,26 +112,15 @@ class AnalyticsEngine:
             float | None: The calculated match rating on a 0-10 scale, or None
                 if the player did not play enough minutes to rate.
         """
-        # Importing weights, means and stds
-        config_path: Path = self.project_root / "config"
-        weights_path: Path = config_path / "performance_weights.json"
-        means_stds_path: Path = config_path / "performance_means_stds.json"
-        with Path.open(weights_path) as f:
-            weights: PerformanceWeightsMap = json.load(f)
-        with Path.open(means_stds_path) as f:
-            means_stds: PerformanceMeansStdsMap = json.load(f)
+        self._get_match_rating_service()
 
-        # Initialising MatchRatingsService
-        match_ratings_service = analytics_services.MatchRatingsService(
-            weights, means_stds
-        )
+        if self._match_ratings_service:
+            if performance.get("performance_type") == "GK":
+                return self._match_ratings_service.calculate_gk_rating(
+                    performance, match_overview, half_length, team_name
+                )
 
-        if performance.get("performance_type") == "GK":
-            return match_ratings_service.calculate_gk_rating(
-                performance, match_overview, half_length, team_name
-            )
-
-        else:
-            return match_ratings_service.calculate_outfield_rating(
-                performance, match_overview, half_length, team_name
-            )
+            else:
+                return self._match_ratings_service.calculate_outfield_rating(
+                    performance, match_overview, half_length, team_name
+                )

@@ -49,6 +49,10 @@ class SemanticColorsProtocol(Protocol):
     submit_hover: str
     remove_hover: str
     unsaved_nav_hover: str
+    rating_bad: str
+    rating_ok: str
+    rating_good: str
+    rating_great: str
 
 
 @runtime_checkable
@@ -345,6 +349,16 @@ class PlayerBufferSaveControllerProtocol(Protocol):
 
 
 @runtime_checkable
+class LiveMatchRatingControllerProtocol(Protocol):
+    """Controller capability for computing and displaying live match ratings."""
+
+    def get_live_match_rating(
+        self, performance: PlayerPerformancePayload
+    ) -> float | None:
+        """Compute and display a match rating based on current buffered data."""
+
+
+@runtime_checkable
 class AddGKFrameControllerProtocol(
     BaseViewControllerProtocol,
     PlayerDropdownControllerProtocol,
@@ -553,6 +567,7 @@ class GKStatsFrameControllerProtocol(
     PlayerPerformanceControllerProtocol,
     SaveBufferedMatchControllerProtocol,
     PerformanceBufferControllerProtocol,
+    LiveMatchRatingControllerProtocol,
     Protocol,
 ):
     """Composed controller capability required by GKStatsFrame."""
@@ -566,6 +581,7 @@ class PlayerStatsFrameControllerProtocol(
     PlayerPerformanceControllerProtocol,
     SaveBufferedMatchControllerProtocol,
     PerformanceBufferControllerProtocol,
+    LiveMatchRatingControllerProtocol,
     Protocol,
 ):
     """Composed controller capability required by PlayerStatsFrame."""

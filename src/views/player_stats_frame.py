@@ -6,10 +6,16 @@ persisted as part of the match-save workflow.
 """
 
 import logging
+from typing import cast
 
 import customtkinter as ctk
 
-from src.contracts.ui import BaseViewThemeProtocol, PlayerStatsFrameControllerProtocol
+from src.contracts.backend import PlayerPerformancePayload
+from src.contracts.ui import (
+    BaseViewThemeProtocol,
+    PlayerStatsFrameControllerProtocol,
+    SemanticColorsProtocol,
+)
 from src.exceptions import DataDiscrepancyError, DuplicateRecordError
 from src.utils import safe_float_conversion, safe_int_conversion
 from src.views.base_view_frame import BaseViewFrame
@@ -105,6 +111,12 @@ class PlayerStatsFrame(
             ("distance_sprinted", "Distance Sprinted (km)"),
         ]
 
+        self.live_rating_var: ctk.StringVar = ctk.StringVar(value="-")
+        self.positions_var: ctk.StringVar = ctk.StringVar(value="")
+
+        self._live_rating_after_id: str | None = None
+        self._live_rating_debounce_ms = 400
+
         self._setup_ui()
 
     def _setup_ui(self) -> None:
@@ -163,21 +175,45 @@ class PlayerStatsFrame(
         )
         self.position_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
         self.position_entry = ctk.CTkEntry(
-            self.position_frame, placeholder_text="e.g. RW, LW", font=self.fonts["body"]
+            self.position_frame,
+            placeholder_text="e.g. RW, LW",
+            textvariable=self.positions_var,
+            font=self.fonts["body"],
         )
         self.position_entry.grid(row=0, column=2, padx=5, pady=5, sticky="e")
 
+        self.info_and_rating_grid = ctk.CTkFrame(self)
+        self.info_and_rating_grid.grid(row=4, column=1, pady=(0, 20))
+        self.info_and_rating_grid.grid_columnconfigure(0, weight=1)
+        self.info_and_rating_grid.grid_columnconfigure(1, weight=0)
+        self.info_and_rating_grid.grid_columnconfigure(2, weight=0)
+        self.info_and_rating_grid.grid_columnconfigure(3, weight=0)
+        self.info_and_rating_grid.grid_columnconfigure(4, weight=1)
+        self.info_and_rating_grid.grid_rowconfigure(0, weight=1)
         # Info Label
         self.info_label = ctk.CTkLabel(
-            self,
+            self.info_and_rating_grid,
             text=(
                 "Please review the captured player performance data."
                 "\nFill in any missing fields and correct any inaccuracies."
             ),
             font=self.fonts["body"],
         )
-        self.info_label.grid(row=4, column=1, pady=(0, 20))
+        self.info_label.grid(row=0, column=1)
         self.register_wrapping_widget(self.info_label, width_ratio=0.8)
+
+        self.rating_label = ctk.CTkLabel(
+            self.info_and_rating_grid,
+            text="Match Rating:",
+            font=self.fonts["body"],
+        )
+        self.rating_label.grid(row=0, column=2, padx=(20, 2))
+        self.live_rating_value_label = ctk.CTkLabel(
+            self.info_and_rating_grid,
+            textvariable=self.live_rating_var,
+            font=self.fonts["body"],
+        )
+        self.live_rating_value_label.grid(row=0, column=3)
 
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self)
@@ -278,6 +314,104 @@ class PlayerStatsFrame(
 
         self.apply_focus_flourishes(self)
 
+        self._register_live_rating_traces()
+
+    def _register_live_rating_traces(self) -> None:
+        for var in self.stats_vars.values():
+            var.trace_add("write", self._on_live_rating_change)
+        self.positions_var.trace_add("write", self._on_live_rating_change)
+
+    def _on_live_rating_change(self, *_: str) -> None:
+        self._schedule_live_rating_update()
+
+    def _schedule_live_rating_update(self) -> None:
+        """Debounce live rating updates triggered by field edits."""
+        if self._live_rating_after_id:
+            self.after_cancel(self._live_rating_after_id)
+            self._live_rating_after_id = None
+
+        self._live_rating_after_id: str | None = self.after(
+            self._live_rating_debounce_ms, self._update_live_rating
+        )
+
+    def _update_live_rating(self) -> None:
+        try:
+            payload: PlayerPerformancePayload | None = self.build_soft_payload()
+            rating: float | None = (
+                self.controller.get_live_match_rating(payload) if payload else None
+            )
+            if rating is None:
+                self.live_rating_var.set("-")
+                self.live_rating_value_label.configure(
+                    text_color=self._theme_color("CTkLabel", "text_color")
+                )
+            else:
+                self.live_rating_var.set(f"{rating:.1f}")
+                # Apply color based on rating thresholds
+                colors: SemanticColorsProtocol = self.theme.semantic_colors
+                if rating < 5.5:
+                    color: str = colors.rating_bad
+                elif rating < 7.0:
+                    color: str = colors.rating_ok
+                elif rating < 8.0:
+                    color: str = colors.rating_good
+                else:
+                    color: str = colors.rating_great
+                self.live_rating_value_label.configure(text_color=color)
+        finally:
+            self._live_rating_after_id = None
+
+    def build_soft_payload(self) -> PlayerPerformancePayload | None:
+        """Build a soft payload for live performance evaluation.
+
+        This method attempts to construct a PlayerPerformancePayload from the current
+        field values without enforcing all validation rules. It is used to provide
+        real-time feedback on the player's match rating as the user edits fields, even
+        if the data is incomplete or partially invalid.
+        If the minutes played field is present and indicates the player has played at
+        least 10 minutes, a payload is returned with available data; otherwise, None is
+        returned to indicate insufficient data for rating. This allows the live rating
+        feature to be responsive while avoiding errors from incomplete input.
+        If the position field does not contain valid positions, the payload will also
+        be considered invalid and None will be returned, since position is a critical
+        factor in rating calculation.
+
+        Returns:
+            PlayerPerformancePayload | None: The constructed payload or None if invalid.
+        """
+        payload: dict[str, int | float | str | list[str] | None] = {}
+        for stat_key, var in self.stats_vars.items():
+            key = str(stat_key)
+            value = var.get()
+            if value.strip() == "":
+                payload[key] = 0
+            else:
+                payload[key] = (
+                    safe_float_conversion(value)
+                    if key in {"distance_covered", "distance_sprinted"}
+                    else safe_int_conversion(value)
+                )
+        for key, value in payload.items():
+            if value is None:
+                payload[key] = 0
+        payload["performance_type"] = "Outfield"
+        position_text: str = self.positions_var.get().strip()
+        if not position_text:
+            return None
+        positions: list[str] = [
+            p.strip().upper() for p in position_text.split(",") if p.strip()
+        ]
+        if not positions or any(p not in VALID_POSITIONS for p in positions):
+            return None
+        payload["positions_played"] = positions
+
+        mins_val: int | float | str | list[str] | None = payload.get("minutes_played")
+        if isinstance(mins_val, (int, float, str)):
+            mins_played = int(mins_val or 0)
+        else:
+            mins_played = 0
+        return None if mins_played < 10 else cast(PlayerPerformancePayload, payload)
+
     def on_show(self) -> None:
         """Reset frame state and refresh dynamic UI data on activation.
 
@@ -296,8 +430,14 @@ class PlayerStatsFrame(
         self.refresh_performance_sidebar()
         self.skip_save_var.set(False)
 
-        self.position_entry.delete(0, "end")
+        self.positions_var.set("")
         self.position_entry.configure(placeholder_text="e.g. RW, LW")
+
+        # Reset live rating display
+        self.live_rating_var.set("-")
+        # Set the colour back to the normal text color
+        default_color = self._theme_color("CTkLabel", "text_color")
+        self.live_rating_value_label.configure(text_color=default_color)
 
         # Reset scroll position of the stats grid to the top when the frame is shown
         self.stats_grid._parent_canvas.yview_moveto(0)
@@ -322,13 +462,12 @@ class PlayerStatsFrame(
 
         # Only auto-fill the position entry if the user hasn't typed anything yet
         try:
-            current_value = self.position_entry.get().strip()
+            current_value = self.positions_var.get().strip()
         except Exception:
             current_value = ""
 
         if not current_value:
-            self.position_entry.delete(0, "end")
-            self.position_entry.insert(0, positions[-1])
+            self.positions_var.set(positions[-1])
 
     def _on_next_outfield_player_button_press(self) -> None:
         """Save current data, OCR-scan the next outfield player, and reload.
@@ -512,7 +651,7 @@ class PlayerStatsFrame(
         self.ui_data["player_name"] = player_name
         self.ui_data["performance_type"] = "Outfield"
 
-        positions_played: str = self.position_entry.get().strip()
+        positions_played: str = self.positions_var.get().strip()
 
         if not self._validate_positions(positions_played):
             return False

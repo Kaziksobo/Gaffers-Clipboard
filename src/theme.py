@@ -31,5 +31,9 @@ theme = SimpleNamespace(
         submit_hover="#4caf50",
         remove_hover="#ff4c4c",
         unsaved_nav_hover="#ffcc00",
+        rating_bad="#ff4c4c",
+        rating_ok="#ffcc00",
+        rating_good="#4caf50",
+        rating_great="#1b5e20",
     ),
 )

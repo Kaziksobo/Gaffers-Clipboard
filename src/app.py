@@ -970,6 +970,61 @@ class App(ctk.CTk):
             player_name,
         )
 
+    def get_live_match_rating(
+        self, performance: PlayerPerformancePayload
+    ) -> float | None:
+        """Return a live preview match rating for the given performance payload.
+
+        Pulls the buffered match overview plus current career metadata, then
+        delegates to the analytics engine. Returns the rating rounded to one
+        decimal place, or None when context is missing or calculation fails.
+        Errors are logged but no UI warnings are raised.
+
+        Args:
+            performance (PlayerPerformancePayload): The in-progress performance
+                data to score, with blanks already normalized by the caller.
+
+        Returns:
+            float | None: The live rating rounded to one decimal place, or None
+                when unavailable or on error.
+        """
+        try:
+            match_overview: MatchOverviewPayload = (
+                self._buffer_service.get_buffered_match().match_overview
+            )
+        except Exception as e:
+            logger.error(
+                "Error retrieving buffered match overview for live rating: %s",
+                e,
+                exc_info=True,
+            )
+            return None
+        if not match_overview:
+            logger.warning(
+                "Attempted to calculate live match rating without "
+                "a buffered match overview."
+            )
+            return None
+        career = self.get_current_career_details()
+        half_length: int = getattr(career, "half_length", 10)
+        team_name: str = getattr(career, "club_name", "Unknown Club")
+        try:
+            rating = self._analytics_engine.calculate_match_rating(
+                performance=performance,
+                match_overview=match_overview,
+                half_length=half_length,
+                team_name=team_name,
+            )
+        except Exception as e:
+            logger.error(
+                "Error calculating live match rating for player '%s': %s",
+                performance.get("player_name", "Unknown Player"),
+                e,
+                exc_info=True,
+            )
+            return None
+        return round(rating, 1) if isinstance(rating, (int, float)) else None
+
     def get_match_review_context(
         self,
     ) -> tuple[

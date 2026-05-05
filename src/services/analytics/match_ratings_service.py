@@ -764,6 +764,21 @@ class MatchRatingsService:
         performance_metrics: dict[str, float],
         z_scores: dict[str, float],
     ) -> dict[str, float]:
+        """Mask efficiency Z-scores when underlying action volume is too low.
+
+        This prevents extreme accuracy values from a handful of events from
+        disproportionately influencing the overall rating.
+
+        Args:
+            performance_metrics (dict[str, float]): Raw or normalized counting stats
+                such as passes, shots, dribbles, and tackles.
+            z_scores (dict[str, float]): Standardized efficiency metrics that may be
+                zeroed out when volume thresholds are not met.
+
+        Returns:
+            dict[str, float]: The updated Z-score dictionary with low-volume
+                efficiency metrics set to 0.0.
+        """
         volume_masks = {"passes": 5, "shots": 2, "dribbles": 3, "tackles": 2}
         volume_z_pairs = {
             "passes": "pass_accuracy_z",
