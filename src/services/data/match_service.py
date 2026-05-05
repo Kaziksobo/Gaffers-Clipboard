@@ -178,6 +178,7 @@ class MatchService:
             penalty_goals_conceded=performance["penalty_goals_conceded"],
             shoot_out_saves=performance["shoot_out_saves"],
             shoot_out_goals_conceded=performance["shoot_out_goals_conceded"],
+            match_rating=performance.get("match_rating"),
             player_id=player_id,
         )
 
@@ -212,6 +213,7 @@ class MatchService:
             minutes_played=performance["minutes_played"],
             distance_covered=performance["distance_covered"],
             distance_sprinted=performance["distance_sprinted"],
+            match_rating=performance.get("match_rating"),
             player_id=player_id,
         )
 

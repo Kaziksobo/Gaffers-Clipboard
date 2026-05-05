@@ -174,6 +174,7 @@ class OutfieldPerformancePayload(TypedDict):
     minutes_played: int
     distance_covered: float
     distance_sprinted: float
+    match_rating: NotRequired[float | None]
 
 
 class GoalkeeperPerformancePayload(TypedDict):
@@ -192,6 +193,7 @@ class GoalkeeperPerformancePayload(TypedDict):
     penalty_goals_conceded: int
     shoot_out_saves: int
     shoot_out_goals_conceded: int
+    match_rating: NotRequired[float | None]
 
 
 type PlayerPerformancePayload = (
@@ -239,6 +241,7 @@ class PartialPlayerPerformancePayload(TypedDict, total=False):
     penalty_goals_conceded: int
     shoot_out_saves: int
     shoot_out_goals_conceded: int
+    match_rating: float | None
 
 
 @dataclass(frozen=True, slots=True)

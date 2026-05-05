@@ -544,7 +544,10 @@ class OutfieldPlayerPerformance(BaseModel):
     distance_covered: float = Field(ge=0)
     distance_sprinted: float = Field(ge=0)
     match_rating: float | None = Field(
-        ge=0, le=10, description="The custom analytics rating calculated post-match."
+        default=None,
+        ge=0,
+        le=10,
+        description="The custom analytics rating calculated post-match.",
     )
     player_id: int
 
@@ -585,7 +588,10 @@ class GoalkeeperPerformance(BaseModel):
     shoot_out_saves: int = Field(ge=0)
     shoot_out_goals_conceded: int = Field(ge=0)
     match_rating: float | None = Field(
-        ge=0, le=10, description="The custom analytics rating calculated post-match."
+        default=None,
+        ge=0,
+        le=10,
+        description="The custom analytics rating calculated post-match.",
     )
     player_id: int
 
