@@ -21,6 +21,7 @@ theme = SimpleNamespace(
         button=("Segoe UI", 28, "bold"),
         sidebar_body=("Segoe UI", 14),
         sidebar_button=("Segoe UI", 14, "bold"),
+        metric_value=("Segoe UI", 36, "bold"),
     ),
     semantic_colors=SimpleNamespace(
         accent="#00bfff",
@@ -35,5 +36,6 @@ theme = SimpleNamespace(
         rating_ok="#ffcc00",
         rating_good="#4caf50",
         rating_great="#1b5e20",
+        badge_bg="#3c3c3c",
     ),
 )

@@ -182,39 +182,48 @@ class PlayerStatsFrame(
         )
         self.position_entry.grid(row=0, column=2, padx=5, pady=5, sticky="e")
 
-        self.info_and_rating_grid = ctk.CTkFrame(self)
-        self.info_and_rating_grid.grid(row=4, column=1, pady=(0, 20))
-        self.info_and_rating_grid.grid_columnconfigure(0, weight=1)
-        self.info_and_rating_grid.grid_columnconfigure(1, weight=0)
-        self.info_and_rating_grid.grid_columnconfigure(2, weight=0)
-        self.info_and_rating_grid.grid_columnconfigure(3, weight=0)
-        self.info_and_rating_grid.grid_columnconfigure(4, weight=1)
-        self.info_and_rating_grid.grid_rowconfigure(0, weight=1)
-        # Info Label
+        # Create a transparent container to stack items vertically
+        self.info_and_rating_container = ctk.CTkFrame(self, fg_color="transparent")
+        self.info_and_rating_container.grid(row=4, column=1, pady=(0, 20), sticky="ew")
+        self.info_and_rating_container.grid_columnconfigure(0, weight=1)
+
+        # Info Label (Row 0)
         self.info_label = ctk.CTkLabel(
-            self.info_and_rating_grid,
+            self.info_and_rating_container,
             text=(
                 "Please review the captured player performance data."
                 "\nFill in any missing fields and correct any inaccuracies."
             ),
             font=self.fonts["body"],
         )
-        self.info_label.grid(row=0, column=1)
+        self.info_label.grid(row=0, column=0, pady=(0, 15))
         self.register_wrapping_widget(self.info_label, width_ratio=0.8)
 
-        self.rating_label = ctk.CTkLabel(
-            self.info_and_rating_grid,
-            text="Match Rating:",
-            font=self.fonts["body"],
+        # The "Badge" Frame (Row 1) - Creates a nice visual container
+        # Using a slightly lighter grey from the button theme to make
+        # it pop against the background
+        self.rating_badge_frame = ctk.CTkFrame(
+            self.info_and_rating_container,
+            corner_radius=8,
+            fg_color=self.theme.semantic_colors.badge_bg,
         )
-        self.rating_label.grid(row=0, column=2, padx=(20, 2))
-        self.live_rating_value_label = ctk.CTkLabel(
-            self.info_and_rating_grid,
-            textvariable=self.live_rating_var,
-            font=self.fonts["body"],
-        )
-        self.live_rating_value_label.grid(row=0, column=3)
+        self.rating_badge_frame.grid(row=1, column=0)
 
+        # Rating Label
+        self.rating_label = ctk.CTkLabel(
+            self.rating_badge_frame,
+            text="Match Rating",
+            font=self.fonts["sidebar_button"],  # Slightly smaller/bolder for the prefix
+        )
+        self.rating_label.grid(row=0, column=0, padx=(20, 10), pady=10)
+
+        # Rating Value - Dynamically create a larger, bolder font
+        self.live_rating_value_label = ctk.CTkLabel(
+            self.rating_badge_frame,
+            textvariable=self.live_rating_var,
+            font=self.fonts["metric_value"],
+        )
+        self.live_rating_value_label.grid(row=0, column=1, padx=(0, 20), pady=10)
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self)
         self.stats_grid.grid(row=5, column=1, pady=(0, 20), sticky="nsew", padx=20)
