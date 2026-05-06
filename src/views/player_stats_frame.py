@@ -212,7 +212,7 @@ class PlayerStatsFrame(
         # Rating Label
         self.rating_label = ctk.CTkLabel(
             self.rating_badge_frame,
-            text="Match Rating",
+            text="Match Rating: ",
             font=self.fonts["sidebar_button"],  # Slightly smaller/bolder for the prefix
         )
         self.rating_label.grid(row=0, column=0, padx=(20, 10), pady=10)
