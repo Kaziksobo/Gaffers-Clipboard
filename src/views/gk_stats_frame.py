@@ -128,39 +128,46 @@ class GKStatsFrame(
         )
         self.player_dropdown.grid(row=2, column=1, pady=(0, 20))
 
-        self.info_and_rating_grid = ctk.CTkFrame(self)
-        self.info_and_rating_grid.grid(row=3, column=1, pady=(0, 20))
-        self.info_and_rating_grid.grid_columnconfigure(0, weight=1)
-        self.info_and_rating_grid.grid_columnconfigure(1, weight=0)
-        self.info_and_rating_grid.grid_columnconfigure(2, weight=0)
-        self.info_and_rating_grid.grid_columnconfigure(3, weight=0)
-        self.info_and_rating_grid.grid_columnconfigure(4, weight=1)
-        self.info_and_rating_grid.grid_rowconfigure(0, weight=1)
+        # Create a transparent container to stack items vertically
+        self.info_and_rating_container = ctk.CTkFrame(self, fg_color="transparent")
+        self.info_and_rating_container.grid(row=3, column=1, pady=(0, 20), sticky="ew")
+        self.info_and_rating_container.grid_columnconfigure(0, weight=1)
 
-        # Info Label
+        # Info Label (Row 0)
         self.info_label = ctk.CTkLabel(
-            self.info_and_rating_grid,
+            self.info_and_rating_container,
             text=(
                 "Empty stats couldn't be recognised and require manual entry.\n "
                 "Please review and update player attributes as necessary."
             ),
             font=self.fonts["body"],
         )
-        self.info_label.grid(row=0, column=1)
+        self.info_label.grid(row=0, column=0, pady=(0, 15))
         self.register_wrapping_widget(self.info_label, width_ratio=0.8)
 
+        # The "Badge" Frame (Row 1)
+        self.rating_badge_frame = ctk.CTkFrame(
+            self.info_and_rating_container,
+            corner_radius=8,
+            fg_color=self.theme.semantic_colors.badge_bg,
+        )
+        self.rating_badge_frame.grid(row=1, column=0)
+
+        # Rating Label
         self.rating_label = ctk.CTkLabel(
-            self.info_and_rating_grid,
-            text="Match Rating:",
-            font=self.fonts["body"],
+            self.rating_badge_frame,
+            text="Match Rating: ",
+            font=self.fonts["sidebar_button"],
         )
-        self.rating_label.grid(row=0, column=2, padx=(20, 2))
+        self.rating_label.grid(row=0, column=0, padx=(20, 10), pady=10)
+
+        # Rating Value
         self.live_rating_value_label = ctk.CTkLabel(
-            self.info_and_rating_grid,
+            self.rating_badge_frame,
             textvariable=self.live_rating_var,
-            font=self.fonts["body"],
+            font=self.fonts["metric_value"],
         )
-        self.live_rating_value_label.grid(row=0, column=3)
+        self.live_rating_value_label.grid(row=0, column=1, padx=(0, 20), pady=10)
 
         # Stats Grid
         self.stats_grid = ctk.CTkScrollableFrame(self)
