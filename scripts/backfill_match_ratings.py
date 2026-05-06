@@ -1,11 +1,23 @@
-"""
-Backfill Match Ratings Script.
+"""Backfill Match Ratings Script.
 
-This script traverses all career directories in the data folder, loads historical
-match data, and utilizes the MatchRatingsService to append calculated 0-10 match
-ratings to existing player performances that currently lack them.
+This script traverses career folders under ``data/`` (either from
+``data/careers_details.json`` when available or by scanning the directory), loads
+each career's ``metadata.json`` and ``matches.json`` files, and calculates
+match ratings using ``MatchRatingsService``. Ratings are written into each
+player performance entry in ``matches.json`` as ``match_rating``.
+
+By default, only performances missing a rating are updated. Use ``--overwrite``
+to recalculate ratings and replace existing values after tweaking the ratings
+logic. The script also normalizes legacy structures (e.g., ``rating`` keys or
+alternative match/performance containers) and preserves the overall JSON
+shape when saving.
+
+Usage:
+    python scripts/backfill_match_ratings.py
+    python scripts/backfill_match_ratings.py --overwrite
 """
 
+import argparse
 import json
 import logging
 from pathlib import Path
@@ -136,7 +148,132 @@ def resolve_match_performances(match: dict[str, object]) -> list[dict[str, objec
     return []
 
 
-def backfill_career(career_dir: Path, ratings_service: MatchRatingsService) -> None:  # noqa: C901
+def resolve_career_context(career_dir: Path) -> tuple[str, int] | None:
+    """Resolve team name and half length from a career's metadata."""
+    meta_path = career_dir / "metadata.json"
+    if not meta_path.exists():
+        logger.warning("Skipping %s: Missing metadata.json", career_dir.name)
+        return None
+
+    meta_data = cast(dict[str, object], load_json_file(meta_path))
+    team_name_raw = meta_data.get("club_name") or meta_data.get("team_name")
+    team_name = str(team_name_raw).strip() if team_name_raw is not None else ""
+    if not team_name:
+        logger.error(
+            "Skipping %s: No club_name found in metadata.json",
+            career_dir.name,
+        )
+        return None
+
+    half_length = coerce_half_length(meta_data.get("half_length"), 10)
+    return team_name, half_length
+
+
+def load_matches_container(
+    matches_path: Path,
+    career_dir: Path,
+) -> tuple[list[dict[str, object]], list[dict[str, object]] | dict[str, object]] | None:
+    """Load matches and return (matches, container) for saving."""
+    if not matches_path.exists():
+        logger.warning("Skipping %s: Missing matches.json", career_dir.name)
+        return None
+
+    matches_json = load_json_file(matches_path)
+    if isinstance(matches_json, dict) and isinstance(matches_json.get("matches"), list):
+        matches = cast(list[dict[str, object]], matches_json["matches"])
+        return matches, matches_json
+    if isinstance(matches_json, list):
+        matches = cast(list[dict[str, object]], matches_json)
+        return matches, matches_json
+
+    logger.error("Skipping %s: Unexpected matches.json structure", career_dir)
+    return None
+
+
+def copy_legacy_rating_if_present(
+    perf: dict[str, object],
+    overwrite_existing: bool,
+) -> bool:
+    """Copy legacy rating into match_rating when appropriate."""
+    if not overwrite_existing and "rating" in perf:
+        perf["match_rating"] = perf.get("rating")
+        perf.pop("rating", None)
+        return True
+
+    if overwrite_existing and "rating" in perf:
+        perf.pop("rating", None)
+
+    return False
+
+
+def calculate_match_rating(
+    performance_type: object,
+    perf_payload: PlayerPerformancePayload,
+    ratings_service: MatchRatingsService,
+    match_overview: MatchOverviewPayload,
+    match_half_length: int,
+    team_name: str,
+    career_name: str,
+) -> float | None:
+    """Calculate rating for a performance type or return None."""
+    if performance_type == "GK":
+        return ratings_service.calculate_gk_rating(
+            performance=perf_payload,
+            match_overview=match_overview,
+            half_length=match_half_length,
+            team_name=team_name,
+        )
+    if performance_type == "Outfield":
+        return ratings_service.calculate_outfield_rating(
+            performance=perf_payload,
+            match_overview=match_overview,
+            half_length=match_half_length,
+            team_name=team_name,
+        )
+
+    logger.warning("Skipping performance without valid type in %s", career_name)
+    return None
+
+
+def update_performance_rating(
+    perf: dict[str, object],
+    ratings_service: MatchRatingsService,
+    match_overview: MatchOverviewPayload,
+    match_half_length: int,
+    team_name: str,
+    career_name: str,
+    overwrite_existing: bool,
+) -> bool:
+    """Update a single performance entry and return whether it changed."""
+    if not overwrite_existing and "match_rating" in perf:
+        return False
+
+    if copy_legacy_rating_if_present(perf, overwrite_existing):
+        return True
+
+    performance_type = perf.get("performance_type")
+    perf_payload = cast(PlayerPerformancePayload, perf)
+    rating = calculate_match_rating(
+        performance_type=performance_type,
+        perf_payload=perf_payload,
+        ratings_service=ratings_service,
+        match_overview=match_overview,
+        match_half_length=match_half_length,
+        team_name=team_name,
+        career_name=career_name,
+    )
+    if rating is None:
+        return False
+
+    perf["match_rating"] = rating
+    return True
+
+
+def backfill_career(
+    career_dir: Path,
+    ratings_service: MatchRatingsService,
+    overwrite_existing: bool,
+) -> None:
     # sourcery skip: low-code-quality
     """Process a single career directory to backfill match ratings.
 
@@ -144,38 +281,16 @@ def backfill_career(career_dir: Path, ratings_service: MatchRatingsService) -> N
         career_dir (Path): The path to the specific career directory.
         ratings_service (MatchRatingsService): The initialized ratings service.
     """
-    meta_path = career_dir / "metadata.json"
+    context = resolve_career_context(career_dir)
+    if context is None:
+        return
+    team_name, half_length = context
+
     matches_path = career_dir / "matches.json"
-
-    if not meta_path.exists() or not matches_path.exists():
-        logger.warning(
-            "Skipping %s: Missing metadata.json or matches.json",
-            career_dir.name,
-        )
+    matches_result = load_matches_container(matches_path, career_dir)
+    if matches_result is None:
         return
-
-    meta_data = cast(dict[str, object], load_json_file(meta_path))
-    team_name_raw = meta_data.get("club_name") or meta_data.get("team_name")
-    team_name = str(team_name_raw).strip() if team_name_raw is not None else ""
-    half_length = coerce_half_length(meta_data.get("half_length"), 10)
-
-    if not team_name:
-        logger.error(
-            "Skipping %s: No club_name found in metadata.json",
-            career_dir.name,
-        )
-        return
-
-    matches_json = load_json_file(matches_path)
-    if isinstance(matches_json, dict) and isinstance(matches_json.get("matches"), list):
-        matches = cast(list[dict[str, object]], matches_json["matches"])
-        matches_container: list[dict[str, object]] | dict[str, object] = matches_json
-    elif isinstance(matches_json, list):
-        matches = cast(list[dict[str, object]], matches_json)
-        matches_container = matches_json
-    else:
-        logger.error("Skipping %s: Unexpected matches.json structure", career_dir)
-        return
+    matches, matches_container = matches_result
     updates_made = 0
 
     for match in matches:
@@ -192,43 +307,16 @@ def backfill_career(career_dir: Path, ratings_service: MatchRatingsService) -> N
             if not isinstance(perf, dict):
                 continue
 
-            if "match_rating" in perf:
-                continue
-
-            if "rating" in perf:
-                perf["match_rating"] = perf.get("rating")
-                perf.pop("rating", None)
+            if update_performance_rating(
+                perf=perf,
+                ratings_service=ratings_service,
+                match_overview=match_overview,
+                match_half_length=match_half_length,
+                team_name=team_name,
+                career_name=career_dir.name,
+                overwrite_existing=overwrite_existing,
+            ):
                 updates_made += 1
-                continue
-
-            performance_type = perf.get("performance_type")
-            rating = None
-
-            perf_payload = cast(PlayerPerformancePayload, perf)
-
-            if performance_type == "GK":
-                rating = ratings_service.calculate_gk_rating(
-                    performance=perf_payload,
-                    match_overview=match_overview,
-                    half_length=match_half_length,
-                    team_name=team_name,
-                )
-            elif performance_type == "Outfield":
-                rating = ratings_service.calculate_outfield_rating(
-                    performance=perf_payload,
-                    match_overview=match_overview,
-                    half_length=match_half_length,
-                    team_name=team_name,
-                )
-            else:
-                logger.warning(
-                    "Skipping performance without valid type in %s",
-                    career_dir.name,
-                )
-                continue
-
-            perf["match_rating"] = rating if rating is not None else None
-            updates_made += 1
 
     if updates_made > 0:
         save_json_file(matches_path, matches_container)
@@ -241,9 +329,26 @@ def backfill_career(career_dir: Path, ratings_service: MatchRatingsService) -> N
         logger.info("No missing ratings found for career: %s", career_dir.name)
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse CLI args for the backfill process."""
+    parser = argparse.ArgumentParser(
+        description="Backfill match ratings across all careers.",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Recalculate and overwrite existing match ratings.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
     """Orchestrate the backfill process across all saved careers."""
-    logger.info("Starting Match Ratings Backfill Migration...")
+    args = parse_args()
+    logger.info(
+        "Starting Match Ratings Backfill Migration (overwrite=%s)...",
+        args.overwrite,
+    )
 
     career_dirs = resolve_career_dirs()
     if not career_dirs:
@@ -254,7 +359,7 @@ def main() -> None:
     ratings_service = MatchRatingsService(weights=weights, means_stds=means_stds)
 
     for career_dir in career_dirs:
-        backfill_career(career_dir, ratings_service)
+        backfill_career(career_dir, ratings_service, args.overwrite)
 
     logger.info("Match Ratings Backfill Migration Complete.")
 
