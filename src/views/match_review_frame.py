@@ -14,6 +14,7 @@ Dependencies: `customtkinter`, controller protocols from `src.contracts`,
 and `DataDiscrepancyError` from `src.exceptions`.
 """
 
+import contextlib
 import logging
 from typing import cast
 
@@ -66,6 +67,10 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
         # Structure: { "stat_name": { player_index: ("Player Name", StringVar) } }
         self.player_vars: dict[str, dict[int, tuple[str, ctk.StringVar]]] = {}
 
+        # New tracking for live player sums
+        self.player_totals_vars: dict[str, ctk.StringVar] = {}
+        self.player_totals_labels: dict[str, ctk.CTkLabel] = {}
+
         self.stat_definitions: list[tuple[str, str]] = [
             ("goals", "Goals"),
             ("shots", "Shots"),
@@ -74,6 +79,8 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
             ("offsides", "Offsides"),
             ("fouls_committed", "Fouls Committed"),
         ]
+
+        self._live_rating_debounce_ms = 400
 
         self._setup_ui()
 
@@ -238,6 +245,9 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
             )
             team_var = ctk.StringVar(value=team_val)
             self.team_vars[stat] = team_var
+
+            team_var.trace_add("write", lambda *_, s=stat: self._update_live_sum(s))
+
             team_entry = ctk.CTkEntry(
                 stat_frame,
                 textvariable=team_var,
@@ -245,6 +255,24 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
                 font=self.fonts["body"],
             )
             team_entry.grid(row=row_idx, column=1, pady=2, sticky="w")
+            row_idx += 1
+
+            # Live Player Sum Row (Read-Only)
+            players_sum_label = ctk.CTkLabel(
+                stat_frame, text="Players Sum:", font=self.fonts["body"]
+            )
+            players_sum_label.grid(
+                row=row_idx, column=0, padx=(10, 20), pady=(2, 10), sticky="w"
+            )
+
+            sum_var = ctk.StringVar(value="0")
+            self.player_totals_vars[stat] = sum_var
+
+            sum_val_label = ctk.CTkLabel(
+                stat_frame, textvariable=sum_var, font=self.fonts["body"]
+            )
+            sum_val_label.grid(row=row_idx, column=1, pady=(2, 10), sticky="w")
+            self.player_totals_labels[stat] = sum_val_label
             row_idx += 1
 
             self.player_vars[stat] = {}
@@ -264,6 +292,8 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
                 p_var = ctk.StringVar(value=player_val)
                 self.player_vars[stat][p_idx] = (player_name, p_var)
 
+                p_var.trace_add("write", lambda *_, s=stat: self._update_live_sum(s))
+
                 player_entry = ctk.CTkEntry(
                     stat_frame,
                     textvariable=p_var,
@@ -273,7 +303,36 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
                 player_entry.grid(row=row_idx, column=1, pady=2, sticky="w")
                 row_idx += 1
 
+            self._update_live_sum(stat)
+
         self.apply_focus_flourishes(self.discrepancy_grid)
+
+    def _update_live_sum(self, stat_key: str) -> None:
+        player_sum = 0
+        for _, p_var in self.players_vars[stat_key].values():
+            with contextlib.suppress(ValueError):
+                # Safely parse integer, ignoring empty strings or
+                # temporary invalid chars
+                player_sum += int(p_var.get().strip())
+
+        self.player_totals_vars[stat_key].set(str(player_sum))
+
+        # Visual feedback: Compare player sum to team total
+        try:
+            team_total = int(self.team_vars[stat_key].get().strip())
+            is_match = player_sum == team_total
+        except ValueError:
+            is_match = False
+
+        # Apply semantic coloring based on discrepancy status
+        target_color = (
+            self.theme.semantic_colors.rating_good
+            if is_match
+            else self.theme.semantic_colors.rating_bad
+        )
+
+        if sum_label := self.player_totals_labels.get(stat_key):
+            sum_label.configure(text_color=target_color)
 
     def _on_submit_review(self) -> None:
         try:
