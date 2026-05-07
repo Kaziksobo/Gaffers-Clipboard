@@ -58,12 +58,19 @@ class AnalyticsEngine:
         constructed before any rating calculations are performed.
         """
         if self._match_ratings_service:
+            logger.debug("Using cached MatchRatingsService instance.")
             return
         if not self._performance_weights or not self._performance_means_stds:
+            logger.debug("Performance configuration not loaded; loading from disk.")
             self._load_configuration()
         if self._performance_weights and self._performance_means_stds:
             self._match_ratings_service = analytics_services.MatchRatingsService(
                 self._performance_weights, self._performance_means_stds
+            )
+            logger.info(
+                "MatchRatingsService initialized (weights=%d, means_stds=%d).",
+                len(self._performance_weights),
+                len(self._performance_means_stds),
             )
 
     def _load_configuration(self) -> None:
@@ -77,10 +84,20 @@ class AnalyticsEngine:
         config_path: Path = self.project_root / "config"
         weights_path: Path = config_path / "performance_weights.json"
         means_stds_path: Path = config_path / "performance_means_stds.json"
+        logger.debug(
+            "Loading performance configuration from %s and %s.",
+            weights_path,
+            means_stds_path,
+        )
         with Path.open(weights_path) as f:
             self._performance_weights = json.load(f)
         with Path.open(means_stds_path) as f:
             self._performance_means_stds = json.load(f)
+        logger.info(
+            "Loaded performance configuration (weights=%d, means_stds=%d).",
+            len(self._performance_weights or {}),
+            len(self._performance_means_stds or {}),
+        )
 
     def calculate_match_rating(
         self,
@@ -112,15 +129,27 @@ class AnalyticsEngine:
             float | None: The calculated match rating on a 0-10 scale, or None
                 if the player did not play enough minutes to rate.
         """
+        logger.debug(
+            "Calculating match rating (player_id=%s, type=%s, team=%s, half_length=%s).",
+            performance.get("player_id"),
+            performance.get("performance_type"),
+            team_name,
+            half_length,
+        )
         self._get_match_rating_service()
 
         if self._match_ratings_service:
             if performance.get("performance_type") == "GK":
+                logger.debug("Routing to GK rating pipeline.")
                 return self._match_ratings_service.calculate_gk_rating(
                     performance, match_overview, half_length, team_name
                 )
 
             else:
+                logger.debug("Routing to outfield rating pipeline.")
                 return self._match_ratings_service.calculate_outfield_rating(
                     performance, match_overview, half_length, team_name
                 )
+
+        logger.error("MatchRatingsService unavailable; cannot calculate rating.")
+        return None

@@ -61,6 +61,11 @@ class MatchRatingsService:
         """
         self.weights = weights
         self.means_stds = means_stds
+        logger.info(
+            "MatchRatingsService configured (weights=%d, means_stds=%d).",
+            len(weights),
+            len(means_stds),
+        )
 
     def calculate_gk_rating(
         self,
@@ -89,6 +94,12 @@ class MatchRatingsService:
         Returns:
             float: The calculated goalkeepers match rating on a 0-10 scale.
         """
+        logger.debug(
+            "Calculating GK rating (player_id=%s, team=%s, half_length=%s).",
+            performance.get("player_id"),
+            team_name,
+            half_length,
+        )
         # Placeholder implementation
         is_user_home = match_overview.get("home_team_name") == team_name
         if is_user_home:
@@ -218,6 +229,17 @@ class MatchRatingsService:
 
         # Fix the final rating to be between 0 and 10
         final_rating: float = max(0.0, min(10.0, final_rating))
+        logger.debug(
+            (
+                "GK rating computed (player_id=%s, raw_score=%.3f, "
+                "raw_rating=%.2f, supremacy=%.2f, final=%.1f)."
+            ),
+            performance.get("player_id"),
+            raw_score,
+            raw_rating,
+            supremacy_scalar,
+            final_rating,
+        )
         return round(final_rating, 1)
 
     def _apply_gk_explicit_adjustments(
@@ -455,6 +477,12 @@ class MatchRatingsService:
                           None if the player did not play enough minutes for a
                           reliable rating.
         """
+        logger.debug(
+            "Calculating outfield rating (player_id=%s, team=%s, half_length=%s).",
+            performance.get("player_id"),
+            team_name,
+            half_length,
+        )
         positions_played = performance.get("positions_played", [])
         if not positions_played:
             logger.warning(
@@ -462,6 +490,7 @@ class MatchRatingsService:
                 "Defaulting to 6.0 rating."
             )
             return 6.0
+        logger.debug("Outfield positions to evaluate: %s", positions_played)
         is_user_home = match_overview.get("home_team_name") == team_name
         if is_user_home:
             user_stats = cast(MatchStatsPayload, match_overview.get("home_stats", {}))
@@ -495,6 +524,14 @@ class MatchRatingsService:
 
         minutes_played: float = performance_metrics.get("minutes_played", 0)
         if minutes_played < 10:
+            logger.debug(
+                (
+                    "Skipping outfield rating due to low minutes "
+                    "(player_id=%s, minutes=%.1f)."
+                ),
+                performance.get("player_id"),
+                minutes_played,
+            )
             return None  # Not enough data to calculate a reliable rating
 
         cum_columns = [
@@ -600,9 +637,24 @@ class MatchRatingsService:
             )
             final_rating: float = raw_rating - match_supremacy_scalar
             final_rating: float = max(0.0, min(10.0, final_rating))
+            logger.debug(
+                (
+                    "Position rating computed "
+                    "(player_id=%s, pos=%s, raw_score=%.3f, final=%.2f)."
+                ),
+                performance.get("player_id"),
+                pos,
+                processed_raw_score,
+                final_rating,
+            )
             calculated_ratings.append(final_rating)
 
         if len(calculated_ratings) == 1:
+            logger.debug(
+                "Outfield rating computed (player_id=%s, final=%.1f).",
+                performance.get("player_id"),
+                calculated_ratings[0],
+            )
             return round(calculated_ratings[0], 1)
 
         r_max: float = max(calculated_ratings)
@@ -611,6 +663,17 @@ class MatchRatingsService:
         alpha = 0.25
 
         hybrid_rating = r_max - (alpha * (r_max - r_mean))
+
+        logger.debug(
+            (
+                "Hybrid outfield rating computed "
+                "(player_id=%s, r_max=%.2f, r_mean=%.2f, final=%.2f)."
+            ),
+            performance.get("player_id"),
+            r_max,
+            r_mean,
+            hybrid_rating,
+        )
 
         return round(max(0.0, min(10.0, hybrid_rating)), 1)
 
@@ -804,6 +867,9 @@ class MatchRatingsService:
         """
         if isinstance(opponent_goals, (int, float, str)):
             return float(opponent_goals)
+        logger.debug(
+            "Opponent goals not numeric (%r); defaulting to 0.0.", opponent_goals
+        )
         return 0.0
 
     def _apply_pos_modifiers(
@@ -910,6 +976,9 @@ class MatchRatingsService:
                 performance_metrics=performance_metrics,
             )
         else:
+            logger.warning(
+                "Unknown position '%s' for modifiers; returning 0.0 raw score.", pos
+            )
             return 0.0
 
     def _calculate_dot_product(
