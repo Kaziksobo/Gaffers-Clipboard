@@ -309,7 +309,7 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
 
     def _update_live_sum(self, stat_key: str) -> None:
         player_sum = 0
-        for _, p_var in self.players_vars[stat_key].values():
+        for _, p_var in self.player_vars[stat_key].values():
             with contextlib.suppress(ValueError):
                 # Safely parse integer, ignoring empty strings or
                 # temporary invalid chars
