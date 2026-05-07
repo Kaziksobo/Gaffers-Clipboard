@@ -1,35 +1,73 @@
 
 > [!info] Executive Summary
-> The native rating systems in modern football simulations are often volatile, occasionally punishing players for specific tactical instructions or inflating the scores of short substitute cameos. 
+> The Quantification of a football performance into one number from 0.0 - 10.0 has long been a complex and controversial process, and is an exercise dimensionality reduction - reducing a web of complex and often inter-connected stats down to a single number. Industry standard algorithms like those used by Sofascore and Fotmob have made great progress in this, but are still viewed quite critically by fans, have inherent biases of their own, and operate like a black box with little transparency as to what they are actually analysing.
 > 
-> The Gaffer's Clipboard Analytics Engine circumvents this by calculating a bespoke, purely data-driven $0.0 - 10.0$ match rating based on raw performance data extracted via OCR. This document outlines the mathematical pipeline—from raw data normalization to dimensionality reduction and logistic scaling—used to evaluate player performances.
+> The Gaffer's Clipboard's Analytics Engine attempts to overcome these flaws with a transparent, mathematically rigorous 0.0 - 10.0 scale. While it has limitations of its own (being based on stats extracted from EA FC/FIFA screens), it operates completely offline to process match telemetry through a strict pre-processing pipeline with standardisations, dimensionality reduction and contextual heuristics to evaluate player performances exactly based on what unfolds on the pitch. This gives the user the best, most unbiased insights into how their players are performing
 
 ---
 
-## Table of Contents & Modules
+## I. Introduction and Philosophy
+[Insert 3 paragraphs. Discuss the quantification of human athletic performance. Contrast commercial algorithms with your offline, NumPy-based approach. Explain the overarching goal: 0.0 - 10.0 scale.]
 
-This whitepaper is modular by design. Read straight through for the high-level football philosophy, or explore the linked modules for the underlying mathematical proofs and Python architecture.
+## II. Data Pre-Processing & Normalization
+[Insert 1-2 paragraphs. Explain that raw OCR data is biased by match length and playing time.]
 
-### I. Introduction and Philosophy
-The limitations of native match ratings and the architectural constraints of building a lightweight, `numpy`-only analytics engine for offline execution.
-![[01 - Introduction and Philosophy]]
+### Volume Masking and Temporal Standardization
+[Insert 2 paragraphs. Explain the $H_{base} = 10.0$ baseline. Explain Volume Masking.]
 
-### II. Data Pre-Processing & Normalization
-How raw telemetry is cleaned before scoring. This includes volume masking for percentage stats, half-length standardization, and how [[Bayesian Smoothing]] safely handles substitute appearances.
-![[02 - Data Pre-Processing and Normalization]]
+### Handling Substitute Volatility (Bayesian Smoothing)
+[Insert 2 paragraphs. Detail the "Substitute Problem." Introduce Bayesian Smoothing as the philosophical fix.]
 
-### III. Contextual Adjustments
-Adjusting raw volume metrics to reflect the reality of the match, including Possession Taxes and engineering an Expected Threat (xT) proxy without spatial tracking data.
-![[03 - Contextual Adjustments]]
+> [!abstract]- 📐 Deep Dive: Bayesian Smoothing Architecture
+> ![[02a - Bayesian Smoothing Architecture]]
 
-### IV. Dimensionality Reduction & Weighting
-Why Min-Max scaling fails in football, the shift to Z-Score Standardization, and how [[PCA Block Scaling]] is used to derive fair, positional weight matrices without allowing attacking stats to dominate.
-![[04 - Dimensionality Reduction]]
+## III. Live Feature Engineering & Standardization
+[Insert 1-2 paragraphs. Explain deriving contextually aware features *before* applying weights.]
 
-### V. The Scoring Algorithm
-The core `MatchRatingsService` logic. How the dot product is calculated, the application of positional "Do No Harm" floors, and the [[Sigmoid Mapping]] function that compresses unbounded variance into a strict $0.0 - 10.0$ scale.
-![[05 - The Scoring Algorithm]]
+### The Expected Threat (xT) Proxy
+[Insert 2 paragraphs. Explain engineering a dynamic proxy using verticality and distribution efficiency without XY data.]
 
-### VI. Macro-Context & Goalkeeper Isolation
-Adjusting the final rating using the Match Supremacy Scalar ($\Delta_{xG}$) to account for team dominance, and why goalkeepers bypass the PCA matrix entirely.
-![[06 - Macro-Context and Goalkeepers]]
+### Live Z-Score Standardization
+[Insert 2 paragraphs. Explain converting smoothed metrics into Z-Scores and inverting negative stats.]
+
+## IV. Offline Weight Generation: Dimensionality Reduction
+[Insert 2 paragraphs. Delineate the Offline Phase. We need historical data to know mathematically why a goal is worth more than a pass.]
+
+### The Tangled Stats Problem
+[Insert 2 paragraphs. Explain "Improper Linear Models" (e.g., clearances falsely correlating with wins). State that stats are grouped into tactical blocks to find their true value.]
+
+> [!abstract]- 📐 Deep Dive: Offline Weight Generation & PCA
+> ![[04a - Offline Weight Generation and PCA]]
+
+## V. The Scoring Algorithm
+[Insert 1-2 paragraphs outlining the `MatchRatingsService`. Explain how the live Z-scores from Section III finally meet the offline positional weights from Section IV via a dot product calculation.]
+
+### Positional Modifiers and "Do No Harm" Floors
+[Insert 3-4 paragraphs. This is pure football logic. Detail the "Do No Harm" floors for defenders. Explain your specific philosophical role protections (e.g., "Ghosting Forgiveness," "Third CB" bonus, "Black Hole Penalty").]
+
+### Logistic Mapping
+[Insert 2 paragraphs. Explain why the raw score cannot just be printed. Detail the necessity of the inverse Sigmoid function to elegantly squeeze an unbounded score onto a 0.0 - 10.0 scale.]
+
+> [!abstract]- 📐 Deep Dive: Logistic Mapping Mathematics
+> ![[05a - Logistic Mapping Mathematics]]
+
+## VI. Macro-Context, Hybridization & Goalkeepers
+[Insert 1-2 paragraphs. Address the final layers of the engine: team context, handling players who shift tactical roles mid-match, and the isolated goalkeeper heuristics.]
+
+### The Match Supremacy Scalar
+[Insert 2 paragraphs. Discuss the hierarchical variance of football (team dominance accounting for ~26% of variance). Explain the $\Delta_{xG}$ adjustment concept, and how it is applied to the logistic score.]
+
+> [!abstract]- 📐 Deep Dive: The Match Supremacy Scalar
+> ![[06a - The Match Supremacy Scalar]]
+
+### Multi-Positional Hybridization
+[Insert 2 paragraphs. Explain that modern players often change roles mid-game. State that the engine evaluates their entire match data through the lens of *every* position they played, generating a distinct final rating for each role. Explain why you blend these final ratings rather than just taking the highest one or a simple average.]
+
+> [!abstract]- 📐 Deep Dive: The Alpha Drag Coefficient
+> ![[06b - Multi-Position Alpha Drag]]
+
+### Goalkeeper Isolation Heuristics
+[Insert 2 paragraphs. Explain why goalkeepers bypass the PCA matrix entirely. Introduce the Expected Goals Prevented (xGP) heuristic.]
+
+> [!abstract]- 📐 Deep Dive: Goalkeeper Heuristics
+> ![[06c - Goalkeeper Heuristics]]

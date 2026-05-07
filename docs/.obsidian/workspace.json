@@ -14,8 +14,8 @@
               "type": "markdown",
               "state": {
                 "file": "Gaffer's Clipboard - Match Ratings Methodology.md",
-                "mode": "source",
-                "source": false
+                "mode": "preview",
+                "source": true
               },
               "icon": "lucide-file",
               "title": "Gaffer's Clipboard - Match Ratings Methodology"
@@ -171,9 +171,16 @@
   },
   "active": "11805da58fe51b3e",
   "lastOpenFiles": [
+    "06c - Goalkeeper Heuristics.md",
+    "Gaffer's Clipboard - Match Ratings Methodology.md",
+    "06b - Multi-Position Alpha Drag.md",
+    "06a - The Match Supremacy Scalar.md",
+    "05a - Logistic Mapping Mathematics.md",
+    "04a - Offline Weight Generation and PCA.md",
+    "02a - Bayesian Smoothing Architecture.md",
+    "01 - Introduction and Philosophy.md",
     "project_roadmap.md",
     "Sigmoid Mapping.md",
-    "Gaffer's Clipboard - Match Ratings Methodology.md",
     "Project Roadmap.md",
     "overall_stats_mockup.png",
     "homescreen_mockup.png",
