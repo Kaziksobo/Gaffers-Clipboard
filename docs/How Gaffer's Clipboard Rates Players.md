@@ -22,9 +22,6 @@ Before the engine can process the match data, it must confront the strict limita
 
 Because the engine lacks advanced spatial data, it cannot measure a player's creativity purely through counting stats. To bridge this gap, the algorithm synthesises a 17th metric - Expected Threat (xT) - derived from a combination of passing, dribbling, and physical exertion parameters. This final 17-element array serves as the absolute boundary of the engine's worldview. Everything the algorithm understands about a player's performance must be mathematically deduced from this highly restricted telemetry matrix.
 
-> [!abstract]- Deep Dive: The Outfield Telemetry Matrix
-> ![[01a - The outfield Telemetry Matrix]]
-
 Despite the existing limitations, the goal of this algorithm was to eliminate the black box commonly used by industry-standard services. The architecture takes messy OCR-extracted telemetry data and employs a transparent, purely mathematical approach to distil it into a single player rating. Similar to professional alternatives, there was a strong emphasis on context - considering positional variance, intelligent tactical roles, team performance, and match configurations. Ultimately, this algorithm aims to synthesise these complex contextual variables into a single, transparent metric, transforming raw telemetry into a definitive and unbiased reflection of true on-pitch value.
 
 ## II. Data Pre-Processing & Normalisation
@@ -42,9 +39,6 @@ While temporal standardisation fixes EA FC's custom clock, the engine must still
 
 To prevent this, the engine demands proof of sustainability. It applies a statistical technique known as Bayesian smoothing, which acts as a mathematical anchor. By blending the player's observed stats with a historical positional average, the engine ensures that a player's rating is closely tied to the mean (generating a standard 6.0 rating) when they first step onto the pitch. The fewer minutes a player has on the field, the stronger this anchor holds, meaning their calculated output is largely dictated by historical expectations rather than their brief cameo. Therefore, if they played for only a few minutes, it is highly unlikely their rating would be far from the standard 6.0. To break away from this baseline and earn an elite (or abysmal) rating, the player must physically accrue enough minutes - and consistent statistical output - to overpower the positional average.
 
-> [!abstract]- Deep Dive: Bayesian Smoothing Architecture
-> ![[02b - Bayesian Smoothing Architecture]]
-
 ## III. Live Feature Engineering & Standardisation
 With the raw telemetry successfully cleaned, standardised, and insulated against substitute volatility, the foundational data entering the algorithm is mathematically stable. However, even after this pre-processing, these stats cannot be fed directly into a rating matrix. In their current form, they lack two critical mathematical properties: dimension and equivalence.
 
@@ -57,9 +51,6 @@ In real-world football analytics, the Expected Threat (xT) metric, like related 
 To bridge this spatial void, the Analytics Engine synthesises an xT proxy by combining available metrics to approximate Expected Threat. This heuristic is grounded in real-world sports science - research from the CIES Football Observatory and tracking data from UEFA Euro 2016 demonstrate that while total distance covered has little correlation to match success, high-intensity sprinting is statistically linked to positive goal differentials and is most commonly seen among attacking players.[^1][^2] Furthermore, industry analysis shows that elite teams combine this physical intensity with high passing volume to generate a true attacking threat.[^3] By mathematically binding a player's sprint ratio to their passing efficiency, the engine accurately isolates box-to-box midfielders, overlapping fullbacks, and direct wingers who drive progressive, line-breaking possession.
 
 Crucially, this proxy cannot scale linearly. A player increasing their passing volume from 20 to 40 accurate passes usually signifies a massive increase in active match involvement and threat. However, a player increasing from 80 to 100 passes is often just recycling safe possession in a deep defensive block. To reflect this reality, the engine applies a natural logarithm to the passing data. Doing so ensures that the xT bonus highly rewards players for establishing a baseline of dynamic progression, but applies mathematical diminishing returns to prevent players from artificially inflating their rating through sterile, non-threatening possession.
-
-> [!abstract]- Deep Dive: Expected Threat (xT) Synthesis 
-> ![[03a - Expected Threat Synthesis]]
 
 ### Live Z-Score Standardisation
 Even with advanced proxies like Expected Threat, the telemetry remains dimensionally fragmented. A centre-back executing five successful tackles and a striker completing five shots on target have both registered the number 5, but the tactical weight, frequency and difficulty of those actions will be quite different. To calculate a singular match rating that encompasses all metrics appropriately, each metric must be converted to a universally comparable unit of measurement.
@@ -99,9 +90,6 @@ Each component represents a naturally occurring tactical profile defined by its 
 
 Finally, the engine must collapse these independent dimensions back into a single, usable set of multipliers. To generate the final positional weight for a specific stat, the algorithm looks at that stat's internal weight across all components. It scales each of those internal weights strictly by the percentage of overall variance that the specific component explains, and then sums them. This method ensures the final Positional Weight Vector accurately implements the developer's tactical philosophy without double-counting the underlying telemetry.
 
-> [!abstract]- Deep Dive: Principal Component Analysis and Weight Generation 
-![[04b - PCA Algorithm and Generating Weights]]
-
 ## V. The Scoring Algorithm
 With the live match telemetry mathematically standardised into contextual Z-scores (Section III) and the ideal tactical philosophies distilled into independent Positional Weight Vectors (Section IV), the Analytics Engine reaches its core synthesis phase.
 
@@ -120,9 +108,6 @@ This modification pipeline executes four distinct architectural layers:
 3. **Absolute Output Multipliers:** Z-score standardisation is designed to smooth out variance, but goals and assists are absolute, match-defining events. Therefore, these events are applied as flat numerical bonuses _after_ the dot product calculation, ensuring that direct goal contributions always yield a massive rating spike regardless of the underlying statistical distribution.
 4. **Contextual Heuristics:** The engine deploys complex, position-specific logic to evaluate how a player accumulated their stats. It does not just measure volume; it measures efficiency ratios and match context. For example, the algorithm calculates whether a striker is acting as an offensive "black hole" by comparing their turnover rate to their positive involvements, or dynamically scales a defender's clean sheet bonus based on the quality of chances (xG) the opponent created.
 
-> [!abstract]- Deep Dive: The Synthesis Pipeline & Contextual Heuristics 
-> ![[05a - Synthesis Pipeline & Contextual Logic]]
-
 ### Logistic Mapping
 After the positional modifiers are applied, the engine finally has a single raw score for the player's performance. However, because this score is based on standard deviations, it looks like a bizarre decimal (e.g., a terrible game might be $-2.5$, an average game $0.0$, and a world-class game $4.8$). This format is useless to an end-user. The application must convert this value into the classic $1.0$ to $10.0$ match rating scale used by _FIFA_, _WhoScored_, and football fans worldwide.
 
@@ -131,9 +116,6 @@ A naïve approach would be to scale the numbers evenly - mapping the highest his
 To safely lock the ratings between $1$ and $10$ without breaking the game, the Analytics Engine uses an "S-Curve" (mathematically known as a Sigmoid transformation).
 
 Instead of stretching the numbers evenly, the curve is anchored to a psychological baseline: an exactly average statistical performance is locked to a **$6.0$ rating**. In the middle of the curve - where 95% of normal football matches happen - the scoring is highly sensitive, easily separating a decent $6.5$ performance from a great $7.5$. However, at the extreme top end, the curve applies "diminishing returns." A world-class hat-trick might earn a $9.5$, and adding a fourth goal might only push it to a $9.8$. This ensures that no matter how unbelievable a player's stats become, the rating gracefully slows as it approaches $10.0$, never breaking the ceiling.
-
-> [!abstract]- Deep Dive: Logistic Mapping Mathematics
-> ![[05b - Logistic Mapping Mathematics]]
 
 ## VI. Macro-Context, Hybridisation & Goalkeepers
 While the logistic curve successfully synthesises individual telemetry into a recognisable 1-to-10 rating, evaluating a player purely in a statistical vacuum is inherently flawed. Football is not a static environment. The match's overall momentum deeply influences a player's individual metrics; their tactical role can change depending on the phase of play, and specific positions operate under entirely different physical and data rules.
@@ -153,9 +135,6 @@ The engine calculates which team genuinely dominated the match by comparing the 
     
 - **The Siege Bonus:** If a player's team was heavily outplayed, the engine applies a rating boost. This rewards players who maintained a solid baseline output despite being tactically besieged, recognising their performance against overwhelming odds.
 
-> [!abstract]- Deep Dive: The Match Supremacy Scalar
-> ![[06a - The Match Supremacy Scalar]]
-
 ### Multi-Positional Hybridisation
 Modern football is increasingly positionless. Tactical fluidity often dictates that players change roles mid-match - a fullback may invert into central midfield, or a winger may transition into a second striker, depending on the game state. 
 
@@ -169,9 +148,6 @@ Collapsing these multiple ratings into a single final score presents an architec
 
 To bridge this gap, the engine deploys a proprietary **Alpha Drag** system. The algorithm assumes the player's highest calculated rating reflects their primary tactical role. It anchors the final score to this maximum rating, but applies a fractional "drag" based on the lower scores. This ensures the player is rightfully penalised for poor secondary performances, but the punishment is scaled down so it does not erase their primary success.
 
-> [!abstract]- Deep Dive: The Alpha Drag Coefficient
-> ![[06b - Multi-Position Alpha Drag]]
-
 ### Goalkeeper Isolation Heuristics
 The structural realities of the goalkeeper position render standard analytics algorithms entirely obsolete. This is not merely a tactical difference; it is a fundamental data constraint. For outfield players, the Analytics Engine receives a 17-metric telemetry matrix (measuring progression, passes, distance covered, xT, etc.). For goalkeepers, the engine receives a completely different, highly specialised 11-metric matrix consisting purely of reactive events (e.g., _shots against, saves, rush saves, punch saves, penalty metrics_).
 
@@ -181,9 +157,6 @@ The core of this pipeline is **Expected Goals Prevented (xGP)**. Rather than sim
 
 Furthermore, the goalkeeper pipeline deliberately reverses several contextual heuristics used for outfielders to reflect their reactive role. The most prominent example is the "Inverted Clean Sheet Bonus." When a central defender keeps a clean sheet against a team that generated $0.5$ xG, the defender receives a massive rating boost because they actively smothered the opponent. However, if a goalkeeper keeps a clean sheet against $0.5$ xG, it indicates they were largely a "passenger" in a game dominated by their own defence, yielding a minimised bonus. Conversely, if the defence collapses and allows $2.5$ xG, but the goalkeeper still secures a clean sheet, they trigger a "Bailout" bonus and receive a massive rating spike for single-handedly carrying the team.
 
-> [!abstract]- Deep Dive: Goalkeeper Heuristics
-> ![[06c - Goalkeeper Heuristics]]
-
 ## VII. Conclusion
 A tension between statistical objectivity and tactical reality has historically hampered the quantification of football performance.  Commercial rating systems and native in-game algorithms often rely on rigid, one-size-fits-all linear models. These models fail to account for asymmetric responsibilities across positions, aggressively punish players for executing specific managerial instructions, and unquestioningly reward players for hierarchical dominance within their team.
 
@@ -192,9 +165,6 @@ The custom Analytics Engine detailed in this whitepaper was engineered to resolv
 Most importantly, the engine wraps this linear algebra in rigorous, context-aware heuristics (Sections V & VI). By integrating synthetic xG models, the Alpha Drag hybridisation coefficient, and the GLMM-backed Match Supremacy Scalar, the algorithm bridges the gap between a spreadsheet and the pitch.
 
 The resulting output is a robust, dynamic 1.0 to 10.0 rating system that does not merely count what a player did, but mathematically evaluates _how_ and _why_ they did it. It successfully mimics the subjective, nuanced eye of an elite football analyst while maintaining the strict, reproducible objectivity of a data science framework.
-
->[!abstract]- Appendix: Complete Positional Heuristics Reference 
-![[Appendix A - Positional Heuristics]]
 
 ## Footnotes
 [^1]: Drs Raffaele Poli, Loïc Ravenel and Roger Besson (2021). Monthly Report 68: Analysis of distances covered in professional football. _CIES Football Observatory_ [Available Here](https://football-observatory.com/IMG/sites/mr/mr68/en/)

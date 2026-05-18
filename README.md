@@ -5,7 +5,7 @@
 [![Ruff](https://custom-icon-badges.demolab.com/badge/Ruff-261230.svg?logo=ruff-logo)](https://github.com/astral-sh/ruff)
 [![ty](https://custom-icon-badges.demolab.com/badge/ty-261230.svg?logo=ty-astral-logo)](https://github.com/astral-sh/ty)
 
-> **Note:** This project is currently transitioning into Phase 8 (Analytics Engine).
+> **Note:** This project is currently in Phase 8 (Analytics Engine).
 
 **Gaffer's Clipboard** is a high-fidelity, desktop companion application for EA FC / FIFA Career Mode. It utilizes a custom OpenCV KNN-based OCR engine to extract match and player statistics directly from screenshots, transforming raw pixels into a strictly validated, JSON-backed local database for deep squad analysis.
 
@@ -15,6 +15,16 @@
 * **Multi-Career Management:** Complete data isolation for different manager saves (e.g., "Arsenal" vs. "Wrexham").
 * **Strict Data Validation:** Powered by **Pydantic V2** (`src/schemas.py`), ensuring every extracted goal, tackle, and injury record is mathematically and logically sound before saving.
 * **Resolution Independence:** Dynamically scales OCR regions to support capturing from 1080p, 1440p, and 4K displays.
+
+## The Analytics Engine (Whitepapers)
+
+The player rating system in Gaffer's Clipboard is powered by a custom, mathematically rigorous analytics engine. It completely abandons the "black box" algorithms used by commercial rating apps in favor of transparent, variance-aware statistical models (utilizing Principal Component Analysis and Expected Goals models).
+
+Depending on your technical background, you can read the official documentation on how the engine was built:
+
+* 📄 **[How Gaffer's Clipboard Rates Players](docs/How_Gaffers_Clipboard_Rates_Players.pdf)** *An accessible, high-level executive summary of the rating philosophy and mechanics, designed specifically for EA FC players and football fans.*
+
+* 📐 **[Quantitative Design of the Gaffer's Clipboard Rating Algorithm](docs/Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf)** *The comprehensive data science whitepaper detailing the exact linear algebra, standard deviation normalizations, and positional heuristics powering the algorithm.*
 
 ## Technical Stack
 
@@ -31,7 +41,7 @@ As defined in our `pyproject.toml`, this project is built on a lean, high-perfor
 <summary><b>Click to view full dependency tree (uv tree)</b></summary>
 
 ```text
-gaffers-clipboard v0.7.0
+gaffers-clipboard v0.7.1
 ├── customtkinter v5.2.2
 │   ├── darkdetect v0.8.0
 │   └── packaging v26.0
@@ -54,6 +64,71 @@ gaffers-clipboard v0.7.0
 │   ├── typing-extensions v4.15.0
 │   └── typing-inspection v0.4.2
 │       └── typing-extensions v4.15.0
+├── jupyter v1.1.1 (group: dev)
+│   ├── ipykernel v7.2.0
+│   │   ├── comm v0.2.3
+│   │   ├── debugpy v1.8.20
+│   │   ├── ipython v9.12.0
+│   │   ├── jupyter-core v5.9.1 (*)
+│   │   ├── matplotlib-inline v0.2.1 (*)
+│   │   ├── nest-asyncio v1.6.0
+│   │   ├── packaging v26.0
+│   │   ├── psutil v7.2.2
+│   │   ├── pyzmq v27.1.0
+│   │   ├── tornado v6.5.5
+│   │   └── traitlets v5.14.3
+│   ├── ipywidgets v8.1.8
+│   │   ├── comm v0.2.3
+│   │   ├── ipython v9.12.0 (*)
+│   │   ├── jupyterlab-widgets v3.0.16
+│   │   ├── traitlets v5.14.3
+│   │   └── widgetsnbextension v4.0.15
+│   ├── jupyter-console v6.6.3
+│   │   ├── ipykernel v7.2.0 (*)
+│   │   ├── ipython v9.12.0 (*)
+│   │   ├── jupyter-client v8.8.0 (*)
+│   │   ├── jupyter-core v5.9.1 (*)
+│   │   ├── prompt-toolkit v3.0.52 (*)
+│   │   ├── pygments v2.20.0
+│   │   ├── pyzmq v27.1.0
+│   │   └── traitlets v5.14.3
+│   ├── jupyterlab v4.5.6
+│   │   ├── async-lru v2.3.0
+│   │   ├── httpx v0.28.1
+│   │   ├── ipykernel v7.2.0 (*)
+│   │   ├── jinja2 v3.1.6
+│   │   │   └── markupsafe v3.0.3
+│   │   ├── jupyter-core v5.9.1 (*)
+│   │   ├── jupyter-lsp v2.3.1
+│   │   ├── jupyter-server v2.17.0 (*)
+│   │   ├── jupyterlab-server v2.28.0
+│   │   ├── notebook-shim v0.2.4
+│   │   ├── packaging v26.0
+│   │   ├── setuptools v82.0.1
+│   │   ├── tornado v6.5.5
+│   │   └── traitlets v5.14.3
+│   ├── nbconvert v7.17.1 (*)
+│   └── notebook v7.5.5
+│       ├── jupyter-server v2.17.0 (*)
+│       ├── jupyterlab v4.5.6 (*)
+│       ├── jupyterlab-server v2.28.0 (*)
+│       ├── notebook-shim v0.2.4 (*)
+│       └── tornado v6.5.5
+├── matplotlib v3.10.8 (group: dev)
+│   ├── contourpy v1.3.3
+│   │   └── numpy v2.4.2
+│   ├── cycler v0.12.1
+│   ├── fonttools v4.62.1
+│   ├── kiwisolver v1.5.0
+│   ├── numpy v2.4.2
+│   ├── packaging v26.0
+│   ├── pillow v12.1.1
+│   ├── pyparsing v3.3.2
+│   └── python-dateutil v2.9.0.post0 (*)
+├── pandas v3.0.2 (group: dev)
+│   ├── numpy v2.4.2
+│   ├── python-dateutil v2.9.0.post0 (*)
+│   └── tzdata v2026.1
 ├── pytest v9.0.2 (group: dev)
 │   ├── colorama v0.4.6
 │   ├── iniconfig v2.3.0
@@ -67,6 +142,24 @@ gaffers-clipboard v0.7.0
 ├── pytest-mock v3.15.1 (group: dev)
 │   └── pytest v9.0.2 (*)
 ├── ruff v0.15.9 (group: dev)
+├── scikit-learn v1.8.0 (group: dev)
+│   ├── joblib v1.5.3
+│   ├── numpy v2.4.2
+│   ├── scipy v1.17.1
+│   │   └── numpy v2.4.2
+│   └── threadpoolctl v3.6.0
+├── scipy v1.17.1 (group: dev) (*)
+├── seaborn v0.13.2 (group: dev)
+│   ├── matplotlib v3.10.8 (*)
+│   ├── numpy v2.4.2
+│   └── pandas v3.0.2 (*)
+├── statsmodels v0.14.6 (group: dev)
+│   ├── numpy v2.4.2
+│   ├── packaging v26.0
+│   ├── pandas v3.0.2 (*)
+│   ├── patsy v1.0.2
+│   │   └── numpy v2.4.2
+│   └── scipy v1.17.1 (*)
 └── ty v0.0.28 (group: dev)
 (*) Package tree already displayed
 ```
