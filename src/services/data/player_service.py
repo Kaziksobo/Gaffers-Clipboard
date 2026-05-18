@@ -252,10 +252,11 @@ class PlayerService:
                 "New players require name, country, age, height, weight, and position."
             )
 
-        logger.info("Adding new player: %s", name)
+        normalised_name = name.strip().title()
+        logger.info("Adding new player: %s", normalised_name)
         return Player(
             id=player_id,
-            name=name,
+            name=normalised_name,
             nationality=country,
             age=age,
             height=height,
