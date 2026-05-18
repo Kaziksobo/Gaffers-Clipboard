@@ -13,10 +13,10 @@
             "state": {
               "type": "pdf",
               "state": {
-                "file": "Quantitative Design of the Gaffer's Clipboard Rating Algorithm.pdf"
+                "file": "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf"
               },
               "icon": "lucide-file-text",
-              "title": "Quantitative Design of the Gaffer's Clipboard Rating Algorithm"
+              "title": "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm"
             }
           }
         ]
@@ -92,7 +92,7 @@
             "state": {
               "type": "footnotes",
               "state": {
-                "file": "Quantitative Design of the Gaffer's Clipboard Rating Algorithm.pdf"
+                "file": "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf"
               },
               "icon": "lucide-file-signature",
               "title": "Footnotes"
@@ -118,7 +118,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Quantitative Design of the Gaffer's Clipboard Rating Algorithm.pdf",
+                "file": "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -128,7 +128,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Quantitative Design of the Gaffer's Clipboard Rating Algorithm"
+              "title": "Backlinks for Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm"
             }
           },
           {
@@ -137,12 +137,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Quantitative Design of the Gaffer's Clipboard Rating Algorithm.pdf",
+                "file": "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Quantitative Design of the Gaffer's Clipboard Rating Algorithm"
+              "title": "Outgoing links from Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm"
             }
           },
           {
@@ -166,13 +166,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Quantitative Design of the Gaffer's Clipboard Rating Algorithm.pdf",
+                "file": "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Quantitative Design of the Gaffer's Clipboard Rating Algorithm"
+              "title": "Outline of Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm"
             }
           }
         ]
@@ -195,9 +195,14 @@
   },
   "active": "b78e76cbe05620ae",
   "lastOpenFiles": [
-    "02b - Bayesian Smoothing Architecture.md",
+    "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf",
+    "Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf",
     "Gaffer's Clipboard - Match Ratings Methodology.md",
+    "02b - Bayesian Smoothing Architecture.md",
     "Quantitative Design of the Gaffer's Clipboard Rating Algorithm.pdf",
+    "How_Gaffers_Clipboard_Rates_Players.pdf",
+    "Quantitative_Design_of_the_Gaffer's_Clipboard_Rating_Algorithm.pdf",
+    "How_Gaffer's_Clipboard_Rates_Players.pdf",
     "How Gaffer's Clipboard Rates Players.md",
     "How Gaffer's Clipboard Rates Players.pdf",
     "01a - The Outfield Telemetry Matrix.md",
