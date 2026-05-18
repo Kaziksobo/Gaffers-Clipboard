@@ -22,20 +22,29 @@ The player rating system in Gaffer's Clipboard is powered by a custom, mathemati
 
 Depending on your technical background, you can read the official documentation on how the engine was built:
 
-* 📄 **[How Gaffer's Clipboard Rates Players](docs/How_Gaffers_Clipboard_Rates_Players.pdf)** *An accessible, high-level executive summary of the rating philosophy and mechanics, designed specifically for EA FC players and football fans.*
+* **[How Gaffer's Clipboard Rates Players](docs/How_Gaffers_Clipboard_Rates_Players.pdf)** *An accessible, high-level executive summary of the rating philosophy and mechanics, designed specifically for EA FC players and football fans.*
 
-* 📐 **[Quantitative Design of the Gaffer's Clipboard Rating Algorithm](docs/Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf)** *The comprehensive data science whitepaper detailing the exact linear algebra, standard deviation normalizations, and positional heuristics powering the algorithm.*
+* **[Quantitative Design of the Gaffer's Clipboard Rating Algorithm](docs/Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf)** *The comprehensive data science whitepaper detailing the exact linear algebra, standard deviation normalizations, and positional heuristics powering the algorithm.*
 
 ## Technical Stack
 
 As defined in our `pyproject.toml`, this project is built on a lean, high-performance stack:
 
-* **Language:** Python 3.13+
-* **GUI Framework:** `customtkinter` (Modern, dark-themed UI)
-* **Computer Vision & Math:** `opencv-python`, `pillow`, and `numpy`
-* **Automation:** `pyautogui` (for screenshot capture)
-* **Data Layer:** `pydantic` (Strict type validation)
-* **Environment & Tooling:** `uv` (Package Management), `ruff` (Linting/Formatting), and `ty` (Type checking)
+**Runtime (app dependencies)**  
+
+* Language: Python 3.13+  
+* GUI: `customtkinter`  
+* Computer Vision: `opencv-python`, `pillow`, `pyautogui`  
+* Math: `numpy`  
+* Validation: `pydantic`  
+* Environment & tooling: `uv`
+
+**Development & Research (dev dependencies)**  
+
+* Testing: `pytest`, `pytest-cov`, `pytest-mock`  
+* Linting/Formatting: `ruff`  
+* Type Checking: `ty`  
+* Analytics/Notebooks: `jupyter`, `pandas`, `matplotlib`, `seaborn`, `scikit-learn`, `scipy`, `statsmodels`
 
 <details>
 <summary><b>Click to view full dependency tree (uv tree)</b></summary>
