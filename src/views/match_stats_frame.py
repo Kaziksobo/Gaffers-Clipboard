@@ -10,7 +10,11 @@ import logging
 
 import customtkinter as ctk
 
-from src.contracts.ui import BaseViewThemeProtocol, MatchStatsFrameControllerProtocol
+from src.contracts.ui import (
+    BaseViewThemeProtocol,
+    MatchStatsFrameControllerProtocol,
+    OCRStatsPayload,
+)
 from src.exceptions import DataDiscrepancyError
 from src.schemas import MATCH_YELLOW_CARDS_MAX, MATCH_YELLOW_CARDS_MIN
 from src.utils import safe_float_conversion, safe_int_conversion
@@ -275,6 +279,31 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             OCR population.
         """
         return {"home_team": self.home_stats_vars, "away_team": self.away_stats_vars}
+
+    def populate_stats(self, stats: OCRStatsPayload) -> None:
+        """Populate OCR stats, including match score fields.
+
+        Overrides the default OCRDataMixin handler to ensure the home/away
+        score entries are filled from the OCR payload and cleared when missing
+        """
+        OCRDataMixin.populate_stats(self, stats)
+
+        def _to_entry_text(value: int | float | None) -> str:
+            return str(value) if value is not None else ""
+
+        home_score_value: int | float | None = None
+        away_score_value: int | float | None = None
+
+        if isinstance(stats, dict):
+            home_payload = stats.get("home_team")
+            if isinstance(home_payload, dict):
+                home_score_value = home_payload.get("score")
+            away_payload = stats.get("away_team")
+            if isinstance(away_payload, dict):
+                away_score_value = away_payload.get("score")
+
+        self.home_team_score_var.set(_to_entry_text(home_score_value))
+        self.away_team_score_var.set(_to_entry_text(away_score_value))
 
     def _on_next_outfield_player_button_press(self) -> None:
         """Stage overview data and navigate to outfield player capture flow.
