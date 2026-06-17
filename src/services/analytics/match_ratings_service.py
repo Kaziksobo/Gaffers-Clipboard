@@ -17,7 +17,8 @@ loading, persistence, and UI presentation are handled elsewhere.
 """
 
 import logging
-from typing import cast
+from types import MappingProxyType
+from typing import Final, cast
 
 import numpy as np
 
@@ -40,8 +41,98 @@ class MatchRatingsService:
     heuristics to produce final 0-10 ratings.
     """
 
-    H_BASE = 10.0
-    DUMMY_MINUTES = 30.0
+    H_BASE: Final[float] = 10.0
+    # Vectorized Bayesian Anchors (d) based on metric stabilization rates
+    DUMMY_WEIGHTS: Final = MappingProxyType(
+        {
+            # High-Frequency (Fast stabilization)
+            "passes": 15.0,
+            "distance_covered": 15.0,
+            "distance_sprinted": 15.0,
+            "possession_won": 15.0,
+            "possession_lost": 15.0,
+            # Medium-Frequency (Moderate stabilization)
+            "dribbles": 30.0,
+            "tackles": 30.0,
+            "fouls_committed": 30.0,
+            "offsides": 30.0,
+            # Low-Frequency / Rare Events (Slow stabilization, high volatility)
+            "goals": 45.0,
+            "assists": 45.0,
+            "shots": 45.0,
+        }
+    )
+    DEFAULT_DUMMY: Final[float] = 30.0
+    # Shot volume at which the GK confidence shrink factor reaches 1.0 (no shrinkage).
+    # Below this threshold, raw_score is scaled toward 0 by √(shots_against / K).
+    GK_SHOTS_CONFIDENCE_K: Final[float] = 5.0
+
+    # Dynamic xT Multipliers based on positional progression responsibility
+    XT_POSITION_SCALARS: Final = MappingProxyType(
+        {
+            "ST": 0.35,
+            "RW": 0.35,
+            "LW": 0.35,
+            "CAM": 0.35,
+            "CF": 0.35,
+            "CM": 0.25,
+            "RM": 0.25,
+            "LM": 0.25,
+            "RWB": 0.25,
+            "LWB": 0.25,
+            "RB": 0.25,
+            "LB": 0.25,
+            "CDM": 0.10,
+            "CB": 0.10,
+        }
+    )
+
+    # Crude per-shot xG estimate; shared by goal bonus and wasteful-finisher penalty.
+    XG_PER_SHOT: Final[float] = 0.20
+    # Minimum fraction of a goal that always counts toward the bonus,
+    # preventing a high shot volume from erasing the reward for scoring.
+    GOAL_FLOOR_RATE: Final[float] = 0.40
+
+    # Multi-position hybrid parameters.
+    # ALPHA_BASE scales cosine similarity into the drag coefficient alpha.
+    # VERSATILITY_THRESHOLD is the minimum r_min (worst positional rating) required
+    # for a versatility bonus to fire; 6.5 is the logistic midpoint + half a point,
+    # meaning the player must be above average at every listed position.
+    # VERSATILITY_BETA controls the magnitude of the bonus per rating point above
+    # the threshold.
+    ALPHA_BASE: Final[float] = 0.50
+    VERSATILITY_THRESHOLD: Final[float] = 6.5
+    VERSATILITY_BETA: Final[float] = 0.15
+
+    # Lateral mirror pairs: both sides describe the same tactical role.
+    # When a player is listed at both sides, only the higher-rated is kept.
+    MIRROR_PAIRS: Final[tuple[frozenset, ...]] = (
+        frozenset({"LB", "RB"}),
+        frozenset({"LWB", "RWB"}),
+        frozenset({"LM", "RM"}),
+        frozenset({"LW", "RW"}),
+    )
+
+    # Ordered stat columns used to build positional similarity profiles.
+    _PROFILE_COLS: Final[tuple[str, ...]] = (
+        "goals_p90",
+        "assists_p90",
+        "non_goal_shots_p90",
+        "shot_accuracy",
+        "passes_p90",
+        "pass_accuracy",
+        "dribbles_p90",
+        "dribble_success_rate",
+        "tackles_p90",
+        "tackle_success_rate",
+        "offsides_p90",
+        "fouls_committed_p90",
+        "possession_won_p90",
+        "possession_lost_p90",
+        "distance_covered_p90",
+        "distance_sprinted_p90",
+        "xt_bonus_p90",
+    )
 
     def __init__(
         self,
@@ -61,6 +152,9 @@ class MatchRatingsService:
         """
         self.weights = weights
         self.means_stds = means_stds
+        self._profile_global_mean, self._profile_global_std = (
+            self._build_profile_norms(means_stds)
+        )
         logger.info(
             "MatchRatingsService configured (weights=%d, means_stds=%d).",
             len(weights),
@@ -100,7 +194,6 @@ class MatchRatingsService:
             team_name,
             half_length,
         )
-        # Placeholder implementation
         is_user_home = match_overview.get("home_team_name") == team_name
         if is_user_home:
             user_stats = cast(MatchStatsPayload, match_overview.get("home_stats", {}))
@@ -154,7 +247,6 @@ class MatchRatingsService:
         saves: float = normalized_metrics.get("saves", 0)
         save_success_rate: float = normalized_metrics.get("save_success_rate", 0)
         shots_against: float = normalized_metrics.get("shots_against", 0)
-        shots_on_target: float = normalized_metrics.get("shots_on_target", 0)
         penalty_saves = normalized_metrics.get("penalty_saves", 0)
         penalty_goals_conceded = normalized_metrics.get("penalty_goals_conceded", 0)
         shoot_out_saves = normalized_metrics.get("shoot_out_saves", 0)
@@ -169,25 +261,17 @@ class MatchRatingsService:
         raw_score: float = (gk_heuristic - gk_mean) / gk_std if gk_std > 0 else 0
 
         # ---------------------------------------------------------
-        # 1. Adjustments expressed with explicit conditionals
+        # 1. Low-Volume Confidence Shrinkage
         # ---------------------------------------------------------
-        raw_score = self._apply_gk_explicit_adjustments(
-            raw_score=raw_score,
-            shots_on_target=shots_on_target,
-            goals_conceded=goals_conceded,
-            xgp=xgp,
-        )
-        # ---------------------------------------------------------
-        # 2. Low-Volume Forgiveness (The Match 69 Fix)
-        # ---------------------------------------------------------
-        raw_score = self._apply_gk_low_volume_forgiveness(
+        raw_score = self._apply_gk_volume_shrinkage(
             raw_score=raw_score,
             shots_against=shots_against,
-            goals_conceded=goals_conceded,
+            xgp=xgp,
+            gk_std=gk_std,
         )
         raw_score = self._apply_gk_final_floor(raw_score=raw_score)
         # ---------------------------------------------------------
-        # 3. Additive Bonuses (Penalties & Reliable Shifts)
+        # 2. Additive Bonuses (Penalties & Reliable Shifts)
         # ---------------------------------------------------------
         raw_score = self._apply_gk_additive_bonuses(
             raw_score=raw_score,
@@ -198,7 +282,7 @@ class MatchRatingsService:
             save_success_rate=save_success_rate,
         )
         # ---------------------------------------------------------
-        # 4. Inverted Clean Sheet Bonuses (use nested conditionals)
+        # 3. Inverted Clean Sheet Bonuses (use nested conditionals)
         # ---------------------------------------------------------
         clean_sheet: bool = (
             (goals_conceded == 0)
@@ -242,80 +326,38 @@ class MatchRatingsService:
         )
         return round(final_rating, 1)
 
-    def _apply_gk_explicit_adjustments(
-        self,
-        raw_score: float,
-        shots_on_target: float,
-        goals_conceded: float,
-        xgp: float,
-    ) -> float:
-        """Apply explicit conditional adjustments to the raw goalkeeper score.
-
-        This method encapsulates the logic for applying specific floors and bonuses
-        based on match context, such as the "Spectator Exemption" for zero shots on
-        target or the "1-Goal Narrow Miss" adjustment. It ensures that these
-        adjustments are applied in a clear and maintainable way, separate from the
-        core heuristic calculation.
-
-        Args:
-            raw_score (float): The initial raw score calculated from the heuristic.
-            shots_on_target (float): The number of shots on target faced by the GK.
-            goals_conceded (float): The number of goals conceded by the GK.
-            xgp (float): The expected goals prevented by the GK.
-            shots_against (float): The total number of shots faced by the GK.
-
-        Returns:
-            float: The adjusted raw score after applying explicit conditionals.
-        """
-        # A. Spectator Exemption
-        if (shots_on_target == 0) and (goals_conceded == 0):
-            return 0.0
-
-        # B. The 1-Goal Narrow Miss — floor at -0.15
-        if (goals_conceded == 1) and (xgp >= -0.25) and (raw_score < -0.15):
-            return -0.15
-
-        # C. Positive Impact Anchor — floor at 0.0
-        if (xgp >= 0) and (goals_conceded <= 2) and (raw_score < 0.0):
-            return 0.0
-
-        # D. The Shootout Victim — floor at -0.35
-        if (goals_conceded >= 3) and (xgp >= -0.50) and (raw_score < -0.35):
-            return -0.35
-
-        return raw_score
-
-    def _apply_gk_low_volume_forgiveness(
+    def _apply_gk_volume_shrinkage(
         self,
         raw_score: float,
         shots_against: float,
-        goals_conceded: float,
+        xgp: float,
+        gk_std: float,
     ) -> float:
-        """Apply low-volume forgiveness adjustments to the raw goalkeeper score.
+        """Shrink the raw GK score toward the xgp-only baseline when shot volume is low.
 
-        This method implements the "Match 69 Fix" and related adjustments that provide
-        forgiveness for goalkeepers who face very few shots or concede few goals, which
-        can lead to disproportionately low ratings due to small sample sizes. The
-        adjustments set minimum floors for the raw score based on specific thresholds of
-        shots against and goals conceded.
+        At low shot volume the save term is unreliable, so raw_score is blended
+        toward the xgp-only signal rather than toward 0. This prevents the
+        calibrated mean (which incorporates expected save contributions) from
+        dragging positive-xgp performances below neutral when saves are sparse.
+
+        At shots_against = 0 the anchor is xgp * 1.5 / std, which is non-negative
+        for any positive xgp (handling the spectator case naturally). At or above
+        GK_SHOTS_CONFIDENCE_K normalised shots the factor reaches 1.0 and
+        raw_score passes through unchanged.
 
         Args:
-            raw_score (float): The initial raw score calculated from the heuristic.
-            shots_against (float): The total number of shots faced by the GK.
-            goals_conceded (float): The number of goals conceded by the GK.
+            raw_score (float): The z-scored GK heuristic.
+            shots_against (float): Normalised total shots faced (scaled to
+                10-minute-half units by the caller).
+            xgp (float): Expected goals prevented (xg_against - goals_conceded).
+            gk_std (float): Standard deviation used to z-score the heuristic.
+
         Returns:
-            float: The adjusted raw score after applying low-volume forgiveness.
+            float: The shrunk raw score, regressed toward the xgp-only baseline.
         """
-        # A. Match 69 Fix: If faced <=3 shots and conceded <=1 goal, floor at -0.5
-        if (shots_against <= 3) and (goals_conceded <= 1) and (raw_score < -0.5):
-            return -0.5
-
-        # B. If conceded <=2 goals, floor at -0.8
-        if (goals_conceded <= 2) and (raw_score < -0.8):
-            return -0.8
-
-        # C. If conceded 3 goals, floor at -0.95
-        return -0.95 if (goals_conceded == 3) and (raw_score < -0.95) else raw_score
+        shrink = min(1.0, np.sqrt(shots_against / self.GK_SHOTS_CONFIDENCE_K))
+        xgp_anchor = (xgp * 1.5) / gk_std if gk_std > 0 else 0.0
+        return xgp_anchor * (1 - shrink) + raw_score * shrink
 
     def _apply_gk_final_floor(self, raw_score: float) -> float:
         """Apply a final floor to the raw goalkeeper score.
@@ -410,10 +452,10 @@ class MatchRatingsService:
     ) -> float:
         """Calculate the match supremacy scalar based on team xG and opponent xG.
 
-        This method computes a scalar that adjusts the goalkeeper's rating based on the
+        This method computes a scalar that adjusts a player's rating based on the
         relative quality of the attacking performance of their own team compared to the
         opponent. It uses a logarithmic function to determine the scalar, which is then
-        capped to prevent excessive adjustments.
+        bounded by both a cap (dominant team deduction) and a floor (siege bonus).
 
         Args:
             team_xg (float): The expected goals for the goalkeeper's team.
@@ -426,8 +468,8 @@ class MatchRatingsService:
         delta_xg: float = (team_xg + 1) / (xg_against + 1)
         supremacy_scalar: float = gamma * np.log(delta_xg)
 
-        # Cap the scalar to a max of 0.25
-        return min(supremacy_scalar, 0.25)
+        # Deduction capped at 0.25 (dominant team); siege bonus floored at -0.35
+        return max(min(supremacy_scalar, 0.25), -0.35)
 
     def _apply_sigmoid_transformation(self, raw_score: float) -> float:
         """Apply an inverse sigmoid transformation to convert a Z-Score to a 0-10 scale.
@@ -439,15 +481,115 @@ class MatchRatingsService:
         across typical Z-Score ranges.
 
         Args:
-            raw_score (float): The final adjusted raw score (Z-Score) for the GK.
+            raw_score (float): The final adjusted raw score (Z-Score).
 
         Returns:
             float: The calculated match rating on a 0-10 scale before applying the
                    supremacy scalar.
         """
-        k: float = 0.85
+        k = 0.85 if raw_score >= 0 else 0.45
         s_0: float = np.log(2 / 3) / k  # Z-Score corresponding to a 6.0 rating
         return 10 * (1 / (1 + np.exp(-k * (raw_score - s_0))))
+
+    def _collapse_mirror_positions(
+        self,
+        positions: list[str],
+        ratings: list[float],
+    ) -> tuple[list[str], list[float]]:
+        """Deduplicate lateral mirror-pair listings, keeping the higher-rated side.
+
+        LB/RB, LWB/RWB, LM/RM, and LW/RW describe the same tactical role on
+        opposite flanks. When both sides appear, the lower-rated entry is dropped
+        so that bilateral listings don't inflate the position count or distort the
+        hybrid calculation.
+
+        Args:
+            positions: Position keys for each evaluated rating.
+            ratings:   Corresponding positional ratings, aligned by index.
+
+        Returns:
+            Filtered (positions, ratings) with at most one side per mirror pair.
+        """
+        drop: set[int] = set()
+        for pair in self.MIRROR_PAIRS:
+            idxs = [i for i, p in enumerate(positions) if p in pair]
+            if len(idxs) < 2:
+                continue
+            best = max(idxs, key=lambda i: ratings[i])
+            drop.update(i for i in idxs if i != best)
+        filtered_positions = [p for i, p in enumerate(positions) if i not in drop]
+        filtered_ratings   = [r for i, r in enumerate(ratings)   if i not in drop]
+        return filtered_positions, filtered_ratings
+
+    def _build_profile_norms(
+        self, means_stds: PerformanceMeansStdsMap
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Compute cross-position mean and std for each stat column.
+
+        Used to z-score each position's mean profile so that positional similarity
+        reflects deviation from the positional average rather than raw stat magnitudes.
+        GK is excluded because it uses a scalar structure, not a per-stat mapping.
+
+        Returns:
+            Tuple of (global_mean, global_std) arrays aligned to _PROFILE_COLS.
+        """
+        outfield_means = np.array(
+            [
+                [
+                    cast(dict[str, float], pos_data.get(col, {})).get("mean", 0.0)
+                    for col in self._PROFILE_COLS
+                ]
+                for pos, pos_data in means_stds.items()
+                if pos != "GK"
+            ]
+        )
+        global_mean: np.ndarray = outfield_means.mean(axis=0)
+        global_std: np.ndarray = outfield_means.std(axis=0)
+        global_std[global_std == 0.0] = 1.0
+        return global_mean, global_std
+
+    def _positional_cosine_similarity(self, pos_a: str, pos_b: str) -> float:
+        """Compute cosine similarity between two positions' z-score mean profiles.
+
+        Each position is represented by its mean stat values centred and scaled
+        against the cross-position distribution. This captures how each role
+        deviates from the positional average, which is independent of how the
+        weight vectors were constructed and avoids inflated similarity for
+        base/derived pairs (e.g. RB/RWB, CM/CAM).
+
+        Negative cosine values (anti-correlated roles such as CB/ST) are clamped
+        to zero: orthogonal or opposite positions produce no drag, leaving the
+        hybrid rating at r_max.
+
+        Args:
+            pos_a (str): First position key (e.g. "CB").
+            pos_b (str): Second position key (e.g. "ST").
+
+        Returns:
+            float: Cosine similarity in [0, 1]. Returns 1.0 if either profile
+                   is unknown (conservative: maximum drag for unrecognised roles).
+        """
+        ms = self.means_stds
+        if pos_a not in ms or pos_b not in ms:
+            return 1.0
+
+        def z_profile(pos: str) -> np.ndarray:
+            pos_data = ms[pos]
+            raw = np.array(
+                [
+                    cast(dict[str, float], pos_data.get(col, {})).get("mean", 0.0)
+                    for col in self._PROFILE_COLS
+                ]
+            )
+            return (raw - self._profile_global_mean) / self._profile_global_std
+
+        z_a = z_profile(pos_a)
+        z_b = z_profile(pos_b)
+        norm_a, norm_b = np.linalg.norm(z_a), np.linalg.norm(z_b)
+        if norm_a == 0.0 or norm_b == 0.0:
+            return 1.0
+        sim = float(np.dot(z_a, z_b) / (norm_a * norm_b))
+        return max(0.0, sim)
 
     def calculate_outfield_rating(
         self,
@@ -534,10 +676,8 @@ class MatchRatingsService:
             )
             return None  # Not enough data to calculate a reliable rating
 
-        cum_columns = [
-            "goals",
-            "assists",
-            "shots",
+        # Remove rare events from the linear scaling block
+        vol_columns = [
             "passes",
             "dribbles",
             "tackles",
@@ -549,9 +689,9 @@ class MatchRatingsService:
             "distance_sprinted",
         ]
 
-        # Normalize to 10-minute-half units; thresholds are tuned to this scale.
+        # Normalize volume to 10-minute-half units
         normalized_metrics: dict[str, float] = performance_metrics.copy()
-        for col in cum_columns:
+        for col in vol_columns:
             if col in normalized_metrics:
                 normalized_metrics[col] = normalized_metrics[col] * (
                     self.H_BASE / half_length
@@ -577,17 +717,20 @@ class MatchRatingsService:
                     p90_metrics[col] = performance_metrics[col]
 
             xt: float = self._calculate_xt_bonus(
+                pos=pos,
                 pass_accuracy=performance_metrics.get("pass_accuracy", 0),
                 passes_p90=p90_metrics.get("passes_p90", 0),
                 distance_sprinted_p90=p90_metrics.get("distance_sprinted_p90", 0),
                 distance_covered_p90=p90_metrics.get("distance_covered_p90", 0),
+                possession_won_p90=p90_metrics.get("possession_won_p90", 0),
+                possession_lost_p90=p90_metrics.get("possession_lost_p90", 0),
             )
             p90_metrics["xt_bonus_p90"] = xt
 
             col_names = [
                 "goals_p90",
                 "assists_p90",
-                "shots_p90",
+                "non_goal_shots_p90",
                 "shot_accuracy",
                 "passes_p90",
                 "pass_accuracy",
@@ -607,19 +750,25 @@ class MatchRatingsService:
             final_weights: np.ndarray = np.array(
                 [pos_weights.get(col, 0) for col in col_names]
             )
+
+            p90_metrics["non_goal_shots_p90"] = max(
+                0.0,
+                p90_metrics.get("shots_p90", 0.0) - p90_metrics.get("goals_p90", 0.0),
+            )
+
             z_scores: dict[str, int | float] = self._calculate_z_scores(
                 p90_metrics=p90_metrics,
                 pos_means_stds=cast(
                     dict[str, dict[str, float]], self.means_stds.get(pos, {})
                 ),
+                normalized_metrics=normalized_metrics,
             )
 
-            z_scores: dict[str, int | float] = self._apply_volume_masks(
-                performance_metrics=normalized_metrics,
+            isolation_multiplier: float = self._calculate_tactical_isolation_multiplier(
                 z_scores=z_scores,
             )
 
-            processed_raw_score: float = self._apply_pos_modifiers(
+            processed_raw_score, event_bonus = self._apply_pos_modifiers(
                 z_scores=z_scores,
                 pos=pos,
                 opponent_goals=opponent_goals,
@@ -627,14 +776,19 @@ class MatchRatingsService:
                 final_weights=final_weights,
                 performance_metrics=normalized_metrics,
                 minutes_played=minutes_played,
+                isolation_multiplier=isolation_multiplier,
             )
+
             match_supremacy_scalar: float = self._calculate_match_supremacy_scalar(
                 team_xg=team_xg,
                 xg_against=opponent_xg,
             )
-            raw_rating: float = self._apply_sigmoid_transformation(
-                raw_score=processed_raw_score
-            )
+
+            effective_minutes = min(minutes_played, 90.0)
+            impact_scalar = np.sqrt(effective_minutes / 90.0)
+            raw_score = (processed_raw_score * impact_scalar) + event_bonus
+
+            raw_rating: float = self._apply_sigmoid_transformation(raw_score=raw_score)
             final_rating: float = raw_rating - match_supremacy_scalar
             final_rating: float = max(0.0, min(10.0, final_rating))
             logger.debug(
@@ -644,10 +798,14 @@ class MatchRatingsService:
                 ),
                 performance.get("player_id"),
                 pos,
-                processed_raw_score,
+                raw_score,
                 final_rating,
             )
             calculated_ratings.append(final_rating)
+
+        positions_played, calculated_ratings = self._collapse_mirror_positions(
+            list(positions_played), calculated_ratings
+        )
 
         if len(calculated_ratings) == 1:
             logger.debug(
@@ -658,20 +816,43 @@ class MatchRatingsService:
             return round(calculated_ratings[0], 1)
 
         r_max: float = max(calculated_ratings)
-        r_mean = np.mean(calculated_ratings)
+        r_mean: float = float(np.mean(calculated_ratings))
+        r_min: float = min(calculated_ratings)
 
-        alpha = 0.25
+        max_idx: int = int(np.argmax(calculated_ratings))
+        max_pos: str = positions_played[max_idx]
+        other_positions: list[str] = [
+            p for i, p in enumerate(positions_played) if i != max_idx
+        ]
+        mean_similarity: float = float(
+            np.mean(
+                [
+                    self._positional_cosine_similarity(max_pos, p)
+                    for p in other_positions
+                ]
+            )
+        )
+        alpha: float = self.ALPHA_BASE * mean_similarity
 
-        hybrid_rating = r_max - (alpha * (r_max - r_mean))
+        drag: float = alpha * (r_max - r_mean)
+        bonus: float = self.VERSATILITY_BETA * max(
+            0.0, r_min - self.VERSATILITY_THRESHOLD
+        )
+        hybrid_rating: float = r_max - drag + bonus
 
         logger.debug(
             (
                 "Hybrid outfield rating computed "
-                "(player_id=%s, r_max=%.2f, r_mean=%.2f, final=%.2f)."
+                "(player_id=%s, r_max=%.2f, r_mean=%.2f, r_min=%.2f, "
+                "alpha=%.3f, drag=%.3f, bonus=%.3f, final=%.2f)."
             ),
             performance.get("player_id"),
             r_max,
             r_mean,
+            r_min,
+            alpha,
+            drag,
+            bonus,
             hybrid_rating,
         )
 
@@ -683,8 +864,10 @@ class MatchRatingsService:
         """Apply Bayesian smoothing to raw metrics to calculate stable per-90 rates.
 
         Mitigate small-sample volatility by blending the observed rate with a
-        positional prior. This uses a dummy minutes anchor (d=30). Rare stats
-        use a prior of 0, while volume stats use the historical average.
+        positional prior. The dummy anchor (d) varies by metric: 15 for
+        high-frequency stats (passes, distance), 30 for medium-frequency stats
+        (tackles, dribbles), and 45 for rare events (goals, assists, shots).
+        Rare stats use a prior of 0, while volume stats use the historical average.
 
         For computational efficiency, the conceptual blending formula:
         r_smoothed = [M / (M + d)] * r_obs + [d / (M + d)] * r_prior
@@ -704,15 +887,19 @@ class MatchRatingsService:
             dict[str, float]: A new dictionary containing the smoothed `_p90`
                 metrics.
         """
+        p90_metrics: dict[str, float] = {}
+
+        # 1. Rare Events (Prior = 0.0)
         rare_cols = ["goals", "assists", "shots"]
-        p90_metrics: dict[str, float] = {
-            f"{col}_p90": (
-                normalized_metrics[col] / (minutes_played + self.DUMMY_MINUTES)
-            )
-            * 90.0
-            for col in rare_cols
-            if col in normalized_metrics
-        }
+        for col in rare_cols:
+            if col in normalized_metrics:
+                # Fetch specific 'd' (defaults to 45.0 based on our dictionary)
+                d = self.DUMMY_WEIGHTS.get(col, self.DEFAULT_DUMMY)
+
+                p90_metrics[f"{col}_p90"] = (
+                    normalized_metrics[col] / (minutes_played + d)
+                ) * 90.0
+
         volume_cols = [
             "passes",
             "dribbles",
@@ -726,24 +913,43 @@ class MatchRatingsService:
         ]
         for col in volume_cols:
             if col in normalized_metrics:
+                # Fetch specific 'd' (e.g., 15.0 for passes, 30.0 for tackles)
+                d = self.DUMMY_WEIGHTS.get(col, self.DEFAULT_DUMMY)
+
                 col_stats = self.means_stds.get(pos, {}).get(
                     f"{col}_p90", {"mean": 0.0, "std": 1.0}
                 )
                 if isinstance(col_stats, dict):
                     league_average_p90: float = col_stats.get("mean", 0.0)
-                    dummy_stat: float = league_average_p90 * (self.DUMMY_MINUTES / 90.0)
+                    # possession_won/lost, fouls_committed, and offsides are
+                    # log-transformed before their means are stored (cols_to_log in
+                    # the weight notebooks). The stored mean is mean(log(x+1)),
+                    # not a raw p90 rate — back-convert it.
+                    if col in {
+                        "possession_won",
+                        "possession_lost",
+                        "fouls_committed",
+                        "offsides",
+                    }:
+                        league_average_p90 = float(np.expm1(league_average_p90))
+                    # The literal anchor weight dropped onto the scales
+                    dummy_stat: float = league_average_p90 * (d / 90.0)
+
                     p90_metrics[f"{col}_p90"] = (
-                        (normalized_metrics[col] + dummy_stat)
-                        / (minutes_played + self.DUMMY_MINUTES)
+                        (normalized_metrics[col] + dummy_stat) / (minutes_played + d)
                     ) * 90.0
+
         return p90_metrics
 
     def _calculate_xt_bonus(
         self,
+        pos: str,
         pass_accuracy: float,
         passes_p90: float,
         distance_sprinted_p90: float,
         distance_covered_p90: float,
+        possession_won_p90: float,
+        possession_lost_p90: float,
     ) -> float:
         """Calculate an Expected Threat (xT) proxy bonus based on dynamic actions.
 
@@ -752,16 +958,24 @@ class MatchRatingsService:
         total distance while maintaining high passing volume/accuracy are breaking
         lines and progressing the ball.
 
+        The baseline proxy is dynamically dampened by a possession control ratio
+        to filter out false positives from defensive recovery sprinting, and scaled
+        based on the player's positional responsibility for ball progression.
+
         Formula:
-        xT_bonus = 0.25 * (sprint_dist / total_dist) * ln(accuracy * passes_p90 + 1)
+        xT_bonus = base_scalar
+                   * control_ratio
+                   * (sprint / total)
+                   * ln((passes * acc) + 1)
 
         Args:
-            pass_accuracy (float): The player's pass completion percentage
-                (represented as a float, typically 0.0 to 100.0, but works
-                proportionally).
+            pos (str): The player's position (e.g., "CAM", "CB", "ST").
+            pass_accuracy (float): The player's pass completion percentage.
             passes_p90 (float): Total passes completed per 90 minutes.
             distance_sprinted_p90 (float): Total sprint distance covered per 90.
             distance_covered_p90 (float): Total distance covered per 90.
+            possession_won_p90 (float): Total possession won per 90 minutes.
+            possession_lost_p90 (float): Total possession lost per 90 minutes.
 
         Returns:
             float: The calculated expected threat bonus value. Returns 0.0 if
@@ -769,44 +983,60 @@ class MatchRatingsService:
         """
         if distance_covered_p90 == 0:
             return 0.0
+
+        base_scalar: float = self.XT_POSITION_SCALARS.get(pos, 0.25)
+
+        # Defensive Noise Filter (Laplace Smoothed & Bounded)
+        # (Won + 1) / (Lost + 1) creates a safe ratio. Capped at 2.5.
+        control_ratio: float = min(
+            (possession_won_p90 + 1.0) / (possession_lost_p90 + 1.0), 2.5
+        )
         return (
-            0.25
+            base_scalar
+            * control_ratio
             * (distance_sprinted_p90 / distance_covered_p90)
-            * np.log(pass_accuracy * passes_p90 + 1)
+            * float(np.log((pass_accuracy * passes_p90) + 1.0))
         )
 
     def _calculate_z_scores(
         self,
         p90_metrics: dict[str, float],
         pos_means_stds: dict[str, dict[str, float]],
+        normalized_metrics: dict[str, float],
     ) -> dict[str, float]:
-        """Calculate Z-scores for per-90 metrics against positional averages.
+        """Convert smoothed per-90 metrics into Z-scores using historical baselines.
 
-        Standardize player metrics to determine how many standard deviations
-        above or below the positional mean a performance was. Crucially, this
-        inverts the calculation for negative actions (e.g., fouls, offsides)
-        so that a positive Z-score universally indicates a good performance.
-
-        Standard formula: Z = (x - mean) / std
-        Negative formula: Z = (mean - x) / std
-
-        Args:
-            p90_metrics (dict[str, float]): The smoothed, per-90 metrics
-                calculated for the player.
-            pos_means_stds (dict[str, dict[str, float]]): Reference dictionary
-                containing the historical 'mean' and 'std' for each metric,
-                specific to the player's tactical position.
-
-        Returns:
-            dict[str, float]: A dictionary containing the calculated Z-scores,
-                with original metric keys suffixed by '_z'.
+        Applies log-transformations (np.log1p) to right-skewed stats and continuous
+        logistic volume masking to efficiency percentages to prevent step-function
+        discontinuities.
         """
         negative_stats = [
             "fouls_committed_p90",
             "possession_lost_p90",
             "offsides_p90",
         ]
+
+        # The exact columns transformed in the offline PCA pipeline
+        log_transformed_stats = [
+            "goals_p90",
+            "assists_p90",
+            "non_goal_shots_p90",
+            "offsides_p90",
+            "fouls_committed_p90",
+            "possession_won_p90",
+            "possession_lost_p90",
+        ]
+
+        # Sigmoid parameters: {"z_score_col": ("volume_col", Threshold, Lambda)}
+        volume_masks = {
+            "pass_accuracy_z": ("passes", 3.0, 1.1),
+            "dribble_success_rate_z": ("dribbles", 2.0, 1.5),
+            "shot_accuracy_z": ("shots", 1.5, 2.0),
+            "tackle_success_rate_z": ("tackles", 1.5, 2.0),
+        }
+
         z_scores: dict[str, float] = {}
+
         for col, value in p90_metrics.items():
             col_stats: dict[str, float] = pos_means_stds.get(
                 col, {"mean": 0.0, "std": 1.0}
@@ -814,44 +1044,41 @@ class MatchRatingsService:
             if isinstance(col_stats, dict):
                 mean: float = col_stats.get("mean", 0.0)
                 std: float = col_stats.get("std", 1.0)
-                if std == 0:
-                    z_scores[f"{col}_z"] = 0.0
+
+                # --- 1. LOG-NORMAL COMPRESSION ---
+                if col in log_transformed_stats:
+                    # Compress the live value to match the log-transformed baseline
+                    value = float(np.log1p(value))
+
+                # --- 2. BASE Z-SCORE CALCULATION ---
+                if std == 0.0:
+                    raw_z = 0.0
                 elif col in negative_stats:
-                    z_scores[f"{col}_z"] = (mean - value) / std
+                    raw_z = (mean - value) / std
                 else:
-                    z_scores[f"{col}_z"] = (value - mean) / std
-        return z_scores
+                    raw_z = (value - mean) / std
 
-    def _apply_volume_masks(
-        self,
-        performance_metrics: dict[str, float],
-        z_scores: dict[str, float],
-    ) -> dict[str, float]:
-        """Mask efficiency Z-scores when underlying action volume is too low.
+                # --- 3. CONTINUOUS LOGISTIC VOLUME MASKING ---
+                z_key = f"{col}_z"
+                if z_key in volume_masks:
+                    vol_col, threshold, lam = volume_masks[z_key]
 
-        This prevents extreme accuracy values from a handful of events from
-        disproportionately influencing the overall rating.
+                    # Fetch the temporally normalized volume
+                    x_vol = normalized_metrics.get(vol_col, 0.0)
 
-        Args:
-            performance_metrics (dict[str, float]): Raw or normalized counting stats
-                such as passes, shots, dribbles, and tackles.
-            z_scores (dict[str, float]): Standardized efficiency metrics that may be
-                zeroed out when volume thresholds are not met.
+                    # Neutralise accuracy when volume is too low to be meaningful
+                    if x_vol <= 1.0:
+                        z_scores[z_key] = 0.0
+                        continue
 
-        Returns:
-            dict[str, float]: The updated Z-score dictionary with low-volume
-                efficiency metrics set to 0.0.
-        """
-        volume_masks = {"passes": 5, "shots": 2, "dribbles": 3, "tackles": 2}
-        volume_z_pairs = {
-            "passes": "pass_accuracy_z",
-            "shots": "shot_accuracy_z",
-            "dribbles": "dribble_success_rate_z",
-            "tackles": "tackle_success_rate_z",
-        }
-        for vol_col, z_col in volume_z_pairs.items():
-            if performance_metrics.get(vol_col, 0) < volume_masks.get(vol_col, 0):
-                z_scores[z_col] = 0.0
+                    # W_mask = 1 / (1 + e^(-λ(X - T)))
+                    w_mask = 1.0 / (1.0 + np.exp(-lam * (x_vol - threshold)))
+
+                    # Apply the confidence weight to the Z-Score
+                    z_scores[z_key] = raw_z * float(w_mask)
+                else:
+                    z_scores[z_key] = raw_z
+
         return z_scores
 
     def _normalize_opponent_goals(self, opponent_goals: object) -> float:
@@ -872,6 +1099,41 @@ class MatchRatingsService:
         )
         return 0.0
 
+    def _calculate_tactical_isolation_multiplier(
+        self, z_scores: dict[str, float]
+    ) -> float:
+        """Calculate a decay multiplier for attackers who isolate themselves.
+
+        Evaluates a player's involvement in the build-up phase (passing,
+        dribbling, and work rate). If their combined build-up Z-score falls
+        below a critical threshold (-1.0), it generates an exponential decay
+        multiplier to throttle their semantic goal/assist bonuses.
+
+        Args:
+            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
+
+        Returns:
+            float: A multiplier between 0.0 and 1.0. Returns 1.0 if the player
+                is sufficiently involved in the match context.
+        """
+        build_metrics = [
+            "passes_p90_z",
+            "pass_accuracy_z",
+            "dribbles_p90_z",
+            "dribble_success_rate_z",
+            "distance_covered_p90_z",
+            "distance_sprinted_p90_z",
+        ]
+
+        build_z_values = [z_scores.get(m, 0.0) for m in build_metrics if m in z_scores]
+
+        if not build_z_values:
+            return 1.0
+
+        z_build = sum(build_z_values) / len(build_z_values)
+
+        return float(np.exp(z_build + 1.0)) if z_build < -1.0 else 1.0
+
     def _apply_pos_modifiers(
         self,
         z_scores: dict[str, float],
@@ -881,7 +1143,8 @@ class MatchRatingsService:
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> float:
+        isolation_multiplier: float = 1.0,
+    ) -> tuple[float, float]:
         """Apply position-specific modifier pipelines to the raw outfield score.
 
         This dispatcher routes the standardized metrics through the appropriate
@@ -902,10 +1165,13 @@ class MatchRatingsService:
                 counting stats for the player, used for bonus logic.
             minutes_played (float): The number of minutes the player was on the
                 pitch, used to gate certain bonuses or penalties.
+            isolation_multiplier (float): A decay multiplier for attackers who
+                isolate themselves from the build-up. Defaults to 1.0 (no decay).
 
         Returns:
-            float: The adjusted raw score after applying the position-specific
-                modifier logic.
+            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
+                is the goal/assist contribution kept separate so the caller can
+                apply the minutes impact scalar only to the base score.
         """
         if pos == "CB":
             return self._apply_cb_modifiers(
@@ -940,6 +1206,7 @@ class MatchRatingsService:
                 final_weights=final_weights,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                isolation_multiplier=isolation_multiplier,
             )
         elif pos == "CM":
             return self._apply_cm_modifiers(
@@ -948,12 +1215,14 @@ class MatchRatingsService:
                 final_weights=final_weights,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                isolation_multiplier=isolation_multiplier,
             )
         elif pos == "CAM":
             return self._apply_cam_modifiers(
                 z_scores=z_scores,
                 final_weights=final_weights,
                 performance_metrics=performance_metrics,
+                isolation_multiplier=isolation_multiplier,
             )
         elif pos in {"RM", "LM"}:
             return self._apply_wm_modifiers(
@@ -962,24 +1231,40 @@ class MatchRatingsService:
                 final_weights=final_weights,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                isolation_multiplier=isolation_multiplier,
             )
         elif pos in {"RW", "LW"}:
             return self._apply_winger_modifiers(
                 z_scores=z_scores,
                 final_weights=final_weights,
                 performance_metrics=performance_metrics,
+                isolation_multiplier=isolation_multiplier,
             )
         elif pos == "ST":
             return self._apply_st_modifiers(
                 z_scores=z_scores,
                 final_weights=final_weights,
                 performance_metrics=performance_metrics,
+                isolation_multiplier=isolation_multiplier,
             )
         else:
             logger.warning(
                 "Unknown position '%s' for modifiers; returning 0.0 raw score.", pos
             )
-            return 0.0
+            return 0.0, 0.0
+
+    def _apply_z_score_floors(
+        self, z_scores: dict[str, float], floors: dict[str, float]
+    ) -> None:
+        """Apply minimum thresholds to specified Z-score metrics in-place.
+
+        Args:
+            z_scores (dict[str, float]): The Z-score dictionary to modify.
+            floors (dict[str, float]): Mapping of Z-score key to its floor value.
+        """
+        for key, floor in floors.items():
+            if key in z_scores:
+                z_scores[key] = max(z_scores[key], floor)
 
     def _calculate_dot_product(
         self, z_scores: dict[str, float], weights: np.ndarray
@@ -1010,7 +1295,7 @@ class MatchRatingsService:
         col_names = [
             "goals_p90",
             "assists_p90",
-            "shots_p90",
+            "non_goal_shots_p90",
             "shot_accuracy",
             "passes_p90",
             "pass_accuracy",
@@ -1031,6 +1316,28 @@ class MatchRatingsService:
             weights,
         )
 
+    def _effective_goal_bonus(self, goals: float, shots: float, coeff: float) -> float:
+        """Calculate a goal bonus scaled by finishing efficiency.
+
+        Uses above-expected goals (goals minus estimated xG) so a player who
+        scores the same number of goals from fewer shots is rewarded more. A
+        per-goal floor ensures scoring always contributes positively regardless
+        of shot volume.
+
+        Args:
+            goals (float): Goals scored in the match.
+            shots (float): Total shots taken (including goals).
+            coeff (float): Position-specific goal bonus coefficient.
+
+        Returns:
+            float: The goal bonus contribution to the raw score.
+        """
+        above_expected = max(
+            goals - shots * self.XG_PER_SHOT,
+            goals * self.GOAL_FLOOR_RATE,
+        )
+        return above_expected * coeff
+
     def _apply_cb_modifiers(
         self,
         z_scores: dict[str, float],
@@ -1039,14 +1346,10 @@ class MatchRatingsService:
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> float:  # sourcery skip: class-extract-method
+    ) -> tuple[float, float]:  # sourcery skip: class-extract-method
         """Apply Center Back (CB) specific scoring logic and situational bonuses.
 
         Philosophy:
-        - Forgives low attacking volume and poor shooting efficiency (Attacking and
-          Efficiency floors).
-        - Caps penalties for fouls committed, acknowledging that tactical or
-          professional fouls are an inherent part of the position.
         - Rewards elite ball-playing ability (exceptionally high passing volume).
         - Rewards dominant defensive displays (exceptionally high tackles and
           possession won).
@@ -1064,29 +1367,38 @@ class MatchRatingsService:
             minutes_played (float): The number of minutes the player was on the pitch.
 
         Returns:
-            float: The calculated raw match rating score for the center back.
+            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus is
+                the goal/assist contribution, returned separately so the caller can
+                apply the minutes impact scalar only to the base score.
         """
-        z_scores = self._apply_attacking_floor(z_scores)
-
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        if z_scores.get("fouls_committed_p90_z", 0) < -2.0:
-            z_scores["fouls_committed_p90_z"] = -2.0
-
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        raw_score += performance_metrics.get("goals", 0) * 0.6
-        raw_score += performance_metrics.get("assists", 0) * 0.4
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=0.75,
+            )
+            + performance_metrics.get("assists", 0) * 0.55
+        )
 
-        if z_scores.get("tackles_p90_z", 0) > 2.0:
-            raw_score += (z_scores["tackles_p90_z"] - 2.0) * 0.25
-        if z_scores.get("possession_won_p90_z", 0) > 2.0:
-            raw_score += (z_scores["possession_won_p90_z"] - 2.0) * 0.25
-        if z_scores.get("passes_p90_z", 0) > 1.5:
-            raw_score += (z_scores["passes_p90_z"] - 1.5) * 0.30
+        # Dominant Stopper
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
+        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
+
+        stopper_mastery = min(tackles_z, poss_won_z)
+        if stopper_mastery > 1.5:
+            raw_score += (stopper_mastery - 1.5) * 0.25
+
+        # Ball Playing Defender
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+
+        ball_playing_mastery = min(passes_z, poss_won_z)
+        if ball_playing_mastery > 1.0:
+            raw_score += (ball_playing_mastery - 1.0) * 0.20
 
         raw_score = self._apply_defender_clean_sheet_bonus(
             raw_score=raw_score,
@@ -1096,35 +1408,7 @@ class MatchRatingsService:
         if opponent_goals >= 3 and minutes_played >= 60:
             raw_score -= 0.3
 
-        return raw_score
-
-    def _apply_efficiency_floor(self, z_scores: dict[str, float]) -> dict[str, float]:
-        """Apply a minimum threshold to efficiency-based performance metrics.
-
-        Philosophy:
-        - Mitigates the impact of low-volume statistical anomalies (e.g., a player
-          completing 1 of 3 passes resulting in a mathematically abysmal 33% accuracy).
-        - Ensures a poor success rate in isolated actions acts as a standard "bad day"
-          penalty (capped at -0.75 standard deviations) rather than creating an
-          unrecoverable black hole for the overall match rating.
-
-        Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-
-        Returns:
-            dict[str, float]: The updated Z-scores dictionary with efficiency
-                metrics floored at -0.75.
-        """
-        efficiency_stats = [
-            "tackle_success_rate_z",
-            "pass_accuracy_z",
-            "dribble_success_rate_z",
-            "shot_accuracy_z",
-        ]
-        for col in efficiency_stats:
-            if col in z_scores and z_scores[col] < -0.75:
-                z_scores[col] = -0.75
-        return z_scores
+        return raw_score, event_bonus
 
     def _apply_defender_clean_sheet_bonus(
         self,
@@ -1161,34 +1445,6 @@ class MatchRatingsService:
                 return raw_score + 0.35
         return raw_score
 
-    def _apply_attacking_floor(self, z_scores: dict[str, float]) -> dict[str, float]:
-        """Neutralize mathematical penalties for lack of attacking output.
-
-        Philosophy:
-        - Forgives defensive or deep-lying players (like CBs or DMs) for not
-          registering shots, goals, or assists.
-        - Prevents the standardized Z-score system from penalizing a player simply
-          because they did not participate in the final third, effectively treating
-          a lack of attacking output as a neutral baseline (0.0) rather than a negative.
-
-        Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-
-        Returns:
-            dict[str, float]: The updated Z-scores dictionary with attacking
-                metrics floored at 0.0.
-        """
-        attacking_stats = [
-            "goals_p90_z",
-            "assists_p90_z",
-            "shots_p90_z",
-            "shot_accuracy_z",
-        ]
-        for stat in attacking_stats:
-            if stat in z_scores and z_scores[stat] < 0:
-                z_scores[stat] = 0.0
-        return z_scores
-
     def _apply_fb_modifiers(
         self,
         z_scores: dict[str, float],
@@ -1197,18 +1453,15 @@ class MatchRatingsService:
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> float:
+    ) -> tuple[float, float]:
         """Apply Fullback (FB/LB/RB) specific scoring logic and situational bonuses.
 
         Philosophy:
-        - Forgives a lack of direct attacking output (shots/goals) and isolated
-          efficiency drops.
         - Implements a "Tactical Instruction" floor: prevents severe penalties for
-          low dribbling volume, Expected Threat (xT), and distance covered. This
-          protects players who are tactically instructed to "Stay Back While Attacking"
-          from being statistically punished for following managerial orders.
-        - Caps penalties for fouls committed, recognizing that fullbacks are often
-          isolated out wide and forced into professional fouls.
+          low dribbling volume and Expected Threat (xT). This protects players who
+          are tactically instructed to "Stay Back While Attacking" from being
+          statistically punished for following managerial orders. The floor is lifted
+          when the fullback is acting as a third CB (high tackles + possession won).
         - Rewards direct goal contributions, valuing assists slightly higher than
           goals to reflect the modern fullback's role as a wide creator.
         - Applies dedicated, modular bonuses for exceptional defensive solidity and
@@ -1226,35 +1479,36 @@ class MatchRatingsService:
             minutes_played (float): The number of minutes the player was on the pitch.
 
         Returns:
-            float: The calculated raw match rating score for the fullback.
+            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
+                is the goal/assist contribution kept separate so the caller can
+                apply the minutes impact scalar only to the base score.
         """
-        z_scores = self._apply_attacking_floor(z_scores)
-        # The "Tactical Instruction" Floor
-        # If the LB is told to stay back, they will have 0 dribbles, low xt,
-        # and low distance. We floor these at -0.50 (a microscopic penalty) so
-        # they aren't destroyed for following tactics.
-        tactical_stats = [
-            "dribbles_p90_z",
-            "xt_bonus_p90_z",
-            "distance_covered_p90_z",
-            "distance_sprinted_p90_z",
-        ]
-        for col in tactical_stats:
-            if col in z_scores and z_scores[col] < -0.50:
-                z_scores[col] = -0.50
-
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        if z_scores.get("fouls_committed_p90_z", 0) < -1.5:
-            z_scores["fouls_committed_p90_z"] = -1.5
+        third_cb_active = (
+            min(
+                z_scores.get("tackles_p90_z", 0.0),
+                z_scores.get("possession_won_p90_z", 0.0),
+            )
+            > 1.0
+        )
+        attacking_floor = 0.0 if third_cb_active else -0.5
+        self._apply_z_score_floors(
+            z_scores,
+            {"dribbles_p90_z": attacking_floor, "xt_bonus_p90_z": attacking_floor},
+        )
 
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        raw_score += performance_metrics.get("goals", 0) * 0.4
-        raw_score += performance_metrics.get("assists", 0) * 0.6
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=0.5,
+            )
+            + performance_metrics.get("assists", 0) * 0.4
+        )
 
         raw_score = self._apply_defensive_fb_bonuses(
             raw_score=raw_score,
@@ -1274,7 +1528,7 @@ class MatchRatingsService:
         if opponent_goals >= 3 and minutes_played >= 60:
             raw_score -= 0.3
 
-        return raw_score
+        return raw_score, event_bonus
 
     def _apply_defensive_fb_bonuses(
         self, raw_score: float, z_scores: dict[str, float]
@@ -1282,27 +1536,21 @@ class MatchRatingsService:
         """Apply situational defensive bonuses for Fullbacks.
 
         Philosophy:
-        - Rewards the "Third CB" archetype (e.g., a tucked-in, inverted, or
-          defensively-minded fullback).
-        - Triggers positive modifiers only when the player registers elite
-          defensive volume (tackles and possession won) that significantly
-          exceeds the positional average.
-        - Ensures that fullbacks who secure the flank but don't overlap are
-          still recognized for dominant defensive displays.
-
-        Args:
-            raw_score (float): The current, pre-bonus match rating for the fullback.
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-
-        Returns:
-            float: The adjusted match rating including defensive bonuses.
+        - Rewards the "Third CB" archetype.
+        - Uses 'Bottleneck Synergy' to scalably reward mastery of the role.
+        - The bonus only scales if the player simultaneously increases BOTH
+          tackling and possession recovery.
         """
-        # Reward Path A: The "Third CB" (For the Tucked-In LB)
-        # Triggers if they dominate defensively and recycle the ball safely
-        if z_scores.get("tackles_p90_z", 0) > 1.5:
-            raw_score += (z_scores["tackles_p90_z"] - 1.5) * 0.15
-        if z_scores.get("possession_won_p90_z", 0) > 1.5:
-            raw_score += (z_scores["possession_won_p90_z"] - 1.5) * 0.15
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
+        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
+
+        # Archetype Mastery is defined by the weakest necessary skill
+        third_cb_mastery = min(tackles_z, poss_won_z)
+
+        # Scalable Reward: Starts at 1.0 Z-score, scales infinitely upwards
+        if third_cb_mastery > 1.0:
+            raw_score += (third_cb_mastery - 1.0) * 0.25
+
         return raw_score
 
     def _apply_attacking_fb_bonuses(
@@ -1311,36 +1559,27 @@ class MatchRatingsService:
         """Apply situational attacking and progression bonuses for Fullbacks.
 
         Philosophy:
-        - Rewards the "Express Train" archetype (e.g., an aggressive overlapping
-          fullback or wing-back).
-        - Triggers positive modifiers for elite physical exertion (distance covered
-          and sprinted) coupled with high Expected Threat (xT) generation.
-        - Includes a secondary "Creativity Bonus" to reward fullbacks acting as
-          primary ball-progressors or wide playmakers via elite passing and
-          dribbling volume.
-
-        Args:
-            raw_score (float): The current, pre-bonus match rating for the fullback.
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-
-        Returns:
-            float: The adjusted match rating including attacking bonuses.
+        - Rewards the "Express Train" archetype
+        - Uses 'Bottleneck Synergy' to scalably reward mastery of the role.
+        - Rewards the "Wide Playmaker" archetype, acknowledging that some fullbacks
+          excel not through raw physicality but by being elite distributors and
+          dribblers in wide areas, effectively acting as auxiliary playmakers.
         """
-        # Reward Path B: The "Express Train" (For the Overlapping RB)
-        # Triggers if they cover massive ground and create expected threat
-        if z_scores.get("distance_covered_p90_z", 0) > 1.5:
-            raw_score += (z_scores["distance_covered_p90_z"] - 1.5) * 0.10
-        if z_scores.get("distance_sprinted_p90_z", 0) > 1.5:
-            raw_score += (z_scores["distance_sprinted_p90_z"] - 1.5) * 0.10
-        if z_scores.get("xt_bonus_p90_z", 0) > 1.5:
-            raw_score += (z_scores["xt_bonus_p90_z"] - 1.5) * 0.15
+        # Reward Path B: The "Express Train"
+        sprint_z = z_scores.get("distance_sprinted_p90_z", 0.0)
+        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
 
-        # Creativity Bonus: If they make a larger-than-expected number
-        # of passes or dribbles
-        if z_scores.get("passes_p90_z", 0) > 2.0:
-            raw_score += (z_scores["passes_p90_z"] - 2.0) * 0.15
-        if z_scores.get("dribbles_p90_z", 0) > 1.5:
-            raw_score += (z_scores["dribbles_p90_z"] - 1.5) * 0.15
+        express_train_mastery = min(sprint_z, xt_z)
+        if express_train_mastery > 1.0:
+            raw_score += (express_train_mastery - 1.0) * 0.20
+
+        # Reward Path C: The "Wide Playmaker"
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
+
+        playmaker_mastery = min(passes_z, dribbles_z)
+        if playmaker_mastery > 1.0:
+            raw_score += (playmaker_mastery - 1.0) * 0.15
 
         return raw_score
 
@@ -1351,24 +1590,16 @@ class MatchRatingsService:
         opponent_xg: float,
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
-    ) -> float:
+    ) -> tuple[float, float]:
         """Apply Wingback (WB/LWB/RWB) specific scoring logic and situational bonuses.
 
         Philosophy:
-        - Forgives a lack of direct attacking output (shots/goals) and isolated
-          efficiency drops.
-        - Implements an "Active Detriment Cap": Punishes bad turnovers and fouls,
-          but stops the free-fall at -1.5 standard deviations to prevent a few bad
-          decisions from mathematically ruining an otherwise decent performance.
-        - Implements a "Passenger Cap": Floors volume-based penalties at -1.0. If
-          the tactical flow of the match bypasses their flank, they are treated as
-          uninvolved rather than an active threat to the team.
         - Heavily rewards direct goal contributions, valuing assists (0.8) higher
           than goals (0.6) to reflect their primary role as wide playmakers.
-        - Applies scaling bonuses for elite physical exertion (distance covered
-          and sprinted) and ball progression (Expected Threat).
-        - Applies a flat synergy bonus if the wingback registers above-average
-          output in both tackles and possession won, rewarding elite two-way play.
+        - Applies a scaling bonus for elite physical exertion (distance sprinted)
+          combined with ball progression (Expected Threat) — the "Relentless Engine".
+        - Applies a scaling synergy bonus for elite two-way play: high output in
+          both tackles and possession won simultaneously.
         - Contextually rewards clean sheets based on opponent xG.
 
         Args:
@@ -1380,61 +1611,46 @@ class MatchRatingsService:
                 metrics (e.g., total goals, assists).
 
         Returns:
-            float: The calculated raw match rating score for the wingback.
+            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
+                is the goal/assist contribution kept separate so the caller can
+                apply the minutes impact scalar only to the base score.
         """
-        z_scores = self._apply_attacking_floor(z_scores)
-
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        # The Active Detriment Cap
-        # Punishes them for bad turnovers/fouls, but stops the free-fall at -1.5
-        detriment_stats = ["fouls_committed_p90_z", "possession_lost_p90_z"]
-        for col in detriment_stats:
-            if col in z_scores and z_scores[col] < -1.5:
-                z_scores[col] = -1.5
-
-        # The Passenger Cap (Volume Floors)
-        # Volume stats measure involvement. If they are a passenger, cap the
-        # penalty at -1.0 so they aren't mathematically treated as an
-        # active threat to the team.
-        passenger_stats = [
-            "passes_p90_z",
-            "dribbles_p90_z",
-            "tackles_p90_z",
-            "possession_won_p90_z",
-            "distance_covered_p90_z",
-            "distance_sprinted_p90_z",
-            "xt_bonus_p90_z",
-        ]
-        for col in passenger_stats:
-            if col in z_scores and z_scores[col] < -1.0:
-                z_scores[col] = -1.0
-
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        raw_score += performance_metrics.get("goals", 0) * 0.6
-        raw_score += performance_metrics.get("assists", 0) * 0.8
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=0.75,
+            )
+            + performance_metrics.get("assists", 0) * 0.55
+        )
 
-        if z_scores.get("distance_covered_p90_z", 0) > 1.5:
-            raw_score += (z_scores["distance_covered_p90_z"] - 1.5) * 0.15
-        if z_scores.get("distance_sprinted_p90_z", 0) > 1.5:
-            raw_score += (z_scores["distance_sprinted_p90_z"] - 1.5) * 0.15
-        if z_scores.get("xt_bonus_p90_z", 0) > 1.5:
-            raw_score += (z_scores["xt_bonus_p90_z"] - 1.5) * 0.20
+        # Relentless Engine
+        sprint_z = z_scores.get("distance_sprinted_p90_z", 0.0)
+        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
 
-        if (z_scores.get("tackles_p90_z", 0) > 1.0) and (
-            z_scores.get("possession_won_p90_z", 0) > 1.0
-        ):
-            raw_score += 0.35
+        engine_mastery = min(sprint_z, xt_z)
+        if engine_mastery > 1.5:
+            raw_score += (engine_mastery - 1.5) * 0.20
 
-        return self._apply_defender_clean_sheet_bonus(
+        # Two-way Flank
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
+        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
+
+        two_way_mastery = min(tackles_z, poss_won_z)
+        if two_way_mastery > 1.0:
+            raw_score += (two_way_mastery - 1.0) * 0.25
+
+        raw_score = self._apply_defender_clean_sheet_bonus(
             raw_score=raw_score,
             opponent_goals=opponent_goals,
             opponent_xg=opponent_xg,
         )
+        return raw_score, event_bonus
 
     def _apply_cdm_modifiers(
         self,
@@ -1443,14 +1659,11 @@ class MatchRatingsService:
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> float:
+        isolation_multiplier: float = 1.0,
+    ) -> tuple[float, float]:
         """Apply Central Defensive Midfielder (CDM) specific scoring logic and bonuses.
 
         Philosophy:
-        - Implements a "Do No Harm" attacking floor, forgiving CDMs for lacking
-          shots, goals, or assists, as their primary role lies deeper.
-        - Applies an efficiency floor to prevent isolated statistical anomalies from
-          derailing the rating.
         - Caps the penalty for fouls committed (-1.0 Z-score). This acknowledges
           the "dark arts" of the position, where tactical and professional fouls
           are often necessary to break up counter-attacks.
@@ -1470,44 +1683,64 @@ class MatchRatingsService:
             performance_metrics (dict[str, float]): Raw, unstandardized performance
                 metrics (e.g., total goals, assists, possession lost).
             minutes_played (float): The number of minutes the player was on the pitch.
+            isolation_multiplier (float): A decay multiplier for attackers who
+                isolate themselves from the build-up. Defaults to 1.0 (no decay).
 
         Returns:
-            float: The calculated raw match rating score for the defensive midfielder.
+            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
+                is the goal/assist contribution kept separate so the caller can
+                apply the minutes impact scalar only to the base score.
         """
-        # The "Do No Harm" Attacking Floor for CDMs
-        z_scores = self._apply_attacking_floor(z_scores)
-
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        if z_scores.get("fouls_committed_p90_z", 0) < -1.0:
-            z_scores["fouls_committed_p90_z"] = -1.0
+        self._apply_z_score_floors(z_scores, {"fouls_committed_p90_z": -1.0})
 
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        raw_score += performance_metrics.get("goals", 0) * 0.5
-        raw_score += performance_metrics.get("assists", 0) * 0.4
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=0.6,
+            )
+            + performance_metrics.get("assists", 0) * 0.45
+        ) * isolation_multiplier
 
-        # Defensive Dominance
-        if z_scores.get("tackles_p90_z", 0) > 2.0:
-            raw_score += (z_scores["tackles_p90_z"] - 2.0) * 0.25
-        if z_scores.get("possession_won_p90_z", 0) > 2.0:
-            raw_score += (z_scores["possession_won_p90_z"] - 2.0) * 0.25
+        # The Destroyer
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
+        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
 
-        # Passing Prowess
-        if z_scores.get("passes_p90_z", 0) > 2.0:
-            raw_score += (z_scores["passes_p90_z"] - 2.0) * 0.35
+        destroyer_mastery = min(tackles_z, poss_won_z)
+        if destroyer_mastery > 1.5:
+            raw_score += (destroyer_mastery - 1.5) * 0.25
 
-        if minutes_played >= 60:
-            if performance_metrics.get("possession_lost") == 0:
-                raw_score += 0.20
+        # The Deep-Lying Playmaker
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
 
+        dlp_mastery = min(passes_z, dribbles_z)
+        if dlp_mastery > 1.5:
+            raw_score += (dlp_mastery - 1.5) * 0.25
+
+        if minutes_played >= 60.0:
+            # The Reliable Pivot (Tiered Synergy)
+            poss_lost = performance_metrics.get("possession_lost", 0.0)
+            pass_acc = performance_metrics.get("pass_accuracy", 0.0)
+
+            if pass_acc >= 92.0 and passes_z > 1.0:
+                if poss_lost == 0.0:
+                    # The "Perfect Metronome": Flawless retention at elite volume
+                    raw_score += 0.35
+                elif poss_lost <= 1.0:
+                    # The "Reliable Shift": Elite retention at elite volume
+                    raw_score += 0.20
+
+            # Defensive Shielding
             if opponent_goals == 0:
                 raw_score += 0.20
 
-        return raw_score
+        return raw_score, event_bonus
 
     def _apply_cm_modifiers(
         self,
@@ -1516,20 +1749,15 @@ class MatchRatingsService:
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> float:
+        isolation_multiplier: float = 1.0,
+    ) -> tuple[float, float]:
         """Apply Central Midfielder (CM) specific scoring logic and situational bonuses.
 
         Philosophy:
-        - Implements attacking and efficiency floors, acknowledging that a CM's role
-          can be highly variable (e.g., deep-lying playmaker vs. shuttler) and
-          forgiving a lack of direct goal contributions.
-        - Caps the standardized impact of goals and assists at 1.5 standard deviations.
-          This prevents mathematical inflation from anomalous per-90 metrics, replacing
-          it with a reliable, flat scalar reward for direct goal contributions.
         - Values goals (0.8) slightly higher than assists (0.6)
           for flat performance rewards.
         - Rewards the "Complete Midfielder" (Box-to-Box) with scaling bonuses for
-          registering elite volume (> 2.0 Z-score) across various disciplines.
+          registering elite volume (> 1.5 Z-score) across various disciplines.
         - Heavily weights elite ball-winning (possession won) and distribution (passes),
           reflecting the primary objectives of central midfield:
           win the ball and keep it.
@@ -1543,44 +1771,50 @@ class MatchRatingsService:
             performance_metrics (dict[str, float]): Raw, unstandardized performance
                 metrics (e.g., total goals, assists).
             minutes_played (float): The number of minutes the player was on the pitch.
+            isolation_multiplier (float): A decay multiplier for attackers who
+                isolate themselves from the build-up. Defaults to 1.0 (no decay).
 
         Returns:
-            float: The calculated raw match rating score for the central midfielder.
+            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
+                is the goal/assist contribution kept separate so the caller can
+                apply the minutes impact scalar only to the base score.
         """
-        z_scores = self._apply_attacking_floor(z_scores)
-
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        # Cap goals and assists at 1.5
-        if z_scores.get("goals_p90_z", 0) > 1.5:
-            z_scores["goals_p90_z"] = 1.5
-        if z_scores.get("assists_p90_z", 0) > 1.5:
-            z_scores["assists_p90_z"] = 1.5
-
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        if performance_metrics.get("goals", 0) > 0:
-            raw_score += performance_metrics.get("goals", 0) * 0.8
-        if performance_metrics.get("assists", 0) > 0:
-            raw_score += performance_metrics.get("assists", 0) * 0.6
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=1.0,
+            )
+            + performance_metrics.get("assists", 0) * 0.75
+        ) * isolation_multiplier
 
-        if z_scores.get("tackles_p90_z", 0) > 2.0:
-            raw_score += (z_scores["tackles_p90_z"] - 2.0) * 0.20
-        if z_scores.get("possession_won_p90_z", 0) > 2.0:
-            raw_score += (z_scores["possession_won_p90_z"] - 2.0) * 0.40
-        if z_scores.get("passes_p90_z", 0) > 2.0:
-            raw_score += (z_scores["passes_p90_z"] - 2.0) * 0.40
-        if z_scores.get("dribbles_p90_z", 0) > 2.0:
-            raw_score += (z_scores["dribbles_p90_z"] - 2.0) * 0.20
+        # The Enforcer
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
+        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
 
-        return self._apply_cm_clean_sheet_bonus(
+        enforcer_mastery = min(tackles_z, poss_won_z)
+        if enforcer_mastery > 1.5:
+            raw_score += (enforcer_mastery - 1.5) * 0.25
+
+        # The Progression Engine
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
+
+        progression_mastery = min(passes_z, dribbles_z)
+        if progression_mastery > 1.2:
+            raw_score += (progression_mastery - 1.2) * 0.25
+
+        raw_score = self._apply_cm_clean_sheet_bonus(
             raw_score=raw_score,
             opponent_goals=opponent_goals,
             minutes_played=minutes_played,
         )
+        return raw_score, event_bonus
 
     def _apply_cm_clean_sheet_bonus(
         self,
@@ -1616,7 +1850,8 @@ class MatchRatingsService:
         z_scores: dict[str, float],
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
-    ) -> float:
+        isolation_multiplier: float = 1.0,
+    ) -> tuple[float, float]:
         """Apply Central Attacking Midfielder (CAM) specific scoring logic and bonuses.
 
         Philosophy:
@@ -1624,150 +1859,87 @@ class MatchRatingsService:
           passenger) to account for the unique, often polarizing nature of a pure
           playmaker, forgiving them for a lack of defensive output provided they
           are actively involved in the attack.
-        - Caps goal and assist Z-scores at 2.0. This is a higher ceiling than central
-          midfielders, reflecting their advanced role,
-          but still controls extreme variance.
         - Values assists (0.9) higher than goals (0.7) for flat performance metrics,
           cementing their role as the primary creative hub.
         - "Maestro Bonus": Rewards high passing volume combined with elite expected
           threat (xT) generation.
-        - "Shadow Striker Bonus": Provides a scaling reward for high shot volume.
-        - "Risky Creator Bonus": Rewards players who maintain high overall pass accuracy
-          despite high possession lost, indicating progressive, line-breaking intent.
-        - "Modern 10 Bonus": A massive flat reward (+0.50) for advanced playmakers
-          who successfully contribute to a high press (tackles and possession won).
+        - "Shadow Striker Bonus": Provides a scaling reward for high shot volume
+          combined with high xT.
+        - "Modern 10 Bonus": Scaling reward for advanced playmakers who successfully
+          contribute to a high press (tackles and possession won above 1.0 Z-score).
 
         Args:
             z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
             final_weights (np.ndarray): The base positional weights for dot product.
             performance_metrics (dict[str, float]): Raw, unstandardized performance
                 metrics (e.g., total goals, assists).
+            isolation_multiplier (float): A decay multiplier for attackers who
+                isolate themselves from the build-up. Defaults to 1.0 (no decay).
 
         Returns:
-            float: The calculated raw match rating score for the attacking midfielder.
+            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
+                is the goal/assist contribution kept separate so the caller can
+                apply the minutes impact scalar only to the base score.
         """
-        z_scores = self._apply_defensive_floor(z_scores)
-
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        z_scores = self._apply_detriment_floor(z_scores)
-
-        z_scores = self._apply_passenger_floors(z_scores)
-
-        # Cap goals and assists at 2.0
-        if z_scores.get("goals_p90_z", 0) > 2.0:
-            z_scores["goals_p90_z"] = 2.0
-        if z_scores.get("assists_p90_z", 0) > 2.0:
-            z_scores["assists_p90_z"] = 2.0
+        self._apply_z_score_floors(
+            z_scores,
+            {
+                # Defensive floor: CAMs are not expected to win tackles or duels
+                "tackles_p90_z": -0.5,
+                "tackle_success_rate_z": -0.5,
+                "possession_won_p90_z": -0.5,
+                # Passenger floor: prevents infinite freefall when team defends deep
+                "passes_p90_z": -1.0,
+                "dribbles_p90_z": -1.0,
+                "non_goal_shots_p90_z": -1.0,
+                "distance_covered_p90_z": -1.0,
+                "distance_sprinted_p90_z": -1.0,
+                "xt_bonus_p90_z": -1.0,
+                # Detriment floor: playmakers attempt high-risk passes and run in behind
+                "fouls_committed_p90_z": -1.5,
+                "possession_lost_p90_z": -1.5,
+                "offsides_p90_z": -1.5,
+            },
+        )
 
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        raw_score += performance_metrics.get("goals", 0) * 0.7
-        raw_score += performance_metrics.get("assists", 0) * 0.9
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=0.9,
+            )
+            + performance_metrics.get("assists", 0) * 0.75
+        ) * isolation_multiplier
 
-        if (z_scores.get("passes_p90_z", 0) > 1.0) and (
-            z_scores.get("xt_bonus_p90_z", 0) > 1.5
-        ):
-            raw_score += 0.40
-        if z_scores.get("shots_p90_z", 0) > 1.5:
-            raw_score += (z_scores["shots_p90_z"] - 1.5) * 0.10
-        if (z_scores.get("pass_accuracy_z", 0) > 1.0) and (
-            z_scores.get("possession_lost_p90_z", 0) > 1.0
-        ):
-            raw_score += 0.15
-        if (z_scores.get("tackles_p90_z", 0) > 1.0) and (
-            z_scores.get("possession_won_p90_z", 0) > 1.0
-        ):
-            raw_score += 0.50
+        # The Maestro
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
 
-        return raw_score
+        maestro_mastery = min(passes_z, xt_z)
+        if maestro_mastery > 1.5:
+            raw_score += (maestro_mastery - 1.5) * 0.25
 
-    def _apply_defensive_floor(self, z_scores: dict[str, float]) -> dict[str, float]:
-        """Apply a floor to defensive metrics to prevent harsh penalties.
+        # The Shadow Striker
+        shots_z = z_scores.get("non_goal_shots_p90_z", 0.0)
 
-        Philosophy:
-        - Central Attacking Midfielders (CAMs) are primarily creative players.
-        - They should not be severely punished for failing to register high
-          defensive outputs (e.g., tackles or possession won).
-        - Caps negative variance for defensive stats at -0.5 standard deviations.
+        shadow_striker_mastery = min(shots_z, xt_z)
+        if shadow_striker_mastery > 1.5:
+            raw_score += (shadow_striker_mastery - 1.5) * 0.20
 
-        Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
+        # The Modern 10
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
+        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
 
-        Returns:
-            dict[str, float]: The modified Z-scores dictionary
-                              with defensive floors applied.
-        """
-        defensive_exemptions = [
-            "tackles_p90_z",
-            "tackle_success_rate_z",
-            "possession_won_p90_z",
-        ]
-        for stat in defensive_exemptions:
-            if stat in z_scores and z_scores[stat] < -0.5:
-                z_scores[stat] = -0.5
-        return z_scores
+        modern_10_mastery = min(tackles_z, poss_won_z)
+        if modern_10_mastery > 1.0:
+            raw_score += (modern_10_mastery - 1.0) * 0.25
 
-    def _apply_passenger_floors(self, z_scores: dict[str, float]) -> dict[str, float]:
-        """Apply a floor to involvement metrics to limit 'passenger' penalties.
-
-        Philosophy:
-        - While a CAM must be involved in the game, punishing them infinitely for
-          low volume in specific matches can skew ratings unfairly (e.g., in games
-          where the team is heavily out-possessed and defending deep).
-        - Caps the negative variance for involvement/volume stats at -1.0 standard
-          deviations.
-
-        Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-
-        Returns:
-            dict[str, float]: The modified Z-scores dictionary
-                              with passenger floors applied.
-        """
-        passenger_stats = [
-            "passes_p90_z",
-            "dribbles_p90_z",
-            "shots_p90_z",
-            "distance_covered_p90_z",
-            "distance_sprinted_p90_z",
-            "xt_bonus_p90_z",
-        ]
-        for col in passenger_stats:
-            if col in z_scores and z_scores[col] < -1.0:
-                z_scores[col] = -1.0
-        return z_scores
-
-    def _apply_detriment_floor(self, z_scores: dict[str, float]) -> dict[str, float]:
-        """Apply a floor to detrimental metrics to forgive calculated risks.
-
-        Philosophy:
-        - A true playmaker is expected to attempt high-risk, high-reward plays.
-        - Consequently, they will lose possession or drift offside more frequently
-          than safer, deeper players.
-        - Caps the penalty for these detrimental stats at -1.5 standard deviations,
-          preventing a creative player from being statistically ruined by simply
-          trying to pick the lock.
-
-        Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-
-        Returns:
-            dict[str, float]: The modified Z-scores dictionary
-                              with detriment floors applied.
-        """
-        detriment_stats = [
-            "fouls_committed_p90_z",
-            "possession_lost_p90_z",
-            "offsides_p90_z",
-        ]
-        for col in detriment_stats:
-            if col in z_scores and z_scores[col] < -1.5:
-                z_scores[col] = -1.5
-        return z_scores
+        return raw_score, event_bonus
 
     def _apply_wm_modifiers(
         self,
@@ -1776,14 +1948,15 @@ class MatchRatingsService:
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> float:
+        isolation_multiplier: float = 1.0,
+    ) -> tuple[float, float]:
         """Apply Wide Midfielder (RM/LM) specific scoring logic and bonuses.
 
         Philosophy:
         - Wide Midfielders are the engines of the flanks, expected to contribute
           in both phases of play.
-        - Forgives a lack of direct goalscoring (via attacking floor) to account for
-          deeper, more traditional wide roles.
+        - Caps penalties for fouls, possession lost, and offsides at -1.5 Z-score,
+          accounting for the aggressive wide role.
         - Values assists (0.8) slightly higher than goals (0.6) to reflect their
           role as wide creators and crossers.
         - "Two-Way Engine Bonus": Rewards high passing volume combined with high
@@ -1803,67 +1976,79 @@ class MatchRatingsService:
             performance_metrics (dict[str, float]): Raw, unstandardized
                                                     performance metrics.
             minutes_played (float): The number of minutes the player was on the pitch.
+            isolation_multiplier (float): A decay multiplier for attackers who
+                isolate themselves from the build-up. Defaults to 1.0 (no decay).
 
         Returns:
             float: The calculated raw match rating score for the wide midfielder.
         """
-        attacking_stats = [
-            "goals_p90_z",
-            "assists_p90_z",
-            "shots_p90_z",
-            "shot_accuracy_z",
-        ]
-        for stat in attacking_stats:
-            if stat in z_scores and z_scores[stat] < -0.5:
-                z_scores[stat] = -0.5
-
-        z_scores = self._apply_efficiency_floor(z_scores)
-        z_scores = self._apply_detriment_floor(z_scores)
-        z_scores = self._apply_passenger_floors(z_scores)
+        self._apply_z_score_floors(
+            z_scores,
+            {
+                "fouls_committed_p90_z": -1.5,
+                "possession_lost_p90_z": -1.5,
+                "offsides_p90_z": -1.5,
+            },
+        )
 
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        if performance_metrics.get("goals", 0) > 0:
-            raw_score += performance_metrics.get("goals", 0) * 0.6
-        if performance_metrics.get("assists", 0) > 0:
-            raw_score += performance_metrics.get("assists", 0) * 0.8
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=0.75,
+            )
+            + performance_metrics.get("assists", 0) * 0.55
+        ) * isolation_multiplier
 
-        if (z_scores.get("passes_p90_z", 0) > 1.0) and (
-            z_scores.get("tackles_p90_z", 0) > 1.0
-        ):
-            raw_score += 0.40
-        if z_scores.get("xt_bonus_p90_z", 0) > 1.5:
-            raw_score += (z_scores["xt_bonus_p90_z"] - 1.5) * 0.15
+        # Two-Way Engine
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
 
-        return self._apply_cm_clean_sheet_bonus(
+        two_way_mastery = min(passes_z, tackles_z)
+        if two_way_mastery > 1.0:
+            raw_score += (two_way_mastery - 1.0) * 0.25
+
+        # Wide Progressor
+        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
+        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
+
+        progression_mastery = min(xt_z, dribbles_z)
+        if progression_mastery > 1.0:
+            raw_score += (progression_mastery - 1.0) * 0.20
+
+        raw_score = self._apply_cm_clean_sheet_bonus(
             raw_score=raw_score,
             opponent_goals=opponent_goals,
             minutes_played=minutes_played,
         )
+        return raw_score, event_bonus
 
     def _apply_winger_modifiers(
         self,
         z_scores: dict[str, float],
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
-    ) -> float:
+        isolation_multiplier: float = 1.0,
+    ) -> tuple[float, float]:
         """Apply Winger (LW/RW) specific scoring logic, bonuses, and penalties.
 
         Philosophy:
         - Evaluates the player as a modern inside-forward or direct attacking threat,
-          emphasizing direct goalscoring (0.8 multiplier) over pure creation (0.6).
+          emphasizing direct goalscoring (1.3 multiplier) with assists close behind
+          (1.0).
         - Grants tactical forgiveness for offsides (capped at -2.0 standard deviations),
           recognizing that playing on the shoulder of the defense and making runs in
           behind is a core positional requirement.
-        - "Elite Outlier Bonuses": Grants scaling rewards for
-          statistically extraordinary
-          performances (> 2.0 Z-score) in dribbling, expected threat (xT), and passing,
-          highlighting players who single-handedly dismantle defenses.
-        - "High Press Bonus": Rewards wingers who actively win the ball back high up
-          the pitch (tackles > 1.5 Z-score).
+        - "Elite Outlier Bonuses": Grants scaling rewards for statistically
+          extraordinary performances (> 1.5 Z-score): dribbling combined with xT
+          (Direct Threat) and passing combined with xT (Wide Playmaker).
+        - "High Press Bonus": Rewards wingers who win the ball back high up the
+          pitch (tackles and possession won both above 1.0 Z-score).
         - "Wastefulness Penalty": Actively punishes "selfish winger syndrome" by
           reducing the score if the player takes 3 or more shots in a match
           without registering a goal.
@@ -1876,47 +2061,80 @@ class MatchRatingsService:
             performance_metrics (dict[str, float]): Dictionary of raw, unstandardized
                                                     performance metrics for the match
                                                     (e.g., goals, assists, shots).
+            isolation_multiplier (float): A decay multiplier for attackers who
+                    isolate themselves from the build-up. Defaults to 1.0 (no decay).
 
         Returns:
             float: The final calculated raw match rating score for the winger.
         """
-        z_scores = self._apply_defensive_floor(z_scores)
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        if z_scores.get("fouls_committed_p90_z", 0) < -1.5:
-            z_scores["fouls_committed_p90_z"] = -1.5
-        if z_scores.get("offsides_p90_z", 0) < -2.0:
-            z_scores["offsides_p90_z"] = -2.0
+        self._apply_z_score_floors(
+            z_scores,
+            {
+                # Defensive floor: wingers are primarily offensive players
+                "tackles_p90_z": -0.5,
+                "tackle_success_rate_z": -0.5,
+                "possession_won_p90_z": -0.5,
+                # Detriment floor: wingers attempt high-risk dribbles and run in behind
+                "fouls_committed_p90_z": -1.5,
+                "possession_lost_p90_z": -1.5,
+                # Looser offsides floor — running in behind
+                # is a core positional requirement
+                "offsides_p90_z": -2.0,
+            },
+        )
 
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
-        raw_score += performance_metrics.get("goals", 0) * 0.8
-        raw_score += performance_metrics.get("assists", 0) * 0.6
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=1.3,
+            )
+            + performance_metrics.get("assists", 0) * 1.0
+        ) * isolation_multiplier
 
-        if z_scores.get("dribbles_p90_z", 0) > 2.0:
-            raw_score += (z_scores["dribbles_p90_z"] - 2.0) * 0.25
-        if z_scores.get("xt_bonus_p90_z", 0) > 2.0:
-            raw_score += (z_scores["xt_bonus_p90_z"] - 2.0) * 0.20
-        if z_scores.get("passes_p90_z", 0) > 2.0:
-            raw_score += (z_scores["passes_p90_z"] - 2.0) * 0.20
-        if z_scores.get("tackles_p90_z", 0) > 1.5:
-            raw_score += (z_scores["tackles_p90_z"] - 1.5) * 0.10
+        # The Direct Threat
+        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
+        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
 
-        if (performance_metrics.get("shots", 0) >= 3) and (
-            performance_metrics.get("goals", 0) == 0
-        ):
-            raw_score -= (performance_metrics.get("shots", 0) - 2) * 0.10
+        direct_threat_mastery = min(dribbles_z, xt_z)
+        if direct_threat_mastery > 1.5:
+            raw_score += (direct_threat_mastery - 1.5) * 0.25
 
-        return raw_score
+        # The Wide Playmaker
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+
+        wide_playmaker_mastery = min(passes_z, xt_z)
+        if wide_playmaker_mastery > 1.5:
+            raw_score += (wide_playmaker_mastery - 1.5) * 0.20
+
+        # The Pressing Forward
+        tackles_z = z_scores.get("tackles_p90_z", 0.0)
+        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
+
+        pressing_mastery = min(tackles_z, poss_won_z)
+        if pressing_mastery > 1.0:
+            raw_score += (pressing_mastery - 1.0) * 0.15
+
+        # Wastefulness Penalty
+        shots = performance_metrics.get("shots", 0)
+        goals = performance_metrics.get("goals", 0)
+
+        if (shots >= 3) and (goals == 0):
+            raw_score -= (shots - 2) * 0.10
+
+        return raw_score, event_bonus
 
     def _apply_st_modifiers(
         self,
         z_scores: dict[str, float],
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
-    ) -> float:
+        isolation_multiplier: float = 1.0,
+    ) -> tuple[float, float]:
         """Apply Striker specific scoring logic, bonuses, and penalties.
 
         Philosophy:
@@ -1930,7 +2148,7 @@ class MatchRatingsService:
           as playing on the shoulder of the last defender is a
           core positional requirement.
         - "Complete Forward Bonuses": Rewards statistically extraordinary passing and
-          dribbling (> 2.0 Z-score) to highlight elite deep-lying
+          dribbling (> 1.5 Z-score) to highlight elite deep-lying
           forwards or complete number 9s.
         - Integrates specific sub-routines to reward target man play (hold-up bonus),
           and punish offensive possession drains (black hole penalty) or poor conversion
@@ -1942,33 +2160,51 @@ class MatchRatingsService:
                                         for dot product calculation.
             performance_metrics (dict[str, float]): Raw, unstandardized
                                                     performance metrics.
+            isolation_multiplier (float): A decay multiplier for attackers who
+                isolate themselves from the build-up. Defaults to 1.0 (no decay).
 
         Returns:
             float: The calculated raw match rating score for the striker.
         """
-        z_scores = self._apply_defensive_floor(z_scores)
-        z_scores = self._apply_efficiency_floor(z_scores)
-
-        ghosting_stats = ["goals_p90_z", "assists_p90_z", "shots_p90_z"]
-        for stat in ghosting_stats:
-            if stat in z_scores and z_scores[stat] < -2.0:
-                z_scores[stat] = -2.0
-
-        if z_scores.get("offsides_p90_z", 0) < -1.5:
-            z_scores["offsides_p90_z"] = -1.5
+        self._apply_z_score_floors(
+            z_scores,
+            {
+                # Defensive floor: strikers are not expected to win duels or press hard
+                "tackles_p90_z": -0.5,
+                "tackle_success_rate_z": -0.5,
+                "possession_won_p90_z": -0.5,
+                # Ghosting forgiveness: strikers depend on service;
+                # zero-chance games happen
+                "goals_p90_z": -2.0,
+                "assists_p90_z": -2.0,
+                "non_goal_shots_p90_z": -2.0,
+                # Offside forgiveness: playing on the last defender's
+                # shoulder is the job
+                "offsides_p90_z": -1.5,
+            },
+        )
 
         raw_score: float = self._calculate_dot_product(
             z_scores=z_scores,
             weights=final_weights,
         )
 
-        raw_score += performance_metrics.get("goals", 0) * 1.2
-        raw_score += performance_metrics.get("assists", 0) * 0.6
+        event_bonus: float = (
+            self._effective_goal_bonus(
+                goals=performance_metrics.get("goals", 0),
+                shots=performance_metrics.get("shots", 0),
+                coeff=1.5,
+            )
+            + performance_metrics.get("assists", 0) * 1.1
+        ) * isolation_multiplier
 
-        if z_scores.get("passes_p90_z", 0) > 2.0:
-            raw_score += (z_scores["passes_p90_z"] - 2.0) * 0.20
-        if z_scores.get("dribbles_p90_z", 0) > 2.0:
-            raw_score += (z_scores["dribbles_p90_z"] - 2.0) * 0.20
+        # The Complete Forward
+        passes_z = z_scores.get("passes_p90_z", 0.0)
+        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
+
+        complete_forward_mastery = min(passes_z, dribbles_z)
+        if complete_forward_mastery > 1.5:
+            raw_score += (complete_forward_mastery - 1.5) * 0.25
 
         raw_score = self._apply_st_black_hole_penalty(
             raw_score=raw_score,
@@ -1984,7 +2220,7 @@ class MatchRatingsService:
             performance_metrics=performance_metrics,
         )
 
-        return raw_score
+        return raw_score, event_bonus
 
     def _apply_st_black_hole_penalty(
         self,
@@ -2099,7 +2335,7 @@ class MatchRatingsService:
         Returns:
             float: The modified match rating after applying the penalty.
         """
-        estimated_xg = performance_metrics.get("shots", 0) * 0.20
+        estimated_xg = performance_metrics.get("shots", 0) * self.XG_PER_SHOT
         finishing_deficit = estimated_xg - performance_metrics.get("goals", 0)
         if (performance_metrics.get("shots", 0) > 3) and (finishing_deficit > 0.75):
             wasteful_penalty = finishing_deficit * 0.25
