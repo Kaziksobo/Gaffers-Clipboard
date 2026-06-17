@@ -69,7 +69,7 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
 
         # New tracking for live player sums
         self.player_totals_vars: dict[str, ctk.StringVar] = {}
-        self.player_totals_labels: dict[str, ctk.CTkLabel] = {}
+        self.player_totals_labels: dict[str, object] = {}
 
         self.stat_definitions: list[tuple[str, str]] = [
             ("goals", "Goals"),
@@ -267,6 +267,19 @@ class MatchReviewFrame(BaseViewFrame, EntryFocusMixin):
 
             sum_var = ctk.StringVar(value="0")
             self.player_totals_vars[stat] = sum_var
+
+            sum_entry = ctk.CTkEntry(
+                stat_frame, textvariable=sum_var, width=60, font=self.fonts["body"]
+            )
+
+            try:
+                sum_entry.configure(state="readonly")
+            except Exception:
+                sum_entry.bind("<Key>", lambda event: "break")
+
+            sum_entry.grid(row=row_idx, column=1, pady=(2, 10), sticky="w")
+            self.player_totals_labels[stat] = sum_entry
+            row_idx += 1
 
             sum_val_label = ctk.CTkLabel(
                 stat_frame, textvariable=sum_var, font=self.fonts["body"]
