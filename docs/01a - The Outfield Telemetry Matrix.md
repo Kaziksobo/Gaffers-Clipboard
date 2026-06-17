@@ -30,9 +30,12 @@ The raw telemetry matrix is partitioned into four distinct tactical categories:
 15. `fouls_committed_p90`
 16. `offsides_p90`
 
+**Note on shots:** The native telemetry records total shots. Before the 17-element vector enters the scoring pipeline, shots are decomposed into `non_goal_shots_p90` — shots minus goals, clipped to zero. This isolates pure chance creation from goal-scoring output, so a striker who scored twice from two shots is not rewarded twice for the same events.
 ### 3. The 17th Dimension: Synthetic Expected Threat (xT)
-Because the native 16-element array completely lacks spatial progression metrics (e.g., measuring the difference between a safe sideways pass and a line-breaking pass), the engine generates a 17th synthetic feature: **Expected Threat (`xt_bonus_p90`)**.
+Because the native 16-element array completely lacks spatial progression metrics (e.g., the difference between a safe sideways pass and a line-breaking through ball), the engine generates a 17th synthetic feature: **Expected Threat (`xt_bonus_p90`)**.
 
-This derived metric acts as a mathematical proxy for ball progression and spatial dominance. By combining and weighting elite passing volume, dribbling volume, and sprint distance, the engine creates a synthetic indicator of how effectively a player moved the ball into dangerous areas. 
+This derived metric acts as a mathematical proxy for ball progression and spatial dominance. The engine constructs it from three components: the player's sprint ratio (the proportion of total distance covered at high intensity, capturing physical intent and line-breaking runs), their passing volume and accuracy (capturing technical execution and distribution quality), and a possession control ratio (which filters out defensive recovery sprints from genuine attacking build-up play, by comparing possession won against possession lost).
 
-This finalised 17-element array ($T_{17}$) serves as the sole input vector for the downstream PCA eigen-decomposition and positional heuristic pipelines.
+The positional scalar applied to the formula also varies by role — attackers and attacking midfielders receive a higher base multiplier than defensive midfielders and centre-backs, reflecting the different degree to which each position is expected to generate progressive threat. Full mathematical derivation and calibration details are in [[03a - Expected Threat Synthesis]].
+
+This finalised 17-element array ($T_{17}$​) serves as the sole input vector for the downstream PCA eigen-decomposition and positional heuristic pipelines.

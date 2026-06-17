@@ -1,147 +1,217 @@
-This appendix serves as the complete technical glossary and tuning manual for all outfield roles.
+This appendix is the complete technical reference for all outfield positional modifiers as implemented in `match_ratings_service.py`. Values are sourced directly from the live code; no values are estimated or approximated.
 
-(Note: Unless otherwise specified, an "Efficiency Floor" is applied universally to `tackle_success_rate`, `pass_accuracy`, `dribble_success_rate`, and `shot_accuracy`, capping negative variance strictly at $-0.75\sigma$.)
+### Universal Mechanisms
+**Bottleneck Synergy** Every scaling bonus in the engine uses a bottleneck architecture. A bonus activates only when a player simultaneously exceeds a threshold across two paired metrics, and the scaling rate is driven by the weaker of the two:
 
-**1. Attackers (ST, RW, LW)**
+$$\text{bonus} = R \times \bigl(\min(Z_A,\ Z_B) - T\bigr) \quad \text{when } \min(Z_A,\ Z_B) > T$$
 
-- **Striker (ST):**
-    
-    - _Ghosting Forgiveness:_ Goals, assists, and shots are floored at $-2.0\sigma$.
-        
-    - _Offside Leniency:_ Offsides are floored at $-1.5\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+1.2$, and assists by $+0.6$.
-        
-    - _Complete Forward Bonuses:_ Elite passing ($>2.0\sigma$) yields $+0.20$ per $\sigma$ over the threshold. Elite dribbling ($>2.0\sigma$) yields $+0.20$ per $\sigma$.
-        
-    - _Wasteful Finisher Penalty:_ Assigns $0.20$ xG per shot. If a striker takes $>3$ shots and generates a finishing deficit $>0.75$, a penalty of $0.25 \times \text{Deficit}$ is applied (capped at $-0.8$).
-        
-    - _Black Hole Penalty:_ If possession is lost $>4$ times with a turnover-to-involvement ratio $>1.5$, a penalty of $0.08 \times \text{Excess Losses}$ is applied (capped at $-0.6$).
-        
-    - _Target Man Bonus:_ If positive involvements are $\geq 15$ and retention ratio is $>4.0$, a bonus of $0.02 \times \text{Excess Retention}$ is applied (capped at $+0.4$).
-        
-- **Wingers (RW/LW):**
-    
-    - _Defensive Absolution:_ Tackles, tackle success, and possession won are floored at $-0.5\sigma$.
-        
-    - _Detriment Floors:_ Fouls committed floored at $-1.5\sigma$; offsides floored at $-2.0\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.8$, assists by $+0.6$.
-        
-    - _Elite Outlier Bonuses:_ Dribbles $>2.0\sigma$ yield $+0.25$ per $\sigma$ . xT $>2.0\sigma$ yields $+0.20$ per $\sigma$. Passes $>2.0\sigma$ yield $+0.20$ per $\sigma$.
-        
-    - _High Press Bonus:_ Tackles $>1.5\sigma$ yield $+0.10$ per $\sigma$.
-        
-    - _Wastefulness Penalty:_ If a winger registers $\geq 3$ shots and $0$ goals, a penalty of $-0.10$ per shot over 2 is applied.
-        
+A player who is elite in one metric but average in its pair receives no bonus until both are above the threshold. This prevents a single extraordinary stat from generating a reward while masking a deficiency in the complementary skill.
 
-**2. Midfielders (CAM, CM, CDM, WM)**
+**Goal and Assist Multipliers** Goal bonuses are efficiency-adjusted rather than flat. The engine computes an _above-expected_ component using a crude 0.20 xG-per-shot estimate, with a per-goal floor ensuring scoring always contributes positively regardless of shot volume:
+$$\text{above\_expected} = \max(\text{goals} - \text{shots} \times 0.20, \text{goals} \times 0.40)$$
 
-- **Central Attacking Midfielder (CAM):**
-    
-    - _Defensive Exemption:_ Tackles, tackle success, and possession won floored at $-0.5\sigma$.
-        
-    - _Passenger Floor:_ Passes, dribbles, shots, distance covered, sprint distance, and xT floored at $-1.0\sigma$.
-        
-    - _Detriment Floor:_ Fouls, possession lost, and offsides floored at $-1.5\sigma$.
-        
-    - _Z-Score Capping:_ Standardized goals and assists cannot exceed $+2.0\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.7$, assists by $+0.9$.
-        
-    - _Maestro Bonus:_ Passes $>1.0\sigma$ AND xT $>1.5\sigma$ yield a flat $+0.40$.
-        
-    - _Shadow Striker Bonus:_ Shots $>1.5\sigma$ yield $+0.10$ per $\sigma$.
-        
-    - _Risky Creator Bonus:_ Pass accuracy $>1.0\sigma$ AND possession lost $>1.0\sigma$ yield a flat $+0.15$.
-        
-    - _Modern 10 Bonus:_ Tackles $>1.0\sigma$ AND possession won $>1.0\sigma$ yield a flat $+0.50$.
-        
-- **Central Midfielder (CM):**
-    
-    - _Attacking Floor:_ Goals, assists, shots, and shot accuracy floored at $0.0\sigma$.
-        
-    - _Z-Score Capping:_ Standardized goals and assists cannot exceed $+1.5\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.8$, assists by $+0.6$.
-        
-    - _Box-to-Box Scaling:_ Tackles $>2.0\sigma$ yield $+0.20$ per $\sigma$. Possession won $>2.0\sigma$ yields $+0.40$ per $\sigma$. Passes $>2.0\sigma$ yield $+0.40$ per $\sigma$. Dribbles $>2.0\sigma$ yield $+0.20$ per $\sigma$.
-        
-    - _Clean Sheet Bonus:_ Flat $+0.15$ if the team concedes $0$ goals and the player logged $\geq 60$ minutes.
-        
-- **Central Defensive Midfielder (CDM):**
-    
-    - _Attacking Floor:_ Goals, assists, shots, and shot accuracy floored at $0.0\sigma$.
-        
-    - _Detriment Floor:_ Fouls committed floored at $-1.0\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.5$, assists by $+0.4$.
-        
-    - _Defensive Dominance:_ Tackles $>2.0\sigma$ yield $+0.25$ per $\sigma$. Possession won $>2.0\sigma$ yields $+0.25$ per $\sigma$.
-        
-    - _Passing Prowess:_ Passes $>2.0\sigma$ yield $+0.35$ per $\sigma$.
-        
-    - _Reliable Shift:_ If minutes $\geq 60$ AND possession lost is $0$, yields a flat $+0.20$.
-        
-    - _Clean Sheet Bonus:_ Flat $+0.20$ if minutes $\geq 60$ AND $0$ goals conceded.
-        
-- **Wide Midfielder (RM/LM):**
-    
-    - _Attacking Floor:_ Goals, assists, shots, and shot accuracy floored at $-0.5\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.6$, assists by $+0.8$.
-        
-    - _Two-Way Engine Bonus:_ Passes $>1.0\sigma$ AND tackles $>1.0\sigma$ yield a flat $+0.40$.
-        
-    - _Wide Progression Bonus:_ xT $>1.5\sigma$ yields $+0.15$ per $\sigma$.
-        
+$$\text{goal\_contribution} = \text{above\_expected} \times G_{pos}$$
+Assist bonuses remain a flat multiplier: $\text{assist\_contribution} = \text{assists} \times A_{pos}$.
 
-**3. Defenders (CB, FB/WB, LWB/RWB)**
+The **tactical isolation multiplier** derived in Phase III (Section V) is applied to goal and assist bonuses for all midfield and attacking positions (CDM, CM, CAM, WM, Winger, ST). If the player's average build-up Z-score falls below $-1.0$, this multiplier decays exponentially between 0 and 1, reducing bonuses for players statistically absent from the build-up phase. Defensive positions (CB, Fullback, Wingback) are not subject to the isolation multiplier.
 
-- **Center Back (CB):**
-    
-    - _Attacking Floor:_ Goals, assists, shots, and shot accuracy floored at $0.0\sigma$.
-        
-    - _Professional Foul Leniency:_ Fouls committed floored at $-2.0\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.6$, assists by $+0.4$.
-        
-    - _Dominance Bonus:_ Tackles $>2.0\sigma$ yield $+0.25$ per $\sigma$. Possession won $>2.0\sigma$ yields $+0.25$ per $\sigma$. Passes $>1.5\sigma$ yield $+0.30$ per $\sigma$.
-        
-    - _Dynamic Clean Sheet:_ Bonus scales inversely with opponent xG. Max bonus ($+0.5$) for $\leq 1.0$ xG. Min bonus ($+0.15$) for $\geq 2.0$ xG. Standard bonus ($+0.35$) for all other clean sheets.
-        
-    - _Collapse Penalty:_ Flat $-0.3$ penalty if the team concedes $\geq 3$ goals and the player logged $\geq 60$ minutes.
-        
-- **Fullback (LB/RB):**
-    
-    - _Attacking Floor:_ Goals, assists, shots, and shot accuracy floored at $0.0\sigma$.
-        
-    - _Tactical Instruction Floor:_ Dribbles, xT, distance covered, and sprint distance floored at $-0.50\sigma$.
-        
-    - _Foul Leniency:_ Fouls committed floored at $-1.5\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.4$, assists by $+0.6$.
-        
-    - _The "Third CB" Archetype:_ Tackles $>1.5\sigma$ yield $+0.15$ per $\sigma$. Possession won $>1.5\sigma$ yields $+0.15$ per $\sigma$.
-        
-    - _The "Express Train" Archetype:_ Distance covered $>1.5\sigma$ yields $+0.10$ per $\sigma$. Sprint distance $>1.5\sigma$ yields $+0.10$ per $\sigma$ . xT $>1.5\sigma$ yields $+0.15$ per $\sigma$.
-        
-    - _Creativity Bonus:_ Passes $>2.0\sigma$ yield $+0.15$ per $\sigma$. Dribbles $>1.5\sigma$ yield $+0.15$ per $\sigma$.
-        
-    - _Clean Sheet / Collapse:_ Identical to CB logic.
-        
-- **Wingback (LWB/RWB):**
-    
-    - _Attacking Floor:_ Goals, assists, shots, and shot accuracy floored at $0.0\sigma$.
-        
-    - _Active Detriment Cap:_ Fouls and possession lost floored at $-1.5\sigma$.
-        
-    - _Passenger Cap:_ Passes, dribbles, tackles, possession won, distance covered, sprint distance, and xT floored at $-1.0\sigma$.
-        
-    - _Direct Output Multipliers:_ Raw goals are multiplied by $+0.6$, assists by $+0.8$.
-        
-    - _Physical / Progression Bonuses:_ Distance covered $>1.5\sigma$ yields $+0.15$ per $\sigma$. Sprint distance $>1.5\sigma$ yields $+0.15$ per $\sigma$ . xT $>1.5\sigma$ yields $+0.20$ per $\sigma$.
-        
-    - _Two-Way Synergy:_ Tackles $>1.0\sigma$ AND possession won $>1.0\sigma$ yield a flat $+0.35$.
-        
-    - _Clean Sheet:_ Identical to CB logic.
+**Efficiency Metrics** Percentage-based metrics (pass accuracy, shot accuracy, dribble success rate, tackle success rate) are regulated by the continuous logistic volume masking system described in Section III. They are not subject to universal hard floors in the positional modifier layer; only position-specific floors explicitly coded in the modifier are listed below.
+
+---
+
+### 1. Attackers
+
+#### Striker (ST)
+
+**Z-Score Floors**
+
+|Metric|Floor|
+|---|---|
+|`tackles_p90_z`|$-0.50$|
+|`tackle_success_rate_z`|$-0.50$|
+|`possession_won_p90_z`|$-0.50$|
+|`goals_p90_z`|$-2.00$ — Ghosting Forgiveness|
+|`assists_p90_z`|$-2.00$ — Ghosting Forgiveness|
+|`non_goal_shots_p90_z`|$-2.00$ — Ghosting Forgiveness|
+|`offsides_p90_z`|$-1.50$ — Offside Forgiveness|
+
+**Output Multipliers** Goal coefficient $G_{pos} = 1.5$, Assists $\times\ 1.1$ (both scaled by isolation multiplier).
+
+**Complete Forward Bonus** Activates when $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Wasteful Finisher Penalty** Assigns $0.20$ xG per shot. If shots $> 3$ and finishing deficit $> 0.75$: penalty $= \text{deficit} \times 0.25$, capped at $-0.80$.
+
+**Black Hole Penalty** If possession lost $> 4$ and turnover ratio $> 1.5$: penalty $= \text{excess losses} \times 0.08$, capped at $-0.60$.
+
+_Positive involvements = passes + dribbles + shots. Excess losses = possession lost − positive involvements._
+
+**Target Man Bonus** If positive involvements $\geq 15$ and retention ratio $> 4.0$: bonus $= \text{excess retention} \times 0.02$, capped at $+0.40$.
+
+_Excess retention = positive involvements − (possession lost $\times\ 3.0$)._
+
+---
+
+#### Winger (RW / LW)
+
+**Z-Score Floors**
+
+|Metric|Floor|
+|---|---|
+|`tackles_p90_z`|$-0.50$ — Defensive Absolution|
+|`tackle_success_rate_z`|$-0.50$ — Defensive Absolution|
+|`possession_won_p90_z`|$-0.50$ — Defensive Absolution|
+|`fouls_committed_p90_z`|$-1.50$|
+|`possession_lost_p90_z`|$-1.50$|
+|`offsides_p90_z`|$-2.00$ — Offside Forgiveness|
+
+**Output Multipliers** Goal coefficient $G_{pos} = 1.3$, Assists $\times\ 1.0$ (both scaled by isolation multiplier).
+
+**Direct Threat Bonus** Activates when $\min(\text{dribbles\_z},\ \text{xt\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Wide Playmaker Bonus** Activates when $\min(\text{passes\_z},\ \text{xt\_z}) > 1.5$; scales at $+0.20$ per $\sigma$ above threshold.
+
+**High Press Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.0$; scales at $+0.15$ per $\sigma$ above threshold.
+
+**Wastefulness Penalty** If shots $\geq 3$ and goals $= 0$: penalty $= (\text{shots} - 2) \times 0.10$.
+
+---
+
+### 2. Midfielders
+
+#### Central Attacking Midfielder (CAM)
+
+**Z-Score Floors**
+
+|Category|Metrics|Floor|
+|---|---|---|
+|Defensive|`tackles_p90_z`, `tackle_success_rate_z`, `possession_won_p90_z`|$-0.50$|
+|Passenger|`passes_p90_z`, `dribbles_p90_z`, `non_goal_shots_p90_z`, `distance_covered_p90_z`, `distance_sprinted_p90_z`, `xt_bonus_p90_z`|$-1.00$|
+|Detriment|`fouls_committed_p90_z`, `possession_lost_p90_z`, `offsides_p90_z`|$-1.50$|
+
+**Output Multipliers** Goal coefficient $G_{pos} = 0.9$, Assists $\times\ 0.75$ (both scaled by isolation multiplier).
+
+**Maestro Bonus** Activates when $\min(\text{passes\_z},\ \text{xt\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Shadow Striker Bonus** Activates when $\min(\text{non\_goal\_shots\_z},\ \text{xt\_z}) > 1.5$; scales at $+0.20$ per $\sigma$ above threshold.
+
+**Modern 10 Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.0$; scales at $+0.25$ per $\sigma$ above threshold.
+
+---
+
+#### Central Midfielder (CM)
+
+**Z-Score Floors** None applied in the positional modifier.
+
+**Output Multipliers** Goal coefficient $G_{pos} = 1.0$, Assists $\times\ 0.75$ (both scaled by isolation multiplier).
+
+**Enforcer Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Progression Engine Bonus** Activates when $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.2$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Clean Sheet Bonus** Flat $+0.15$ if opponent goals $= 0$ and minutes $\geq 60$.
+
+---
+
+#### Central Defensive Midfielder (CDM)
+
+**Z-Score Floors**
+
+|Metric|Floor|
+|---|---|
+|`fouls_committed_p90_z`|$-1.00$ — Dark Arts Leniency|
+
+**Output Multipliers** Goal coefficient $G_{pos} = 0.6$, Assists $\times\ 0.45$ (both scaled by isolation multiplier).
+
+**Destroyer Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Deep-Lying Playmaker Bonus** Activates when $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Reliable Pivot** _(requires minutes $\geq 60$, pass accuracy $\geq 92\%$, and $passes_z > 1.0$)_
+
+|Condition|Bonus|
+|---|---|
+|Possession lost $= 0$|$+0.35$ — Perfect Metronome|
+|Possession lost $\leq 1$|$+0.20$ — Reliable Shift|
+
+**Clean Sheet Bonus** Flat $+0.20$ if opponent goals $= 0$ and minutes $\geq 60$.
+
+---
+
+#### Wide Midfielder (RM / LM)
+
+**Z-Score Floors**
+
+|Metric|Floor|
+|---|---|
+|`fouls_committed_p90_z`|$-1.50$|
+|`possession_lost_p90_z`|$-1.50$|
+|`offsides_p90_z`|$-1.50$|
+
+**Output Multipliers** Goal coefficient $G_{pos} = 0.75$, Assists $\times\ 0.55$ (both scaled by isolation multiplier).
+
+**Two-Way Engine Bonus** Activates when $\min(\text{passes\_z},\ \text{tackles\_z}) > 1.0$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Wide Progressor Bonus** Activates when $\min(\text{xt\_z},\ \text{dribbles\_z}) > 1.0$; scales at $+0.20$ per $\sigma$ above threshold.
+
+**Clean Sheet Bonus** Flat $+0.15$ if opponent goals $= 0$ and minutes $\geq 60$.
+
+---
+
+### 3. Defenders
+
+#### Centre Back (CB)
+
+**Z-Score Floors** None applied in the positional modifier.
+
+**Output Multipliers** Goal coefficient $G_{pos} = 0.75$, Assists $\times\ 0.55$.
+
+**Dominant Stopper Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Ball-Playing Defender Bonus** Activates when $\min(\text{passes\_z},\ \text{poss\_won\_z}) > 1.0$; scales at $+0.20$ per $\sigma$ above threshold.
+
+**Dynamic Clean Sheet Bonus**
+
+|Opponent xG|Bonus|
+|---|---|
+|$\leq 1.0$|$+0.50$ — Defensive Dominance|
+|$\geq 2.0$|$+0.15$ — Fortunate Clean Sheet|
+|Otherwise|$+0.35$ — Standard|
+
+**Collapse Penalty** Flat $-0.30$ if opponent goals $\geq 3$ and minutes $\geq 60$.
+
+---
+
+#### Fullback (LB / RB)
+
+**Conditional Z-Score Floors** The Tactical Instruction Floor is conditional on whether the Third CB archetype is active. The archetype is active when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.0$.
+
+|Metric|Third CB Active|Third CB Inactive|
+|---|---|---|
+|`dribbles_p90_z`|$0.00$ (lifted to neutral)|$-0.50$|
+|`xt_bonus_p90_z`|$0.00$ (lifted to neutral)|$-0.50$|
+
+**Output Multipliers** Goal coefficient $G_{pos} = 0.5$, Assists $\times\ 0.4$.
+
+**Third CB Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.0$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Express Train Bonus** Activates when $\min(\text{sprint\_z},\ \text{xt\_z}) > 1.0$; scales at $+0.20$ per $\sigma$ above threshold.
+
+**Wide Playmaker Bonus** Activates when $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.0$; scales at $+0.15$ per $\sigma$ above threshold.
+
+**Dynamic Clean Sheet Bonus** Identical to CB logic.
+
+**Collapse Penalty** Flat $-0.30$ if opponent goals $\geq 3$ and minutes $\geq 60$.
+
+---
+
+#### Wingback (LWB / RWB)
+
+**Z-Score Floors** None applied in the positional modifier.
+
+**Output Multipliers** Goal coefficient $G_{pos} = 0.75$, Assists $\times\ 0.55$.
+
+**Relentless Engine Bonus** Activates when $\min(\text{sprint\_z},\ \text{xt\_z}) > 1.5$; scales at $+0.20$ per $\sigma$ above threshold.
+
+**Two-Way Flank Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.0$; scales at $+0.25$ per $\sigma$ above threshold.
+
+**Dynamic Clean Sheet Bonus** Identical to CB logic. No collapse penalty.
