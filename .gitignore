@@ -13,3 +13,4 @@ coverage.xml
 /.coverage
 /.vscode
 **/.ipynb_checkpoints
+docs/.obsidian/
