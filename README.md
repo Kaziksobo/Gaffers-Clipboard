@@ -238,10 +238,18 @@ I maintain strict quality control using `pytest`, `pytest-cov`, `pytest-mock`, `
 
 ### Testing
 
-Run the full test suite with coverage reporting:
+Run the full test suite. Coverage is configured automatically via `addopts` in `pyproject.toml` — no extra flags needed:
 
 ```bash
-uv run pytest --cov=src --cov-report=html
+uv run pytest
+```
+
+This runs all tests under `tests/`, reports per-file coverage in the terminal, and writes a `coverage.xml` report. The minimum coverage threshold is **60%**; the suite will fail if it drops below this.
+
+To generate an HTML coverage report for browser inspection:
+
+```bash
+uv run pytest --cov-report=html
 ```
 
 ### Contributing Standards
@@ -251,7 +259,7 @@ All code must pass strict type checking, linting, and formatting before merging.
 1. **Type Checking:** I use `ty` to enforce rigorous static typing across the project.
 
 ```bash
-uv run ty .
+uv run ty check
 ```
 
 2. **Linting & Formatting:** I use `ruff` to enforce PEP compliance and maintain a clean codebase.
