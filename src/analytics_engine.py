@@ -130,7 +130,10 @@ class AnalyticsEngine:
                 if the player did not play enough minutes to rate.
         """
         logger.debug(
-            "Calculating match rating (player_id=%s, type=%s, team=%s, half_length=%s).",
+            (
+                "Calculating match rating "
+                "(player_id=%s, type=%s, team=%s, half_length=%s)."
+            ),
             performance.get("player_id"),
             performance.get("performance_type"),
             team_name,
