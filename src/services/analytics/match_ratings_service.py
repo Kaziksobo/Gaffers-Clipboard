@@ -150,10 +150,10 @@ class MatchRatingsService:
             means_stds (PerformanceMeansStdsMap): Mean and standard deviation values
                                                   for supported performance types.
         """
-        self.weights = weights
-        self.means_stds = means_stds
-        self._profile_global_mean, self._profile_global_std = (
-            self._build_profile_norms(means_stds)
+        self.weights: PerformanceWeightsMap = weights
+        self.means_stds: PerformanceMeansStdsMap = means_stds
+        self._profile_global_mean, self._profile_global_std = self._build_profile_norms(
+            means_stds
         )
         logger.info(
             "MatchRatingsService configured (weights=%d, means_stds=%d).",
@@ -224,7 +224,7 @@ class MatchRatingsService:
         # Normalize to 10-minute-half units; thresholds are tuned to this scale.
         # Apply formula: metric = metric * (H_BASE / half_length)
         # for every metric in vol_cols
-        time_scalar = self.H_BASE / half_length
+        time_scalar: float = self.H_BASE / half_length
         team_xg *= time_scalar
         xg_against *= time_scalar
 
@@ -247,15 +247,21 @@ class MatchRatingsService:
         saves: float = normalized_metrics.get("saves", 0)
         save_success_rate: float = normalized_metrics.get("save_success_rate", 0)
         shots_against: float = normalized_metrics.get("shots_against", 0)
-        penalty_saves = normalized_metrics.get("penalty_saves", 0)
-        penalty_goals_conceded = normalized_metrics.get("penalty_goals_conceded", 0)
-        shoot_out_saves = normalized_metrics.get("shoot_out_saves", 0)
-        shoot_out_goals_conceded = normalized_metrics.get("shoot_out_goals_conceded", 0)
+        penalty_saves: float = normalized_metrics.get("penalty_saves", 0)
+        penalty_goals_conceded: float = normalized_metrics.get(
+            "penalty_goals_conceded", 0
+        )
+        shoot_out_saves: float = normalized_metrics.get("shoot_out_saves", 0)
+        shoot_out_goals_conceded: float = normalized_metrics.get(
+            "shoot_out_goals_conceded", 0
+        )
 
         gk_heuristic: float = (xgp * 1.5) + (
             np.log(saves + 1) * (save_success_rate / 100.0)
         )
-        gk_means_stds = cast(dict[str, float], self.means_stds.get("GK", {}))
+        gk_means_stds: dict[str, int | float] = cast(
+            dict[str, float], self.means_stds.get("GK", {})
+        )
         gk_mean: float = gk_means_stds.get("mean", 0.0)
         gk_std: float = gk_means_stds.get("std", 1.0)  # Avoid division by zero
         raw_score: float = (gk_heuristic - gk_mean) / gk_std if gk_std > 0 else 0
@@ -263,17 +269,17 @@ class MatchRatingsService:
         # ---------------------------------------------------------
         # 1. Low-Volume Confidence Shrinkage
         # ---------------------------------------------------------
-        raw_score = self._apply_gk_volume_shrinkage(
+        raw_score: float = self._apply_gk_volume_shrinkage(
             raw_score=raw_score,
             shots_against=shots_against,
             xgp=xgp,
             gk_std=gk_std,
         )
-        raw_score = self._apply_gk_final_floor(raw_score=raw_score)
+        raw_score: float = self._apply_gk_final_floor(raw_score=raw_score)
         # ---------------------------------------------------------
         # 2. Additive Bonuses (Penalties & Reliable Shifts)
         # ---------------------------------------------------------
-        raw_score = self._apply_gk_additive_bonuses(
+        raw_score: float = self._apply_gk_additive_bonuses(
             raw_score=raw_score,
             penalty_saves=penalty_saves,
             shoot_out_saves=shoot_out_saves,
@@ -290,7 +296,7 @@ class MatchRatingsService:
             and (shoot_out_goals_conceded == 0)
         )
         if clean_sheet:
-            raw_score = self._apply_gk_clean_sheet_bonuses(
+            raw_score: float = self._apply_gk_clean_sheet_bonuses(
                 raw_score=raw_score,
                 xg_against=xg_against,
                 xgp=xgp,
@@ -355,8 +361,8 @@ class MatchRatingsService:
         Returns:
             float: The shrunk raw score, regressed toward the xgp-only baseline.
         """
-        shrink = min(1.0, np.sqrt(shots_against / self.GK_SHOTS_CONFIDENCE_K))
-        xgp_anchor = (xgp * 1.5) / gk_std if gk_std > 0 else 0.0
+        shrink: float = min(1.0, np.sqrt(shots_against / self.GK_SHOTS_CONFIDENCE_K))
+        xgp_anchor: float = (xgp * 1.5) / gk_std if gk_std > 0 else 0.0
         return xgp_anchor * (1 - shrink) + raw_score * shrink
 
     def _apply_gk_final_floor(self, raw_score: float) -> float:
@@ -512,13 +518,17 @@ class MatchRatingsService:
         """
         drop: set[int] = set()
         for pair in self.MIRROR_PAIRS:
-            idxs = [i for i, p in enumerate(positions) if p in pair]
+            idxs: list[int] = [i for i, p in enumerate(positions) if p in pair]
             if len(idxs) < 2:
                 continue
-            best = max(idxs, key=lambda i: ratings[i])
+            best: int = max(idxs, key=lambda i: ratings[i])
             drop.update(i for i in idxs if i != best)
-        filtered_positions = [p for i, p in enumerate(positions) if i not in drop]
-        filtered_ratings   = [r for i, r in enumerate(ratings)   if i not in drop]
+        filtered_positions: list[str] = [
+            p for i, p in enumerate(positions) if i not in drop
+        ]
+        filtered_ratings: list[float] = [
+            r for i, r in enumerate(ratings) if i not in drop
+        ]
         return filtered_positions, filtered_ratings
 
     def _build_profile_norms(
@@ -543,8 +553,8 @@ class MatchRatingsService:
                 if pos != "GK"
             ]
         )
-        global_mean: np.ndarray = outfield_means.mean(axis=0)
-        global_std: np.ndarray = outfield_means.std(axis=0)
+        global_mean = outfield_means.mean(axis=0)
+        global_std = outfield_means.std(axis=0)
         global_std[global_std == 0.0] = 1.0
         return global_mean, global_std
 
@@ -569,7 +579,7 @@ class MatchRatingsService:
             float: Cosine similarity in [0, 1]. Returns 1.0 if either profile
                    is unknown (conservative: maximum drag for unrecognised roles).
         """
-        ms = self.means_stds
+        ms: PerformanceMeansStdsMap = self.means_stds
         if pos_a not in ms or pos_b not in ms:
             return 1.0
 
@@ -1198,6 +1208,7 @@ class MatchRatingsService:
                 opponent_xg=opponent_xg,
                 final_weights=final_weights,
                 performance_metrics=performance_metrics,
+                minutes_played=minutes_played,
             )
         elif pos == "CDM":
             return self._apply_cdm_modifiers(
@@ -1265,6 +1276,26 @@ class MatchRatingsService:
         for key, floor in floors.items():
             if key in z_scores:
                 z_scores[key] = max(z_scores[key], floor)
+
+    def _apply_mastery_bonus(
+        self,
+        raw_score: float,
+        z_scores: dict,
+        key_a: str,
+        key_b: str,
+        threshold: float,
+        weight: float,
+    ) -> float:
+        """Apply a dual-skill mastery bonus.
+
+        Rewards a player who exceeds a threshold on BOTH of two complementary skills
+        simultaneously - the min() ensures genuine dual excellence rather than
+        just excelling at one dimension. Used across all nine position modifiers.
+        """
+        mastery = min(z_scores.get(key_a, 0.0), z_scores.get(key_b, 0.0))
+        if mastery > threshold:
+            raw_score += (mastery - threshold) * weight
+        return raw_score
 
     def _calculate_dot_product(
         self, z_scores: dict[str, float], weights: np.ndarray
@@ -1386,24 +1417,30 @@ class MatchRatingsService:
         )
 
         # Dominant Stopper
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
-
-        stopper_mastery = min(tackles_z, poss_won_z)
-        if stopper_mastery > 1.5:
-            raw_score += (stopper_mastery - 1.5) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="tackles_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.5,
+            weight=0.25,
+        )
 
         # Ball Playing Defender
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-
-        ball_playing_mastery = min(passes_z, poss_won_z)
-        if ball_playing_mastery > 1.0:
-            raw_score += (ball_playing_mastery - 1.0) * 0.20
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.0,
+            weight=0.20,
+        )
 
         raw_score = self._apply_defender_clean_sheet_bonus(
             raw_score=raw_score,
             opponent_goals=opponent_goals,
             opponent_xg=opponent_xg,
+            minutes_played=minutes_played,
         )
         if opponent_goals >= 3 and minutes_played >= 60:
             raw_score -= 0.3
@@ -1415,6 +1452,7 @@ class MatchRatingsService:
         raw_score: float,
         opponent_goals: int | float,
         opponent_xg: float,
+        minutes_played: float,
     ) -> float:
         """Calculate and apply a context-aware clean sheet bonus for defenders.
 
@@ -1427,6 +1465,8 @@ class MatchRatingsService:
         - A clean sheet with high opponent xG (>= 2.0) suggests the defense was
           porous and relied heavily on poor opponent finishing or exceptional
           goalkeeping, yielding a minimal bonus.
+        - If they have played less than 60 minutes, the bonus is scaled down using
+          a square root function to reflect the reduced impact of their contribution.
 
         Args:
             raw_score (float): The current, pre-bonus match rating for the defender.
@@ -1437,12 +1477,14 @@ class MatchRatingsService:
             float: The adjusted match rating including the contextual clean sheet bonus.
         """
         if opponent_goals == 0:
+            minutes_confidence = np.sqrt(min(minutes_played, 60.0) / 60.0)
             if opponent_xg <= 1.0:
-                return raw_score + 0.5
+                bonus = 0.5
             elif opponent_xg >= 2.0:
-                return raw_score + 0.15
+                bonus = 0.15
             else:
-                return raw_score + 0.35
+                bonus = 0.35
+            return raw_score + (bonus * minutes_confidence)
         return raw_score
 
     def _apply_fb_modifiers(
@@ -1524,6 +1566,7 @@ class MatchRatingsService:
             raw_score=raw_score,
             opponent_goals=opponent_goals,
             opponent_xg=opponent_xg,
+            minutes_played=minutes_played,
         )
         if opponent_goals >= 3 and minutes_played >= 60:
             raw_score -= 0.3
@@ -1541,17 +1584,14 @@ class MatchRatingsService:
         - The bonus only scales if the player simultaneously increases BOTH
           tackling and possession recovery.
         """
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
-
-        # Archetype Mastery is defined by the weakest necessary skill
-        third_cb_mastery = min(tackles_z, poss_won_z)
-
-        # Scalable Reward: Starts at 1.0 Z-score, scales infinitely upwards
-        if third_cb_mastery > 1.0:
-            raw_score += (third_cb_mastery - 1.0) * 0.25
-
-        return raw_score
+        return self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="tackles_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.0,
+            weight=0.25,
+        )
 
     def _apply_attacking_fb_bonuses(
         self, raw_score: float, z_scores: dict[str, float]
@@ -1566,20 +1606,24 @@ class MatchRatingsService:
           dribblers in wide areas, effectively acting as auxiliary playmakers.
         """
         # Reward Path B: The "Express Train"
-        sprint_z = z_scores.get("distance_sprinted_p90_z", 0.0)
-        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
-
-        express_train_mastery = min(sprint_z, xt_z)
-        if express_train_mastery > 1.0:
-            raw_score += (express_train_mastery - 1.0) * 0.20
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="distance_sprinted_p90_z",
+            key_b="xt_bonus_p90_z",
+            threshold=1.0,
+            weight=0.20,
+        )
 
         # Reward Path C: The "Wide Playmaker"
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
-
-        playmaker_mastery = min(passes_z, dribbles_z)
-        if playmaker_mastery > 1.0:
-            raw_score += (playmaker_mastery - 1.0) * 0.15
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="dribbles_p90_z",
+            threshold=1.0,
+            weight=0.15,
+        )
 
         return raw_score
 
@@ -1590,6 +1634,7 @@ class MatchRatingsService:
         opponent_xg: float,
         final_weights: np.ndarray,
         performance_metrics: dict[str, float],
+        minutes_played: float,
     ) -> tuple[float, float]:
         """Apply Wingback (WB/LWB/RWB) specific scoring logic and situational bonuses.
 
@@ -1630,25 +1675,30 @@ class MatchRatingsService:
         )
 
         # Relentless Engine
-        sprint_z = z_scores.get("distance_sprinted_p90_z", 0.0)
-        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
-
-        engine_mastery = min(sprint_z, xt_z)
-        if engine_mastery > 1.5:
-            raw_score += (engine_mastery - 1.5) * 0.20
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="distance_sprinted_p90_z",
+            key_b="xt_bonus_p90_z",
+            threshold=1.5,
+            weight=0.20,
+        )
 
         # Two-way Flank
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
-
-        two_way_mastery = min(tackles_z, poss_won_z)
-        if two_way_mastery > 1.0:
-            raw_score += (two_way_mastery - 1.0) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="tackles_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.0,
+            weight=0.25,
+        )
 
         raw_score = self._apply_defender_clean_sheet_bonus(
             raw_score=raw_score,
             opponent_goals=opponent_goals,
             opponent_xg=opponent_xg,
+            minutes_played=minutes_played,
         )
         return raw_score, event_bonus
 
@@ -1708,25 +1758,30 @@ class MatchRatingsService:
         ) * isolation_multiplier
 
         # The Destroyer
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
-
-        destroyer_mastery = min(tackles_z, poss_won_z)
-        if destroyer_mastery > 1.5:
-            raw_score += (destroyer_mastery - 1.5) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="tackles_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.5,
+            weight=0.25,
+        )
 
         # The Deep-Lying Playmaker
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
-
-        dlp_mastery = min(passes_z, dribbles_z)
-        if dlp_mastery > 1.5:
-            raw_score += (dlp_mastery - 1.5) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="dribbles_p90_z",
+            threshold=1.5,
+            weight=0.25,
+        )
 
         if minutes_played >= 60.0:
             # The Reliable Pivot (Tiered Synergy)
             poss_lost = performance_metrics.get("possession_lost", 0.0)
             pass_acc = performance_metrics.get("pass_accuracy", 0.0)
+            passes_z = z_scores.get("passes_p90_z", 0.0)
 
             if pass_acc >= 92.0 and passes_z > 1.0:
                 if poss_lost == 0.0:
@@ -1794,20 +1849,24 @@ class MatchRatingsService:
         ) * isolation_multiplier
 
         # The Enforcer
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
-
-        enforcer_mastery = min(tackles_z, poss_won_z)
-        if enforcer_mastery > 1.5:
-            raw_score += (enforcer_mastery - 1.5) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="tackles_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.5,
+            weight=0.25,
+        )
 
         # The Progression Engine
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
-
-        progression_mastery = min(passes_z, dribbles_z)
-        if progression_mastery > 1.2:
-            raw_score += (progression_mastery - 1.2) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="dribbles_p90_z",
+            threshold=1.2,
+            weight=0.25,
+        )
 
         raw_score = self._apply_cm_clean_sheet_bonus(
             raw_score=raw_score,
@@ -1917,27 +1976,34 @@ class MatchRatingsService:
         ) * isolation_multiplier
 
         # The Maestro
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
-
-        maestro_mastery = min(passes_z, xt_z)
-        if maestro_mastery > 1.5:
-            raw_score += (maestro_mastery - 1.5) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="xt_bonus_p90_z",
+            threshold=1.5,
+            weight=0.25,
+        )
 
         # The Shadow Striker
-        shots_z = z_scores.get("non_goal_shots_p90_z", 0.0)
-
-        shadow_striker_mastery = min(shots_z, xt_z)
-        if shadow_striker_mastery > 1.5:
-            raw_score += (shadow_striker_mastery - 1.5) * 0.20
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="non_goal_shots_p90_z",
+            key_b="xt_bonus_p90_z",
+            threshold=1.5,
+            weight=0.20,
+        )
 
         # The Modern 10
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
-
-        modern_10_mastery = min(tackles_z, poss_won_z)
-        if modern_10_mastery > 1.0:
-            raw_score += (modern_10_mastery - 1.0) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="tackles_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.0,
+            weight=0.25,
+        )
 
         return raw_score, event_bonus
 
@@ -2006,20 +2072,24 @@ class MatchRatingsService:
         ) * isolation_multiplier
 
         # Two-Way Engine
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-
-        two_way_mastery = min(passes_z, tackles_z)
-        if two_way_mastery > 1.0:
-            raw_score += (two_way_mastery - 1.0) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="tackles_p90_z",
+            threshold=1.0,
+            weight=0.25,
+        )
 
         # Wide Progressor
-        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
-        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
-
-        progression_mastery = min(xt_z, dribbles_z)
-        if progression_mastery > 1.0:
-            raw_score += (progression_mastery - 1.0) * 0.20
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="xt_bonus_p90_z",
+            key_b="dribbles_p90_z",
+            threshold=1.0,
+            weight=0.20,
+        )
 
         raw_score = self._apply_cm_clean_sheet_bonus(
             raw_score=raw_score,
@@ -2097,27 +2167,34 @@ class MatchRatingsService:
         ) * isolation_multiplier
 
         # The Direct Threat
-        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
-        xt_z = z_scores.get("xt_bonus_p90_z", 0.0)
-
-        direct_threat_mastery = min(dribbles_z, xt_z)
-        if direct_threat_mastery > 1.5:
-            raw_score += (direct_threat_mastery - 1.5) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="dribbles_p90_z",
+            key_b="xt_bonus_p90_z",
+            threshold=1.5,
+            weight=0.25,
+        )
 
         # The Wide Playmaker
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-
-        wide_playmaker_mastery = min(passes_z, xt_z)
-        if wide_playmaker_mastery > 1.5:
-            raw_score += (wide_playmaker_mastery - 1.5) * 0.20
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="xt_bonus_p90_z",
+            threshold=1.5,
+            weight=0.20,
+        )
 
         # The Pressing Forward
-        tackles_z = z_scores.get("tackles_p90_z", 0.0)
-        poss_won_z = z_scores.get("possession_won_p90_z", 0.0)
-
-        pressing_mastery = min(tackles_z, poss_won_z)
-        if pressing_mastery > 1.0:
-            raw_score += (pressing_mastery - 1.0) * 0.15
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="tackles_p90_z",
+            key_b="possession_won_p90_z",
+            threshold=1.0,
+            weight=0.15,
+        )
 
         # Wastefulness Penalty
         shots = performance_metrics.get("shots", 0)
@@ -2199,12 +2276,14 @@ class MatchRatingsService:
         ) * isolation_multiplier
 
         # The Complete Forward
-        passes_z = z_scores.get("passes_p90_z", 0.0)
-        dribbles_z = z_scores.get("dribbles_p90_z", 0.0)
-
-        complete_forward_mastery = min(passes_z, dribbles_z)
-        if complete_forward_mastery > 1.5:
-            raw_score += (complete_forward_mastery - 1.5) * 0.25
+        raw_score = self._apply_mastery_bonus(
+            raw_score=raw_score,
+            z_scores=z_scores,
+            key_a="passes_p90_z",
+            key_b="dribbles_p90_z",
+            threshold=1.5,
+            weight=0.25,
+        )
 
         raw_score = self._apply_st_black_hole_penalty(
             raw_score=raw_score,
