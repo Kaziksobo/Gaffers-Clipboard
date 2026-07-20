@@ -1150,7 +1150,7 @@
                 "distance_covered": 2.6,
                 "distance_sprinted": 0.6,
                 "player_id": 13,
-                "match_rating": 6.2
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -1590,7 +1590,7 @@
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.3,
                 "player_id": 53,
-                "match_rating": 5.9
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -1640,7 +1640,7 @@
                 "distance_covered": 2.1,
                 "distance_sprinted": 1.1,
                 "player_id": 52,
-                "match_rating": 6.5
+                "match_rating": 6.3
             },
             {
                 "performance_type": "Outfield",
@@ -2760,7 +2760,7 @@
                 "distance_covered": 2.4,
                 "distance_sprinted": 0.9,
                 "player_id": 13,
-                "match_rating": 6.0
+                "match_rating": 5.8
             },
             {
                 "performance_type": "Outfield",
@@ -2835,7 +2835,7 @@
                 "distance_covered": 1.5,
                 "distance_sprinted": 1.0,
                 "player_id": 52,
-                "match_rating": 5.8
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -3640,7 +3640,7 @@
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.3,
                 "player_id": 14,
-                "match_rating": 6.1
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -4005,7 +4005,7 @@
                 "distance_covered": 2.4,
                 "distance_sprinted": 1.0,
                 "player_id": 11,
-                "match_rating": 6.3
+                "match_rating": 6.1
             },
             {
                 "performance_type": "Outfield",
@@ -4445,7 +4445,7 @@
                 "distance_covered": 3.4,
                 "distance_sprinted": 0.8,
                 "player_id": 11,
-                "match_rating": 6.8
+                "match_rating": 6.7
             },
             {
                 "performance_type": "Outfield",
@@ -4520,7 +4520,7 @@
                 "distance_covered": 1.9,
                 "distance_sprinted": 1.0,
                 "player_id": 20,
-                "match_rating": 6.1
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -6596,7 +6596,7 @@
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.4,
                 "player_id": 14,
-                "match_rating": 6.0
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -6961,7 +6961,7 @@
                 "distance_covered": 3.1,
                 "distance_sprinted": 0.9,
                 "player_id": 4,
-                "match_rating": 6.5
+                "match_rating": 6.3
             },
             {
                 "performance_type": "Outfield",
@@ -7061,7 +7061,7 @@
                 "distance_covered": 3.2,
                 "distance_sprinted": 1.6,
                 "player_id": 20,
-                "match_rating": 6.8
+                "match_rating": 6.6
             },
             {
                 "performance_type": "Outfield",
@@ -9228,7 +9228,7 @@
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.5,
                 "player_id": 53,
-                "match_rating": 6.2
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -9253,7 +9253,7 @@
                 "distance_covered": 3.6,
                 "distance_sprinted": 1.6,
                 "player_id": 52,
-                "match_rating": 6.0
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -9303,7 +9303,7 @@
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.3,
                 "player_id": 13,
-                "match_rating": 5.9
+                "match_rating": 5.8
             }
         ]
     },
@@ -9644,7 +9644,7 @@
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.4,
                 "player_id": 13,
-                "match_rating": 5.9
+                "match_rating": 5.8
             },
             {
                 "performance_type": "Outfield",
@@ -9719,7 +9719,7 @@
                 "distance_covered": 0.9,
                 "distance_sprinted": 0.2,
                 "player_id": 53,
-                "match_rating": 6.2
+                "match_rating": 6.0
             }
         ]
     },
@@ -11819,7 +11819,7 @@
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.3,
                 "player_id": 13,
-                "match_rating": 5.9
+                "match_rating": 5.7
             }
         ]
     },
@@ -12209,7 +12209,7 @@
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.3,
                 "player_id": 13,
-                "match_rating": 5.9
+                "match_rating": 5.7
             }
         ]
     },
@@ -12599,7 +12599,7 @@
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.4,
                 "player_id": 13,
-                "match_rating": 5.9
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -12649,7 +12649,7 @@
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.5,
                 "player_id": 52,
-                "match_rating": 6.8
+                "match_rating": 6.7
             }
         ]
     },
@@ -12973,7 +12973,7 @@
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.9,
                 "player_id": 11,
-                "match_rating": 6.6
+                "match_rating": 6.4
             },
             {
                 "performance_type": "Outfield",
@@ -13048,7 +13048,7 @@
                 "distance_covered": 2.8,
                 "distance_sprinted": 1.6,
                 "player_id": 20,
-                "match_rating": 6.2
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -14318,7 +14318,7 @@
                 "distance_covered": 0.9,
                 "distance_sprinted": 0.2,
                 "player_id": 53,
-                "match_rating": 5.8
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -14368,7 +14368,7 @@
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.6,
                 "player_id": 20,
-                "match_rating": 6.1
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -16031,7 +16031,7 @@
                 "distance_covered": 2.6,
                 "distance_sprinted": 1.0,
                 "player_id": 12,
-                "match_rating": 5.5
+                "match_rating": 5.4
             },
             {
                 "performance_type": "Outfield",
@@ -16262,7 +16262,7 @@
                 "distance_covered": 4.8,
                 "distance_sprinted": 1.1,
                 "player_id": 13,
-                "match_rating": 5.7
+                "match_rating": 5.6
             },
             {
                 "performance_type": "Outfield",
@@ -16563,7 +16563,7 @@
                 "distance_covered": 5.2,
                 "distance_sprinted": 2.9,
                 "player_id": 52,
-                "match_rating": 8.3
+                "match_rating": 8.2
             }
         ]
     },
@@ -17279,7 +17279,7 @@
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.7,
                 "player_id": 13,
-                "match_rating": 6.3
+                "match_rating": 6.2
             },
             {
                 "performance_type": "Outfield",
@@ -17379,7 +17379,7 @@
                 "distance_covered": 1.5,
                 "distance_sprinted": 0.9,
                 "player_id": 20,
-                "match_rating": 5.9
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -17620,7 +17620,7 @@
                 "distance_covered": 2.8,
                 "distance_sprinted": 0.9,
                 "player_id": 11,
-                "match_rating": 6.2
+                "match_rating": 6.1
             },
             {
                 "performance_type": "Outfield",
@@ -17797,7 +17797,7 @@
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.5,
                 "player_id": 53,
-                "match_rating": 6.5
+                "match_rating": 6.4
             },
             {
                 "performance_type": "Outfield",
@@ -18628,7 +18628,7 @@
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.6,
                 "player_id": 14,
-                "match_rating": 6.5
+                "match_rating": 6.4
             },
             {
                 "performance_type": "Outfield",
@@ -18678,7 +18678,7 @@
                 "distance_covered": 2.7,
                 "distance_sprinted": 1.5,
                 "player_id": 52,
-                "match_rating": 6.1
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -19119,7 +19119,7 @@
                 "distance_covered": 2.6,
                 "distance_sprinted": 1.3,
                 "player_id": 52,
-                "match_rating": 6.4
+                "match_rating": 6.2
             },
             {
                 "performance_type": "Outfield",
@@ -19510,7 +19510,7 @@
                 "distance_covered": 2.4,
                 "distance_sprinted": 0.9,
                 "player_id": 13,
-                "match_rating": 6.1
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -19535,7 +19535,7 @@
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.5,
                 "player_id": 53,
-                "match_rating": 5.8
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -19926,7 +19926,7 @@
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.4,
                 "player_id": 53,
-                "match_rating": 6.1
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -20291,7 +20291,7 @@
                 "distance_covered": 3.2,
                 "distance_sprinted": 1.1,
                 "player_id": 12,
-                "match_rating": 6.2
+                "match_rating": 6.1
             },
             {
                 "performance_type": "Outfield",
@@ -24209,7 +24209,7 @@
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.4,
                 "player_id": 14,
-                "match_rating": 5.7
+                "match_rating": 5.6
             },
             {
                 "performance_type": "Outfield",
@@ -24575,7 +24575,7 @@
                 "distance_covered": 2.5,
                 "distance_sprinted": 0.9,
                 "player_id": 4,
-                "match_rating": 6.3
+                "match_rating": 6.2
             },
             {
                 "performance_type": "Outfield",
@@ -25823,7 +25823,7 @@
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.2,
                 "player_id": 64,
-                "match_rating": 5.9
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -25873,7 +25873,7 @@
                 "distance_covered": 2.4,
                 "distance_sprinted": 0.7,
                 "player_id": 62,
-                "match_rating": 5.8
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -26238,7 +26238,7 @@
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.5,
                 "player_id": 64,
-                "match_rating": 5.7
+                "match_rating": 5.6
             },
             {
                 "performance_type": "Outfield",
@@ -26288,7 +26288,7 @@
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.8,
                 "player_id": 62,
-                "match_rating": 5.7
+                "match_rating": 5.6
             },
             {
                 "performance_type": "Outfield",
@@ -26338,7 +26338,7 @@
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.4,
                 "player_id": 53,
-                "match_rating": 5.9
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -27636,7 +27636,7 @@
                 "distance_covered": 2.5,
                 "distance_sprinted": 1.2,
                 "player_id": 4,
-                "match_rating": 6.8
+                "match_rating": 6.6
             },
             {
                 "performance_type": "Outfield",
@@ -27953,7 +27953,7 @@
                 "distance_covered": 2.8,
                 "distance_sprinted": 1.0,
                 "player_id": 4,
-                "match_rating": 6.6
+                "match_rating": 6.5
             },
             {
                 "performance_type": "Outfield",
@@ -28519,7 +28519,7 @@
                 "distance_covered": 4.4,
                 "distance_sprinted": 2.6,
                 "player_id": 52,
-                "match_rating": 6.7
+                "match_rating": 6.6
             },
             {
                 "performance_type": "Outfield",
@@ -28884,7 +28884,7 @@
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.6,
                 "player_id": 14,
-                "match_rating": 6.1
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -28934,7 +28934,7 @@
                 "distance_covered": 2.7,
                 "distance_sprinted": 1.3,
                 "player_id": 4,
-                "match_rating": 6.9
+                "match_rating": 6.7
             },
             {
                 "performance_type": "Outfield",
@@ -30596,7 +30596,7 @@
                 "distance_covered": 3.6,
                 "distance_sprinted": 1.4,
                 "player_id": 11,
-                "match_rating": 6.3
+                "match_rating": 6.2
             },
             {
                 "performance_type": "Outfield",
@@ -31451,7 +31451,7 @@
                 "distance_covered": 3.0,
                 "distance_sprinted": 0.9,
                 "player_id": 62,
-                "match_rating": 7.6
+                "match_rating": 7.5
             },
             {
                 "performance_type": "Outfield",
@@ -31917,7 +31917,7 @@
                 "distance_covered": 1.7,
                 "distance_sprinted": 0.6,
                 "player_id": 62,
-                "match_rating": 6.2
+                "match_rating": 6.1
             },
             {
                 "performance_type": "Outfield",
@@ -32383,7 +32383,7 @@
                 "distance_covered": 3.0,
                 "distance_sprinted": 0.9,
                 "player_id": 62,
-                "match_rating": 6.0
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -33163,7 +33163,7 @@
                 "distance_covered": 1.4,
                 "distance_sprinted": 0.3,
                 "player_id": 53,
-                "match_rating": 5.8
+                "match_rating": 5.6
             },
             {
                 "performance_type": "Outfield",
@@ -33528,7 +33528,7 @@
                 "distance_covered": 2.7,
                 "distance_sprinted": 0.7,
                 "player_id": 64,
-                "match_rating": 6.5
+                "match_rating": 6.3
             },
             {
                 "performance_type": "Outfield",
@@ -34799,7 +34799,7 @@
                 "distance_covered": 3.0,
                 "distance_sprinted": 0.9,
                 "player_id": 64,
-                "match_rating": 6.1
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -34874,7 +34874,7 @@
                 "distance_covered": 2.9,
                 "distance_sprinted": 0.8,
                 "player_id": 14,
-                "match_rating": 5.7
+                "match_rating": 5.6
             },
             {
                 "performance_type": "Outfield",
@@ -37835,7 +37835,7 @@
                 "distance_covered": 5.7,
                 "distance_sprinted": 1.9,
                 "player_id": 62,
-                "match_rating": 6.2
+                "match_rating": 6.1
             },
             {
                 "performance_type": "Outfield",
@@ -37860,7 +37860,7 @@
                 "distance_covered": 5.3,
                 "distance_sprinted": 1.8,
                 "player_id": 11,
-                "match_rating": 6.1
+                "match_rating": 6.0
             },
             {
                 "performance_type": "Outfield",
@@ -37910,7 +37910,7 @@
                 "distance_covered": 4.8,
                 "distance_sprinted": 3.0,
                 "player_id": 52,
-                "match_rating": 6.6
+                "match_rating": 6.5
             },
             {
                 "performance_type": "Outfield",
@@ -38275,7 +38275,7 @@
                 "distance_covered": 1.3,
                 "distance_sprinted": 0.3,
                 "player_id": 11,
-                "match_rating": 6.1
+                "match_rating": 5.8
             },
             {
                 "performance_type": "Outfield",
@@ -39107,7 +39107,7 @@
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.5,
                 "player_id": 53,
-                "match_rating": 5.7
+                "match_rating": 5.6
             },
             {
                 "performance_type": "Outfield",
@@ -41308,7 +41308,7 @@
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.7,
                 "player_id": 20,
-                "match_rating": 6.4
+                "match_rating": 6.2
             },
             {
                 "performance_type": "Outfield",
@@ -41599,7 +41599,7 @@
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.7,
                 "player_id": 64,
-                "match_rating": 6.5
+                "match_rating": 6.4
             },
             {
                 "performance_type": "Outfield",
@@ -41724,7 +41724,7 @@
                 "distance_covered": 5.0,
                 "distance_sprinted": 2.9,
                 "player_id": 52,
-                "match_rating": 6.9
+                "match_rating": 6.8
             },
             {
                 "performance_type": "Outfield",
@@ -42089,7 +42089,7 @@
                 "distance_covered": 1.8,
                 "distance_sprinted": 0.5,
                 "player_id": 53,
-                "match_rating": 5.9
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -42504,7 +42504,7 @@
                 "distance_covered": 1.1,
                 "distance_sprinted": 0.2,
                 "player_id": 53,
-                "match_rating": 6.1
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -42969,7 +42969,7 @@
                 "distance_covered": 3.7,
                 "distance_sprinted": 1.9,
                 "player_id": 20,
-                "match_rating": 6.7
+                "match_rating": 6.5
             },
             {
                 "performance_type": "Outfield",
@@ -43700,7 +43700,7 @@
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.4,
                 "player_id": 4,
-                "match_rating": 5.8
+                "match_rating": 5.7
             },
             {
                 "performance_type": "Outfield",
@@ -44973,7 +44973,7 @@
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.5,
                 "player_id": 4,
-                "match_rating": 6.1
+                "match_rating": 5.9
             },
             {
                 "performance_type": "Outfield",
@@ -45412,7 +45412,7 @@
                 "minutes_played": 16,
                 "distance_covered": 1.7,
                 "distance_sprinted": 0.5,
-                "match_rating": 5.7,
+                "match_rating": 5.6,
                 "player_id": 62
             },
             {
@@ -45462,7 +45462,7 @@
                 "minutes_played": 16,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.4,
-                "match_rating": 6.3,
+                "match_rating": 6.2,
                 "player_id": 53
             },
             {
@@ -46318,7 +46318,7 @@
                 "minutes_played": 25,
                 "distance_covered": 2.9,
                 "distance_sprinted": 1.1,
-                "match_rating": 6.4,
+                "match_rating": 6.2,
                 "player_id": 62
             },
             {
@@ -46368,7 +46368,7 @@
                 "minutes_played": 21,
                 "distance_covered": 2.2,
                 "distance_sprinted": 0.6,
-                "match_rating": 6.2,
+                "match_rating": 6.0,
                 "player_id": 14
             },
             {
@@ -49816,7 +49816,7 @@
                 "minutes_played": 30,
                 "distance_covered": 3.7,
                 "distance_sprinted": 1.5,
-                "match_rating": 6.0,
+                "match_rating": 5.9,
                 "player_id": 20
             },
             {
@@ -50232,7 +50232,7 @@
                 "minutes_played": 14,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.5,
-                "match_rating": 6.2,
+                "match_rating": 6.0,
                 "player_id": 14
             },
             {
@@ -51946,7 +51946,7 @@
                 "minutes_played": 19,
                 "distance_covered": 2.3,
                 "distance_sprinted": 0.6,
-                "match_rating": 7.0,
+                "match_rating": 6.8,
                 "player_id": 62
             },
             {
@@ -51996,7 +51996,7 @@
                 "minutes_played": 30,
                 "distance_covered": 2.8,
                 "distance_sprinted": 0.6,
-                "match_rating": 6.4,
+                "match_rating": 6.2,
                 "player_id": 14
             },
             {
@@ -52021,7 +52021,7 @@
                 "minutes_played": 19,
                 "distance_covered": 3.0,
                 "distance_sprinted": 1.5,
-                "match_rating": 6.2,
+                "match_rating": 6.0,
                 "player_id": 75
             },
             {
@@ -52361,7 +52361,7 @@
                 "minutes_played": 38,
                 "distance_covered": 4.7,
                 "distance_sprinted": 1.7,
-                "match_rating": 6.8,
+                "match_rating": 6.7,
                 "player_id": 78
             },
             {
@@ -52411,7 +52411,7 @@
                 "minutes_played": 18,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.6,
-                "match_rating": 6.5,
+                "match_rating": 6.3,
                 "player_id": 62
             },
             {
@@ -53192,7 +53192,7 @@
                 "minutes_played": 32,
                 "distance_covered": 3.7,
                 "distance_sprinted": 1.0,
-                "match_rating": 6.5,
+                "match_rating": 6.4,
                 "player_id": 62
             },
             {
@@ -53292,7 +53292,7 @@
                 "minutes_played": 32,
                 "distance_covered": 3.2,
                 "distance_sprinted": 0.8,
-                "match_rating": 6.0,
+                "match_rating": 5.8,
                 "player_id": 64
             },
             {
@@ -53342,7 +53342,7 @@
                 "minutes_played": 13,
                 "distance_covered": 1.7,
                 "distance_sprinted": 0.8,
-                "match_rating": 6.2,
+                "match_rating": 6.0,
                 "player_id": 75
             },
             {
@@ -54123,7 +54123,7 @@
                 "minutes_played": 17,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.6,
-                "match_rating": 6.2,
+                "match_rating": 6.0,
                 "player_id": 62
             },
             {
@@ -54563,7 +54563,7 @@
                 "minutes_played": 17,
                 "distance_covered": 2.1,
                 "distance_sprinted": 0.7,
-                "match_rating": 6.7,
+                "match_rating": 6.5,
                 "player_id": 11
             },
             {
@@ -54638,7 +54638,7 @@
                 "minutes_played": 30,
                 "distance_covered": 4.3,
                 "distance_sprinted": 2.0,
-                "match_rating": 6.8,
+                "match_rating": 6.7,
                 "player_id": 78
             },
             {
@@ -55468,7 +55468,7 @@
                 "minutes_played": 24,
                 "distance_covered": 2.7,
                 "distance_sprinted": 0.7,
-                "match_rating": 6.2,
+                "match_rating": 6.0,
                 "player_id": 53
             },
             {
@@ -55518,7 +55518,7 @@
                 "minutes_played": 34,
                 "distance_covered": 4.7,
                 "distance_sprinted": 2.2,
-                "match_rating": 7.1,
+                "match_rating": 7.0,
                 "player_id": 52
             },
             {
@@ -55834,7 +55834,7 @@
                 "minutes_played": 39,
                 "distance_covered": 4.9,
                 "distance_sprinted": 2.0,
-                "match_rating": 6.7,
+                "match_rating": 6.6,
                 "player_id": 78
             },
             {
@@ -55859,7 +55859,7 @@
                 "minutes_played": 52,
                 "distance_covered": 5.5,
                 "distance_sprinted": 1.5,
-                "match_rating": 6.6,
+                "match_rating": 6.5,
                 "player_id": 64
             },
             {
@@ -55909,7 +55909,7 @@
                 "minutes_played": 13,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.3,
-                "match_rating": 6.0,
+                "match_rating": 5.9,
                 "player_id": 14
             },
             {
@@ -55959,7 +55959,7 @@
                 "minutes_played": 39,
                 "distance_covered": 5.2,
                 "distance_sprinted": 2.9,
-                "match_rating": 6.7,
+                "match_rating": 6.6,
                 "player_id": 52
             },
             {
@@ -56324,7 +56324,7 @@
                 "minutes_played": 23,
                 "distance_covered": 2.6,
                 "distance_sprinted": 0.9,
-                "match_rating": 6.1,
+                "match_rating": 6.0,
                 "player_id": 64
             },
             {
@@ -56715,7 +56715,7 @@
                 "minutes_played": 34,
                 "distance_covered": 3.8,
                 "distance_sprinted": 0.9,
-                "match_rating": 6.5,
+                "match_rating": 6.4,
                 "player_id": 64
             },
             {
@@ -56765,7 +56765,7 @@
                 "minutes_played": 34,
                 "distance_covered": 3.9,
                 "distance_sprinted": 1.1,
-                "match_rating": 6.5,
+                "match_rating": 6.3,
                 "player_id": 62
             },
             {
@@ -56815,7 +56815,7 @@
                 "minutes_played": 19,
                 "distance_covered": 1.9,
                 "distance_sprinted": 0.5,
-                "match_rating": 6.1,
+                "match_rating": 5.9,
                 "player_id": 53
             },
             {
@@ -57205,7 +57205,7 @@
                 "minutes_played": 47,
                 "distance_covered": 5.4,
                 "distance_sprinted": 1.7,
-                "match_rating": 7.1,
+                "match_rating": 7.0,
                 "player_id": 11
             },
             {
@@ -57230,7 +57230,7 @@
                 "minutes_played": 45,
                 "distance_covered": 5.4,
                 "distance_sprinted": 2.0,
-                "match_rating": 5.7,
+                "match_rating": 5.6,
                 "player_id": 62
             },
             {
@@ -57280,7 +57280,7 @@
                 "minutes_played": 20,
                 "distance_covered": 2.8,
                 "distance_sprinted": 1.6,
-                "match_rating": 6.0,
+                "match_rating": 5.8,
                 "player_id": 75
             },
             {
@@ -58010,7 +58010,7 @@
                 "minutes_played": 36,
                 "distance_covered": 4.0,
                 "distance_sprinted": 1.4,
-                "match_rating": 5.9,
+                "match_rating": 5.7,
                 "player_id": 78
             },
             {
@@ -58035,7 +58035,7 @@
                 "minutes_played": 56,
                 "distance_covered": 7.4,
                 "distance_sprinted": 3.2,
-                "match_rating": 7.3,
+                "match_rating": 7.2,
                 "player_id": 4
             },
             {
@@ -58085,7 +58085,7 @@
                 "minutes_played": 13,
                 "distance_covered": 1.2,
                 "distance_sprinted": 0.3,
-                "match_rating": 6.0,
+                "match_rating": 5.8,
                 "player_id": 64
             },
             {
@@ -58942,7 +58942,7 @@
                 "minutes_played": 16,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.4,
-                "match_rating": 6.1,
+                "match_rating": 5.9,
                 "player_id": 14
             },
             {
@@ -59382,7 +59382,7 @@
                 "minutes_played": 36,
                 "distance_covered": 3.4,
                 "distance_sprinted": 0.6,
-                "match_rating": 6.6,
+                "match_rating": 6.5,
                 "player_id": 14
             },
             {
@@ -60162,7 +60162,7 @@
                 "minutes_played": 24,
                 "distance_covered": 3.5,
                 "distance_sprinted": 1.6,
-                "match_rating": 6.4,
+                "match_rating": 6.2,
                 "player_id": 78
             },
             {
@@ -60212,7 +60212,7 @@
                 "minutes_played": 14,
                 "distance_covered": 1.7,
                 "distance_sprinted": 0.6,
-                "match_rating": 6.1,
+                "match_rating": 5.8,
                 "player_id": 11
             },
             {
@@ -61018,7 +61018,7 @@
                 "minutes_played": 24,
                 "distance_covered": 2.6,
                 "distance_sprinted": 0.7,
-                "match_rating": 6.4,
+                "match_rating": 6.3,
                 "player_id": 64
             },
             {
@@ -61118,7 +61118,7 @@
                 "minutes_played": 11,
                 "distance_covered": 1.6,
                 "distance_sprinted": 0.8,
-                "match_rating": 6.2,
+                "match_rating": 6.0,
                 "player_id": 75
             },
             {
@@ -62754,7 +62754,7 @@
                 "minutes_played": 33,
                 "distance_covered": 3.9,
                 "distance_sprinted": 1.2,
-                "match_rating": 6.1,
+                "match_rating": 6.0,
                 "player_id": 62
             },
             {
@@ -64075,7 +64075,7 @@
                 "minutes_played": 24,
                 "distance_covered": 3.1,
                 "distance_sprinted": 1.5,
-                "match_rating": 6.9,
+                "match_rating": 6.8,
                 "player_id": 52
             },
             {
@@ -65271,7 +65271,7 @@
                 "minutes_played": 24,
                 "distance_covered": 2.9,
                 "distance_sprinted": 1.1,
-                "match_rating": 6.5,
+                "match_rating": 6.3,
                 "player_id": 78
             },
             {
@@ -65346,7 +65346,7 @@
                 "minutes_played": 34,
                 "distance_covered": 3.5,
                 "distance_sprinted": 1.1,
-                "match_rating": 6.2,
+                "match_rating": 6.1,
                 "player_id": 14
             },
             {
@@ -65738,7 +65738,7 @@
                 "minutes_played": 26,
                 "distance_covered": 3.2,
                 "distance_sprinted": 1.1,
-                "match_rating": 5.9,
+                "match_rating": 5.8,
                 "player_id": 78
             },
             {
@@ -65788,7 +65788,7 @@
                 "minutes_played": 19,
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.7,
-                "match_rating": 5.7,
+                "match_rating": 5.6,
                 "player_id": 11
             },
             {
@@ -66179,7 +66179,7 @@
                 "minutes_played": 17,
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.7,
-                "match_rating": 6.7,
+                "match_rating": 6.5,
                 "player_id": 11
             },
             {
@@ -66229,7 +66229,7 @@
                 "minutes_played": 17,
                 "distance_covered": 2.0,
                 "distance_sprinted": 0.7,
-                "match_rating": 5.6,
+                "match_rating": 5.5,
                 "player_id": 53
             },
             {
