@@ -1887,9 +1887,9 @@ class MatchRatingsService:
         - Central and Defensive Midfielders act as the first line of the defensive
           block. If the team secures a clean sheet, it strongly implies the midfield
           effectively screened the backline and controlled transition spaces.
-        - Rewards the player with a flat +0.15 bump if the opponent scores zero
-          goals, provided the player was on the pitch long enough (60+ minutes)
-          to have meaningfully contributed to the defensive effort.
+        - Rewards the player with a +0.15 bump if the opponent scores zero
+          goals, scaled down using a square root function for players who
+          played less than 60 minutes to reflect their reduced contribution.
 
         Args:
             raw_score (float): The current, pre-bonus match rating for the midfielder.
@@ -1900,8 +1900,9 @@ class MatchRatingsService:
             float: The adjusted match rating including the clean
                    sheet bonus (if applicable).
         """
-        if (opponent_goals == 0) and (minutes_played >= 60):
-            raw_score += 0.15
+        if opponent_goals == 0:
+            minutes_confidence = np.sqrt(min(minutes_played, 60.0) / 60.0)
+            raw_score += 0.15 * minutes_confidence
         return raw_score
 
     def _apply_cam_modifiers(
