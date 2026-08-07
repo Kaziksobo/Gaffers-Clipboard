@@ -88,7 +88,7 @@ class MatchRatingsService:
     )
 
     # Crude per-shot xG estimate; shared by goal bonus and wasteful-finisher penalty.
-    XG_PER_SHOT: Final[float] = 0.20
+    XG_PER_SHOT: Final[float] = 0.1116
     # Minimum fraction of a goal that always counts toward the bonus,
     # preventing a high shot volume from erasing the reward for scoring.
     GOAL_FLOOR_RATE: Final[float] = 0.40
