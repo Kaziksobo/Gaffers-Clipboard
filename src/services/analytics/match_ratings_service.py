@@ -92,7 +92,7 @@ class MatchRatingsService:
 
     # ── Option A: Post-sigmoid bonus constants ────────────────────────────────────
 
-    # Goal bonus: α x log2(goals+1) x isolation  # noqa: RUF003
+    # Goal bonus: α x goals x isolation  # noqa: RUF003
     GOAL_ALPHA: Final = MappingProxyType(
         {
             "ST": 0.30,
@@ -111,7 +111,7 @@ class MatchRatingsService:
         }
     )
 
-    # Assist bonus: γ x log2(assists+1) x isolation  # noqa: RUF003
+    # Assist bonus: γ x assists x isolation  # noqa: RUF003
     ASSIST_GAMMA: Final = MappingProxyType(
         {
             "ST": 0.25,
@@ -1587,9 +1587,9 @@ class MatchRatingsService:
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
         if goals >= 1:
-            bonus += self.GOAL_ALPHA.get("CB", 0.0) * float(np.log2(goals + 1))
+            bonus += self.GOAL_ALPHA.get("CB", 0.0) * goals * (goals + 1) / 2
         if assists >= 1:
-            bonus += self.ASSIST_GAMMA.get("CB", 0.0) * float(np.log2(assists + 1))
+            bonus += self.ASSIST_GAMMA.get("CB", 0.0) * assists * (assists + 1) / 2
 
         # Dominant Stopper mastery
         bonus += self._apply_mastery_bonus(
@@ -1667,9 +1667,9 @@ class MatchRatingsService:
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
         if goals >= 1:
-            bonus += self.GOAL_ALPHA.get("RB", 0.0) * float(np.log2(goals + 1))
+            bonus += self.GOAL_ALPHA.get("RB", 0.0) * goals * (goals + 1) / 2
         if assists >= 1:
-            bonus += self.ASSIST_GAMMA.get("RB", 0.0) * float(np.log2(assists + 1))
+            bonus += self.ASSIST_GAMMA.get("RB", 0.0) * assists * (assists + 1) / 2
 
         # Third CB mastery
         bonus += self._apply_mastery_bonus(
@@ -1756,13 +1756,17 @@ class MatchRatingsService:
         if goals >= 1:
             bonus += (
                 self.GOAL_ALPHA.get("RWB", 0.0)
-                * float(np.log2(goals + 1))
+                * goals
+                * (goals + 1)
+                / 2
                 * isolation_multiplier
             )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("RWB", 0.0)
-                * float(np.log2(assists + 1))
+                * assists
+                * (assists + 1)
+                / 2
                 * isolation_multiplier
             )
 
@@ -1842,13 +1846,17 @@ class MatchRatingsService:
         if goals >= 1:
             bonus += (
                 self.GOAL_ALPHA.get("CDM", 0.0)
-                * float(np.log2(goals + 1))
+                * goals
+                * (goals + 1)
+                / 2
                 * isolation_multiplier
             )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("CDM", 0.0)
-                * float(np.log2(assists + 1))
+                * assists
+                * (assists + 1)
+                / 2
                 * isolation_multiplier
             )
 
@@ -1938,13 +1946,17 @@ class MatchRatingsService:
         if goals >= 1:
             bonus += (
                 self.GOAL_ALPHA.get("CM", 0.0)
-                * float(np.log2(goals + 1))
+                * goals
+                * (goals + 1)
+                / 2
                 * isolation_multiplier
             )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("CM", 0.0)
-                * float(np.log2(assists + 1))
+                * assists
+                * (assists + 1)
+                / 2
                 * isolation_multiplier
             )
 
@@ -2014,13 +2026,17 @@ class MatchRatingsService:
         if goals >= 1:
             bonus += (
                 self.GOAL_ALPHA.get("CAM", 0.0)
-                * float(np.log2(goals + 1))
+                * goals
+                * (goals + 1)
+                / 2
                 * isolation_multiplier
             )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("CAM", 0.0)
-                * float(np.log2(assists + 1))
+                * assists
+                * (assists + 1)
+                / 2
                 * isolation_multiplier
             )
 
@@ -2094,13 +2110,17 @@ class MatchRatingsService:
         if goals >= 1:
             bonus += (
                 self.GOAL_ALPHA.get("RM", 0.0)
-                * float(np.log2(goals + 1))
+                * goals
+                * (goals + 1)
+                / 2
                 * isolation_multiplier
             )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("RM", 0.0)
-                * float(np.log2(assists + 1))
+                * assists
+                * (assists + 1)
+                / 2
                 * isolation_multiplier
             )
 
@@ -2179,13 +2199,17 @@ class MatchRatingsService:
         if goals >= 1:
             bonus += (
                 self.GOAL_ALPHA.get("RW", 0.0)
-                * float(np.log2(goals + 1))
+                * goals
+                * (goals + 1)
+                / 2
                 * isolation_multiplier
             )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("RW", 0.0)
-                * float(np.log2(assists + 1))
+                * assists
+                * (assists + 1)
+                / 2
                 * isolation_multiplier
             )
 
@@ -2263,13 +2287,17 @@ class MatchRatingsService:
         if goals >= 1:
             bonus += (
                 self.GOAL_ALPHA.get("ST", 0.0)
-                * float(np.log2(goals + 1))
+                * goals
+                * (goals + 1)
+                / 2
                 * isolation_multiplier
             )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("ST", 0.0)
-                * float(np.log2(assists + 1))
+                * assists
+                * (assists + 1)
+                / 2
                 * isolation_multiplier
             )
 
