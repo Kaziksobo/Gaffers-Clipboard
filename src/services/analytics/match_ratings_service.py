@@ -89,9 +89,169 @@ class MatchRatingsService:
 
     # Crude per-shot xG estimate; shared by goal bonus and wasteful-finisher penalty.
     XG_PER_SHOT: Final[float] = 0.1116
-    # Minimum fraction of a goal that always counts toward the bonus,
-    # preventing a high shot volume from erasing the reward for scoring.
-    GOAL_FLOOR_RATE: Final[float] = 0.40
+
+    # ── Option A: Post-sigmoid bonus constants ────────────────────────────────────
+
+    # Goal bonus: α x log2(goals+1) x isolation  # noqa: RUF003
+    GOAL_ALPHA: Final = MappingProxyType(
+        {
+            "ST": 0.30,
+            "RW": 0.40,
+            "LW": 0.40,
+            "RM": 0.35,
+            "LM": 0.35,
+            "CM": 0.20,
+            "CAM": 0.28,
+            "CDM": 0.15,
+            "CB": 0.15,
+            "RB": 0.15,
+            "LB": 0.15,
+            "RWB": 0.22,
+            "LWB": 0.22,
+        }
+    )
+
+    # Assist bonus: γ x log2(assists+1) x isolation  # noqa: RUF003
+    ASSIST_GAMMA: Final = MappingProxyType(
+        {
+            "ST": 0.25,
+            "RW": 0.25,
+            "LW": 0.25,
+            "RM": 0.25,
+            "LM": 0.25,
+            "CM": 0.25,
+            "CAM": 0.28,
+            "CDM": 0.15,
+            "CB": 0.15,
+            "RB": 0.15,
+            "LB": 0.15,
+            "RWB": 0.22,
+            "LWB": 0.22,
+        }
+    )
+
+    # Mastery: min(excess, cap) x weight x impact_scalar, per condition
+    MASTERY_WEIGHT: Final[float] = 0.15
+    MASTERY_EXCESS_CAP: Final[float] = 2.0
+
+    # CDM Reliable Pivot gate + tier bonuses
+    CDM_PIVOT_MIN_MINUTES: Final[float] = 45.0
+    CDM_PIVOT_MIN_PASS_ACC: Final[float] = 88.0
+    CDM_PIVOT_MIN_PASSES_Z: Final[float] = 0.8
+    CDM_PIVOT_PERFECT_METRONOME: Final[float] = 0.30  # possession_lost == 0
+    CDM_PIVOT_RELIABLE_SHIFT: Final[float] = 0.15  # possession_lost <= 2
+
+    # ST Hold-Up Bonus
+    ST_HOLDUP_MIN_INV: Final[float] = 20.0
+    ST_HOLDUP_MIN_RATIO: Final[float] = 6.0
+    ST_HOLDUP_SCALE: Final[float] = 0.012
+    ST_HOLDUP_CAP: Final[float] = 0.30
+
+    # ST Black Hole Penalty
+    ST_BLACKHOLE_MIN_POSS_LOST: Final[float] = 2.0
+    ST_BLACKHOLE_MIN_RATIO: Final[float] = 1.0
+    ST_BLACKHOLE_SCALE: Final[float] = 0.060
+    ST_BLACKHOLE_CAP: Final[float] = 0.50
+
+    # ST Wasteful Finisher Penalty
+    ST_WASTEFUL_MIN_SHOTS: Final[float] = 3.0
+    ST_WASTEFUL_MIN_DEFICIT: Final[float] = 0.40
+    ST_WASTEFUL_SCALE: Final[float] = 0.18
+    ST_WASTEFUL_CAP: Final[float] = 0.50
+
+    # Winger Wastefulness Penalty (wasted_shots >= 3 AND creative == 0)
+    WINGER_WASTEFUL_PER_SHOT: Final[float] = 0.15
+
+    # CB/FB clean sheet: xG-tiered x linear ramp (min(mp,60)/60)
+    CS_CB_LOW_XG: Final[float] = 0.50  # opponent xG <= 1.0
+    CS_CB_MID_XG: Final[float] = 0.36  # 1.0 < opponent xG < 2.0
+    CS_CB_HIGH_XG: Final[float] = 0.16  # opponent xG >= 2.0
+
+    # Clean sheet position ratios (fraction of CB tier values)
+    CS_RATIOS: Final = MappingProxyType(
+        {
+            "CB": 1.00,
+            "RB": 0.60,
+            "LB": 0.60,
+            "RWB": 0.50,
+            "LWB": 0.50,
+            "CDM": 0.48,
+            "CM": 0.36,
+            "RM": 0.28,
+            "LM": 0.28,
+            "CAM": 0.00,
+        }
+    )
+
+    # CB/FB collapse penalty (3+ goals conceded, 60+ minutes)
+    COLLAPSE_PENALTY: Final[float] = 0.20
+
+    # Position-specific z-score floors applied post-z-scoring.
+    # Prevents stats structurally irrelevant to a position from
+    # inappropriately penalising the player in the dot product.
+    Z_SCORE_FLOORS: Final = MappingProxyType(
+        {
+            "CB": MappingProxyType(
+                {
+                    "non_goal_shots_p90_z": 0.0,  # CBs never shoot
+                    "dribbles_p90_z": -0.5,  # optional for CBs, mild protection
+                    "assists_p90_z": -0.5,  # CBs rarely assist
+                }
+            ),
+            "RB": MappingProxyType(
+                {
+                    "non_goal_shots_p90_z": 0.0,
+                    "assists_p90_z": -0.5,
+                }
+            ),
+            "LB": MappingProxyType(
+                {
+                    "non_goal_shots_p90_z": 0.0,
+                    "assists_p90_z": -0.5,
+                }
+            ),
+            "CDM": MappingProxyType(
+                {
+                    "non_goal_shots_p90_z": 0.0,  # CDMs should never shoot
+                    "fouls_committed_p90_z": -0.5,  # tactical fouling is the role
+                    "xt_bonus_p90_z": 0.0,  # CDMs not expected to generate xT
+                }
+            ),
+            "CM": MappingProxyType(
+                {
+                    "fouls_committed_p90_z": -0.5,
+                }
+            ),
+            "ST": MappingProxyType(
+                {
+                    "tackles_p90_z": -1.0,
+                    "possession_won_p90_z": -1.0,
+                }
+            ),
+            "RW": MappingProxyType(
+                {
+                    "tackles_p90_z": -1.0,
+                    "possession_won_p90_z": -1.0,
+                }
+            ),
+            "LW": MappingProxyType(
+                {
+                    "tackles_p90_z": -1.0,
+                    "possession_won_p90_z": -1.0,
+                }
+            ),
+            "RWB": MappingProxyType(
+                {
+                    "non_goal_shots_p90_z": 0.0,
+                }
+            ),
+            "LWB": MappingProxyType(
+                {
+                    "non_goal_shots_p90_z": 0.0,
+                }
+            ),
+        }
+    )
 
     # Multi-position hybrid parameters.
     # ALPHA_BASE scales cosine similarity into the drag coefficient alpha.
@@ -773,19 +933,50 @@ class MatchRatingsService:
                 ),
                 normalized_metrics=normalized_metrics,
             )
+            # Perfect efficiency fix: a player who scored every shot
+            # (non_goal_shots == 0) should not be penalised for having zero shot volume.
+            # Floor at 0.
+            if (
+                normalized_metrics.get("goals", 0) >= 1
+                and p90_metrics.get("non_goal_shots_p90", 0.0) == 0.0
+            ):
+                z_scores["non_goal_shots_p90_z"] = max(
+                    0.0, z_scores.get("non_goal_shots_p90_z", 0.0)
+                )
+
+            # Position-specific z-score floors
+            for stat_z, floor_val in self.Z_SCORE_FLOORS.get(pos, {}).items():
+                if stat_z in z_scores:
+                    z_scores[stat_z] = max(floor_val, z_scores[stat_z])
 
             isolation_multiplier: float = self._calculate_tactical_isolation_multiplier(
                 z_scores=z_scores,
             )
 
-            processed_raw_score, event_bonus = self._apply_pos_modifiers(
+            effective_minutes: float = min(minutes_played, 90.0)
+            impact_scalar: float = float(np.sqrt(effective_minutes / 90.0))
+
+            dot: float = self._calculate_dot_product(
+                z_scores=z_scores, weights=final_weights
+            )
+
+            # Option A: base_rating = sigmoid(dot), bonuses added post-sigmoid.
+            # Conditional impact_scalar: only applied for below-average performances.
+            adjusted_dot: float = dot * impact_scalar if dot < 0.0 else dot
+
+            base_rating: float = self._apply_sigmoid_transformation(
+                raw_score=adjusted_dot
+            )
+
+            bonus: float = self._apply_pos_modifiers(
+                base_rating=base_rating,
                 z_scores=z_scores,
                 pos=pos,
                 opponent_goals=opponent_goals,
                 opponent_xg=opponent_xg,
-                final_weights=final_weights,
                 performance_metrics=normalized_metrics,
                 minutes_played=minutes_played,
+                impact_scalar=impact_scalar,
                 isolation_multiplier=isolation_multiplier,
             )
 
@@ -794,21 +985,25 @@ class MatchRatingsService:
                 xg_against=opponent_xg,
             )
 
-            effective_minutes = min(minutes_played, 90.0)
-            impact_scalar = np.sqrt(effective_minutes / 90.0)
-            raw_score = (processed_raw_score * impact_scalar) + event_bonus
+            # Scale supremacy deduction by individual performance quality.
+            # Above-average performers in dominant games lose less of their rating.
+            # At dot=0.0 (average): full deduction. At dot>=1.5 (exceptional): none.
+            individual_quality_factor: float = max(0.0, 1.0 - dot / 1.5)
+            adjusted_supremacy: float = (
+                match_supremacy_scalar * individual_quality_factor
+            )
 
-            raw_rating: float = self._apply_sigmoid_transformation(raw_score=raw_score)
-            final_rating: float = raw_rating - match_supremacy_scalar
-            final_rating: float = max(0.0, min(10.0, final_rating))
+            final_rating: float = base_rating + bonus - adjusted_supremacy
+            final_rating = max(0.0, min(10.0, final_rating))
             logger.debug(
                 (
                     "Position rating computed "
-                    "(player_id=%s, pos=%s, raw_score=%.3f, final=%.2f)."
+                    "(player_id=%s, pos=%s, base=%.3f, bonus=%.3f, final=%.2f)."
                 ),
                 performance.get("player_id"),
                 pos,
-                raw_score,
+                base_rating,
+                bonus,
                 final_rating,
             )
             calculated_ratings.append(final_rating)
@@ -1146,123 +1341,120 @@ class MatchRatingsService:
 
     def _apply_pos_modifiers(
         self,
+        base_rating: float,
         z_scores: dict[str, float],
         pos: str,
         opponent_goals: int | float,
         opponent_xg: float,
-        final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
+        impact_scalar: float,
         isolation_multiplier: float = 1.0,
-    ) -> tuple[float, float]:
-        """Apply position-specific modifier pipelines to the raw outfield score.
+    ) -> float:
+        """Route to the position bonus pipeline and return total post-sigmoid bonus.
 
-        This dispatcher routes the standardized metrics through the appropriate
-        positional adjustment logic so each role is evaluated according to its
-        tactical responsibilities and defensive context.
+        Each modifier method returns a float representing the total rating-point
+        bonus (or penalty) to add to base_rating. The caller clamps the result.
 
         Args:
-            z_scores (dict[str, float]): The per-90 Z-scores for the player's
-                performance metrics.
-            pos (str): The primary position code for the current rating pass
-                (e.g., "CB", "CM", "ST").
-            opponent_goals (int | float): The number of goals conceded by the
-                player's team in the match.
-            opponent_xg (float): The expected goals generated by the opponent.
-            final_weights (np.ndarray): The positional weighting vector applied
-                in the base dot-product score.
-            performance_metrics (dict[str, float]): The raw or normalized
-                counting stats for the player, used for bonus logic.
-            minutes_played (float): The number of minutes the player was on the
-                pitch, used to gate certain bonuses or penalties.
-            isolation_multiplier (float): A decay multiplier for attackers who
-                isolate themselves from the build-up. Defaults to 1.0 (no decay).
+            base_rating: The sigmoid output before any bonuses — used by modifier
+                methods that condition bonus size on quality.
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            pos: Position code for the current rating pass (e.g. "CB", "CM", "ST").
+            opponent_goals: Goals conceded by the player's team.
+            opponent_xg: Expected goals generated by the opponent.
+            performance_metrics: Raw/normalized counting stats for bonus logic.
+            minutes_played: Minutes on pitch, used for ramp calculations.
+            impact_scalar: √(min(mp,90)/90), used to scale mastery bonuses.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
-                is the goal/assist contribution kept separate so the caller can
-                apply the minutes impact scalar only to the base score.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
         if pos == "CB":
             return self._apply_cb_modifiers(
                 z_scores=z_scores,
                 opponent_goals=opponent_goals,
                 opponent_xg=opponent_xg,
-                final_weights=final_weights,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                impact_scalar=impact_scalar,
             )
         elif pos in {"LB", "RB"}:
             return self._apply_fb_modifiers(
                 z_scores=z_scores,
                 opponent_goals=opponent_goals,
                 opponent_xg=opponent_xg,
-                final_weights=final_weights,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                impact_scalar=impact_scalar,
             )
         elif pos in {"LWB", "RWB"}:
             return self._apply_wb_modifiers(
                 z_scores=z_scores,
                 opponent_goals=opponent_goals,
                 opponent_xg=opponent_xg,
-                final_weights=final_weights,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                impact_scalar=impact_scalar,
+                isolation_multiplier=isolation_multiplier,
             )
         elif pos == "CDM":
             return self._apply_cdm_modifiers(
                 z_scores=z_scores,
                 opponent_goals=opponent_goals,
-                final_weights=final_weights,
+                opponent_xg=opponent_xg,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                impact_scalar=impact_scalar,
                 isolation_multiplier=isolation_multiplier,
             )
         elif pos == "CM":
             return self._apply_cm_modifiers(
                 z_scores=z_scores,
                 opponent_goals=opponent_goals,
-                final_weights=final_weights,
+                opponent_xg=opponent_xg,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                impact_scalar=impact_scalar,
                 isolation_multiplier=isolation_multiplier,
             )
         elif pos == "CAM":
             return self._apply_cam_modifiers(
                 z_scores=z_scores,
-                final_weights=final_weights,
                 performance_metrics=performance_metrics,
+                impact_scalar=impact_scalar,
                 isolation_multiplier=isolation_multiplier,
             )
         elif pos in {"RM", "LM"}:
             return self._apply_wm_modifiers(
                 z_scores=z_scores,
                 opponent_goals=opponent_goals,
-                final_weights=final_weights,
+                opponent_xg=opponent_xg,
                 performance_metrics=performance_metrics,
                 minutes_played=minutes_played,
+                impact_scalar=impact_scalar,
                 isolation_multiplier=isolation_multiplier,
             )
         elif pos in {"RW", "LW"}:
             return self._apply_winger_modifiers(
                 z_scores=z_scores,
-                final_weights=final_weights,
                 performance_metrics=performance_metrics,
+                impact_scalar=impact_scalar,
                 isolation_multiplier=isolation_multiplier,
             )
         elif pos == "ST":
             return self._apply_st_modifiers(
                 z_scores=z_scores,
-                final_weights=final_weights,
                 performance_metrics=performance_metrics,
+                impact_scalar=impact_scalar,
                 isolation_multiplier=isolation_multiplier,
             )
         else:
             logger.warning(
-                "Unknown position '%s' for modifiers; returning 0.0 raw score.", pos
+                "Unknown position '%s' for modifiers; returning 0.0 bonus.", pos
             )
-            return 0.0, 0.0
+            return 0.0
 
     def _apply_z_score_floors(
         self, z_scores: dict[str, float], floors: dict[str, float]
@@ -1279,23 +1471,36 @@ class MatchRatingsService:
 
     def _apply_mastery_bonus(
         self,
-        raw_score: float,
         z_scores: dict,
         key_a: str,
         key_b: str,
         threshold: float,
-        weight: float,
+        impact_scalar: float,
     ) -> float:
-        """Apply a dual-skill mastery bonus.
+        """Return post-sigmoid mastery bonus: min(excess, cap) x weight x impact.
 
-        Rewards a player who exceeds a threshold on BOTH of two complementary skills
-        simultaneously - the min() ensures genuine dual excellence rather than
-        just excelling at one dimension. Used across all nine position modifiers.
+        Rewards genuine dual excellence — both z_scores must exceed threshold.
+        Scales proportionally with excess up to MASTERY_EXCESS_CAP, then flat.
+
+        Args:
+            z_scores: Per-90 Z-score dictionary.
+            key_a: First mastery condition Z-score key.
+            key_b: Second mastery condition Z-score key.
+            threshold: Minimum value both keys must exceed.
+            impact_scalar: √(min(mp,90)/90) — scales bonus for cameos.
+
+        Returns:
+            float: Rating-point bonus, or 0.0 if threshold not met.
         """
         mastery = min(z_scores.get(key_a, 0.0), z_scores.get(key_b, 0.0))
         if mastery > threshold:
-            raw_score += (mastery - threshold) * weight
-        return raw_score
+            excess = mastery - threshold
+            return (
+                min(excess, self.MASTERY_EXCESS_CAP)
+                * self.MASTERY_WEIGHT
+                * impact_scalar
+            )
+        return 0.0
 
     def _calculate_dot_product(
         self, z_scores: dict[str, float], weights: np.ndarray
@@ -1347,1080 +1552,769 @@ class MatchRatingsService:
             weights,
         )
 
-    def _effective_goal_bonus(self, goals: float, shots: float, coeff: float) -> float:
-        """Calculate a goal bonus scaled by finishing efficiency.
-
-        Uses above-expected goals (goals minus estimated xG) so a player who
-        scores the same number of goals from fewer shots is rewarded more. A
-        per-goal floor ensures scoring always contributes positively regardless
-        of shot volume.
-
-        Args:
-            goals (float): Goals scored in the match.
-            shots (float): Total shots taken (including goals).
-            coeff (float): Position-specific goal bonus coefficient.
-
-        Returns:
-            float: The goal bonus contribution to the raw score.
-        """
-        above_expected = max(
-            goals - shots * self.XG_PER_SHOT,
-            goals * self.GOAL_FLOOR_RATE,
-        )
-        return above_expected * coeff
-
     def _apply_cb_modifiers(
         self,
         z_scores: dict[str, float],
         opponent_goals: int | float,
         opponent_xg: float,
-        final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> tuple[float, float]:  # sourcery skip: class-extract-method
-        """Apply Center Back (CB) specific scoring logic and situational bonuses.
+        impact_scalar: float,
+    ) -> float:
+        """Apply Center Back (CB) specific post-sigmoid bonuses and penalties.
 
         Philosophy:
-        - Rewards elite ball-playing ability (exceptionally high passing volume).
-        - Rewards dominant defensive displays (exceptionally high tackles and
-          possession won).
-        - Provides flat boosts for rare attacking contributions (goals/assists).
-        - Contextually rewards clean sheets based on opponent xG and penalizes
-          heavy defensive collapses (conceding 3+ goals while on the pitch).
+        - Rewards rare attacking contributions (goals/assists) at a modest flat rate.
+        - Rewards dual defensive excellence (Dominant Stopper) and ball-playing
+        ability (Ball Playing Defender) proportionally via mastery bonuses.
+        - Contextually rewards clean sheets using xG tiers and a linear minutes
+        ramp, penalises heavy defensive collapses (3+ goals conceded).
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            opponent_xg (float): Expected goals (xG) generated by the opponent.
-            final_weights (np.ndarray): The base positional weights for dot product.
-            performance_metrics (dict[str, float]): Raw, unstandardized performance
-                metrics (e.g., total goals, assists).
-            minutes_played (float): The number of minutes the player was on the pitch.
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            opponent_goals: Total goals scored by the opposing team.
+            opponent_xg: Expected goals generated by the opponent.
+            performance_metrics: Raw/normalized counting stats.
+            minutes_played: Minutes on the pitch.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
 
         Returns:
-            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus is
-                the goal/assist contribution, returned separately so the caller can
-                apply the minutes impact scalar only to the base score.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
+        bonus: float = 0.0
 
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=0.75,
-            )
-            + performance_metrics.get("assists", 0) * 0.55
-        )
+        # Goal and assist bonuses (no isolation — CB contributions are set-piece driven)
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += self.GOAL_ALPHA.get("CB", 0.0) * float(np.log2(goals + 1))
+        if assists >= 1:
+            bonus += self.ASSIST_GAMMA.get("CB", 0.0) * float(np.log2(assists + 1))
 
-        # Dominant Stopper
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Dominant Stopper mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="tackles_p90_z",
             key_b="possession_won_p90_z",
-            threshold=1.5,
-            weight=0.25,
+            threshold=1.2,
+            impact_scalar=impact_scalar,
         )
 
-        # Ball Playing Defender
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Ball Playing Defender mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
-            key_b="possession_won_p90_z",
+            key_b="dribbles_p90_z",
             threshold=1.0,
-            weight=0.20,
+            impact_scalar=impact_scalar,
         )
 
-        raw_score = self._apply_defender_clean_sheet_bonus(
-            raw_score=raw_score,
-            opponent_goals=opponent_goals,
-            opponent_xg=opponent_xg,
-            minutes_played=minutes_played,
-        )
-        if opponent_goals >= 3 and minutes_played >= 60:
-            raw_score -= 0.3
-
-        return raw_score, event_bonus
-
-    def _apply_defender_clean_sheet_bonus(
-        self,
-        raw_score: float,
-        opponent_goals: int | float,
-        opponent_xg: float,
-        minutes_played: float,
-    ) -> float:
-        """Calculate and apply a context-aware clean sheet bonus for defenders.
-
-        Philosophy:
-        - Rewards the ultimate defensive objective: keeping a clean sheet.
-        - Scales the reward dynamically using Expected Goals (xG) to reflect true
-          defensive dominance versus luck.
-        - A clean sheet with low opponent xG (<= 1.0) indicates a stifling, dominant
-          defensive performance, yielding the maximum bonus.
-        - A clean sheet with high opponent xG (>= 2.0) suggests the defense was
-          porous and relied heavily on poor opponent finishing or exceptional
-          goalkeeping, yielding a minimal bonus.
-        - If they have played less than 60 minutes, the bonus is scaled down using
-          a square root function to reflect the reduced impact of their contribution.
-
-        Args:
-            raw_score (float): The current, pre-bonus match rating for the defender.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            opponent_xg (float): Expected goals (xG) generated by the opponent.
-
-        Returns:
-            float: The adjusted match rating including the contextual clean sheet bonus.
-        """
+        # xG-tiered clean sheet x linear ramp
         if opponent_goals == 0:
-            minutes_confidence = np.sqrt(min(minutes_played, 60.0) / 60.0)
+            ramp: float = min(minutes_played, 60.0) / 60.0
+            ratio: float = self.CS_RATIOS.get("CB", 1.0)
             if opponent_xg <= 1.0:
-                bonus = 0.5
-            elif opponent_xg >= 2.0:
-                bonus = 0.15
+                bonus += self.CS_CB_LOW_XG * ratio * ramp
+            elif opponent_xg < 2.0:
+                bonus += self.CS_CB_MID_XG * ratio * ramp
             else:
-                bonus = 0.35
-            return raw_score + (bonus * minutes_confidence)
-        return raw_score
+                bonus += self.CS_CB_HIGH_XG * ratio * ramp
+
+        # Heavy collapse penalty
+        if opponent_goals >= 3 and minutes_played >= 60:
+            bonus -= self.COLLAPSE_PENALTY
+
+        return bonus
 
     def _apply_fb_modifiers(
         self,
         z_scores: dict[str, float],
         opponent_goals: int | float,
         opponent_xg: float,
-        final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> tuple[float, float]:
-        """Apply Fullback (FB/LB/RB) specific scoring logic and situational bonuses.
+        impact_scalar: float,
+    ) -> float:
+        """Apply Fullback (RB/LB) specific post-sigmoid bonuses and penalties.
 
         Philosophy:
-        - Implements a "Tactical Instruction" floor: prevents severe penalties for
-          low dribbling volume and Expected Threat (xT). This protects players who
-          are tactically instructed to "Stay Back While Attacking" from being
-          statistically punished for following managerial orders. The floor is lifted
-          when the fullback is acting as a third CB (high tackles + possession won).
-        - Rewards direct goal contributions, valuing assists slightly higher than
-          goals to reflect the modern fullback's role as a wide creator.
-        - Applies dedicated, modular bonuses for exceptional defensive solidity and
-          attacking progression.
-        - Contextually rewards clean sheets based on opponent xG and penalizes heavy
-          defensive collapses (conceding 3+ goals while on the pitch).
+        - Rewards attacking contributions at a modest flat rate.
+        - Rewards three mastery archetypes: Third CB (defensive solidity),
+        Express Train (physical progression), and Wide Playmaker (technical
+        width). All proportional and capped via the shared mastery formula.
+        - Contextually rewards clean sheets using xG tiers and a linear ramp.
+        - Penalises heavy defensive collapses.
+
+        Note: The tactical instruction floor (dribbles/xT floored at -0.5 for
+        stay-back FBs) has been removed. With real-world anchored means, a
+        stay-back FB naturally sits near z=0 on those stats, so no correction
+        is needed.
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            opponent_xg (float): Expected goals (xG) generated by the opponent.
-            final_weights (np.ndarray): The base positional weights for dot product.
-            performance_metrics (dict[str, float]): Raw, unstandardized performance
-                metrics (e.g., total goals, assists).
-            minutes_played (float): The number of minutes the player was on the pitch.
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            opponent_goals: Total goals scored by the opposing team.
+            opponent_xg: Expected goals generated by the opponent.
+            performance_metrics: Raw/normalized counting stats.
+            minutes_played: Minutes on the pitch.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
 
         Returns:
-            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
-                is the goal/assist contribution kept separate so the caller can
-                apply the minutes impact scalar only to the base score.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        third_cb_active = (
-            min(
-                z_scores.get("tackles_p90_z", 0.0),
-                z_scores.get("possession_won_p90_z", 0.0),
-            )
-            > 1.0
-        )
-        attacking_floor = 0.0 if third_cb_active else -0.5
-        self._apply_z_score_floors(
-            z_scores,
-            {"dribbles_p90_z": attacking_floor, "xt_bonus_p90_z": attacking_floor},
-        )
+        bonus: float = 0.0
 
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
+        # Goal and assist bonuses (no isolation for defenders)
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += self.GOAL_ALPHA.get("RB", 0.0) * float(np.log2(goals + 1))
+        if assists >= 1:
+            bonus += self.ASSIST_GAMMA.get("RB", 0.0) * float(np.log2(assists + 1))
 
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=0.5,
-            )
-            + performance_metrics.get("assists", 0) * 0.4
-        )
-
-        raw_score = self._apply_defensive_fb_bonuses(
-            raw_score=raw_score,
-            z_scores=z_scores,
-        )
-
-        raw_score = self._apply_attacking_fb_bonuses(
-            raw_score=raw_score,
-            z_scores=z_scores,
-        )
-
-        raw_score = self._apply_defender_clean_sheet_bonus(
-            raw_score=raw_score,
-            opponent_goals=opponent_goals,
-            opponent_xg=opponent_xg,
-            minutes_played=minutes_played,
-        )
-        if opponent_goals >= 3 and minutes_played >= 60:
-            raw_score -= 0.3
-
-        return raw_score, event_bonus
-
-    def _apply_defensive_fb_bonuses(
-        self, raw_score: float, z_scores: dict[str, float]
-    ) -> float:
-        """Apply situational defensive bonuses for Fullbacks.
-
-        Philosophy:
-        - Rewards the "Third CB" archetype.
-        - Uses 'Bottleneck Synergy' to scalably reward mastery of the role.
-        - The bonus only scales if the player simultaneously increases BOTH
-          tackling and possession recovery.
-        """
-        return self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Third CB mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="tackles_p90_z",
             key_b="possession_won_p90_z",
             threshold=1.0,
-            weight=0.25,
+            impact_scalar=impact_scalar,
         )
 
-    def _apply_attacking_fb_bonuses(
-        self, raw_score: float, z_scores: dict[str, float]
-    ) -> float:
-        """Apply situational attacking and progression bonuses for Fullbacks.
-
-        Philosophy:
-        - Rewards the "Express Train" archetype
-        - Uses 'Bottleneck Synergy' to scalably reward mastery of the role.
-        - Rewards the "Wide Playmaker" archetype, acknowledging that some fullbacks
-          excel not through raw physicality but by being elite distributors and
-          dribblers in wide areas, effectively acting as auxiliary playmakers.
-        """
-        # Reward Path B: The "Express Train"
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Express Train mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="distance_sprinted_p90_z",
             key_b="xt_bonus_p90_z",
             threshold=1.0,
-            weight=0.20,
+            impact_scalar=impact_scalar,
         )
 
-        # Reward Path C: The "Wide Playmaker"
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Wide Playmaker mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="dribbles_p90_z",
             threshold=1.0,
-            weight=0.15,
+            impact_scalar=impact_scalar,
         )
 
-        return raw_score
+        # xG-tiered clean sheet x linear ramp (RB and LB share the same ratio)
+        if opponent_goals == 0:
+            ramp: float = min(minutes_played, 60.0) / 60.0
+            ratio: float = self.CS_RATIOS.get("RB", 0.60)
+            if opponent_xg <= 1.0:
+                bonus += self.CS_CB_LOW_XG * ratio * ramp
+            elif opponent_xg < 2.0:
+                bonus += self.CS_CB_MID_XG * ratio * ramp
+            else:
+                bonus += self.CS_CB_HIGH_XG * ratio * ramp
+
+        # Heavy collapse penalty
+        if opponent_goals >= 3 and minutes_played >= 60:
+            bonus -= self.COLLAPSE_PENALTY
+
+        return bonus
 
     def _apply_wb_modifiers(
         self,
         z_scores: dict[str, float],
         opponent_goals: int | float,
         opponent_xg: float,
-        final_weights: np.ndarray,
         performance_metrics: dict[str, float],
         minutes_played: float,
-    ) -> tuple[float, float]:
-        """Apply Wingback (WB/LWB/RWB) specific scoring logic and situational bonuses.
+        impact_scalar: float,
+        isolation_multiplier: float = 1.0,
+    ) -> float:
+        """Apply Wingback (RWB/LWB) specific post-sigmoid bonuses and penalties.
 
         Philosophy:
-        - Heavily rewards direct goal contributions, valuing assists (0.8) higher
-          than goals (0.6) to reflect their primary role as wide playmakers.
-        - Applies a scaling bonus for elite physical exertion (distance sprinted)
-          combined with ball progression (Expected Threat) — the "Relentless Engine".
-        - Applies a scaling synergy bonus for elite two-way play: high output in
-          both tackles and possession won simultaneously.
-        - Contextually rewards clean sheets based on opponent xG.
+        - More attacking than a fullback — rewards goal/assist contributions at
+        a higher rate than FB, scaled by isolation multiplier.
+        - Two mastery archetypes: Relentless Engine (physical progression) and
+        Two-Way Flank (defensive contribution alongside attacking output).
+        - Receives a clean sheet bonus at a lower ratio than FB, reflecting that
+        WBs push forward and contribute less to defensive solidity.
+        - Collapse penalty applies — WBs remain part of the defensive structure.
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            opponent_xg (float): Expected goals (xG) generated by the opponent.
-            final_weights (np.ndarray): The base positional weights for dot product.
-            performance_metrics (dict[str, float]): Raw, unstandardized performance
-                metrics (e.g., total goals, assists).
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            opponent_goals: Total goals scored by the opposing team.
+            opponent_xg: Expected goals generated by the opponent.
+            performance_metrics: Raw/normalized counting stats.
+            minutes_played: Minutes on the pitch.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
-                is the goal/assist contribution kept separate so the caller can
-                apply the minutes impact scalar only to the base score.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
+        bonus: float = 0.0
 
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=0.75,
+        # Goal and assist bonuses (isolation applies — WBs are attacking contributors)
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += (
+                self.GOAL_ALPHA.get("RWB", 0.0)
+                * float(np.log2(goals + 1))
+                * isolation_multiplier
             )
-            + performance_metrics.get("assists", 0) * 0.55
-        )
+        if assists >= 1:
+            bonus += (
+                self.ASSIST_GAMMA.get("RWB", 0.0)
+                * float(np.log2(assists + 1))
+                * isolation_multiplier
+            )
 
-        # Relentless Engine
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Relentless Engine mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="distance_sprinted_p90_z",
             key_b="xt_bonus_p90_z",
-            threshold=1.5,
-            weight=0.20,
+            threshold=1.0,
+            impact_scalar=impact_scalar,
         )
 
-        # Two-way Flank
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Two-Way Flank mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="tackles_p90_z",
             key_b="possession_won_p90_z",
             threshold=1.0,
-            weight=0.25,
+            impact_scalar=impact_scalar,
         )
 
-        raw_score = self._apply_defender_clean_sheet_bonus(
-            raw_score=raw_score,
-            opponent_goals=opponent_goals,
-            opponent_xg=opponent_xg,
-            minutes_played=minutes_played,
-        )
-        return raw_score, event_bonus
+        # xG-tiered clean sheet x linear ramp
+        if opponent_goals == 0:
+            ramp: float = min(minutes_played, 60.0) / 60.0
+            ratio: float = self.CS_RATIOS.get("RWB", 0.50)
+            if opponent_xg <= 1.0:
+                bonus += self.CS_CB_LOW_XG * ratio * ramp
+            elif opponent_xg < 2.0:
+                bonus += self.CS_CB_MID_XG * ratio * ramp
+            else:
+                bonus += self.CS_CB_HIGH_XG * ratio * ramp
+
+        # Heavy collapse penalty
+        if opponent_goals >= 3 and minutes_played >= 60:
+            bonus -= self.COLLAPSE_PENALTY
+
+        return bonus
 
     def _apply_cdm_modifiers(
         self,
         z_scores: dict[str, float],
         opponent_goals: int | float,
-        final_weights: np.ndarray,
+        opponent_xg: float,
         performance_metrics: dict[str, float],
         minutes_played: float,
+        impact_scalar: float,
         isolation_multiplier: float = 1.0,
-    ) -> tuple[float, float]:
-        """Apply Central Defensive Midfielder (CDM) specific scoring logic and bonuses.
+    ) -> float:
+        """Apply Central Defensive Midfielder (CDM) specific post-sigmoid bonuses.
 
         Philosophy:
-        - Caps the penalty for fouls committed (-1.0 Z-score). This acknowledges
-          the "dark arts" of the position, where tactical and professional fouls
-          are often necessary to break up counter-attacks.
-        - Rewards rare attacking contributions, valuing goals slightly higher than
-          assists for deep-lying players.
-        - Applies elite scaling bonuses for "Defensive Dominance" (exceptionally
-          high tackles and possession won) and "Passing Prowess" (acting as the
-          team's metronome with incredibly high pass volume).
-        - Rewards perfect ball retention (zero possession lost) and effective
-          defensive shielding (zero opponent goals) for players completing the
-          majority of the match (60+ minutes).
+        - Rewards rare attacking contributions scaled by isolation.
+        - Rewards Destroyer (defensive dominance) and Deep-Lying Playmaker
+        (passing excellence) mastery archetypes proportionally.
+        - The Reliable Pivot bonus rewards exceptional ball retention at elite
+        passing volume — the hallmark of the position.
+        - Clean sheet bonus uses the shared xG-tiered system at CDM ratio,
+        replacing the old binary Defensive Shielding flat bonus.
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            final_weights (np.ndarray): The base positional weights for dot product.
-            performance_metrics (dict[str, float]): Raw, unstandardized performance
-                metrics (e.g., total goals, assists, possession lost).
-            minutes_played (float): The number of minutes the player was on the pitch.
-            isolation_multiplier (float): A decay multiplier for attackers who
-                isolate themselves from the build-up. Defaults to 1.0 (no decay).
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            opponent_goals: Total goals scored by the opposing team.
+            opponent_xg: Expected goals generated by the opponent.
+            performance_metrics: Raw/normalized counting stats.
+            minutes_played: Minutes on the pitch.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
-                is the goal/assist contribution kept separate so the caller can
-                apply the minutes impact scalar only to the base score.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        self._apply_z_score_floors(z_scores, {"fouls_committed_p90_z": -1.0})
+        bonus: float = 0.0
 
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
-
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=0.6,
+        # Goal and assist bonuses
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += (
+                self.GOAL_ALPHA.get("CDM", 0.0)
+                * float(np.log2(goals + 1))
+                * isolation_multiplier
             )
-            + performance_metrics.get("assists", 0) * 0.45
-        ) * isolation_multiplier
+        if assists >= 1:
+            bonus += (
+                self.ASSIST_GAMMA.get("CDM", 0.0)
+                * float(np.log2(assists + 1))
+                * isolation_multiplier
+            )
 
-        # The Destroyer
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Destroyer mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="tackles_p90_z",
             key_b="possession_won_p90_z",
-            threshold=1.5,
-            weight=0.25,
+            threshold=1.2,
+            impact_scalar=impact_scalar,
         )
 
-        # The Deep-Lying Playmaker
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Deep-Lying Playmaker mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="dribbles_p90_z",
-            threshold=1.5,
-            weight=0.25,
+            threshold=1.2,
+            impact_scalar=impact_scalar,
         )
 
-        if minutes_played >= 60.0:
-            # The Reliable Pivot (Tiered Synergy)
-            poss_lost = performance_metrics.get("possession_lost", 0.0)
-            pass_acc = performance_metrics.get("pass_accuracy", 0.0)
-            passes_z = z_scores.get("passes_p90_z", 0.0)
+        # The Reliable Pivot (updated gate conditions)
+        if minutes_played >= self.CDM_PIVOT_MIN_MINUTES:
+            poss_lost: float = performance_metrics.get("possession_lost", 0.0)
+            pass_acc: float = performance_metrics.get("pass_accuracy", 0.0)
+            passes_z: float = z_scores.get("passes_p90_z", 0.0)
 
-            if pass_acc >= 92.0 and passes_z > 1.0:
+            if (
+                pass_acc >= self.CDM_PIVOT_MIN_PASS_ACC
+                and passes_z > self.CDM_PIVOT_MIN_PASSES_Z
+            ):
                 if poss_lost == 0.0:
-                    # The "Perfect Metronome": Flawless retention at elite volume
-                    raw_score += 0.35
-                elif poss_lost <= 1.0:
-                    # The "Reliable Shift": Elite retention at elite volume
-                    raw_score += 0.20
+                    bonus += self.CDM_PIVOT_PERFECT_METRONOME
+                elif poss_lost <= 2.0:
+                    bonus += self.CDM_PIVOT_RELIABLE_SHIFT
 
-            # Defensive Shielding
-            if opponent_goals == 0:
-                raw_score += 0.20
+        # xG-tiered clean sheet x linear ramp
+        if opponent_goals == 0:
+            ramp: float = min(minutes_played, 60.0) / 60.0
+            ratio: float = self.CS_RATIOS.get("CDM", 0.48)
+            if opponent_xg <= 1.0:
+                bonus += self.CS_CB_LOW_XG * ratio * ramp
+            elif opponent_xg < 2.0:
+                bonus += self.CS_CB_MID_XG * ratio * ramp
+            else:
+                bonus += self.CS_CB_HIGH_XG * ratio * ramp
 
-        return raw_score, event_bonus
+        return bonus
 
     def _apply_cm_modifiers(
         self,
         z_scores: dict[str, float],
         opponent_goals: int | float,
-        final_weights: np.ndarray,
+        opponent_xg: float,
         performance_metrics: dict[str, float],
         minutes_played: float,
+        impact_scalar: float,
         isolation_multiplier: float = 1.0,
-    ) -> tuple[float, float]:
-        """Apply Central Midfielder (CM) specific scoring logic and situational bonuses.
+    ) -> float:
+        """Apply Central Midfielder (CM) specific post-sigmoid bonuses.
 
         Philosophy:
-        - Values goals (0.8) slightly higher than assists (0.6)
-          for flat performance rewards.
-        - Rewards the "Complete Midfielder" (Box-to-Box) with scaling bonuses for
-          registering elite volume (> 1.5 Z-score) across various disciplines.
-        - Heavily weights elite ball-winning (possession won) and distribution (passes),
-          reflecting the primary objectives of central midfield:
-          win the ball and keep it.
-        - Applies a contextual clean sheet bonus for contributing to a solid overall
-          defensive structure.
+        - Rewards goal and assist contributions equally, scaled by isolation.
+        - Rewards The Enforcer (defensive work rate) and Progression Engine
+        (passing and dribbling creativity) mastery archetypes proportionally.
+        - Clean sheet bonus uses the shared xG-tiered system at CM ratio,
+        acknowledging the midfielder's role in defensive structure.
+        - No collapse penalty — CM is not a primary defensive position.
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            final_weights (np.ndarray): The base positional weights for dot product.
-            performance_metrics (dict[str, float]): Raw, unstandardized performance
-                metrics (e.g., total goals, assists).
-            minutes_played (float): The number of minutes the player was on the pitch.
-            isolation_multiplier (float): A decay multiplier for attackers who
-                isolate themselves from the build-up. Defaults to 1.0 (no decay).
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            opponent_goals: Total goals scored by the opposing team.
+            opponent_xg: Expected goals generated by the opponent.
+            performance_metrics: Raw/normalized counting stats.
+            minutes_played: Minutes on the pitch.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
-                is the goal/assist contribution kept separate so the caller can
-                apply the minutes impact scalar only to the base score.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
+        bonus: float = 0.0
 
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=1.0,
+        # Goal and assist bonuses
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += (
+                self.GOAL_ALPHA.get("CM", 0.0)
+                * float(np.log2(goals + 1))
+                * isolation_multiplier
             )
-            + performance_metrics.get("assists", 0) * 0.75
-        ) * isolation_multiplier
+        if assists >= 1:
+            bonus += (
+                self.ASSIST_GAMMA.get("CM", 0.0)
+                * float(np.log2(assists + 1))
+                * isolation_multiplier
+            )
 
-        # The Enforcer
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Enforcer mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="tackles_p90_z",
             key_b="possession_won_p90_z",
-            threshold=1.5,
-            weight=0.25,
+            threshold=1.2,
+            impact_scalar=impact_scalar,
         )
 
-        # The Progression Engine
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Progression Engine mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="dribbles_p90_z",
             threshold=1.2,
-            weight=0.25,
+            impact_scalar=impact_scalar,
         )
 
-        raw_score = self._apply_cm_clean_sheet_bonus(
-            raw_score=raw_score,
-            opponent_goals=opponent_goals,
-            minutes_played=minutes_played,
-        )
-        return raw_score, event_bonus
-
-    def _apply_cm_clean_sheet_bonus(
-        self,
-        raw_score: float,
-        opponent_goals: int | float,
-        minutes_played: float,
-    ) -> float:
-        """Apply a contextual clean sheet bonus for central midfielders.
-
-        Philosophy:
-        - Central and Defensive Midfielders act as the first line of the defensive
-          block. If the team secures a clean sheet, it strongly implies the midfield
-          effectively screened the backline and controlled transition spaces.
-        - Rewards the player with a +0.15 bump if the opponent scores zero
-          goals, scaled down using a square root function for players who
-          played less than 60 minutes to reflect their reduced contribution.
-
-        Args:
-            raw_score (float): The current, pre-bonus match rating for the midfielder.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            minutes_played (float): The number of minutes the player was on the pitch.
-
-        Returns:
-            float: The adjusted match rating including the clean
-                   sheet bonus (if applicable).
-        """
+        # xG-tiered clean sheet x linear ramp
         if opponent_goals == 0:
-            minutes_confidence = np.sqrt(min(minutes_played, 60.0) / 60.0)
-            raw_score += 0.15 * minutes_confidence
-        return raw_score
+            ramp: float = min(minutes_played, 60.0) / 60.0
+            ratio: float = self.CS_RATIOS.get("CM", 0.36)
+            if opponent_xg <= 1.0:
+                bonus += self.CS_CB_LOW_XG * ratio * ramp
+            elif opponent_xg < 2.0:
+                bonus += self.CS_CB_MID_XG * ratio * ramp
+            else:
+                bonus += self.CS_CB_HIGH_XG * ratio * ramp
+
+        return bonus
 
     def _apply_cam_modifiers(
         self,
         z_scores: dict[str, float],
-        final_weights: np.ndarray,
         performance_metrics: dict[str, float],
+        impact_scalar: float,
         isolation_multiplier: float = 1.0,
-    ) -> tuple[float, float]:
-        """Apply Central Attacking Midfielder (CAM) specific scoring logic and bonuses.
+    ) -> float:
+        """Apply Central Attacking Midfielder (CAM) post-sigmoid bonuses.
 
         Philosophy:
-        - Applies a robust suite of floors (defensive, efficiency, detriment, and
-          passenger) to account for the unique, often polarizing nature of a pure
-          playmaker, forgiving them for a lack of defensive output provided they
-          are actively involved in the attack.
-        - Values assists (0.9) higher than goals (0.7) for flat performance metrics,
-          cementing their role as the primary creative hub.
-        - "Maestro Bonus": Rewards high passing volume combined with elite expected
-          threat (xT) generation.
-        - "Shadow Striker Bonus": Provides a scaling reward for high shot volume
-          combined with high xT.
-        - "Modern 10 Bonus": Scaling reward for advanced playmakers who successfully
-          contribute to a high press (tackles and possession won above 1.0 Z-score).
+        - Rewards assists slightly above goals, cementing the CAM's role as
+        the primary creative hub.
+        - Three mastery archetypes: Maestro (passing vision combined with xT),
+        Shadow Striker (shot threat combined with xT), and Modern 10
+        (pressing contribution alongside creative output).
+        - No clean sheet bonus — CAMs do not contribute to defensive structure.
+        - Z-score floors removed: with real-world anchored means a CAM who
+        doesn't defend naturally sits near z=0 on those stats.
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            final_weights (np.ndarray): The base positional weights for dot product.
-            performance_metrics (dict[str, float]): Raw, unstandardized performance
-                metrics (e.g., total goals, assists).
-            isolation_multiplier (float): A decay multiplier for attackers who
-                isolate themselves from the build-up. Defaults to 1.0 (no decay).
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            performance_metrics: Raw/normalized counting stats.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            tuple[float, float]: (base_raw_score, event_bonus) where event_bonus
-                is the goal/assist contribution kept separate so the caller can
-                apply the minutes impact scalar only to the base score.
+            float: Total bonus in rating-point space to add to base_rating.
         """
-        self._apply_z_score_floors(
-            z_scores,
-            {
-                # Defensive floor: CAMs are not expected to win tackles or duels
-                "tackles_p90_z": -0.5,
-                "tackle_success_rate_z": -0.5,
-                "possession_won_p90_z": -0.5,
-                # Passenger floor: prevents infinite freefall when team defends deep
-                "passes_p90_z": -1.0,
-                "dribbles_p90_z": -1.0,
-                "non_goal_shots_p90_z": -1.0,
-                "distance_covered_p90_z": -1.0,
-                "distance_sprinted_p90_z": -1.0,
-                "xt_bonus_p90_z": -1.0,
-                # Detriment floor: playmakers attempt high-risk passes and run in behind
-                "fouls_committed_p90_z": -1.5,
-                "possession_lost_p90_z": -1.5,
-                "offsides_p90_z": -1.5,
-            },
-        )
+        bonus: float = 0.0
 
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
-
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=0.9,
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += (
+                self.GOAL_ALPHA.get("CAM", 0.0)
+                * float(np.log2(goals + 1))
+                * isolation_multiplier
             )
-            + performance_metrics.get("assists", 0) * 0.75
-        ) * isolation_multiplier
+        if assists >= 1:
+            bonus += (
+                self.ASSIST_GAMMA.get("CAM", 0.0)
+                * float(np.log2(assists + 1))
+                * isolation_multiplier
+            )
 
-        # The Maestro
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Maestro mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="xt_bonus_p90_z",
             threshold=1.5,
-            weight=0.25,
+            impact_scalar=impact_scalar,
         )
 
-        # The Shadow Striker
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Shadow Striker mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="non_goal_shots_p90_z",
             key_b="xt_bonus_p90_z",
             threshold=1.5,
-            weight=0.20,
+            impact_scalar=impact_scalar,
         )
 
-        # The Modern 10
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Modern 10 mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="tackles_p90_z",
             key_b="possession_won_p90_z",
             threshold=1.0,
-            weight=0.25,
+            impact_scalar=impact_scalar,
         )
 
-        return raw_score, event_bonus
+        return bonus
 
     def _apply_wm_modifiers(
         self,
         z_scores: dict[str, float],
         opponent_goals: int | float,
-        final_weights: np.ndarray,
+        opponent_xg: float,
         performance_metrics: dict[str, float],
         minutes_played: float,
+        impact_scalar: float,
         isolation_multiplier: float = 1.0,
-    ) -> tuple[float, float]:
-        """Apply Wide Midfielder (RM/LM) specific scoring logic and bonuses.
+    ) -> float:
+        """Apply Wide Midfielder (RM/LM) post-sigmoid bonuses.
 
         Philosophy:
-        - Wide Midfielders are the engines of the flanks, expected to contribute
-          in both phases of play.
-        - Caps penalties for fouls, possession lost, and offsides at -1.5 Z-score,
-          accounting for the aggressive wide role.
-        - Values assists (0.8) slightly higher than goals (0.6) to reflect their
-          role as wide creators and crossers.
-        - "Two-Way Engine Bonus": Rewards high passing volume combined with high
-          tackling output, perfectly capturing the quintessential
-          box-to-box wide player.
-        - "Wide Progression Bonus": Provides a scaling reward for elite expected
-          threat (xT) generation, highlighting players who consistently drive the
-          team up the pitch.
-        - Reuses the Central Midfielder clean sheet bonus, as traditional wide
-          midfielders are vital to maintaining the team's defensive shape in a
-          low or mid block.
+        - Two-way players rewarded for both creative progression and defensive
+        contribution via Two-Way Engine and Wide Progressor mastery archetypes.
+        - Goal and assist bonuses at a slightly reduced rate versus Wingers,
+        reflecting the more industrious, less direct nature of the role.
+        - Clean sheet bonus at a lower ratio than CM, reflecting that WMs
+        track back less reliably than central midfielders.
+        - Wastefulness penalty applies at 0.10 per excess shot — slightly more
+        lenient than Wingers (0.15) given shooting is more expected in this role.
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            opponent_goals (int | float): Total goals scored by the opposing team.
-            final_weights (np.ndarray): The base positional weights for dot product.
-            performance_metrics (dict[str, float]): Raw, unstandardized
-                                                    performance metrics.
-            minutes_played (float): The number of minutes the player was on the pitch.
-            isolation_multiplier (float): A decay multiplier for attackers who
-                isolate themselves from the build-up. Defaults to 1.0 (no decay).
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            opponent_goals: Total goals scored by the opposing team.
+            opponent_xg: Expected goals generated by the opponent.
+            performance_metrics: Raw/normalized counting stats.
+            minutes_played: Minutes on the pitch.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            float: The calculated raw match rating score for the wide midfielder.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        self._apply_z_score_floors(
-            z_scores,
-            {
-                "fouls_committed_p90_z": -1.5,
-                "possession_lost_p90_z": -1.5,
-                "offsides_p90_z": -1.5,
-            },
-        )
+        bonus: float = 0.0
 
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
-
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=0.75,
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += (
+                self.GOAL_ALPHA.get("RM", 0.0)
+                * float(np.log2(goals + 1))
+                * isolation_multiplier
             )
-            + performance_metrics.get("assists", 0) * 0.55
-        ) * isolation_multiplier
+        if assists >= 1:
+            bonus += (
+                self.ASSIST_GAMMA.get("RM", 0.0)
+                * float(np.log2(assists + 1))
+                * isolation_multiplier
+            )
 
-        # Two-Way Engine
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Two-Way Engine mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="tackles_p90_z",
             threshold=1.0,
-            weight=0.25,
+            impact_scalar=impact_scalar,
         )
 
-        # Wide Progressor
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # Wide Progressor mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="xt_bonus_p90_z",
             key_b="dribbles_p90_z",
             threshold=1.0,
-            weight=0.20,
+            impact_scalar=impact_scalar,
         )
 
-        raw_score = self._apply_cm_clean_sheet_bonus(
-            raw_score=raw_score,
-            opponent_goals=opponent_goals,
-            minutes_played=minutes_played,
-        )
-        return raw_score, event_bonus
+        # xG-tiered clean sheet x linear ramp
+        if opponent_goals == 0:
+            ramp: float = min(minutes_played, 60.0) / 60.0
+            ratio: float = self.CS_RATIOS.get("RM", 0.28)
+            if opponent_xg <= 1.0:
+                bonus += self.CS_CB_LOW_XG * ratio * ramp
+            elif opponent_xg < 2.0:
+                bonus += self.CS_CB_MID_XG * ratio * ramp
+            else:
+                bonus += self.CS_CB_HIGH_XG * ratio * ramp
+
+        # Wastefulness penalty (wasted shots with no creative output)
+        wasted: float = performance_metrics.get("shots", 0) - goals
+        creative: float = goals + assists
+        if wasted >= 3 and creative == 0:
+            bonus -= (
+                wasted - 2
+            ) * 0.10  # 0.10 per excess shot (WM, more lenient than Winger)
+
+        return bonus
 
     def _apply_winger_modifiers(
         self,
         z_scores: dict[str, float],
-        final_weights: np.ndarray,
         performance_metrics: dict[str, float],
+        impact_scalar: float,
         isolation_multiplier: float = 1.0,
-    ) -> tuple[float, float]:
-        """Apply Winger (LW/RW) specific scoring logic, bonuses, and penalties.
+    ) -> float:
+        """Apply Winger (LW/RW) specific post-sigmoid bonuses and penalties.
 
         Philosophy:
-        - Evaluates the player as a modern inside-forward or direct attacking threat,
-          emphasizing direct goalscoring (1.3 multiplier) with assists close behind
-          (1.0).
-        - Grants tactical forgiveness for offsides (capped at -2.0 standard deviations),
-          recognizing that playing on the shoulder of the defense and making runs in
-          behind is a core positional requirement.
-        - "Elite Outlier Bonuses": Grants scaling rewards for statistically
-          extraordinary performances (> 1.5 Z-score): dribbling combined with xT
-          (Direct Threat) and passing combined with xT (Wide Playmaker).
-        - "High Press Bonus": Rewards wingers who win the ball back high up the
-          pitch (tackles and possession won both above 1.0 Z-score).
-        - "Wastefulness Penalty": Actively punishes "selfish winger syndrome" by
-          reducing the score if the player takes 3 or more shots in a match
-          without registering a goal.
+        - Rewards direct goal and assist contributions scaled by isolation.
+        - Three mastery archetypes: Direct Threat (dribbling + xT), Wide Playmaker
+        (passing + xT), and Pressing Forward (defensive contribution).
+        - Wastefulness penalty fires when a winger has 3+ wasted shots AND zero
+        creative output (goals + assists == 0) — punishes selfish shot selection
+        rather than simply missing chances.
+        - No clean sheet bonus — wingers do not contribute to defensive shape.
+        - Z-score floors removed: with real-world anchored means wingers naturally
+        sit near z=0 on defensive stats without needing a floor correction.
 
         Args:
-            z_scores (dict[str, float]): Dictionary containing standardized
-                                         per-90 metrics.
-            final_weights (np.ndarray): The base positional weights used for the dot
-                                        product calculation.
-            performance_metrics (dict[str, float]): Dictionary of raw, unstandardized
-                                                    performance metrics for the match
-                                                    (e.g., goals, assists, shots).
-            isolation_multiplier (float): A decay multiplier for attackers who
-                    isolate themselves from the build-up. Defaults to 1.0 (no decay).
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            performance_metrics: Raw/normalized counting stats.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            float: The final calculated raw match rating score for the winger.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        self._apply_z_score_floors(
-            z_scores,
-            {
-                # Defensive floor: wingers are primarily offensive players
-                "tackles_p90_z": -0.5,
-                "tackle_success_rate_z": -0.5,
-                "possession_won_p90_z": -0.5,
-                # Detriment floor: wingers attempt high-risk dribbles and run in behind
-                "fouls_committed_p90_z": -1.5,
-                "possession_lost_p90_z": -1.5,
-                # Looser offsides floor — running in behind
-                # is a core positional requirement
-                "offsides_p90_z": -2.0,
-            },
-        )
+        bonus: float = 0.0
 
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=1.3,
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += (
+                self.GOAL_ALPHA.get("RW", 0.0)
+                * float(np.log2(goals + 1))
+                * isolation_multiplier
             )
-            + performance_metrics.get("assists", 0) * 1.0
-        ) * isolation_multiplier
+        if assists >= 1:
+            bonus += (
+                self.ASSIST_GAMMA.get("RW", 0.0)
+                * float(np.log2(assists + 1))
+                * isolation_multiplier
+            )
 
-        # The Direct Threat
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Direct Threat mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="dribbles_p90_z",
             key_b="xt_bonus_p90_z",
-            threshold=1.5,
-            weight=0.25,
+            threshold=1.2,
+            impact_scalar=impact_scalar,
         )
 
-        # The Wide Playmaker
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Wide Playmaker mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="xt_bonus_p90_z",
-            threshold=1.5,
-            weight=0.20,
+            threshold=1.0,
+            impact_scalar=impact_scalar,
         )
 
-        # The Pressing Forward
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Pressing Forward mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="tackles_p90_z",
             key_b="possession_won_p90_z",
             threshold=1.0,
-            weight=0.15,
+            impact_scalar=impact_scalar,
         )
 
-        # Wastefulness Penalty
-        shots = performance_metrics.get("shots", 0)
-        goals = performance_metrics.get("goals", 0)
+        # Wastefulness penalty
+        wasted: float = performance_metrics.get("shots", 0) - goals
+        creative: float = goals + assists
+        if wasted >= 3 and creative == 0:
+            bonus -= (wasted - 2) * self.WINGER_WASTEFUL_PER_SHOT
 
-        if (shots >= 3) and (goals == 0):
-            raw_score -= (shots - 2) * 0.10
-
-        return raw_score, event_bonus
+        return bonus
 
     def _apply_st_modifiers(
         self,
         z_scores: dict[str, float],
-        final_weights: np.ndarray,
         performance_metrics: dict[str, float],
+        impact_scalar: float,
         isolation_multiplier: float = 1.0,
-    ) -> tuple[float, float]:
-        """Apply Striker specific scoring logic, bonuses, and penalties.
+    ) -> float:
+        """Apply Striker (ST) specific post-sigmoid bonuses and penalties.
 
         Philosophy:
-        - Evaluates the player as the focal point of the attack, applying the highest
-          premium in the engine for direct goalscoring (1.2 multiplier).
-        - "Ghosting Forgiveness": Caps negative variance for goals, assists, and shots
-          at -2.0 standard deviations. Strikers are heavily reliant on service; they
-          should not be mathematically ruined for isolated
-          matches where the team is dominated.
-        - "Offside Forgiveness": Grants a generous detriment floor for offsides (-1.5),
-          as playing on the shoulder of the last defender is a
-          core positional requirement.
-        - "Complete Forward Bonuses": Rewards statistically extraordinary passing and
-          dribbling (> 1.5 Z-score) to highlight elite deep-lying
-          forwards or complete number 9s.
-        - Integrates specific sub-routines to reward target man play (hold-up bonus),
-          and punish offensive possession drains (black hole penalty) or poor conversion
-          rates (wasteful finisher penalty).
+        - Rewards goals and assists at the highest rate of any position,
+        scaled by isolation.
+        - Complete Forward mastery rewards elite passing and dribbling —
+        the hallmark of a true number 9 who drops deep and links play.
+        - Hold-Up Bonus rewards efficient ball retention at high involvement.
+        - Black Hole Penalty punishes strikers who demand the ball and give it
+        straight back — updated to fire at lower thresholds reflecting the
+        short match format.
+        - Wasteful Finisher Penalty punishes significant xG underperformance
+        at sufficient shot volume.
+        - Z-score floors removed: with real-world anchored means a striker who
+        doesn't defend or shoot naturally sits near z=0 without correction.
 
         Args:
-            z_scores (dict[str, float]): Dictionary of standardized per-90 metrics.
-            final_weights (np.ndarray): The base positional weights
-                                        for dot product calculation.
-            performance_metrics (dict[str, float]): Raw, unstandardized
-                                                    performance metrics.
-            isolation_multiplier (float): A decay multiplier for attackers who
-                isolate themselves from the build-up. Defaults to 1.0 (no decay).
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            performance_metrics: Raw/normalized counting stats.
+            impact_scalar: √(min(mp,90)/90) — scales mastery bonuses for cameos.
+            isolation_multiplier: Decay multiplier for isolated attackers.
 
         Returns:
-            float: The calculated raw match rating score for the striker.
+            float: Total bonus/penalty in rating-point space to add to base_rating.
         """
-        self._apply_z_score_floors(
-            z_scores,
-            {
-                # Defensive floor: strikers are not expected to win duels or press hard
-                "tackles_p90_z": -0.5,
-                "tackle_success_rate_z": -0.5,
-                "possession_won_p90_z": -0.5,
-                # Ghosting forgiveness: strikers depend on service;
-                # zero-chance games happen
-                "goals_p90_z": -2.0,
-                "assists_p90_z": -2.0,
-                "non_goal_shots_p90_z": -2.0,
-                # Offside forgiveness: playing on the last defender's
-                # shoulder is the job
-                "offsides_p90_z": -1.5,
-            },
-        )
+        bonus: float = 0.0
 
-        raw_score: float = self._calculate_dot_product(
-            z_scores=z_scores,
-            weights=final_weights,
-        )
-
-        event_bonus: float = (
-            self._effective_goal_bonus(
-                goals=performance_metrics.get("goals", 0),
-                shots=performance_metrics.get("shots", 0),
-                coeff=1.5,
+        goals: float = performance_metrics.get("goals", 0)
+        assists: float = performance_metrics.get("assists", 0)
+        if goals >= 1:
+            bonus += (
+                self.GOAL_ALPHA.get("ST", 0.0)
+                * float(np.log2(goals + 1))
+                * isolation_multiplier
             )
-            + performance_metrics.get("assists", 0) * 1.1
-        ) * isolation_multiplier
+        if assists >= 1:
+            bonus += (
+                self.ASSIST_GAMMA.get("ST", 0.0)
+                * float(np.log2(assists + 1))
+                * isolation_multiplier
+            )
 
-        # The Complete Forward
-        raw_score = self._apply_mastery_bonus(
-            raw_score=raw_score,
+        # The Complete Forward mastery
+        bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="dribbles_p90_z",
             threshold=1.5,
-            weight=0.25,
+            impact_scalar=impact_scalar,
         )
 
-        raw_score = self._apply_st_black_hole_penalty(
-            raw_score=raw_score,
-            performance_metrics=performance_metrics,
-        )
-        raw_score = self._apply_st_hold_up_bonus(
-            raw_score=raw_score,
-            performance_metrics=performance_metrics,
-        )
-
-        raw_score = self._apply_st_wasteful_finisher_penalty(
-            raw_score=raw_score,
-            performance_metrics=performance_metrics,
-        )
-
-        return raw_score, event_bonus
-
-    def _apply_st_black_hole_penalty(
-        self,
-        raw_score: float,
-        performance_metrics: dict[str, float],
-    ) -> float:
-        """Apply a penalty for strikers who consistently turn over possession.
-
-        Philosophy:
-        - Punishes the "black hole" striker who demands the ball but frequently
-          loses it without generating positive involvements (passes, dribbles, shots).
-        - Triggers only if the player loses possession excessively (> 4) and their
-          turnover ratio (losses per positive involvement) is critically high (> 1.5).
-        - The penalty scales linearly with excess losses but is strictly capped at 0.6.
-
-        Args:
-            raw_score (float): The current calculated match rating.
-            performance_metrics (dict[str, float]): Raw, unstandardized
-                                                    performance metrics.
-
-        Returns:
-            float: The modified match rating after applying the penalty.
-        """
-        positive_involvements = (
+        # Hold-Up Bonus
+        pos_inv: float = (
             performance_metrics.get("passes", 0)
             + performance_metrics.get("dribbles", 0)
             + performance_metrics.get("shots", 0)
         )
-        safe_positive_involvements = max(
-            positive_involvements, 1
-        )  # Avoid division by zero
-
-        turnover_ratio = (
-            performance_metrics.get("possession_lost", 0) / safe_positive_involvements
-        )
-
-        if performance_metrics.get("possession_lost", 0) > 4 and turnover_ratio > 1.5:
-            excess_losses = max(
-                0,
-                performance_metrics.get("possession_lost", 0) - positive_involvements,
-            )
-            black_hole_penalty = excess_losses * 0.08
-            # cap penalty at 0.6
-            black_hole_penalty = min(black_hole_penalty, 0.6)
-            raw_score -= black_hole_penalty
-
-        return raw_score
-
-    def _apply_st_hold_up_bonus(
-        self,
-        raw_score: float,
-        performance_metrics: dict[str, float],
-    ) -> float:
-        """Apply a bonus for strikers who excel at holding up the ball.
-
-        Philosophy:
-        - Rewards the "target man" or complete forward who absorbs pressure and
-          retains the ball efficiently to bring teammates into play.
-        - Triggers for highly active players (>= 15 positive involvements) who
-          maintain an excellent retention ratio (> 4.0 positive involvements per loss).
-        - The bonus scales with retention efficiency but is capped at 0.4.
-
-        Args:
-            raw_score (float): The current calculated match rating.
-            performance_metrics (dict[str, float]): Raw, unstandardized
-                                                    performance metrics.
-
-        Returns:
-            float: The modified match rating after applying the bonus.
-        """
-        positive_involvements = (
-            performance_metrics.get("passes", 0)
-            + performance_metrics.get("dribbles", 0)
-            + performance_metrics.get("shots", 0)
-        )
-        safe_losses = max(
-            performance_metrics.get("possession_lost", 0), 1
-        )  # Avoid division by zero
-        if (positive_involvements >= 15) and (
-            (positive_involvements / safe_losses) > 4.0
+        safe_loss: float = max(performance_metrics.get("possession_lost", 0), 1.0)
+        if (
+            pos_inv >= self.ST_HOLDUP_MIN_INV
+            and (pos_inv / safe_loss) > self.ST_HOLDUP_MIN_RATIO
         ):
-            normal_expected_touches = (
-                performance_metrics.get("possession_lost", 0) * 3.0
+            excess_ret: float = max(
+                0.0, pos_inv - performance_metrics.get("possession_lost", 0) * 3.0
             )
-            excess_retention = max(0, positive_involvements - normal_expected_touches)
-            hold_up_bonus = excess_retention * 0.02
-            # cap the hold-up bonus at 0.4
-            hold_up_bonus = min(hold_up_bonus, 0.4)
-            raw_score += hold_up_bonus
+            bonus += min(excess_ret * self.ST_HOLDUP_SCALE, self.ST_HOLDUP_CAP)
 
-        return raw_score
+        # Black Hole Penalty
+        poss_lost: float = performance_metrics.get("possession_lost", 0)
+        safe_inv: float = max(pos_inv, 1.0)
+        if (
+            poss_lost > self.ST_BLACKHOLE_MIN_POSS_LOST
+            and (poss_lost / safe_inv) > self.ST_BLACKHOLE_MIN_RATIO
+        ):
+            excess_loss: float = max(0.0, poss_lost - pos_inv)
+            bonus -= min(excess_loss * self.ST_BLACKHOLE_SCALE, self.ST_BLACKHOLE_CAP)
 
-    def _apply_st_wasteful_finisher_penalty(
-        self,
-        raw_score: float,
-        performance_metrics: dict[str, float],
-    ) -> float:
-        """Apply a penalty for poor shot conversion.
+        # Wasteful Finisher Penalty
+        est_xg: float = performance_metrics.get("shots", 0) * self.XG_PER_SHOT
+        deficit: float = est_xg - goals
+        if (
+            performance_metrics.get("shots", 0) > self.ST_WASTEFUL_MIN_SHOTS
+            and deficit > self.ST_WASTEFUL_MIN_DEFICIT
+        ):
+            bonus -= min(deficit * self.ST_WASTEFUL_SCALE, self.ST_WASTEFUL_CAP)
 
-        Philosophy:
-        - Evaluates finishing efficiency by assigning a flat 0.20 Expected Goals (xG)
-          value per shot.
-        - Punishes strikers who take a high volume of shots (> 3) but significantly
-          underperform their estimated xG (finishing deficit > 0.75).
-        - The penalty scales with the deficit but is capped at 0.8.
-
-        Args:
-            raw_score (float): The current calculated match rating.
-            performance_metrics (dict[str, float]): Raw, unstandardized
-                                                    performance metrics.
-
-        Returns:
-            float: The modified match rating after applying the penalty.
-        """
-        estimated_xg = performance_metrics.get("shots", 0) * self.XG_PER_SHOT
-        finishing_deficit = estimated_xg - performance_metrics.get("goals", 0)
-        if (performance_metrics.get("shots", 0) > 3) and (finishing_deficit > 0.75):
-            wasteful_penalty = finishing_deficit * 0.25
-            # cap the wasteful finisher penalty at 0.8
-            wasteful_penalty = min(wasteful_penalty, 0.8)
-            raw_score -= wasteful_penalty
-
-        return raw_score
+        return bonus
