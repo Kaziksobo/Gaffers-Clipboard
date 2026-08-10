@@ -213,7 +213,7 @@ class AddGKFrame(BaseViewFrame, OCRDataMixin, PlayerDropdownMixin, EntryFocusMix
         """
         self._dismissed_warnings.clear()
 
-        self.refresh_player_dropdown(only_gk=True)
+        self.refresh_optional_player_dropdown(only_gk=True)
         self.player_dropdown.set_value("Or select existing player")
 
         self.name_entry.delete(0, "end")

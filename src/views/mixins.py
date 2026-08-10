@@ -127,6 +127,29 @@ class PlayerDropdownMixin:
         ):
             self.player_dropdown.set_values(names)
 
+    def refresh_optional_player_dropdown(
+        self: PlayerDropdownMixinHostProtocol,
+        only_gk: bool = False,
+        only_outfield: bool = False,
+        remove_on_loan: bool = False,
+    ) -> None:
+        """Refresh the dropdown without redirecting away when it is empty.
+
+        Intended for frames where selecting an existing player is optional
+        (e.g. creating a brand-new player), so an empty library is a valid
+        state rather than one requiring a warning and navigation away.
+
+        Args:
+            only_gk (bool): When True, include only goalkeeper names.
+            only_outfield (bool): When True, include only outfield player names.
+            remove_on_loan (bool): When True, exclude players marked as on loan.
+        """
+        names: list[str] = self.controller.get_all_player_names(
+            only_gk=only_gk, only_outfield=only_outfield, remove_on_loan=remove_on_loan
+        )
+        if names:
+            self.player_dropdown.set_values(names)
+
 
 class OCRDataMixin:
     """A feature pack that adds OCR data validation and processing to any frame."""

@@ -238,7 +238,7 @@ class AddOutfieldFrame1(
         """
         self._dismissed_warnings.clear()
 
-        self.refresh_player_dropdown(only_outfield=True)
+        self.refresh_optional_player_dropdown(only_outfield=True)
         self.player_dropdown.set_value("Or select existing player")
 
         self.name_entry.delete(0, "end")
