@@ -14,3 +14,4 @@ coverage.xml
 /.vscode
 **/.ipynb_checkpoints
 docs/.obsidian/
+workshop/ratings_creation/rating_reports
