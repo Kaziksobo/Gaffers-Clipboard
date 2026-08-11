@@ -424,7 +424,10 @@ class OCRService:
                 parsed_data[stat_name] = None
                 continue
 
-            recognised_number = recognised_data[0] if debug else recognised_data
+            if isinstance(recognised_data, tuple):
+                recognised_number = recognised_data[0]
+            else:
+                recognised_number = recognised_data
 
             if recognised_number is None:
                 parsed_data[stat_name] = None
@@ -435,7 +438,10 @@ class OCRService:
             # otherwise convert to int.
             if stat_name in decimal_stats:
                 try:
-                    parsed_data[stat_name] = float(str(recognised_number)) / 10
+                    parsed_data[stat_name] = OCRService._parse_decimal_stat(
+                        recognised_number,
+                        stat_name,
+                    )
                 except (TypeError, ValueError):
                     logger.warning(
                         "Failed to parse decimal stat '%s' from OCR output "
@@ -457,3 +463,40 @@ class OCRService:
                     parsed_data[stat_name] = None
 
         return parsed_data
+
+    @staticmethod
+    def _parse_decimal_stat(
+        recognised_number: str | int | float,
+        stat_name: str,
+    ) -> float:
+        """Parse a decimal OCR stat and correct common leading-9 prefixes.
+
+        The distance stats occasionally come back with an extra leading ``9``
+        from OCR, e.g. ``94.5`` instead of ``4.5`` or ``910.5`` instead of
+        ``10.5``. When that happens, strip the first digit before converting the
+        value back to a decimal.
+
+        Args:
+            recognised_number (str | int | float): OCR output for the stat.
+            stat_name (str): Name of the stat being parsed.
+
+        Returns:
+            float: Parsed decimal value, corrected when the OCR prefix pattern is
+                detected.
+        """
+        recognised_text = str(recognised_number).strip()
+
+        if (
+            stat_name in {"distance_covered", "distance_sprinted"}
+            and recognised_text.startswith("9")
+            and len(recognised_text) > 1
+        ):
+            corrected_text = recognised_text[1:]
+            if "." in corrected_text:
+                return float(corrected_text)
+            return float(corrected_text) / 10
+
+        if "." in recognised_text:
+            return float(recognised_text)
+
+        return float(recognised_text) / 10
