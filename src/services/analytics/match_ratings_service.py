@@ -137,9 +137,9 @@ class MatchRatingsService:
     # CDM Reliable Pivot gate + tier bonuses
     CDM_PIVOT_MIN_MINUTES: Final[float] = 45.0
     CDM_PIVOT_MIN_PASS_ACC: Final[float] = 88.0
-    CDM_PIVOT_MIN_PASSES_Z: Final[float] = 0.8
+    CDM_PIVOT_MIN_PASSES_RAW: Final[float] = 15
     CDM_PIVOT_PERFECT_METRONOME: Final[float] = 0.30  # possession_lost == 0
-    CDM_PIVOT_RELIABLE_SHIFT: Final[float] = 0.15  # possession_lost <= 2
+    CDM_PIVOT_RELIABLE_SHIFT: Final[float] = 0.20  # possession_lost <= 2
 
     # ST Hold-Up Bonus
     ST_HOLDUP_MIN_INV: Final[float] = 20.0
@@ -220,6 +220,7 @@ class MatchRatingsService:
             "CM": MappingProxyType(
                 {
                     "fouls_committed_p90_z": -0.5,
+                    "non_goal_shots_p90_z": -1.0,
                 }
             ),
             "ST": MappingProxyType(
@@ -948,6 +949,16 @@ class MatchRatingsService:
             for stat_z, floor_val in self.Z_SCORE_FLOORS.get(pos, {}).items():
                 if stat_z in z_scores:
                     z_scores[stat_z] = max(floor_val, z_scores[stat_z])
+
+            # Wing-backs/full-backs bombing forward (high dribble output) should
+            # not be penalised for the possession losses that come with it.
+            if (
+                pos in ("RB", "LB", "RWB", "LWB")
+                and z_scores.get("dribbles_p90_z", 0.0) > 1.0
+            ):
+                z_scores["possession_lost_p90_z"] = max(
+                    -1.0, z_scores.get("possession_lost_p90_z", 0.0)
+                )
 
             isolation_multiplier: float = self._calculate_tactical_isolation_multiplier(
                 z_scores=z_scores,
@@ -1882,11 +1893,11 @@ class MatchRatingsService:
         if minutes_played >= self.CDM_PIVOT_MIN_MINUTES:
             poss_lost: float = performance_metrics.get("possession_lost", 0.0)
             pass_acc: float = performance_metrics.get("pass_accuracy", 0.0)
-            passes_z: float = z_scores.get("passes_p90_z", 0.0)
+            raw_passes: float = performance_metrics.get("passes", 0.0)
 
             if (
                 pass_acc >= self.CDM_PIVOT_MIN_PASS_ACC
-                and passes_z > self.CDM_PIVOT_MIN_PASSES_Z
+                and raw_passes >= self.CDM_PIVOT_MIN_PASSES_RAW
             ):
                 if poss_lost == 0.0:
                     bonus += self.CDM_PIVOT_PERFECT_METRONOME
