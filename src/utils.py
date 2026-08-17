@@ -1,5 +1,6 @@
 """Shared utility helpers for screen coordinates and value normalization."""
 
+import contextlib
 import logging
 import string
 from datetime import datetime
@@ -128,6 +129,35 @@ def safe_int_conversion(value: str | int | float | None) -> int | None:
             return None
 
     return None
+
+
+def parse_in_game_date_string(value: str) -> datetime:
+    """Parse an in-game date string into a datetime object.
+
+    Accepts ISO format (for JSON round-tripping) or the UI-entered formats
+    dd/mm/yy and dd/mm/yyyy.
+
+    Args:
+        value (str): The date string to parse.
+
+    Raises:
+        ValueError: If the string doesn't match any supported format.
+
+    Returns:
+        datetime: The parsed date.
+    """
+    value = value.strip()
+
+    if "T" in value or "-" in value:
+        with contextlib.suppress(ValueError):
+            return datetime.fromisoformat(value)
+    for date_format in ("%d/%m/%y", "%d/%m/%Y"):
+        with contextlib.suppress(ValueError):
+            return datetime.strptime(value, date_format)
+
+    raise ValueError(
+        f"Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, got '{value}'"
+    )
 
 
 def derive_season(date_str: str) -> str:

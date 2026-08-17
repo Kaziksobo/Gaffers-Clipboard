@@ -25,7 +25,6 @@ Keeping these schemas centralized ensures consistent behavior across loading,
 saving, and UI-driven service operations.
 """
 
-import contextlib
 import datetime as dt
 from abc import ABC
 from typing import Annotated, Literal
@@ -38,7 +37,7 @@ from pydantic import (
     model_validator,
 )
 
-from src.utils import capitalize_competition_name
+from src.utils import capitalize_competition_name, parse_in_game_date_string
 
 # Enums and constants
 DifficultyLevel = Literal[
@@ -111,24 +110,8 @@ class BaseAttributeSnapshot(BaseModel, ABC):
         """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
         if isinstance(value, dt.datetime):
             return value
-
         if isinstance(value, str):
-            value = value.strip()
-
-            # 1. Attempt to parse standard ISO format (from JSON load)
-            if "T" in value or "-" in value:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.fromisoformat(value)
-            # 2. Attempt to parse custom UI format (from Tkinter input)
-            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.strptime(value, date_format)
-
-            raise ValueError(
-                "Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, "
-                f"got '{value}'"
-            )
-
+            return parse_in_game_date_string(value)
         raise ValueError(
             f"in_game_date must be a string or datetime, got {type(value)}"
         )
@@ -269,24 +252,8 @@ class FinancialSnapshot(BaseModel):
         """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
         if isinstance(value, dt.datetime):
             return value
-
         if isinstance(value, str):
-            value = value.strip()
-
-            # 1. Attempt to parse standard ISO format (from JSON load)
-            if "T" in value or "-" in value:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.fromisoformat(value)
-            # 2. Attempt to parse custom UI format (from Tkinter input)
-            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.strptime(value, date_format)
-
-            raise ValueError(
-                "Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, "
-                f"got '{value}'"
-            )
-
+            return parse_in_game_date_string(value)
         raise ValueError(
             f"in_game_date must be a string or datetime, got {type(value)}"
         )
@@ -311,24 +278,8 @@ class InjuryRecord(BaseModel):
         """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
         if isinstance(value, dt.datetime):
             return value
-
         if isinstance(value, str):
-            value = value.strip()
-
-            # 1. Attempt to parse standard ISO format (from JSON load)
-            if "T" in value or "-" in value:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.fromisoformat(value)
-            # 2. Attempt to parse custom UI format (from Tkinter input)
-            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.strptime(value, date_format)
-
-            raise ValueError(
-                "Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, "
-                f"got '{value}'"
-            )
-
+            return parse_in_game_date_string(value)
         raise ValueError(
             f"in_game_date must be a string or datetime, got {type(value)}"
         )
@@ -395,24 +346,8 @@ class Player(BaseModel):
             return None
         if isinstance(value, dt.datetime):
             return value
-
         if isinstance(value, str):
-            value = value.strip()
-
-            # 1. Attempt to parse standard ISO format (from JSON load)
-            if "T" in value or "-" in value:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.fromisoformat(value)
-            # 2. Attempt to parse custom UI format (from Tkinter input)
-            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.strptime(value, date_format)
-
-            raise ValueError(
-                "Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, "
-                f"got '{value}'"
-            )
-
+            return parse_in_game_date_string(value)
         raise ValueError(f"date_sold must be a string or datetime, got {type(value)}")
 
     @property
@@ -499,17 +434,7 @@ class MatchData(BaseModel):
         if isinstance(value, dt.datetime):
             return value
         if isinstance(value, str):
-            value = value.strip()
-            if "T" in value or "-" in value:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.fromisoformat(value)
-            for date_format in ["%d/%m/%y", "%d/%m/%Y"]:
-                with contextlib.suppress(ValueError):
-                    return dt.datetime.strptime(value, date_format)
-            raise ValueError(
-                "Invalid date format. Expected dd/mm/yy, dd/mm/yyyy or ISO, "
-                f"got '{value}'"
-            )
+            return parse_in_game_date_string(value)
         raise ValueError(
             f"in_game_date must be a string or datetime, got {type(value)}"
         )
