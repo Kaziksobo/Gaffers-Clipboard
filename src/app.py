@@ -544,22 +544,21 @@ class App(ctk.CTk):
         """
         return self._player_service.get_last_financial_reference_date(name)
 
-    def get_last_injury_reference_date(self, name: str) -> datetime | None:
-        """Retrieve the reference date for a new injury record.
+    def get_injury_date_floor(self, name: str) -> datetime | None:
+        """Retrieve the earliest plausible in-game date for a new injury record.
 
-        Uses the player's most recent attribute snapshot date, since a player
-        can't be injured before they existed in the save. Delegates to
-        `PlayerService.get_last_injury_reference_date`.
+        Prefers the player's most recent previous injury date, falling back to
+        their earliest attribute snapshot date. Delegates to
+        `PlayerService.get_injury_date_floor`.
 
         Args:
             name (str): The exact registered name of the player to look up.
 
         Returns:
-            datetime | None: The in-game date of the player's most recent
-            attribute snapshot, or None if the player doesn't exist or has no
-            attribute history yet.
+            datetime | None: The floor in-game date, or None if the player
+            doesn't exist or has neither injury nor attribute history yet.
         """
-        return self._player_service.get_last_injury_reference_date(name)
+        return self._player_service.get_injury_date_floor(name)
 
     # --- Squad lookup and identity ---
 

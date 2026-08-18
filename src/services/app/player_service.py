@@ -442,21 +442,26 @@ class PlayerService:
             return player.current_attributes.in_game_date
         return None
 
-    def get_last_injury_reference_date(self, name: str) -> datetime | None:
-        """Return the reference date for a new injury record.
+    def get_injury_date_floor(self, name: str) -> datetime | None:
+        """Return the earliest plausible in-game date for a new injury record.
 
-        Uses the player's most recent attribute snapshot date, since a player
-        can't be injured before they existed in the save.
+        Prefers the player's most recent previous injury date, since they
+        can't be injured again before their last injury. Falls back to their
+        earliest attribute snapshot date if they have no injury history yet,
+        since a player can't be injured before they existed in the save.
 
         Args:
             name (str): Name of the player to look up.
 
         Returns:
-            datetime | None: The in-game date of the player's most recent
-            attribute snapshot, or None if the player doesn't exist or has no
-            attribute history yet.
+            datetime | None: The floor in-game date, or None if the player
+            doesn't exist or has neither injury nor attribute history yet.
         """
         player = self._data_manager.find_player_by_name(name)
-        if player is None or player.current_attributes is None:
+        if player is None:
             return None
-        return player.current_attributes.in_game_date
+        if player.most_recent_injury is not None:
+            return player.most_recent_injury.in_game_date
+        if player.first_attribute_snapshot is not None:
+            return player.first_attribute_snapshot.in_game_date
+        return None

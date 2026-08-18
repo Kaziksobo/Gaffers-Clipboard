@@ -360,11 +360,27 @@ class Player(BaseModel):
         return sorted(self.attribute_history, key=lambda x: x.datetime)[-1]
 
     @property
+    def first_attribute_snapshot(
+        self,
+    ) -> GKAttributeSnapshot | OutfieldAttributeSnapshot | None:
+        """Returns the earliest attribute snapshot for the player."""
+        if not self.attribute_history:
+            return None
+        return sorted(self.attribute_history, key=lambda x: x.datetime)[0]
+
+    @property
     def current_financials(self) -> FinancialSnapshot | None:
         """Returns the most recent financial snapshot for the player."""
         if not self.financial_history:
             return None
         return sorted(self.financial_history, key=lambda x: x.in_game_date)[-1]
+
+    @property
+    def most_recent_injury(self) -> InjuryRecord | None:
+        """Returns the most recent injury record for the player."""
+        if not self.injury_history:
+            return None
+        return sorted(self.injury_history, key=lambda x: x.in_game_date)[-1]
 
 
 # --- Match Models ---

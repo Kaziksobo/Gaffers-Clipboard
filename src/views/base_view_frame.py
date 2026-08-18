@@ -35,7 +35,7 @@ from src.contracts.ui import (
     BaseViewThemeProtocol,
     CareerDetailsControllerProtocol,
     FinancialHistoryDateControllerProtocol,
-    InjuryHistoryDateControllerProtocol,
+    InjuryDateFloorControllerProtocol,
     LatestMatchDateControllerProtocol,
     WarningValue,
     WidthEventProtocol,
@@ -60,8 +60,9 @@ logger = logging.getLogger(__name__)
 # is being dated. These only drive soft confirmation warnings (see
 # `soft_validate`), never a hard block. Matches happen roughly weekly, so a
 # large gap is suspicious; attribute/financial snapshots are often updated
-# once a season, so they get a wider allowance.
-type DateReferenceKind = Literal["match", "attribute", "financial", "injury", "sell"]
+# once a season, so they get a wider allowance. Injuries aren't tied to this
+# kind of cadence at all (see `_check_injury_date_floor` for that check instead).
+type DateReferenceKind = Literal["match", "attribute", "financial", "sell"]
 
 MATCH_DATE_MAX_DAYS_AFTER = 120
 SNAPSHOT_DATE_MAX_DAYS_AFTER = 365
@@ -70,7 +71,6 @@ _REFERENCE_TOLERANCE_DAYS: dict[DateReferenceKind, int] = {
     "match": MATCH_DATE_MAX_DAYS_AFTER,
     "attribute": SNAPSHOT_DATE_MAX_DAYS_AFTER,
     "financial": SNAPSHOT_DATE_MAX_DAYS_AFTER,
-    "injury": MATCH_DATE_MAX_DAYS_AFTER,
     "sell": MATCH_DATE_MAX_DAYS_AFTER,
 }
 
@@ -940,12 +940,13 @@ class BaseViewFrame(ctk.CTkFrame):
         disallow_older_than_last: bool = False,
         reference_kind: DateReferenceKind | None = None,
         player_name: str | None = None,
+        check_injury_floor: bool = False,
         check_career_floor: bool = True,
     ) -> bool:
         """Validate in-game date format and sense-check it against known history.
 
         Accepts `dd/mm/yy`, `dd/mm/yyyy`, and ISO formats. Beyond format
-        checking, this performs up to three additional passes:
+        checking, this performs up to four additional passes:
 
         1. If `disallow_older_than_last` is set, hard-blocks a date earlier
            than the latest stored match date (match entries only).
@@ -953,7 +954,11 @@ class BaseViewFrame(ctk.CTkFrame):
            confirmation dialog) when the date is implausibly far after the
            relevant reference date for that kind of record — e.g. a player's
            previous attribute snapshot, or the latest match.
-        3. Unless `check_career_floor` is False, soft-warns when the date
+        3. If `check_injury_floor` is set, soft-warns when the date is before
+           the player's last injury (or, absent any, before they existed in
+           the save) — injuries (unlike attribute/financial snapshots) have no
+           regular cadence, so a "too long since" check doesn't apply here.
+        4. Unless `check_career_floor` is False, soft-warns when the date
            predates the active career's starting season.
 
         Args:
@@ -965,7 +970,9 @@ class BaseViewFrame(ctk.CTkFrame):
                 tolerance. None skips the plausibility check entirely.
             player_name (str | None): The player this date concerns, when
                 `reference_kind` needs player-specific history (attribute,
-                financial, injury).
+                financial) or `check_injury_floor` is set.
+            check_injury_floor (bool): If True, warn when the date is before
+                the player's most recent injury or earliest attribute snapshot.
             check_career_floor (bool): If True, warn when the date predates the
                 active career's starting season.
 
@@ -985,6 +992,11 @@ class BaseViewFrame(ctk.CTkFrame):
 
         if reference_kind is not None and not self._check_date_plausibility(
             date_str, parsed, reference_kind, player_name
+        ):
+            return False
+
+        if check_injury_floor and not self._check_injury_date_floor(
+            date_str, parsed, player_name
         ):
             return False
 
@@ -1075,10 +1087,6 @@ class BaseViewFrame(ctk.CTkFrame):
                     player_name
                 )
             label = f"{player_name}'s last financial or attribute update"
-        elif reference_kind == "injury" and player_name:
-            if isinstance(self.controller, InjuryHistoryDateControllerProtocol):
-                reference = self.controller.get_last_injury_reference_date(player_name)
-            label = f"{player_name}'s last attribute update"
 
         if reference is None:
             if isinstance(self.controller, LatestMatchDateControllerProtocol):
@@ -1125,6 +1133,46 @@ class BaseViewFrame(ctk.CTkFrame):
                 f"The date you entered ({date_str}) is more than {max_days} days "
                 f"after {label} ({reference.strftime('%d/%m/%y')}).\n\n"
                 "Did you mean to enter a different date?"
+            ),
+        )
+
+    def _check_injury_date_floor(
+        self, date_str: str, parsed: datetime, player_name: str | None
+    ) -> bool:
+        """Soft-warn when an injury date is before the player's last injury.
+
+        Falls back to the player's earliest attribute snapshot date when they
+        have no prior injury history, since a player can't be injured before
+        they existed in the save.
+
+        Args:
+            date_str (str): The original user-provided date string, for
+                messaging.
+            parsed (datetime): The parsed date being validated.
+            player_name (str | None): The player this date concerns.
+
+        Returns:
+            bool: True if on/after the floor (or unavailable) or the user
+            confirmed the warning, False if the user chose to fix it.
+        """
+        if not player_name or not isinstance(
+            self.controller, InjuryDateFloorControllerProtocol
+        ):
+            return True
+
+        floor = self.controller.get_injury_date_floor(player_name)
+        if floor is None or parsed >= floor:
+            return True
+
+        return self.soft_validate(
+            warning_key="in_game_date_injury_floor",
+            value=(player_name, date_str),
+            title="Date Before Last Injury",
+            message=(
+                f"The date you entered ({date_str}) is before {player_name}'s "
+                f"most recent injury or earliest recorded attributes "
+                f"({floor.strftime('%d/%m/%y')}).\n\n"
+                "Are you sure this is correct?"
             ),
         )
 

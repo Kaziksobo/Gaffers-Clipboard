@@ -129,11 +129,11 @@ class FinancialHistoryDateControllerProtocol(Protocol):
 
 
 @runtime_checkable
-class InjuryHistoryDateControllerProtocol(Protocol):
+class InjuryDateFloorControllerProtocol(Protocol):
     """Optional controller capability for injury-record chronology checks."""
 
-    def get_last_injury_reference_date(self, name: str) -> datetime | None:
-        """Return the reference date for a new injury record."""
+    def get_injury_date_floor(self, name: str) -> datetime | None:
+        """Return the earliest plausible in-game date for a new injury record."""
 
 
 @runtime_checkable
@@ -152,7 +152,7 @@ class ViewControllerProtocol(
     LatestMatchDateControllerProtocol,
     AttributeHistoryDateControllerProtocol,
     FinancialHistoryDateControllerProtocol,
-    InjuryHistoryDateControllerProtocol,
+    InjuryDateFloorControllerProtocol,
     Protocol,
 ):
     """Backward-compatible superset for legacy view controller annotations."""
