@@ -251,7 +251,9 @@ class AddMatchFrame(BaseViewFrame):
 
         # Validate in-game date
         in_game_date: str = self.in_game_date_entry.get().strip()
-        if not self.validate_in_game_date(in_game_date, disallow_older_than_last=True):
+        if not self.validate_in_game_date(
+            in_game_date, disallow_older_than_last=True, reference_kind="match"
+        ):
             return
 
         # Validate competition selection

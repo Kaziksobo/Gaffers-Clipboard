@@ -113,6 +113,30 @@ class LatestMatchDateControllerProtocol(Protocol):
 
 
 @runtime_checkable
+class AttributeHistoryDateControllerProtocol(Protocol):
+    """Optional controller capability for attribute-snapshot chronology checks."""
+
+    def get_last_attribute_update_date(self, name: str) -> datetime | None:
+        """Return the in-game date of the player's most recent attribute snapshot."""
+
+
+@runtime_checkable
+class FinancialHistoryDateControllerProtocol(Protocol):
+    """Optional controller capability for financial-snapshot chronology checks."""
+
+    def get_last_financial_reference_date(self, name: str) -> datetime | None:
+        """Return the best available reference date for a new financial snapshot."""
+
+
+@runtime_checkable
+class InjuryHistoryDateControllerProtocol(Protocol):
+    """Optional controller capability for injury-record chronology checks."""
+
+    def get_last_injury_reference_date(self, name: str) -> datetime | None:
+        """Return the reference date for a new injury record."""
+
+
+@runtime_checkable
 class BaseViewControllerProtocol(
     DynamicFontsControllerProtocol,
     UnsavedWorkControllerProtocol,
@@ -126,6 +150,9 @@ class BaseViewControllerProtocol(
 class ViewControllerProtocol(
     BaseViewControllerProtocol,
     LatestMatchDateControllerProtocol,
+    AttributeHistoryDateControllerProtocol,
+    FinancialHistoryDateControllerProtocol,
+    InjuryHistoryDateControllerProtocol,
     Protocol,
 ):
     """Backward-compatible superset for legacy view controller annotations."""

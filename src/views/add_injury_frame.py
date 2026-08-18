@@ -257,7 +257,9 @@ class AddInjuryFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
 
         # Preemptive Date Validation
         in_game_date_str = str(ui_data.get("in_game_date", "")).strip()
-        if not self.validate_in_game_date(in_game_date_str):
+        if not self.validate_in_game_date(
+            in_game_date_str, reference_kind="injury", player_name=player_name
+        ):
             return
 
         try:

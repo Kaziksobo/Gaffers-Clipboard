@@ -24,14 +24,18 @@ import logging
 import re
 import tkinter as tk
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 import customtkinter as ctk
 
 from src.contracts.ui import (
     AlertOption,
+    AttributeHistoryDateControllerProtocol,
     BaseViewControllerProtocol,
     BaseViewThemeProtocol,
+    CareerDetailsControllerProtocol,
+    FinancialHistoryDateControllerProtocol,
+    InjuryHistoryDateControllerProtocol,
     LatestMatchDateControllerProtocol,
     WarningValue,
     WidthEventProtocol,
@@ -45,10 +49,30 @@ from src.schemas import (
     PLAYER_AGE_MIN,
     PLAYER_WEIGHT_MAX,
     PLAYER_WEIGHT_MIN,
+    CareerMetadata,
 )
+from src.utils import parse_in_game_date_string
 from src.views.widgets.custom_alert import CustomAlert
 
 logger = logging.getLogger(__name__)
+
+# In-game date plausibility tolerances, in days, keyed by what kind of record
+# is being dated. These only drive soft confirmation warnings (see
+# `soft_validate`), never a hard block. Matches happen roughly weekly, so a
+# large gap is suspicious; attribute/financial snapshots are often updated
+# once a season, so they get a wider allowance.
+type DateReferenceKind = Literal["match", "attribute", "financial", "injury", "sell"]
+
+MATCH_DATE_MAX_DAYS_AFTER = 120
+SNAPSHOT_DATE_MAX_DAYS_AFTER = 365
+
+_REFERENCE_TOLERANCE_DAYS: dict[DateReferenceKind, int] = {
+    "match": MATCH_DATE_MAX_DAYS_AFTER,
+    "attribute": SNAPSHOT_DATE_MAX_DAYS_AFTER,
+    "financial": SNAPSHOT_DATE_MAX_DAYS_AFTER,
+    "injury": MATCH_DATE_MAX_DAYS_AFTER,
+    "sell": MATCH_DATE_MAX_DAYS_AFTER,
+}
 
 
 class BaseViewFrame(ctk.CTkFrame):
@@ -911,34 +935,74 @@ class BaseViewFrame(ctk.CTkFrame):
         return True
 
     def validate_in_game_date(
-        self, date_str: str, disallow_older_than_last: bool = False
+        self,
+        date_str: str,
+        disallow_older_than_last: bool = False,
+        reference_kind: DateReferenceKind | None = None,
+        player_name: str | None = None,
+        check_career_floor: bool = True,
     ) -> bool:
-        """Validate in-game date format and optionally enforce chronology.
+        """Validate in-game date format and sense-check it against known history.
 
-        Accepts `dd/mm/yy` and `dd/mm/yyyy` formats. When chronological
-        enforcement is enabled, compares the parsed date against the latest
-        saved match date provided by controllers supporting
-        `LatestMatchDateControllerProtocol`.
+        Accepts `dd/mm/yy`, `dd/mm/yyyy`, and ISO formats. Beyond format
+        checking, this performs up to three additional passes:
+
+        1. If `disallow_older_than_last` is set, hard-blocks a date earlier
+           than the latest stored match date (match entries only).
+        2. If `reference_kind` is given, soft-warns (with an overridable
+           confirmation dialog) when the date is implausibly far after the
+           relevant reference date for that kind of record — e.g. a player's
+           previous attribute snapshot, or the latest match.
+        3. Unless `check_career_floor` is False, soft-warns when the date
+           predates the active career's starting season.
 
         Args:
             date_str (str): The user-provided date string.
             disallow_older_than_last (bool): If True, block dates earlier than
                 the latest stored match date.
+            reference_kind (DateReferenceKind | None): The kind of record being
+                dated, used to pick the right plausibility reference and
+                tolerance. None skips the plausibility check entirely.
+            player_name (str | None): The player this date concerns, when
+                `reference_kind` needs player-specific history (attribute,
+                financial, injury).
+            check_career_floor (bool): If True, warn when the date predates the
+                active career's starting season.
 
         Returns:
-            bool: True if valid (and passes chronological check when enabled),
+            bool: True if valid (and the user confirmed any warnings),
             otherwise False.
         """
-        date_str: str = date_str.strip()
-        parsed: datetime | None = None
-        for fmt in ("%d/%m/%y", "%d/%m/%Y"):
-            try:
-                parsed: datetime = datetime.strptime(date_str, fmt)
-                break
-            except ValueError:
-                continue
-
+        date_str = date_str.strip()
+        parsed = self._parse_in_game_date_input(date_str)
         if parsed is None:
+            return False
+
+        if disallow_older_than_last and not self._check_not_older_than_last_match(
+            date_str, parsed
+        ):
+            return False
+
+        if reference_kind is not None and not self._check_date_plausibility(
+            date_str, parsed, reference_kind, player_name
+        ):
+            return False
+
+        return not check_career_floor or self._check_career_floor(date_str, parsed)
+
+    def _parse_in_game_date_input(self, date_str: str) -> datetime | None:
+        """Parse a UI-entered in-game date, showing a warning on failure.
+
+        Args:
+            date_str (str): The already-stripped user-provided date string.
+
+        Returns:
+            datetime | None: The parsed date, or None (with a warning shown)
+            if the string doesn't match a supported format.
+        """
+        try:
+            return parse_in_game_date_string(date_str)
+        except ValueError:
             logger.warning(f"Date validation failed for input: {date_str}")
             self.show_warning(
                 title="Invalid Date Format",
@@ -947,30 +1011,165 @@ class BaseViewFrame(ctk.CTkFrame):
                     "or dd/mm/yyyy. Please correct it before proceeding."
                 ),
             )
+            return None
+
+    def _check_not_older_than_last_match(self, date_str: str, parsed: datetime) -> bool:
+        """Hard-block a date earlier than the latest stored match date.
+
+        Args:
+            date_str (str): The original user-provided date string, for
+                messaging.
+            parsed (datetime): The parsed date being validated.
+
+        Returns:
+            bool: False (with a warning shown) if a later match is already on
+            record, otherwise True.
+        """
+        latest: datetime | None = None
+        try:
+            if isinstance(self.controller, LatestMatchDateControllerProtocol):
+                latest = self.controller.get_latest_match_in_game_date()
+        except Exception as e:
+            logger.debug(f"Could not retrieve latest match date for validation: {e}")
+
+        if latest is not None and parsed < latest:
+            self.show_warning(
+                title="Date Earlier Than Last Match",
+                message=(
+                    f"The date you entered ({date_str}) is earlier than "
+                    "the most recent stored match "
+                    f"({latest.strftime('%d/%m/%y')}).\n\n"
+                    "Please enter a date on or after the most recent match date."
+                ),
+            )
             return False
-
-        if disallow_older_than_last:
-            latest: datetime | None = None
-            try:
-                if isinstance(self.controller, LatestMatchDateControllerProtocol):
-                    latest: datetime | None = (
-                        self.controller.get_latest_match_in_game_date()
-                    )
-            except Exception as e:
-                logger.debug(
-                    f"Could not retrieve latest match date for validation: {e}"
-                )
-
-            if latest is not None and parsed < latest:
-                self.show_warning(
-                    title="Date Earlier Than Last Match",
-                    message=(
-                        f"The date you entered ({date_str}) is earlier than "
-                        "the most recent stored match "
-                        f"({latest.strftime('%d/%m/%y')}).\n\n"
-                        "Please enter a date on or after the most recent match date."
-                    ),
-                )
-                return False
-
         return True
+
+    def _resolve_plausibility_reference(
+        self, reference_kind: DateReferenceKind, player_name: str | None
+    ) -> tuple[datetime | None, str]:
+        """Resolve the comparison date and label used for a plausibility check.
+
+        Player-specific history is preferred when `reference_kind` calls for
+        it and the controller supports the relevant optional capability;
+        otherwise falls back to the latest stored match date.
+
+        Args:
+            reference_kind (DateReferenceKind): The kind of record being dated.
+            player_name (str | None): The player this date concerns, if any.
+
+        Returns:
+            tuple[datetime | None, str]: The reference date (None if
+            unavailable) and a human-readable label describing it.
+        """
+        reference: datetime | None = None
+        label = "the most recent match"
+
+        if reference_kind == "attribute" and player_name:
+            if isinstance(self.controller, AttributeHistoryDateControllerProtocol):
+                reference = self.controller.get_last_attribute_update_date(player_name)
+            label = f"{player_name}'s last attribute update"
+        elif reference_kind == "financial" and player_name:
+            if isinstance(self.controller, FinancialHistoryDateControllerProtocol):
+                reference = self.controller.get_last_financial_reference_date(
+                    player_name
+                )
+            label = f"{player_name}'s last financial or attribute update"
+        elif reference_kind == "injury" and player_name:
+            if isinstance(self.controller, InjuryHistoryDateControllerProtocol):
+                reference = self.controller.get_last_injury_reference_date(player_name)
+            label = f"{player_name}'s last attribute update"
+
+        if reference is None:
+            if isinstance(self.controller, LatestMatchDateControllerProtocol):
+                reference = self.controller.get_latest_match_in_game_date()
+            label = "the most recent match"
+
+        return reference, label
+
+    def _check_date_plausibility(
+        self,
+        date_str: str,
+        parsed: datetime,
+        reference_kind: DateReferenceKind,
+        player_name: str | None,
+    ) -> bool:
+        """Soft-warn when a date is implausibly far after its reference date.
+
+        Args:
+            date_str (str): The original user-provided date string, for
+                messaging.
+            parsed (datetime): The parsed date being validated.
+            reference_kind (DateReferenceKind): The kind of record being dated.
+            player_name (str | None): The player this date concerns, if any.
+
+        Returns:
+            bool: True if within tolerance or the user confirmed the warning,
+            False if the user chose to fix the date.
+        """
+        reference, label = self._resolve_plausibility_reference(
+            reference_kind, player_name
+        )
+        if reference is None:
+            return True
+
+        max_days = _REFERENCE_TOLERANCE_DAYS[reference_kind]
+        if (parsed - reference).days <= max_days:
+            return True
+
+        return self.soft_validate(
+            warning_key="in_game_date_plausibility",
+            value=(reference_kind, player_name, date_str),
+            title="Unusual In-Game Date",
+            message=(
+                f"The date you entered ({date_str}) is more than {max_days} days "
+                f"after {label} ({reference.strftime('%d/%m/%y')}).\n\n"
+                "Did you mean to enter a different date?"
+            ),
+        )
+
+    def _get_career_floor_date(self) -> datetime | None:
+        """Derive the earliest plausible in-game date for the active career.
+
+        Returns:
+            datetime | None: 1 July of the first year in the career's
+            `starting_season` (e.g. "24/25" -> 01/07/2024), or None if no
+            career is loaded or the season can't be parsed.
+        """
+        if not isinstance(self.controller, CareerDetailsControllerProtocol):
+            return None
+        career: CareerMetadata | None = self.controller.get_current_career_details()
+        if career is None:
+            return None
+        try:
+            start_year = 2000 + int(career.starting_season[:2])
+            return datetime(start_year, 7, 1)
+        except (ValueError, IndexError):
+            return None
+
+    def _check_career_floor(self, date_str: str, parsed: datetime) -> bool:
+        """Soft-warn when a date predates the active career's starting season.
+
+        Args:
+            date_str (str): The original user-provided date string, for
+                messaging.
+            parsed (datetime): The parsed date being validated.
+
+        Returns:
+            bool: True if on/after the career floor (or unavailable) or the
+            user confirmed the warning, False if the user chose to fix it.
+        """
+        floor = self._get_career_floor_date()
+        if floor is None or parsed >= floor:
+            return True
+
+        return self.soft_validate(
+            warning_key="in_game_date_career_floor",
+            value=date_str,
+            title="Date Before Career Start",
+            message=(
+                f"The date you entered ({date_str}) is before your career's "
+                f"starting season ({floor.strftime('%d/%m/%y')}).\n\n"
+                "Are you sure this is correct?"
+            ),
+        )

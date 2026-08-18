@@ -359,6 +359,13 @@ class Player(BaseModel):
             return None
         return sorted(self.attribute_history, key=lambda x: x.datetime)[-1]
 
+    @property
+    def current_financials(self) -> FinancialSnapshot | None:
+        """Returns the most recent financial snapshot for the player."""
+        if not self.financial_history:
+            return None
+        return sorted(self.financial_history, key=lambda x: x.in_game_date)[-1]
+
 
 # --- Match Models ---
 

@@ -252,7 +252,9 @@ class AddFinancialFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
             return
 
         in_game_date: str = self.in_game_date_entry.get().strip()
-        if not self.validate_in_game_date(in_game_date):
+        if not self.validate_in_game_date(
+            in_game_date, reference_kind="financial", player_name=player
+        ):
             return
 
         try:

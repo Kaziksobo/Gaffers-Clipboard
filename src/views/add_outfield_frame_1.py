@@ -339,6 +339,7 @@ class AddOutfieldFrame1(
                 "Validation Error", "Please enter a name or select an existing player."
             )
             return
+        player_name: str = str(ui_data["name"])
 
         is_existing_player = player_name_dropdown is not None
 
@@ -346,7 +347,9 @@ class AddOutfieldFrame1(
         ui_data["country"] = country if country not in invalid_fields else None
 
         in_game_date: str = self.in_game_date_entry.get().strip()
-        if not self.validate_in_game_date(in_game_date):
+        if not self.validate_in_game_date(
+            in_game_date, reference_kind="attribute", player_name=player_name
+        ):
             return
         ui_data["in_game_date"] = in_game_date
 

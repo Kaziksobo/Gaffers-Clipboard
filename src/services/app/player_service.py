@@ -22,6 +22,7 @@ and error-boundary behavior for player workflows.
 """
 
 import logging
+from datetime import datetime
 
 from src.contracts.backend import (
     FinancialDataPayload,
@@ -396,3 +397,66 @@ class PlayerService:
             "country": player.nationality,
             "positions": player.positions,
         }
+
+    def get_last_attribute_update_date(self, name: str) -> datetime | None:
+        # sourcery skip: class-extract-method
+        """Return the in-game date of the player's most recent attribute snapshot.
+
+        Used to sense-check a newly entered in-game date for an attribute
+        update against the player's own history.
+
+        Args:
+            name (str): Name of the player to look up.
+
+        Returns:
+            datetime | None: The in-game date of the player's most recent
+            attribute snapshot, or None if the player doesn't exist or has no
+            attribute history yet.
+        """
+        player = self._data_manager.find_player_by_name(name)
+        if player is None or player.current_attributes is None:
+            return None
+        return player.current_attributes.in_game_date
+
+    def get_last_financial_reference_date(self, name: str) -> datetime | None:
+        """Return the best available reference date for a new financial snapshot.
+
+        Prefers the player's most recent financial snapshot date. Falls back to
+        their most recent attribute snapshot date if no financial history
+        exists yet, since a player can't have financial data before they
+        existed in the save.
+
+        Args:
+            name (str): Name of the player to look up.
+
+        Returns:
+            datetime | None: The reference in-game date, or None if the player
+            doesn't exist or has neither financial nor attribute history yet.
+        """
+        player = self._data_manager.find_player_by_name(name)
+        if player is None:
+            return None
+        if player.current_financials is not None:
+            return player.current_financials.in_game_date
+        if player.current_attributes is not None:
+            return player.current_attributes.in_game_date
+        return None
+
+    def get_last_injury_reference_date(self, name: str) -> datetime | None:
+        """Return the reference date for a new injury record.
+
+        Uses the player's most recent attribute snapshot date, since a player
+        can't be injured before they existed in the save.
+
+        Args:
+            name (str): Name of the player to look up.
+
+        Returns:
+            datetime | None: The in-game date of the player's most recent
+            attribute snapshot, or None if the player doesn't exist or has no
+            attribute history yet.
+        """
+        player = self._data_manager.find_player_by_name(name)
+        if player is None or player.current_attributes is None:
+            return None
+        return player.current_attributes.in_game_date

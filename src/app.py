@@ -511,6 +511,56 @@ class App(ctk.CTk):
         """
         return self._match_service.get_latest_match_in_game_date()
 
+    def get_last_attribute_update_date(self, name: str) -> datetime | None:
+        """Retrieve the in-game date of a player's most recent attribute snapshot.
+
+        Used by attribute entry frames to sense-check a newly entered in-game
+        date against that player's own history. Delegates to
+        `PlayerService.get_last_attribute_update_date`.
+
+        Args:
+            name (str): The exact registered name of the player to look up.
+
+        Returns:
+            datetime | None: The in-game date of the player's most recent
+            attribute snapshot, or None if the player doesn't exist or has no
+            attribute history yet.
+        """
+        return self._player_service.get_last_attribute_update_date(name)
+
+    def get_last_financial_reference_date(self, name: str) -> datetime | None:
+        """Retrieve the best available reference date for a new financial snapshot.
+
+        Prefers the player's most recent financial snapshot date, falling back
+        to their most recent attribute snapshot date. Delegates to
+        `PlayerService.get_last_financial_reference_date`.
+
+        Args:
+            name (str): The exact registered name of the player to look up.
+
+        Returns:
+            datetime | None: The reference in-game date, or None if the player
+            doesn't exist or has no financial or attribute history yet.
+        """
+        return self._player_service.get_last_financial_reference_date(name)
+
+    def get_last_injury_reference_date(self, name: str) -> datetime | None:
+        """Retrieve the reference date for a new injury record.
+
+        Uses the player's most recent attribute snapshot date, since a player
+        can't be injured before they existed in the save. Delegates to
+        `PlayerService.get_last_injury_reference_date`.
+
+        Args:
+            name (str): The exact registered name of the player to look up.
+
+        Returns:
+            datetime | None: The in-game date of the player's most recent
+            attribute snapshot, or None if the player doesn't exist or has no
+            attribute history yet.
+        """
+        return self._player_service.get_last_injury_reference_date(name)
+
     # --- Squad lookup and identity ---
 
     def get_all_player_names(

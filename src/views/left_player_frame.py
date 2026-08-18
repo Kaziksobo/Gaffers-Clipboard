@@ -290,7 +290,7 @@ class LeftPlayerFrame(BaseViewFrame, PlayerDropdownMixin, EntryFocusMixin):
         """
         in_game_date_str: str = self.in_game_date_entry.get().strip()
 
-        if not self.validate_in_game_date(in_game_date_str):
+        if not self.validate_in_game_date(in_game_date_str, reference_kind="sell"):
             return None
 
         return in_game_date_str
