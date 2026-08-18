@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 import pytest
 
 from src.data_manager import DataManager
+from src.schemas import Match, MatchData, MatchStats
 
 
 def _gk_player_data(name: str = "David Raya") -> dict[str, object]:
@@ -372,3 +374,72 @@ def test_load_matches_strict_or_raise_raises_without_career(tmp_path: Path) -> N
 
     with pytest.raises(RuntimeError, match="no active career"):
         dm._load_matches_strict_or_raise()
+
+
+# ---------------------------------------------------------------------------
+# normalize_team_name / get_known_team_names
+# ---------------------------------------------------------------------------
+
+
+def _match(
+    match_id: int,
+    home_team_name: str,
+    away_team_name: str,
+    stats: dict[str, int | float],
+) -> Match:
+    """Build a minimal valid Match for seeding a DataManager's in-memory cache."""
+    return Match(
+        id=match_id,
+        datetime=datetime.now(),
+        data=MatchData(
+            in_game_date=datetime.now(),
+            half_length=6,
+            competition="La Liga",
+            home_team_name=home_team_name,
+            away_team_name=away_team_name,
+            home_score=1,
+            away_score=0,
+            home_stats=MatchStats(**stats),
+            away_stats=MatchStats(**stats),
+        ),
+    )
+
+
+def test_get_known_team_names_returns_just_the_career_club_with_no_matches(
+    loaded_data_manager: DataManager,
+) -> None:
+    """get_known_team_names returns only the career's own club with no match history."""
+    result = loaded_data_manager.get_known_team_names()
+
+    assert result == ["Valencia CF"]
+
+
+def test_get_known_team_names_includes_opponents_from_match_history(
+    loaded_data_manager: DataManager, minimal_team_stats: dict[str, int | float]
+) -> None:
+    """get_known_team_names includes every distinct opponent seen in past matches."""
+    loaded_data_manager.matches = [
+        _match(1, "Valencia CF", "Real Madrid", minimal_team_stats),
+    ]
+
+    result = loaded_data_manager.get_known_team_names()
+
+    assert result == ["Real Madrid", "Valencia CF"]
+
+
+def test_normalize_team_name_matches_career_club_case_insensitively(
+    loaded_data_manager: DataManager,
+) -> None:
+    """normalize_team_name canonicalizes a case/FC-differing typed name."""
+    result = loaded_data_manager.normalize_team_name("valencia cf")
+
+    assert result == "Valencia CF"
+
+
+def test_normalize_team_name_returns_unchanged_for_unknown_name(
+    loaded_data_manager: DataManager,
+) -> None:
+    """normalize_team_name leaves a name with no close match unchanged."""
+    result = loaded_data_manager.normalize_team_name("Athletic Bilbao")
+
+    assert result == "Athletic Bilbao"

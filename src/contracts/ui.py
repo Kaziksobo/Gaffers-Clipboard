@@ -5,6 +5,7 @@ CustomTkinter controllers and views. Keep cross-layer payload contracts in
 src.contracts and persistence models in src.schemas.
 """
 
+import tkinter as tk
 from datetime import datetime
 from pathlib import Path
 from typing import Protocol, runtime_checkable
@@ -291,6 +292,14 @@ class MatchOverviewControllerProtocol(Protocol):
 
 
 @runtime_checkable
+class TeamNameSuggestionsControllerProtocol(Protocol):
+    """Controller capability for team-name autocomplete suggestions."""
+
+    def get_known_team_names(self) -> list[str]:
+        """Return team names known to the active career, for autocomplete UI."""
+
+
+@runtime_checkable
 class PlayerAttributeProcessorControllerProtocol(Protocol):
     """Controller capability for OCR-driven player attribute extraction."""
 
@@ -521,6 +530,7 @@ class MatchReviewControllerProtocol(
 @runtime_checkable
 class MatchStatsFrameControllerProtocol(
     BaseViewControllerProtocol,
+    TeamNameSuggestionsControllerProtocol,
     Protocol,
 ):
     """Composed controller capability required by MatchStatsFrame."""
@@ -644,6 +654,55 @@ class EntryFocusMixinHostProtocol(Protocol):
 
     def apply_focus_flourishes(self, parent_widget: ctk.CTkBaseClass) -> None:
         """Apply recursive entry focus effects to child widgets."""
+
+
+@runtime_checkable
+class PopupListMixinHostProtocol(Protocol):
+    """Host object contract required by `PopupListMixin` methods."""
+
+    dropdown_popup: ctk.CTkToplevel | None
+    dropdown_height: int
+    _outside_click_bind_id: str | None
+    _popup_scroll: ctk.CTkScrollableFrame | None
+
+    def cget(self, param: str) -> object:
+        """Return a widget configuration option's current value."""
+
+    def winfo_toplevel(self) -> ctk.CTk:
+        """Return this widget's top-level window."""
+
+    def _popup_anchor(self) -> ctk.CTkBaseClass:
+        """Return the widget the popup positions itself under and sizes to."""
+
+    def _popup_values(self) -> list[str]:
+        """Return the current list of option strings to render in the popup."""
+
+    def _popup_option_style(self) -> dict[str, str]:
+        """Return extra CTkButton kwargs applied to each rendered option."""
+
+    def _popup_takes_focus(self) -> bool:
+        """Return whether opening the popup should force keyboard focus onto it."""
+
+    def _on_popup_select(self, name: str) -> None:
+        """Handle a selection event originating from inside the popup."""
+
+    def _ensure_popup_open(self) -> None:
+        """Create and position the popup Toplevel window, if not already open."""
+
+    def _render_popup_options(self) -> None:
+        """Clear and repopulate the popup's option buttons."""
+
+    def _close_popup(self) -> None:
+        """Destroy the popup Toplevel window if it exists."""
+
+    def _bind_outside_click_close(self) -> None:
+        """Bind a click handler that closes the popup only on an outside click."""
+
+    def _unbind_outside_click_close(self) -> None:
+        """Unbind this widget's outside-click handler only."""
+
+    def _on_global_click(self, event: tk.Event) -> None:
+        """Close the popup only when a click lands outside the anchor/popup."""
 
 
 @runtime_checkable

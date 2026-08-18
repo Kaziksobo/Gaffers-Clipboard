@@ -20,6 +20,7 @@ from src.schemas import MATCH_YELLOW_CARDS_MAX, MATCH_YELLOW_CARDS_MIN
 from src.utils import safe_float_conversion, safe_int_conversion
 from src.views.base_view_frame import BaseViewFrame
 from src.views.mixins import EntryFocusMixin, OCRDataMixin
+from src.views.widgets.autocomplete_entry import AutocompleteEntry
 
 logger = logging.getLogger(__name__)
 
@@ -132,11 +133,12 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
             self.stats_grid.grid_rowconfigure(row, weight=1)
 
         # Populate subgrid with entry fields
-        self.home_team_name = ctk.CTkEntry(
+        self.home_team_name = AutocompleteEntry(
             self.stats_grid,
-            textvariable=self.home_team_name_var,
+            theme=self.theme,
+            fonts=self.fonts,
+            variable=self.home_team_name_var,
             width=200,
-            font=self.fonts["body"],
         )
         self.home_team_name.grid(row=0, column=0, padx=5, pady=5)
 
@@ -160,11 +162,12 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         )
         self.away_team_score.grid(row=0, column=3, padx=5, pady=5)
 
-        self.away_team_name = ctk.CTkEntry(
+        self.away_team_name = AutocompleteEntry(
             self.stats_grid,
-            textvariable=self.away_team_name_var,
+            theme=self.theme,
+            fonts=self.fonts,
+            variable=self.away_team_name_var,
             width=200,
-            font=self.fonts["body"],
         )
         self.away_team_name.grid(row=0, column=4, padx=5, pady=5)
 
@@ -225,6 +228,11 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         # Reset team names
         self.home_team_name_var.set("Home Team")
         self.away_team_name_var.set("Away Team")
+
+        # Refresh team-name autocomplete suggestions from this career's history
+        known_team_names = self.controller.get_known_team_names()
+        self.home_team_name.set_values(known_team_names)
+        self.away_team_name.set_values(known_team_names)
 
         # Reset scroll position of the stats grid to the top when the frame is shown
         self.stats_grid._parent_canvas.yview_moveto(0)

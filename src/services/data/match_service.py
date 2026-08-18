@@ -231,13 +231,12 @@ class MatchService:
             logger.warning("Failed to compute latest match date: %s", e)
             return None
 
-    def normalize_team_names(
+    def _build_reference_names(
         self,
-        match_names: list[str],
         full_matches_list: list[Match],
         career_team_name: str | None = None,
-    ) -> list[str]:
-        """Normalize team names from match overview data against existing matches."""
+    ) -> set[str]:
+        """Collect every distinct team name seen so far, plus the career's own club."""
         reference_names: set[str] = set()
         for match in full_matches_list:
             reference_names.add(match.data.home_team_name)
@@ -245,6 +244,33 @@ class MatchService:
 
         if career_team_name:
             reference_names.add(career_team_name)
+        return reference_names
+
+    def normalize_team_names(
+        self,
+        match_names: list[str],
+        full_matches_list: list[Match],
+        career_team_name: str | None = None,
+    ) -> list[str]:
+        """Normalize team names from match overview data against existing matches."""
+        reference_names = self._build_reference_names(
+            full_matches_list, career_team_name
+        )
         return [
             normalize_team_name(name, list(reference_names)) for name in match_names
         ]
+
+    def get_known_team_names(
+        self,
+        full_matches_list: list[Match],
+        career_team_name: str | None = None,
+    ) -> list[str]:
+        """Return every distinct team name known to this career, sorted.
+
+        Combines the career's own club name with every distinct
+        `home_team_name`/`away_team_name` recorded across its match history.
+        """
+        reference_names = self._build_reference_names(
+            full_matches_list, career_team_name
+        )
+        return sorted(reference_names)

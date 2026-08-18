@@ -880,8 +880,11 @@ class App(ctk.CTk):
 
         Used as the first step in the match-logging UI flow. Staging this data
         allows the user to transition to the player-specific OCR screens without
-        losing the overarching match result (e.g., score, possession).
-        Delegates to `BufferService.buffer_match_overview`.
+        losing the overarching match result (e.g., score, possession). Team
+        names are canonicalized against the career's known team names before
+        staging, so downstream home/away comparisons against `club_name` stay
+        correct even if the user typed a differently-cased or FC/CF-prefixed
+        variant. Delegates to `BufferService.buffer_match_overview`.
 
         Args:
             overview_data (MatchOverviewPayload): A strictly typed dictionary of
@@ -890,7 +893,22 @@ class App(ctk.CTk):
         Raises:
             ValueError: If overview_data is not a dictionary-like payload.
         """
+        for key in ("home_team_name", "away_team_name"):
+            raw_name = overview_data.get(key)
+            if isinstance(raw_name, str) and raw_name.strip():
+                overview_data[key] = self._data_manager.normalize_team_name(raw_name)
+
         self._buffer_service.buffer_match_overview(overview_data)
+
+    def get_known_team_names(self) -> list[str]:
+        """Return every team name known to the active career, for autocomplete UI.
+
+        Delegates to `DataManager.get_known_team_names`.
+
+        Returns:
+            list[str]: Sorted, deduplicated team names known to the current career.
+        """
+        return self._data_manager.get_known_team_names()
 
     def process_player_stats(self, is_goalkeeper: bool = False) -> None:
         """Process individual player match statistics via the OCR workflow.

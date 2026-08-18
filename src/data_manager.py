@@ -512,6 +512,46 @@ class DataManager:
         self.refresh_matches()
         return self._match_service.get_latest_in_game_date(self.matches)
 
+    def normalize_team_name(self, name: str) -> str:
+        """Canonicalize a team name against the current career's known team names.
+
+        Matches names that differ only by case, whitespace, or an "FC"/"CF"
+        affix (e.g. "manchester united fc" -> "Manchester United") against the
+        career's own club name and every team name already seen in its match
+        history. Names with no close match are returned unchanged.
+
+        Args:
+            name (str): The raw, user-entered team name to normalize.
+
+        Returns:
+            str: The canonical previously-seen spelling, or `name` unchanged
+                 if no match was found.
+        """
+        career_metadata = self.get_current_career_metadata()
+        career_team_name = career_metadata.club_name if career_metadata else None
+        return self._match_service.normalize_team_names(
+            match_names=[name],
+            full_matches_list=self.matches,
+            career_team_name=career_team_name,
+        )[0]
+
+    def get_known_team_names(self) -> list[str]:
+        """Return every team name known to the current career, sorted alphabetically.
+
+        Combines the career's own club name with every distinct
+        `home_team_name`/`away_team_name` recorded across its match history.
+        Intended as the suggestion source for team-name autocomplete UI.
+
+        Returns:
+            list[str]: Sorted, deduplicated team names known to this career.
+        """
+        career_metadata = self.get_current_career_metadata()
+        career_team_name = career_metadata.club_name if career_metadata else None
+        return self._match_service.get_known_team_names(
+            full_matches_list=self.matches,
+            career_team_name=career_team_name,
+        )
+
     def find_player_by_name(self, name: str) -> Player | None:
         """Query the synchronized internal instance cache to resolve a player record.
 

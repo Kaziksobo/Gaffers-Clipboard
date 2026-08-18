@@ -1,17 +1,17 @@
 """Scrollable dropdown widget for long option lists in CustomTkinter forms."""
 
 import logging
-import tkinter as tk
 from collections.abc import Callable
 
 import customtkinter as ctk
 
 from src.contracts.ui import BaseViewThemeProtocol
+from src.views.widgets.popup_list_mixin import PopupListMixin
 
 logger = logging.getLogger(__name__)
 
 
-class ScrollableDropdown(ctk.CTkFrame):
+class ScrollableDropdown(ctk.CTkFrame, PopupListMixin):
     """A custom scrollable dropdown widget using a CTkToplevel window.
 
     Designed to replace standard OptionMenus for long lists, providing a
@@ -51,6 +51,7 @@ class ScrollableDropdown(ctk.CTkFrame):
         self.command: Callable[[str], None] | None = command
         self.dropdown_height: int = dropdown_height
         self.dropdown_popup: ctk.CTkToplevel | None = None
+        self._popup_scroll: ctk.CTkScrollableFrame | None = None
         self._outside_click_bind_id: str | None = None
 
         self.button = ctk.CTkButton(
@@ -95,8 +96,45 @@ class ScrollableDropdown(ctk.CTkFrame):
         """
         return self.variable.get() if self.variable else self.button.cget("text")
 
-    def _open_dropdown(self) -> None:  # sourcery skip: extract-method
-        """Calculate geometry and render the dropdown Toplevel window."""
+    def _popup_anchor(self) -> ctk.CTkBaseClass:
+        """Return the trigger button the popup positions itself under.
+
+        Returns:
+            ctk.CTkBaseClass: The dropdown's trigger button.
+        """
+        return self.button
+
+    def _popup_values(self) -> list[str]:
+        """Return the configured option list, or a placeholder when empty.
+
+        Returns:
+            list[str]: The current option strings, or a single "No items
+                found" placeholder if none are configured.
+        """
+        return self.values or ["No items found"]
+
+    def _popup_option_style(self) -> dict[str, str]:
+        """Match each option button's colors to the trigger button's theme.
+
+        Returns:
+            dict[str, str]: `text_color`/`hover_color` kwargs copied from the
+                trigger button.
+        """
+        return {
+            "text_color": self.button.cget("text_color"),
+            "hover_color": self.button.cget("hover_color"),
+        }
+
+    def _on_popup_select(self, name: str) -> None:
+        """Handle a selection event from inside the dropdown.
+
+        Args:
+            name (str): The selected option's text.
+        """
+        self._select_value(name)
+
+    def _open_dropdown(self) -> None:
+        """Toggle the dropdown popup open, or closed if it is already open."""
         logger.debug(
             f"_open_dropdown called. popup_exists={self.dropdown_popup is not None}, "
             f"button_text='{self.button.cget('text')}', values_count={len(self.values)}"
@@ -109,144 +147,20 @@ class ScrollableDropdown(ctk.CTkFrame):
                     "Closing existing popup instead of opening new one.",
                 )
             )
-            self._close_dropdown()
+            self._close_popup()
             return
 
-        try:
-            values: list[str] = self.values or ["No items found"]
-            logger.debug(
-                f"Resolved dropdown values. rendered_values_count={len(values)}"
-            )
-
-            self.dropdown_popup = ctk.CTkToplevel(self)
-            self.dropdown_popup.overrideredirect(True)
-            self.dropdown_popup.attributes("-topmost", True)
-
-            x: int = self.button.winfo_rootx()
-            y: int = self.button.winfo_rooty() + self.button.winfo_height()
-            width: int = self.button.winfo_width()
-            height: int = self.dropdown_height
-
-            logger.debug(
-                f"Computed dropdown geometry x={x}, y={y}, "
-                f"width={width}, height={height}, "
-                f"button_exists={self.button.winfo_exists()}, "
-                f"button_mapped={self.button.winfo_ismapped()}"
-            )
-
-            self.dropdown_popup.geometry(f"{width}x{height}+{x}+{y}")
-
-            container = ctk.CTkFrame(
-                self.dropdown_popup, fg_color=self.cget("fg_color")
-            )
-            container.pack(fill="both", expand=True)
-
-            scroll = ctk.CTkScrollableFrame(
-                container, fg_color=self.cget("fg_color"), width=width, height=height
-            )
-            scroll.pack(fill="both", expand=True)
-
-            for name in values:
-                btn = ctk.CTkButton(
-                    scroll,
-                    text=name,
-                    fg_color=self.cget("fg_color"),
-                    text_color=self.button.cget("text_color"),
-                    hover_color=self.button.cget("hover_color"),
-                    anchor="w",
-                    command=lambda n=name: self._select_value(n),
-                )
-                btn.pack(fill="x", padx=4, pady=2)
-
-            # FocusOut on overrideredirect windows can fire immediately on Windows.
-            # Use global outside-click close instead.
-            self.dropdown_popup.bind("<Escape>", lambda _e: self._close_dropdown())
-            self.dropdown_popup.focus_force()
-            self._bind_outside_click_close()
-
-            logger.debug("Dropdown popup created and focused successfully.")
-        except Exception as exc:
-            logger.exception(f"Failed to open dropdown popup. error='{exc}'")
-            self._close_dropdown()
-
-    def _bind_outside_click_close(self) -> None:
-        """Bind a click handler that closes only when clicking outside."""
-        if self._outside_click_bind_id is not None:
-            logger.debug("Outside-click handler already bound; skipping rebind.")
-            return
-
-        root: ctk.CTk = self.winfo_toplevel()
-        self._outside_click_bind_id = root.bind(
-            "<Button-1>", self._on_global_click, add="+"
-        )
-        logger.debug(
-            f"Bound outside-click handler. bind_id='{self._outside_click_bind_id}'"
-        )
-
-    def _unbind_outside_click_close(self) -> None:
-        """Unbind this widget's outside-click handler only."""
-        if self._outside_click_bind_id is None:
-            return
-
-        try:
-            root: ctk.CTk = self.winfo_toplevel()
-            root.unbind("<Button-1>", self._outside_click_bind_id)
-            logger.debug(
-                f"Unbound outside-click handler. "
-                f"bind_id='{self._outside_click_bind_id}'"
-            )
-        except Exception as exc:
-            logger.exception(f"Failed to unbind outside-click handler. error='{exc}'")
-        finally:
-            self._outside_click_bind_id = None
-
-    def _on_global_click(self, event: tk.Event) -> None:
-        """Close dropdown only when click is outside button and popup bounds."""
-        if self.dropdown_popup is None or not self.dropdown_popup.winfo_exists():
-            return
-
-        ex: int = event.x_root
-        ey: int = event.y_root
-
-        px: int = self.dropdown_popup.winfo_rootx()
-        py: int = self.dropdown_popup.winfo_rooty()
-        pw: int = self.dropdown_popup.winfo_width()
-        ph: int = self.dropdown_popup.winfo_height()
-
-        bx: int = self.button.winfo_rootx()
-        by: int = self.button.winfo_rooty()
-        bw: int = self.button.winfo_width()
-        bh: int = self.button.winfo_height()
-
-        in_popup: bool = (px <= ex <= px + pw) and (py <= ey <= py + ph)
-        in_button: bool = (bx <= ex <= bx + bw) and (by <= ey <= by + bh)
-
-        logger.debug(
-            f"Global click ex={ex}, ey={ey}, "
-            f"in_popup={in_popup}, in_button={in_button}, "
-            f"popup_bounds=({px},{py},{pw},{ph}), button_bounds=({bx},{by},{bw},{bh})"
-        )
-
-        if not in_popup and not in_button:
-            logger.debug("Click outside popup/button detected. Closing dropdown.")
-            self._close_dropdown()
-
-    def _close_dropdown(self) -> None:
-        """Destroy the dropdown Toplevel window if it exists."""
-        logger.debug(
-            f"_close_dropdown called. popup_exists={self.dropdown_popup is not None}"
-        )
-        self._unbind_outside_click_close()
-        if self.dropdown_popup is not None:
-            self.dropdown_popup.destroy()
-            self.dropdown_popup = None
-            logger.debug("Dropdown popup destroyed.")
+        self._render_popup()
 
     def _select_value(self, name: str) -> None:
-        """Handle a selection event from inside the dropdown."""
+        """Handle a selection event from inside the dropdown.
+
+        Args:
+            name (str): The selected option's text.
+        """
         logger.debug(f"Dropdown option selected: '{name}'")
         self.set_value(name)
         if self.command:
             logger.debug(f"Invoking dropdown command callback with value '{name}'")
             self.command(name)
-        self._close_dropdown()
+        self._close_popup()

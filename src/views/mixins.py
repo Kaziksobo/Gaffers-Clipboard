@@ -25,6 +25,7 @@ Architectural intent:
 
 import contextlib
 import logging
+import tkinter as tk
 from typing import cast
 
 import customtkinter as ctk
@@ -279,6 +280,13 @@ class EntryFocusMixin:
         handlers to each `CTkEntry` so borders highlight with semantic info
         color on focus and reset to themed defaults on blur.
 
+        Recurses through plain `tkinter.Canvas` containers too, since
+        `CTkScrollableFrame` embeds its actual content frame inside an
+        internal canvas (`_parent_canvas`) rather than parenting it directly
+        under the frame that gets packed/gridded into the caller's layout —
+        without this, every entry placed inside a scrollable frame would be
+        skipped entirely.
+
         Args:
             parent_widget (ctk.CTkBaseClass): Root container to traverse.
         """
@@ -296,7 +304,7 @@ class EntryFocusMixin:
                         border_color=self._theme_color("CTkEntry", "border_color")
                     ),
                 )
-            elif isinstance(child, (ctk.CTkFrame, ctk.CTkScrollableFrame)):
+            elif isinstance(child, (ctk.CTkFrame, ctk.CTkScrollableFrame, tk.Canvas)):
                 self.apply_focus_flourishes(child)
 
     def trigger_success_flash(
