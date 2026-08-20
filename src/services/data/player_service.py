@@ -17,6 +17,7 @@ from src.contracts.backend import (
     JsonValue,
     PlayerAttributePayload,
     PlayerCoreFields,
+    SuspensionDataPayload,
 )
 from src.schemas import (
     FinancialSnapshot,
@@ -25,6 +26,7 @@ from src.schemas import (
     OutfieldAttributeSnapshot,
     Player,
     PositionType,
+    SuspensionRecord,
 )
 
 logger = logging.getLogger(__name__)
@@ -216,7 +218,7 @@ class PlayerService:
         raises detailed errors if any critical information is missing or invalid.
         The new player is initialized with the provided attribute snapshot as the
         first entry in their attribute history, and empty
-        financial and injury histories.
+        financial, injury, and suspension histories.
 
         Args:
             player_id (int): The unique ID to assign to the new player.
@@ -265,6 +267,7 @@ class PlayerService:
             attribute_history=[attributes_snapshot],
             financial_history=[],
             injury_history=[],
+            suspension_history=[],
             sold=False,
             date_sold=None,
             loaned=False,
@@ -343,6 +346,30 @@ class PlayerService:
             logger.error("Failed to add injury record: %s", e)
             raise ValueError(
                 f"Invalid injury data for player '{player_name}': {e}"
+            ) from e
+
+    def create_suspension_snapshot(
+        self,
+        *,
+        player_name: str,
+        suspension_data: SuspensionDataPayload,
+    ) -> SuspensionRecord:
+        """Create a validated suspension snapshot from raw UI payload data.
+
+        Raises:
+            ValueError: If the suspension data is invalid.
+        """
+        snapshot_payload = {
+            "datetime": datetime.now(),
+            **suspension_data,
+        }
+
+        try:
+            return SuspensionRecord.model_validate(snapshot_payload)
+        except (ValidationError, ValueError) as e:
+            logger.error("Failed to add suspension record: %s", e)
+            raise ValueError(
+                f"Invalid suspension data for player '{player_name}': {e}"
             ) from e
 
     # ----------------- Status Transitions -----------------

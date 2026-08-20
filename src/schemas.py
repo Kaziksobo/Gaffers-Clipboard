@@ -285,6 +285,33 @@ class InjuryRecord(BaseModel):
         )
 
 
+class SuspensionRecord(BaseModel):
+    """Represent a single suspension record for a player.
+
+    Captures when the suspension occurred, why it happened, and how many
+    matches the player is banned for. Unlike injuries, suspensions in EA FC
+    Career Mode are always match-count bans, never calendar-time based.
+    """
+
+    datetime: dt.datetime
+    in_game_date: dt.datetime
+    reason: Literal["Red Card", "Accumulated Yellow Cards", "Other"]
+    suspension_detail: str = ""
+    matches_out: int = Field(ge=1)
+
+    @field_validator("in_game_date", mode="before")
+    @classmethod
+    def parse_in_game_date(cls, value: str | dt.datetime) -> dt.datetime:
+        """Convert string in dd/mm/yy, dd/mm/yyyy or ISO format to datetime object."""
+        if isinstance(value, dt.datetime):
+            return value
+        if isinstance(value, str):
+            return parse_in_game_date_string(value)
+        raise ValueError(
+            f"in_game_date must be a string or datetime, got {type(value)}"
+        )
+
+
 class Player(BaseModel):
     """Represent a player within a career save.
 
@@ -317,6 +344,7 @@ class Player(BaseModel):
 
     financial_history: list[FinancialSnapshot] = Field(default_factory=list)
     injury_history: list[InjuryRecord] = Field(default_factory=list)
+    suspension_history: list[SuspensionRecord] = Field(default_factory=list)
 
     sold: bool = False
     date_sold: dt.datetime | None = None
@@ -381,6 +409,13 @@ class Player(BaseModel):
         if not self.injury_history:
             return None
         return sorted(self.injury_history, key=lambda x: x.in_game_date)[-1]
+
+    @property
+    def most_recent_suspension(self) -> SuspensionRecord | None:
+        """Returns the most recent suspension record for the player."""
+        if not self.suspension_history:
+            return None
+        return sorted(self.suspension_history, key=lambda x: x.in_game_date)[-1]
 
 
 # --- Match Models ---

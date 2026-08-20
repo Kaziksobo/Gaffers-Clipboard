@@ -29,6 +29,7 @@ from src.contracts.backend import (
     InjuryDataPayload,
     PlayerAttributePayload,
     PlayerBioDict,
+    SuspensionDataPayload,
 )
 from src.data_manager import DataManager
 from src.exceptions import DataPersistenceError, IncompleteDataError
@@ -209,6 +210,56 @@ class PlayerService:
                 exc_info=True,
             )
             raise DataPersistenceError(f"Failed to save injury data: {e}") from e
+
+    def add_suspension_record(
+        self,
+        player_name: str,
+        suspension_data: SuspensionDataPayload,
+    ) -> None:
+        """Create and persist a suspension record for a specific player.
+
+        Validates required context, forwards the suspension payload to the
+        DataManager, and wraps common backend validation failures into a
+        persistence error.
+
+        Args:
+            player_name (str): Name of the player for whom the suspension is
+                being recorded.
+            suspension_data (SuspensionDataPayload): Dictionary of suspension
+                details captured from the UI, including reason and matches out.
+
+        Raises:
+            IncompleteDataError: If player_name is blank or suspension_data is
+                empty.
+            DataPersistenceError: If the backend fails to validate or save the
+                suspension record, including incorrect date formatting.
+        """
+        # Validate critical context before hitting the DataManager
+        if not player_name or not player_name.strip():
+            logger.error("Suspension save aborted: Player name is missing.")
+            raise IncompleteDataError("Cannot save suspension: No player selected.")
+
+        if not suspension_data:
+            logger.error(
+                "Suspension save aborted: No data provided for %s.", player_name
+            )
+            raise IncompleteDataError(
+                "Cannot save suspension: Suspension data fields are empty."
+            )
+
+        logger.info("Initiating suspension record save for player '%s'", player_name)
+
+        # Cross the Pydantic Boundary
+        try:
+            self._data_manager.add_suspension_record(player_name, suspension_data)
+        except Exception as e:
+            logger.error(
+                "Failed to persist suspension data for %s: %s",
+                player_name,
+                e,
+                exc_info=True,
+            )
+            raise DataPersistenceError(f"Failed to save suspension data: {e}") from e
 
     def sell_player(self, player_name: str, in_game_date: str) -> None:
         """Record the sale of a player on a specific in-game date.
@@ -462,6 +513,31 @@ class PlayerService:
             return None
         if player.most_recent_injury is not None:
             return player.most_recent_injury.in_game_date
+        if player.first_attribute_snapshot is not None:
+            return player.first_attribute_snapshot.in_game_date
+        return None
+
+    def get_suspension_date_floor(self, name: str) -> datetime | None:
+        """Return the earliest plausible in-game date for a new suspension record.
+
+        Prefers the player's most recent previous suspension date, since they
+        can't be suspended again before their last suspension. Falls back to
+        their earliest attribute snapshot date if they have no suspension
+        history yet, since a player can't be suspended before they existed in
+        the save.
+
+        Args:
+            name (str): Name of the player to look up.
+
+        Returns:
+            datetime | None: The floor in-game date, or None if the player
+            doesn't exist or has neither suspension nor attribute history yet.
+        """
+        player = self._data_manager.find_player_by_name(name)
+        if player is None:
+            return None
+        if player.most_recent_suspension is not None:
+            return player.most_recent_suspension.in_game_date
         if player.first_attribute_snapshot is not None:
             return player.first_attribute_snapshot.in_game_date
         return None

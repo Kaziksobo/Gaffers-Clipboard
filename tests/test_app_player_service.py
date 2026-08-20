@@ -180,6 +180,50 @@ def test_add_injury_record_wraps_backend_error(
 
 
 # ---------------------------------------------------------------------------
+# add_suspension_record
+# ---------------------------------------------------------------------------
+
+
+def test_add_suspension_record_rejects_empty_player_name(
+    player_service: PlayerService,
+) -> None:
+    """add_suspension_record raises IncompleteDataError when player name is blank."""
+    with pytest.raises(IncompleteDataError, match="No player selected"):
+        player_service.add_suspension_record("", {"reason": "Red Card"})  # type: ignore[arg-type]
+
+
+def test_add_suspension_record_rejects_empty_suspension_data(
+    player_service: PlayerService,
+) -> None:
+    """add_suspension_record raises IncompleteDataError when data is empty."""
+    with pytest.raises(IncompleteDataError, match="Suspension data fields are empty"):
+        player_service.add_suspension_record("Saka", {})  # type: ignore[arg-type]
+
+
+def test_add_suspension_record_delegates_on_valid_input(
+    player_service: PlayerService,
+    mock_dm: MagicMock,
+) -> None:
+    """add_suspension_record delegates to DataManager when inputs are valid."""
+    payload = {"reason": "Red Card", "matches_out": 3}
+
+    player_service.add_suspension_record("Saka", payload)  # type: ignore[arg-type]
+
+    mock_dm.add_suspension_record.assert_called_once_with("Saka", payload)
+
+
+def test_add_suspension_record_wraps_backend_error(
+    player_service: PlayerService,
+    mock_dm: MagicMock,
+) -> None:
+    """add_suspension_record wraps a DataManager failure in DataPersistenceError."""
+    mock_dm.add_suspension_record.side_effect = RuntimeError("db error")
+
+    with pytest.raises(DataPersistenceError, match="Failed to save suspension data"):
+        player_service.add_suspension_record("Saka", {"reason": "Red Card"})  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
 # sell_player
 # ---------------------------------------------------------------------------
 

@@ -49,6 +49,14 @@ def test_non_ocr_player_lifecycle_persists_across_reload(
             "time_out_unit": "Weeks",
         },
     )
+    loaded_data_manager.add_suspension_record(
+        player_name="Giorgi Mamardashvili",
+        suspension_data={
+            "in_game_date": "12/08/24",
+            "reason": "Red Card",
+            "matches_out": 3,
+        },
+    )
 
     loaded_data_manager.loan_out_player("Giorgi Mamardashvili")
     loaded_data_manager.return_loan_player("Giorgi Mamardashvili")
@@ -63,6 +71,7 @@ def test_non_ocr_player_lifecycle_persists_across_reload(
     assert len(player.attribute_history) == 1
     assert len(player.financial_history) == 1
     assert len(player.injury_history) == 1
+    assert len(player.suspension_history) == 1
     assert player.sold is True
     assert player.loaned is False
     assert player.date_sold is not None

@@ -37,6 +37,7 @@ from src.contracts.ui import (
     FinancialHistoryDateControllerProtocol,
     InjuryDateFloorControllerProtocol,
     LatestMatchDateControllerProtocol,
+    SuspensionDateFloorControllerProtocol,
     WarningValue,
     WidthEventProtocol,
 )
@@ -60,8 +61,9 @@ logger = logging.getLogger(__name__)
 # is being dated. These only drive soft confirmation warnings (see
 # `soft_validate`), never a hard block. Matches happen roughly weekly, so a
 # large gap is suspicious; attribute/financial snapshots are often updated
-# once a season, so they get a wider allowance. Injuries aren't tied to this
-# kind of cadence at all (see `_check_injury_date_floor` for that check instead).
+# once a season, so they get a wider allowance. Injuries and suspensions
+# aren't tied to this kind of cadence at all (see `_check_injury_date_floor`
+# and `_check_suspension_date_floor` for those checks instead).
 type DateReferenceKind = Literal["match", "attribute", "financial", "sell"]
 
 MATCH_DATE_MAX_DAYS_AFTER = 120
@@ -941,12 +943,13 @@ class BaseViewFrame(ctk.CTkFrame):
         reference_kind: DateReferenceKind | None = None,
         player_name: str | None = None,
         check_injury_floor: bool = False,
+        check_suspension_floor: bool = False,
         check_career_floor: bool = True,
     ) -> bool:
         """Validate in-game date format and sense-check it against known history.
 
         Accepts `dd/mm/yy`, `dd/mm/yyyy`, and ISO formats. Beyond format
-        checking, this performs up to four additional passes:
+        checking, this performs up to five additional passes:
 
         1. If `disallow_older_than_last` is set, hard-blocks a date earlier
            than the latest stored match date (match entries only).
@@ -958,7 +961,10 @@ class BaseViewFrame(ctk.CTkFrame):
            the player's last injury (or, absent any, before they existed in
            the save) — injuries (unlike attribute/financial snapshots) have no
            regular cadence, so a "too long since" check doesn't apply here.
-        4. Unless `check_career_floor` is False, soft-warns when the date
+        4. If `check_suspension_floor` is set, soft-warns when the date is
+           before the player's last suspension (or, absent any, before they
+           existed in the save) — same rationale as the injury floor check.
+        5. Unless `check_career_floor` is False, soft-warns when the date
            predates the active career's starting season.
 
         Args:
@@ -970,9 +976,13 @@ class BaseViewFrame(ctk.CTkFrame):
                 tolerance. None skips the plausibility check entirely.
             player_name (str | None): The player this date concerns, when
                 `reference_kind` needs player-specific history (attribute,
-                financial) or `check_injury_floor` is set.
+                financial), or `check_injury_floor`/`check_suspension_floor`
+                is set.
             check_injury_floor (bool): If True, warn when the date is before
                 the player's most recent injury or earliest attribute snapshot.
+            check_suspension_floor (bool): If True, warn when the date is
+                before the player's most recent suspension or earliest
+                attribute snapshot.
             check_career_floor (bool): If True, warn when the date predates the
                 active career's starting season.
 
@@ -996,6 +1006,11 @@ class BaseViewFrame(ctk.CTkFrame):
             return False
 
         if check_injury_floor and not self._check_injury_date_floor(
+            date_str, parsed, player_name
+        ):
+            return False
+
+        if check_suspension_floor and not self._check_suspension_date_floor(
             date_str, parsed, player_name
         ):
             return False
@@ -1136,6 +1151,50 @@ class BaseViewFrame(ctk.CTkFrame):
             ),
         )
 
+    def _check_history_date_floor(
+        self,
+        *,
+        date_str: str,
+        parsed: datetime,
+        floor: datetime | None,
+        warning_key: str,
+        title: str,
+        floor_description: str,
+    ) -> bool:
+        """Soft-warn when a date is before a given player-history floor date.
+
+        Shared by per-record-kind floor checks (injury, suspension) so the
+        comparison and warning-dialog logic isn't duplicated per kind.
+
+        Args:
+            date_str (str): The original user-provided date string, for
+                messaging.
+            parsed (datetime): The parsed date being validated.
+            floor (datetime | None): The floor date to compare against, or
+                None if unavailable (in which case this always passes).
+            warning_key (str): Unique soft-validate warning key for this check.
+            title (str): Dialog title for the warning.
+            floor_description (str): Human-readable description of what the
+                floor date represents, used in the warning message.
+
+        Returns:
+            bool: True if on/after the floor (or unavailable) or the user
+            confirmed the warning, False if the user chose to fix it.
+        """
+        if floor is None or parsed >= floor:
+            return True
+
+        return self.soft_validate(
+            warning_key=warning_key,
+            value=(date_str, floor_description),
+            title=title,
+            message=(
+                f"The date you entered ({date_str}) is before {floor_description} "
+                f"({floor.strftime('%d/%m/%y')}).\n\n"
+                "Are you sure this is correct?"
+            ),
+        )
+
     def _check_injury_date_floor(
         self, date_str: str, parsed: datetime, player_name: str | None
     ) -> bool:
@@ -1161,18 +1220,51 @@ class BaseViewFrame(ctk.CTkFrame):
             return True
 
         floor = self.controller.get_injury_date_floor(player_name)
-        if floor is None or parsed >= floor:
+        return self._check_history_date_floor(
+            date_str=date_str,
+            parsed=parsed,
+            floor=floor,
+            warning_key="in_game_date_injury_floor",
+            title="Date Before Last Injury",
+            floor_description=(
+                f"{player_name}'s most recent injury or earliest recorded attributes"
+            ),
+        )
+
+    def _check_suspension_date_floor(
+        self, date_str: str, parsed: datetime, player_name: str | None
+    ) -> bool:
+        """Soft-warn when a suspension date is before the player's last suspension.
+
+        Falls back to the player's earliest attribute snapshot date when they
+        have no prior suspension history, since a player can't be suspended
+        before they existed in the save.
+
+        Args:
+            date_str (str): The original user-provided date string, for
+                messaging.
+            parsed (datetime): The parsed date being validated.
+            player_name (str | None): The player this date concerns.
+
+        Returns:
+            bool: True if on/after the floor (or unavailable) or the user
+            confirmed the warning, False if the user chose to fix it.
+        """
+        if not player_name or not isinstance(
+            self.controller, SuspensionDateFloorControllerProtocol
+        ):
             return True
 
-        return self.soft_validate(
-            warning_key="in_game_date_injury_floor",
-            value=(player_name, date_str),
-            title="Date Before Last Injury",
-            message=(
-                f"The date you entered ({date_str}) is before {player_name}'s "
-                f"most recent injury or earliest recorded attributes "
-                f"({floor.strftime('%d/%m/%y')}).\n\n"
-                "Are you sure this is correct?"
+        floor = self.controller.get_suspension_date_floor(player_name)
+        return self._check_history_date_floor(
+            date_str=date_str,
+            parsed=parsed,
+            floor=floor,
+            warning_key="in_game_date_suspension_floor",
+            title="Date Before Last Suspension",
+            floor_description=(
+                f"{player_name}'s most recent suspension or earliest recorded "
+                "attributes"
             ),
         )
 

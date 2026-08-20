@@ -115,7 +115,8 @@ class PlayerLibraryFrame(BaseViewFrame):
         self.lower_buttons_grid.grid_columnconfigure(4, weight=1)
         self.lower_buttons_grid.grid_rowconfigure(0, weight=1)
         self.lower_buttons_grid.grid_rowconfigure(1, weight=0)
-        self.lower_buttons_grid.grid_rowconfigure(2, weight=1)
+        self.lower_buttons_grid.grid_rowconfigure(2, weight=0)
+        self.lower_buttons_grid.grid_rowconfigure(3, weight=1)
 
         self.add_financial_button = ctk.CTkButton(
             self.lower_buttons_grid,
@@ -146,6 +147,18 @@ class PlayerLibraryFrame(BaseViewFrame):
             ),
         )
         self.leave_button.grid(row=1, column=3, padx=10, pady=5, sticky="ew")
+
+        self.add_suspension_button = ctk.CTkButton(
+            self.lower_buttons_grid,
+            text="Log Player Suspension",
+            font=self.fonts["button"],
+            command=lambda: self.controller.show_frame(
+                self.controller.get_frame_class("AddSuspensionFrame")
+            ),
+        )
+        self.add_suspension_button.grid(
+            row=2, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
 
         self.home_button = ctk.CTkButton(
             self,

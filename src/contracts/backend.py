@@ -106,6 +106,15 @@ class InjuryDataPayload(TypedDict):
     time_out_unit: Literal["Days", "Weeks", "Months"]
 
 
+class SuspensionDataPayload(TypedDict):
+    """Expected suspension payload shape used by player suspension mutations."""
+
+    in_game_date: str
+    reason: Literal["Red Card", "Accumulated Yellow Cards", "Other"]
+    suspension_detail: NotRequired[str]
+    matches_out: int
+
+
 class CareerMetadataUpdate(TypedDict, total=False):
     """Partial metadata patch payload accepted by career metadata updates."""
 

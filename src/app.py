@@ -38,6 +38,7 @@ from src.contracts.backend import (
     PlayerAttributePayload,
     PlayerBioDict,
     PlayerPerformancePayload,
+    SuspensionDataPayload,
     UIFlushCallback,
 )
 from src.contracts.ui import (
@@ -63,6 +64,7 @@ from src.views.add_injury_frame import AddInjuryFrame
 from src.views.add_match_frame import AddMatchFrame
 from src.views.add_outfield_frame_1 import AddOutfieldFrame1
 from src.views.add_outfield_frame_2 import AddOutfieldFrame2
+from src.views.add_suspension_frame import AddSuspensionFrame
 from src.views.career_config_frame import CareerConfigFrame
 from src.views.career_select_frame import CareerSelectFrame
 from src.views.create_career_frame import CreateCareerFrame
@@ -178,6 +180,7 @@ class App(ctk.CTk):
             LeftPlayerFrame,
             GKStatsFrame,
             AddInjuryFrame,
+            AddSuspensionFrame,
             CareerConfigFrame,
             MatchReviewFrame,
         ):
@@ -560,6 +563,22 @@ class App(ctk.CTk):
         """
         return self._player_service.get_injury_date_floor(name)
 
+    def get_suspension_date_floor(self, name: str) -> datetime | None:
+        """Retrieve the earliest plausible in-game date for a new suspension record.
+
+        Prefers the player's most recent previous suspension date, falling back
+        to their earliest attribute snapshot date. Delegates to
+        `PlayerService.get_suspension_date_floor`.
+
+        Args:
+            name (str): The exact registered name of the player to look up.
+
+        Returns:
+            datetime | None: The floor in-game date, or None if the player
+            doesn't exist or has neither suspension nor attribute history yet.
+        """
+        return self._player_service.get_suspension_date_floor(name)
+
     # --- Squad lookup and identity ---
 
     def get_all_player_names(
@@ -781,6 +800,30 @@ class App(ctk.CTk):
                 saving injury data.
         """
         self._player_service.add_injury_record(player_name, injury_data)
+
+    def add_suspension_record(
+        self,
+        player_name: str,
+        suspension_data: SuspensionDataPayload,
+    ) -> None:
+        """Append a new suspension event to a player's disciplinary history.
+
+        Triggered by the AddSuspensionFrame. Writing this data allows the UI to
+        render suspension indicators or track historical disciplinary trends.
+        Delegates payload validation and disk I/O to
+        `PlayerService.add_suspension_record`.
+
+        Args:
+            player_name (str): The exact registered name of the player.
+            suspension_data (SuspensionDataPayload): A strictly typed dictionary
+                containing suspension specifics (e.g., reason, matches out).
+
+        Raises:
+            IncompleteDataError: If required suspension context fields are missing.
+            DataPersistenceError: If validation or persistence fails while
+                saving suspension data.
+        """
+        self._player_service.add_suspension_record(player_name, suspension_data)
 
     def loan_out_player(self, player_name: str) -> None:
         """Update a player's status to indicate they are currently out on loan.

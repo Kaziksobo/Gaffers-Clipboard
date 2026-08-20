@@ -21,6 +21,7 @@ from src.contracts.backend import (
     PlayerAttributePayload,
     PlayerBioDict,
     PlayerPerformancePayload,
+    SuspensionDataPayload,
 )
 
 type AppFrameClass = type[ctk.CTkFrame]
@@ -138,6 +139,14 @@ class InjuryDateFloorControllerProtocol(Protocol):
 
 
 @runtime_checkable
+class SuspensionDateFloorControllerProtocol(Protocol):
+    """Optional controller capability for suspension-record chronology checks."""
+
+    def get_suspension_date_floor(self, name: str) -> datetime | None:
+        """Return the earliest plausible in-game date for a new suspension record."""
+
+
+@runtime_checkable
 class BaseViewControllerProtocol(
     DynamicFontsControllerProtocol,
     UnsavedWorkControllerProtocol,
@@ -154,6 +163,7 @@ class ViewControllerProtocol(
     AttributeHistoryDateControllerProtocol,
     FinancialHistoryDateControllerProtocol,
     InjuryDateFloorControllerProtocol,
+    SuspensionDateFloorControllerProtocol,
     Protocol,
 ):
     """Backward-compatible superset for legacy view controller annotations."""
@@ -220,6 +230,18 @@ class InjuryRecordControllerProtocol(Protocol):
         injury_data: InjuryDataPayload,
     ) -> None:
         """Persist an injury record for the selected player."""
+
+
+@runtime_checkable
+class SuspensionRecordControllerProtocol(Protocol):
+    """Controller capability for persisting player suspension records."""
+
+    def add_suspension_record(
+        self,
+        player_name: str,
+        suspension_data: SuspensionDataPayload,
+    ) -> None:
+        """Persist a suspension record for the selected player."""
 
 
 @runtime_checkable
@@ -412,6 +434,16 @@ class AddInjuryFrameControllerProtocol(
     Protocol,
 ):
     """Composed controller capability required by AddInjuryFrame."""
+
+
+@runtime_checkable
+class AddSuspensionFrameControllerProtocol(
+    BaseViewControllerProtocol,
+    PlayerDropdownControllerProtocol,
+    SuspensionRecordControllerProtocol,
+    Protocol,
+):
+    """Composed controller capability required by AddSuspensionFrame."""
 
 
 @runtime_checkable

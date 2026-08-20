@@ -52,6 +52,7 @@ from src.contracts.backend import (
     PlayerCoreFields,
     PlayerPerformanceBuffer,
     SupportsId,
+    SuspensionDataPayload,
 )
 from src.schemas import (
     CareerDetail,
@@ -64,6 +65,7 @@ from src.schemas import (
     OutfieldAttributeSnapshot,
     Player,
     PositionType,
+    SuspensionRecord,
 )
 from src.services import data as data_services
 
@@ -733,6 +735,51 @@ class DataManager:
         )
 
         existing_player.injury_history.append(snapshot)
+
+        self._json_service.save_json_atomic_or_raise(players_path, self.players)
+        self.players: list[Player] = self._load_players_strict_or_raise()
+
+    def add_suspension_record(
+        self, player_name: str, suspension_data: SuspensionDataPayload
+    ) -> None:
+        """Execute an atomic append of a suspension event to a player's history.
+
+        Enforces strict fail-closed state validation prior to mutation. Verifies the
+        target player exists in the current registry and delegates Pydantic model
+        construction to `PlayerDataService`. Appends the resulting suspension model to
+        the player's internal suspension history array.
+
+        Writes the mutated list to the active `players.json` file using a safe atomic
+        operation, followed by an immediate internal cache re-sync to ensure stability.
+
+        Args:
+            player_name (str): The exact registered name of the target player.
+            suspension_data (SuspensionDataPayload): Validated dictionary payload
+                                                      containing the suspension
+                                                      specifics (e.g., reason,
+                                                      matches out).
+
+        Raises:
+            RuntimeError: If called without an initialized career context.
+            ValueError: If the target player does not exist, or if the suspension
+                        data fails strict Pydantic schema validation.
+            OSError: If the atomic file replacement fails due to filesystem permissions.
+        """
+        players_path: Path = self._require_players_path()
+        self.players: list[Player] = self._load_players_strict_or_raise()
+        existing_player: Player = self._player_service.require_existing_player(
+            players=self.players,
+            player_name=player_name,
+            action_description="add suspension record",
+        )
+
+        logger.info("Saving suspension record for %s", player_name)
+        snapshot: SuspensionRecord = self._player_service.create_suspension_snapshot(
+            player_name=player_name,
+            suspension_data=suspension_data,
+        )
+
+        existing_player.suspension_history.append(snapshot)
 
         self._json_service.save_json_atomic_or_raise(players_path, self.players)
         self.players: list[Player] = self._load_players_strict_or_raise()

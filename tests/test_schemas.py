@@ -17,6 +17,7 @@ from src.schemas import (
     MatchStats,
     OutfieldPlayerPerformance,
     Player,
+    SuspensionRecord,
 )
 
 # ---------------------------------------------------------------------------
@@ -124,6 +125,7 @@ def _player_payload(**overrides: object) -> dict[str, object]:
         "attribute_history": [],
         "financial_history": [],
         "injury_history": [],
+        "suspension_history": [],
         "sold": False,
         "date_sold": None,
         "loaned": False,
@@ -558,6 +560,44 @@ def test_injury_record_rejects_invalid_in_game_date_string() -> None:
     """InjuryRecord.in_game_date raises ValidationError for an unparseable string."""
     with pytest.raises(ValidationError):
         InjuryRecord.model_validate(_injury_payload(in_game_date="bad-date"))
+
+
+def _suspension_payload(**overrides: object) -> dict[str, object]:
+    """Return a minimal valid SuspensionRecord payload dict."""
+    return {
+        "datetime": dt.datetime(2024, 8, 1),
+        "in_game_date": "01/08/24",
+        "reason": "Red Card",
+        "matches_out": 3,
+        **overrides,
+    }
+
+
+def test_suspension_record_accepts_datetime_in_game_date() -> None:
+    """SuspensionRecord.in_game_date accepts a datetime object directly."""
+    date = dt.datetime(2024, 9, 10)
+    record = SuspensionRecord.model_validate(_suspension_payload(in_game_date=date))
+
+    assert record.in_game_date == date
+
+
+def test_suspension_record_rejects_invalid_in_game_date_string() -> None:
+    """SuspensionRecord.in_game_date raises ValidationError for a bad string."""
+    with pytest.raises(ValidationError):
+        SuspensionRecord.model_validate(_suspension_payload(in_game_date="bad-date"))
+
+
+def test_suspension_record_rejects_invalid_reason() -> None:
+    """SuspensionRecord.reason raises ValidationError for a non-enumerated value."""
+    with pytest.raises(ValidationError):
+        SuspensionRecord.model_validate(_suspension_payload(reason="Doping Ban"))
+
+
+def test_suspension_record_defaults_suspension_detail_to_empty_string() -> None:
+    """SuspensionRecord.suspension_detail defaults to an empty string when omitted."""
+    record = SuspensionRecord.model_validate(_suspension_payload())
+
+    assert record.suspension_detail == ""
 
 
 def _match_data_payload(**overrides: object) -> dict[str, object]:
