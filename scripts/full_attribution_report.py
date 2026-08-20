@@ -1,5 +1,5 @@
-"""Generate a full, per-position rating-attribution report for every
-performance in a match.
+# ruff: noqa: E501
+"""Generate a full, per-position rating report for every performance in a match.
 
 Overview
 --------
@@ -78,6 +78,7 @@ import argparse
 import datetime
 import json
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -87,7 +88,11 @@ ATTRIBUTION_LIB_DIR = PROJECT_ROOT / "workshop" / "ratings_creation"
 if str(ATTRIBUTION_LIB_DIR) not in sys.path:
     sys.path.append(str(ATTRIBUTION_LIB_DIR))
 
-from attribution_lib import build_full_report, load_config, run_attribution  # noqa: E402
+from attribution_lib import (  # noqa: E402 # type: ignore
+    build_full_report,
+    load_config,
+    run_attribution,
+)
 
 DEFAULT_REPORTS_DIR = PROJECT_ROOT / "workshop" / "ratings_creation" / "rating_reports"
 
@@ -101,7 +106,9 @@ def resolve_match_path(match_file_arg: str | None, career: str | None) -> Path:
     elif career:
         path = (DATA_DIR / career / "matches.json").resolve()
     else:
-        career_dirs = [p for p in DATA_DIR.iterdir() if p.is_dir()] if DATA_DIR.exists() else []
+        career_dirs = (
+            [p for p in DATA_DIR.iterdir() if p.is_dir()] if DATA_DIR.exists() else []
+        )
         if len(career_dirs) != 1:
             raise ValueError(
                 "Provide --match-file or --career when multiple (or zero) careers exist."
@@ -135,7 +142,29 @@ def resolve_team_name(metadata_path: Path, override: str | None) -> str:
     )
 
 
-def resolve_match_record(loaded: Any, match_id: int | None) -> dict:
+def _select_match_by_id(records: Sequence[dict], match_id: int) -> dict:
+    """Return the record whose 'id' field equals match_id."""
+    for record in records:
+        if record.get("id") == match_id:
+            return record
+    raise ValueError(f"Match id {match_id} not found in match file.")
+
+
+def _match_id_sort_key(record: dict) -> int:
+    """Return a sortable match id value with a safe fallback."""
+    value = record.get("id")
+    if isinstance(value, int):
+        return value
+    return int(value) if isinstance(value, str) and value.isdigit() else -1
+
+
+def _select_latest_match(records: Sequence[dict]) -> dict:
+    """Return the record with the highest numeric id, falling back to the last entry."""
+    best = max(records, key=_match_id_sort_key, default=None)
+    return records[-1] if best is None or _match_id_sort_key(best) == -1 else best
+
+
+def resolve_match_record(loaded: Any, match_id: int | None) -> dict:  # noqa: ANN401
     """Return a single match record from a loaded match file.
 
     Accepts either a single match record (dict with "data" and
@@ -154,24 +183,8 @@ def resolve_match_record(loaded: Any, match_id: int | None) -> dict:
         if not loaded:
             raise ValueError("Match file is an empty list.")
         if match_id is not None:
-            for record in loaded:
-                if record.get("id") == match_id:
-                    return record
-            raise ValueError(f"Match id {match_id} not found in match file.")
-
-        def key(record: dict) -> int:
-            """Return a sortable match id value with a safe fallback."""
-            value = record.get("id")
-            if isinstance(value, int):
-                return value
-            if isinstance(value, str) and value.isdigit():
-                return int(value)
-            return -1
-
-        best = max(loaded, key=key, default=None)
-        if best is None or key(best) == -1:
-            return loaded[-1]
-        return best
+            return _select_match_by_id(loaded, match_id)
+        return _select_latest_match(loaded)
 
     raise ValueError("Match file must be a JSON object or an array of match records.")
 
@@ -188,7 +201,9 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
-        "--match-id", type=int, help="Match id to select from an array (default: latest)"
+        "--match-id",
+        type=int,
+        help="Match id to select from an array (default: latest)",
     )
     parser.add_argument("--team-name", help="Override club/team name")
     parser.add_argument(
@@ -199,7 +214,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> int:
+def main() -> int:  # sourcery skip: extract-method
     """Run the full attribution report for every performance in a match."""
     args = parse_args()
 
@@ -247,7 +262,9 @@ def main() -> int:
             player_id = performance.get("player_id")
 
             if performance.get("performance_type") == "GK":
-                summary_lines.append(f"  player {player_id}: GK - skipped (not supported)")
+                summary_lines.append(
+                    f"  player {player_id}: GK - skipped (not supported)"
+                )
                 continue
 
             svc, final_rating, blend = run_attribution(
@@ -281,7 +298,9 @@ def main() -> int:
         (output_dir / "_summary.txt").write_text(summary_text, encoding="utf-8")
 
         print(summary_text)
-        print(f"\n{len(performances)} performance(s) processed. Reports written to: {output_dir}")
+        print(
+            f"\n{len(performances)} performance(s) processed. Reports written to: {output_dir}"
+        )
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
