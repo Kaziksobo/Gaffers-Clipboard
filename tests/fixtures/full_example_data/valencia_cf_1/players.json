@@ -13275,5 +13275,68 @@
         "sold": false,
         "date_sold": null,
         "loaned": true
+    },
+    {
+        "id": 84,
+        "name": "Jorge Garcia",
+        "nationality": "Andorra",
+        "age": 17,
+        "height": "5'7\"",
+        "weight": 143,
+        "positions": [
+            "LW"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-07-04T19:31:48.544253",
+                "in_game_date": "2032-02-08T00:00:00",
+                "position": "LW",
+                "position_type": "Outfield",
+                "acceleration": 79,
+                "sprint_speed": 77,
+                "agility": 81,
+                "balance": 61,
+                "jumping": 49,
+                "stamina": 60,
+                "strength": 51,
+                "aggression": 42,
+                "att_position": 71,
+                "composure": 73,
+                "interceptions": 29,
+                "reactions": 61,
+                "vision": 73,
+                "defensive_awareness": 34,
+                "ball_control": 80,
+                "crossing": 70,
+                "curve": 49,
+                "dribbling": 57,
+                "fk_accuracy": 39,
+                "finishing": 53,
+                "heading_accuracy": 40,
+                "long_pass": 71,
+                "long_shots": 69,
+                "penalties": 49,
+                "short_pass": 73,
+                "shot_power": 48,
+                "slide_tackle": 33,
+                "stand_tackle": 32,
+                "volleys": 46
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-07-04T19:32:12.490795",
+                "in_game_date": "2032-02-08T00:00:00",
+                "wage": 8800,
+                "market_value": 3900000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
     }
 ]
