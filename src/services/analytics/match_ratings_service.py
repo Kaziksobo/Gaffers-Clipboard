@@ -999,7 +999,7 @@ class MatchRatingsService:
             # Scale supremacy deduction by individual performance quality.
             # Above-average performers in dominant games lose less of their rating.
             # At dot=0.0 (average): full deduction. At dot>=1.5 (exceptional): none.
-            individual_quality_factor: float = max(0.0, 1.0 - dot / 1.5)
+            individual_quality_factor: float = max(0.0, min(1.0, 1.0 - dot / 1.5))
             adjusted_supremacy: float = (
                 match_supremacy_scalar * individual_quality_factor
             )
