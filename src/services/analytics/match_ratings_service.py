@@ -140,6 +140,7 @@ class MatchRatingsService:
     # Mastery: min(excess, cap) x weight x impact_scalar, per condition
     MASTERY_WEIGHT: Final[float] = 0.15
     MASTERY_EXCESS_CAP: Final[float] = 2.0
+    CM_PROGRESSION_BASE_EXCESS: Final[float] = 0.75
 
     # CDM Reliable Pivot gate + tier bonuses
     CDM_PIVOT_MIN_MINUTES: Final[float] = 45.0
@@ -256,6 +257,12 @@ class MatchRatingsService:
             "LWB": MappingProxyType(
                 {
                     "non_goal_shots_p90_z": 0.0,
+                }
+            ),
+            "LM": MappingProxyType(
+                {
+                    "possession_won_p90_z": -1.0,
+                    "tackles_p90_z": -1.0,
                 }
             ),
         }
@@ -1873,13 +1880,17 @@ class MatchRatingsService:
         )
 
         # The Progression Engine mastery
-        bonus += self._apply_mastery_bonus(
-            z_scores=z_scores,
-            key_a="passes_p90_z",
-            key_b="dribbles_p90_z",
-            threshold=1.2,
-            impact_scalar=impact_scalar,
+        progression_min = min(
+            z_scores.get("passes_p90_z", 0.0),
+            z_scores.get("dribbles_p90_z", 0.0),
         )
+        if progression_min > 1.2:
+            excess = (progression_min - 1.2) + self.CM_PROGRESSION_BASE_EXCESS
+            bonus += (
+                min(excess, self.MASTERY_EXCESS_CAP)
+                * self.MASTERY_WEIGHT
+                * impact_scalar
+            )
 
         # xG-tiered clean sheet x linear ramp
         if opponent_goals == 0:
