@@ -87,6 +87,9 @@ class MatchRatingsService:
         }
     )
 
+    # Multiplier applied to the supremacy scalar for CBs
+    CB_SUPREMACY_SCALAR: Final[float] = 0.5
+
     # Crude per-shot xG estimate; shared by goal bonus and wasteful-finisher penalty.
     XG_PER_SHOT: Final[float] = 0.1116
 
@@ -901,8 +904,13 @@ class MatchRatingsService:
             # Above-average performers in dominant games lose less of their rating.
             # At dot=0.0 (average): full deduction. At dot>=1.5 (exceptional): none.
             individual_quality_factor: float = max(0.0, min(1.0, 1.0 - dot / 1.5))
+            pos_supremacy_scalar: float = (
+                self.CB_SUPREMACY_SCALAR if pos == "CB" else 1.0
+            )
             adjusted_supremacy: float = (
-                match_supremacy_scalar * individual_quality_factor
+                match_supremacy_scalar
+                * individual_quality_factor
+                * pos_supremacy_scalar
             )
 
             final_rating: float = base_rating + bonus - adjusted_supremacy
