@@ -613,6 +613,7 @@ class DataManager:
         players_path: Path = self._require_players_path()
         self.players: list[Player] = self._load_players_strict_or_raise()
 
+        position = self._player_service.normalize_position(position)
         core_fields: PlayerCoreFields = self._player_service.extract_player_core_fields(
             player_ui_data
         )

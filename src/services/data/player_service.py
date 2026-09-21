@@ -6,7 +6,7 @@ player update flow. It intentionally performs no filesystem I/O.
 
 import logging
 from datetime import datetime
-from typing import Literal, cast
+from typing import Literal, cast, get_args
 
 from pydantic import ValidationError
 
@@ -31,11 +31,41 @@ from src.schemas import (
 
 logger = logging.getLogger(__name__)
 
+_VALID_POSITIONS: frozenset[str] = frozenset(get_args(PositionType))
+
 
 class PlayerService:
     """Provide pure player-domain helpers for DataManager."""
 
     # ----------------- Primitive Coercion Helpers -----------------
+
+    @staticmethod
+    def normalize_position(position: str | None) -> PositionType | None:
+        """Normalize a raw UI position string to its canonical uppercase form.
+
+        Args:
+            position (str | None): Raw position text captured from the UI or
+                an existing player record.
+
+        Raises:
+            ValueError: If a non-empty position is provided but does not match
+                any recognized `PositionType` value, case-insensitively.
+
+        Returns:
+            PositionType | None: The canonical uppercase position, or None if
+                no position was provided.
+        """
+        cleaned = PlayerService._as_non_empty_str(position)
+        if cleaned is None:
+            return None
+
+        normalized = cleaned.upper()
+        if normalized not in _VALID_POSITIONS:
+            valid = ", ".join(sorted(_VALID_POSITIONS))
+            raise ValueError(
+                f"'{cleaned}' is not a recognized position. Valid positions: {valid}."
+            )
+        return cast(PositionType, normalized)
 
     @staticmethod
     def _as_non_empty_str(value: JsonValue) -> str | None:
@@ -240,7 +270,7 @@ class PlayerService:
         age = self._as_int(core_fields.age)
         height = self._as_non_empty_str(core_fields.height)
         weight = self._as_int(core_fields.weight)
-        normalized_position = self._as_non_empty_str(position)
+        normalized_position = self.normalize_position(position)
 
         if (
             name is None
@@ -263,7 +293,7 @@ class PlayerService:
             age=age,
             height=height,
             weight=weight,
-            positions=[cast(PositionType, normalized_position)],
+            positions=[normalized_position],
             attribute_history=[attributes_snapshot],
             financial_history=[],
             injury_history=[],

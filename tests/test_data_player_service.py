@@ -366,6 +366,51 @@ def test_create_new_player_rejects_blank_strings(
         )
 
 
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("CAM", "CAM"),
+        ("cam", "CAM"),
+        ("Cam", "CAM"),
+        (" st ", "ST"),
+        (None, None),
+        ("", None),
+        ("   ", None),
+    ],
+)
+def test_normalize_position_canonicalizes_case(
+    raw: str | None, expected: str | None
+) -> None:
+    """Test that normalize_position uppercases and trims valid positions."""
+    assert PlayerService.normalize_position(raw) == expected
+
+
+def test_normalize_position_rejects_unrecognized_value() -> None:
+    """Test that normalize_position raises a clear error for unknown positions."""
+    with pytest.raises(ValueError, match="'Striker' is not a recognized position"):
+        PlayerService.normalize_position("Striker")
+
+
+def test_create_new_player_rejects_unrecognized_position(
+    data_player_service: PlayerService,
+) -> None:
+    """Test that create_new_player surfaces a friendly error for a bad position."""
+    class MockCoreFields:
+        name = "John Doe"
+        age = 22
+        height = "5'8\""
+        weight = 145
+        country = "England"
+
+    with pytest.raises(ValueError, match="'Striker' is not a recognized position"):
+        data_player_service.create_new_player(
+            player_id=1,
+            core_fields=MockCoreFields(),
+            attributes_snapshot="mock_attributes_snapshot",
+            position="Striker",
+        )
+
+
 def test_require_existing_player_invalid_player(
     data_player_service: PlayerService,
 ) -> None:

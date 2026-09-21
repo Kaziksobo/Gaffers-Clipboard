@@ -24,7 +24,7 @@ import logging
 import re
 import tkinter as tk
 from datetime import datetime
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 import customtkinter as ctk
 
@@ -51,6 +51,7 @@ from src.schemas import (
     PLAYER_WEIGHT_MAX,
     PLAYER_WEIGHT_MIN,
     CareerMetadata,
+    PositionType,
 )
 from src.utils import parse_in_game_date_string
 from src.views.widgets.custom_alert import CustomAlert
@@ -68,6 +69,8 @@ type DateReferenceKind = Literal["match", "attribute", "financial", "sell"]
 
 MATCH_DATE_MAX_DAYS_AFTER = 120
 SNAPSHOT_DATE_MAX_DAYS_AFTER = 365
+
+_VALID_POSITIONS: frozenset[str] = frozenset(get_args(PositionType))
 
 _REFERENCE_TOLERANCE_DAYS: dict[DateReferenceKind, int] = {
     "match": MATCH_DATE_MAX_DAYS_AFTER,
@@ -711,6 +714,34 @@ class BaseViewFrame(ctk.CTkFrame):
             title="Invalid Height Format",
             message=(
                 "Height must be in the format '6'2\"' or '6ft 2in'. "
+                "Please correct it before proceeding."
+            ),
+        )
+        return None
+
+    def validate_position(self, position: str) -> str | None:
+        """Validate and normalize a position string against `PositionType`.
+
+        Accepts any casing or surrounding whitespace (e.g. `cam`, ` Cam `) and
+        normalizes to the canonical uppercase form (e.g. `CAM`).
+
+        Args:
+            position (str): Raw position string entered by the user.
+
+        Returns:
+            str | None: Normalized, canonical position code, or None when
+            the value doesn't match a recognized position.
+        """
+        normalized = position.strip().upper()
+        if normalized in _VALID_POSITIONS:
+            return normalized
+
+        logger.warning(f"Position validation failed for input: {position}")
+        self.show_warning(
+            title="Invalid Position",
+            message=(
+                f"'{position}' is not a recognized position. Valid positions: "
+                f"{', '.join(sorted(_VALID_POSITIONS))}. "
                 "Please correct it before proceeding."
             ),
         )

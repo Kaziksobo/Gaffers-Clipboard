@@ -354,9 +354,7 @@ class AddOutfieldFrame1(
         ui_data["in_game_date"] = in_game_date
 
         ui_data["height"] = self._get_height(invalid_fields)
-
-        position: str = self.position_entry.get().strip()
-        ui_data["position"] = position if position not in invalid_fields else None
+        ui_data["position"] = self._get_position(invalid_fields)
 
         # Handle Numeric bio fields
         age_raw: int | None = safe_int_conversion(self.age_entry.get())
@@ -400,6 +398,27 @@ class AddOutfieldFrame1(
         if height_raw and height_raw not in invalid_fields:
             height: str | None = self.validate_height(height_raw)
             return None if height is None else height
+        return None
+
+    def _get_position(self, invalid_fields: list[str]) -> str | None:
+        """Validate and normalize the position field if the user provided one.
+
+        The position entry is optional for existing-player flows. Placeholder
+        or sentinel text values are treated as empty, while non-empty values
+        are checked against recognized position codes (warning and dropping
+        the value if unrecognized) before inclusion in the payload.
+
+        Args:
+            invalid_fields (list[str]): Sentinel placeholder values treated as
+                empty or invalid for text inputs.
+
+        Returns:
+            str | None: Normalized, canonical position code when valid,
+            otherwise None.
+        """
+        position_raw: str = self.position_entry.get().strip()
+        if position_raw and position_raw not in invalid_fields:
+            return self.validate_position(position_raw)
         return None
 
     def _validate_required_fields(
