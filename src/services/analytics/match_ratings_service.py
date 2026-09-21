@@ -132,6 +132,8 @@ class MatchRatingsService:
         }
     )
 
+    ASSIST_BONUS_CAP: Final[float] = 2.0
+
     # Mastery: min(excess, cap) x weight x impact_scalar, per condition
     MASTERY_WEIGHT: Final[float] = 0.15
     MASTERY_EXCESS_CAP: Final[float] = 2.0
@@ -1221,10 +1223,9 @@ class MatchRatingsService:
     ) -> float:
         """Compute the post-sigmoid goal bonus for a single position pass.
 
-        Uses a power formula (n^1.5) rather than the triangular T(n) = n(n+1)/2
-        to produce a convex but less steeply accelerating reward curve. The raw
-        bonus is capped at GOAL_BONUS_CAP to prevent hat-tricks from overwhelming
-        the weights-driven base rating.
+        Uses a power formula (n^1.5) to produce a convex but less steeply accelerating
+        reward curve. The raw bonus is capped at GOAL_BONUS_CAP to prevent hat-tricks
+        from overwhelming the weights-driven base rating.
 
         Args:
             goals: Raw goal count for this position pass.
@@ -1240,6 +1241,32 @@ class MatchRatingsService:
         alpha = self.GOAL_ALPHA.get(pos, 0.0)
         raw = alpha * (goals**1.5) * isolation_multiplier
         return min(raw, self.GOAL_BONUS_CAP)
+
+    def _calculate_assist_bonus(
+        self,
+        assists: float,
+        pos: str,
+        isolation_multiplier: float = 1.0,
+    ) -> float:
+        """Compute the post-sigmoid assist bonus for a single position pass.
+
+        Uses a power formula (n^1.5) to produce a convex but less steeply accelerating
+        reward curve. The raw bonus is capped at ASSIST_BONUS_CAP to prevent
+        multi-assist games from overwhelming the weights-driven base rating.
+
+        Args:
+            assists: Raw assist count for this position pass.
+            pos: Position key used to look up ASSIST_GAMMA.
+            isolation_multiplier: Tactical isolation decay; pass 1.0 for
+                defensive positions where isolation doesn't apply.
+
+        Returns:
+            float: Assist bonus in rating-point space, capped at ASSIST_BONUS_CAP.
+        """
+        if assists < 1:
+            return 0.0
+        gamma = self.ASSIST_GAMMA.get(pos, 0.0)
+        return min(gamma * (assists**1.5) * isolation_multiplier, self.ASSIST_BONUS_CAP)
 
     def _apply_pos_modifiers(
         self,
@@ -1489,8 +1516,7 @@ class MatchRatingsService:
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
         bonus += self._calculate_goal_bonus(goals, pos="CB")
-        if assists >= 1:
-            bonus += self.ASSIST_GAMMA.get("CB", 0.0) * assists * (assists + 1) / 2
+        bonus += self._calculate_assist_bonus(assists, pos="CB")
 
         # Dominant Stopper mastery
         bonus += self._apply_mastery_bonus(
@@ -1568,8 +1594,7 @@ class MatchRatingsService:
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
         bonus += self._calculate_goal_bonus(goals, pos="RB")
-        if assists >= 1:
-            bonus += self.ASSIST_GAMMA.get("RB", 0.0) * assists * (assists + 1) / 2
+        bonus += self._calculate_assist_bonus(assists, pos="RB")
 
         # Third CB mastery
         bonus += self._apply_mastery_bonus(
@@ -1656,14 +1681,9 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(
             goals, pos="RWB", isolation_multiplier=isolation_multiplier
         )
-        if assists >= 1:
-            bonus += (
-                self.ASSIST_GAMMA.get("RWB", 0.0)
-                * assists
-                * (assists + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_assist_bonus(
+            assists, pos="RWB", isolation_multiplier=isolation_multiplier
+        )
 
         # Relentless Engine mastery
         bonus += self._apply_mastery_bonus(
@@ -1741,14 +1761,9 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(
             goals, pos="CDM", isolation_multiplier=isolation_multiplier
         )
-        if assists >= 1:
-            bonus += (
-                self.ASSIST_GAMMA.get("CDM", 0.0)
-                * assists
-                * (assists + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_assist_bonus(
+            assists, pos="CDM", isolation_multiplier=isolation_multiplier
+        )
 
         # The Destroyer mastery
         bonus += self._apply_mastery_bonus(
@@ -1836,14 +1851,9 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(
             goals, pos="CM", isolation_multiplier=isolation_multiplier
         )
-        if assists >= 1:
-            bonus += (
-                self.ASSIST_GAMMA.get("CM", 0.0)
-                * assists
-                * (assists + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_assist_bonus(
+            assists, pos="CM", isolation_multiplier=isolation_multiplier
+        )
 
         # The Enforcer mastery
         bonus += self._apply_mastery_bonus(
@@ -1911,14 +1921,9 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(
             goals, pos="CAM", isolation_multiplier=isolation_multiplier
         )
-        if assists >= 1:
-            bonus += (
-                self.ASSIST_GAMMA.get("CAM", 0.0)
-                * assists
-                * (assists + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_assist_bonus(
+            assists, pos="CAM", isolation_multiplier=isolation_multiplier
+        )
 
         # The Maestro mastery
         bonus += self._apply_mastery_bonus(
@@ -1990,14 +1995,9 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(
             goals, pos="RM", isolation_multiplier=isolation_multiplier
         )
-        if assists >= 1:
-            bonus += (
-                self.ASSIST_GAMMA.get("RM", 0.0)
-                * assists
-                * (assists + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_assist_bonus(
+            assists, pos="RM", isolation_multiplier=isolation_multiplier
+        )
 
         # Two-Way Engine mastery
         bonus += self._apply_mastery_bonus(
@@ -2074,14 +2074,9 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(
             goals, pos="RW", isolation_multiplier=isolation_multiplier
         )
-        if assists >= 1:
-            bonus += (
-                self.ASSIST_GAMMA.get("RW", 0.0)
-                * assists
-                * (assists + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_assist_bonus(
+            assists, pos="RW", isolation_multiplier=isolation_multiplier
+        )
 
         # The Direct Threat mastery
         bonus += self._apply_mastery_bonus(
@@ -2157,14 +2152,9 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(
             goals, pos="ST", isolation_multiplier=isolation_multiplier
         )
-        if assists >= 1:
-            bonus += (
-                self.ASSIST_GAMMA.get("ST", 0.0)
-                * assists
-                * (assists + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_assist_bonus(
+            assists, pos="ST", isolation_multiplier=isolation_multiplier
+        )
 
         # The Complete Forward mastery
         bonus += self._apply_mastery_bonus(
