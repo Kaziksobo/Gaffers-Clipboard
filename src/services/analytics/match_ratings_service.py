@@ -255,13 +255,11 @@ class MatchRatingsService:
     )
 
     # Multi-position hybrid parameters.
-    # ALPHA_BASE scales cosine similarity into the drag coefficient alpha.
     # VERSATILITY_THRESHOLD is the minimum r_min (worst positional rating) required
     # for a versatility bonus to fire; 6.5 is the logistic midpoint + half a point,
     # meaning the player must be above average at every listed position.
     # VERSATILITY_BETA controls the magnitude of the bonus per rating point above
     # the threshold.
-    ALPHA_BASE: Final[float] = 0.50
     VERSATILITY_THRESHOLD: Final[float] = 6.5
     VERSATILITY_BETA: Final[float] = 0.15
 
@@ -272,27 +270,6 @@ class MatchRatingsService:
         frozenset({"LWB", "RWB"}),
         frozenset({"LM", "RM"}),
         frozenset({"LW", "RW"}),
-    )
-
-    # Ordered stat columns used to build positional similarity profiles.
-    _PROFILE_COLS: Final[tuple[str, ...]] = (
-        "goals_p90",
-        "assists_p90",
-        "non_goal_shots_p90",
-        "shot_accuracy",
-        "passes_p90",
-        "pass_accuracy",
-        "dribbles_p90",
-        "dribble_success_rate",
-        "tackles_p90",
-        "tackle_success_rate",
-        "offsides_p90",
-        "fouls_committed_p90",
-        "possession_won_p90",
-        "possession_lost_p90",
-        "distance_covered_p90",
-        "distance_sprinted_p90",
-        "xt_bonus_p90",
     )
 
     def __init__(
@@ -313,9 +290,6 @@ class MatchRatingsService:
         """
         self.weights: PerformanceWeightsMap = weights
         self.means_stds: PerformanceMeansStdsMap = means_stds
-        self._profile_global_mean, self._profile_global_std = self._build_profile_norms(
-            means_stds
-        )
         logger.info(
             "MatchRatingsService configured (weights=%d, means_stds=%d).",
             len(weights),
@@ -660,9 +634,8 @@ class MatchRatingsService:
 
     def _collapse_mirror_positions(
         self,
-        positions: list[str],
-        ratings: list[float],
-    ) -> tuple[list[str], list[float]]:
+        position_ratings: dict[str, float],
+    ) -> list[str]:
         """Deduplicate lateral mirror-pair listings, keeping the higher-rated side.
 
         LB/RB, LWB/RWB, LM/RM, and LW/RW describe the same tactical role on
@@ -671,96 +644,20 @@ class MatchRatingsService:
         hybrid calculation.
 
         Args:
-            positions: Position keys for each evaluated rating.
-            ratings:   Corresponding positional ratings, aligned by index.
+            position_ratings: Mapping of position key to its calculated rating.
 
         Returns:
-            Filtered (positions, ratings) with at most one side per mirror pair.
+            Position keys with at most one side per mirror pair retained.
         """
-        drop: set[int] = set()
+        positions = list(position_ratings.keys())
+        drop: set[str] = set()
         for pair in self.MIRROR_PAIRS:
-            idxs: list[int] = [i for i, p in enumerate(positions) if p in pair]
-            if len(idxs) < 2:
+            members: list[str] = [p for p in positions if p in pair]
+            if len(members) < 2:
                 continue
-            best: int = max(idxs, key=lambda i: ratings[i])
-            drop.update(i for i in idxs if i != best)
-        filtered_positions: list[str] = [
-            p for i, p in enumerate(positions) if i not in drop
-        ]
-        filtered_ratings: list[float] = [
-            r for i, r in enumerate(ratings) if i not in drop
-        ]
-        return filtered_positions, filtered_ratings
-
-    def _build_profile_norms(
-        self, means_stds: PerformanceMeansStdsMap
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """Compute cross-position mean and std for each stat column.
-
-        Used to z-score each position's mean profile so that positional similarity
-        reflects deviation from the positional average rather than raw stat magnitudes.
-        GK is excluded because it uses a scalar structure, not a per-stat mapping.
-
-        Returns:
-            Tuple of (global_mean, global_std) arrays aligned to _PROFILE_COLS.
-        """
-        outfield_means = np.array(
-            [
-                [
-                    cast(dict[str, float], pos_data.get(col, {})).get("mean", 0.0)
-                    for col in self._PROFILE_COLS
-                ]
-                for pos, pos_data in means_stds.items()
-                if pos != "GK"
-            ]
-        )
-        global_mean = outfield_means.mean(axis=0)
-        global_std = outfield_means.std(axis=0)
-        global_std[global_std == 0.0] = 1.0
-        return global_mean, global_std
-
-    def _positional_cosine_similarity(self, pos_a: str, pos_b: str) -> float:
-        """Compute cosine similarity between two positions' z-score mean profiles.
-
-        Each position is represented by its mean stat values centred and scaled
-        against the cross-position distribution. This captures how each role
-        deviates from the positional average, which is independent of how the
-        weight vectors were constructed and avoids inflated similarity for
-        base/derived pairs (e.g. RB/RWB, CM/CAM).
-
-        Negative cosine values (anti-correlated roles such as CB/ST) are clamped
-        to zero: orthogonal or opposite positions produce no drag, leaving the
-        hybrid rating at r_max.
-
-        Args:
-            pos_a (str): First position key (e.g. "CB").
-            pos_b (str): Second position key (e.g. "ST").
-
-        Returns:
-            float: Cosine similarity in [0, 1]. Returns 1.0 if either profile
-                   is unknown (conservative: maximum drag for unrecognised roles).
-        """
-        ms: PerformanceMeansStdsMap = self.means_stds
-        if pos_a not in ms or pos_b not in ms:
-            return 1.0
-
-        def z_profile(pos: str) -> np.ndarray:
-            pos_data = ms[pos]
-            raw = np.array(
-                [
-                    cast(dict[str, float], pos_data.get(col, {})).get("mean", 0.0)
-                    for col in self._PROFILE_COLS
-                ]
-            )
-            return (raw - self._profile_global_mean) / self._profile_global_std
-
-        z_a = z_profile(pos_a)
-        z_b = z_profile(pos_b)
-        norm_a, norm_b = np.linalg.norm(z_a), np.linalg.norm(z_b)
-        if norm_a == 0.0 or norm_b == 0.0:
-            return 1.0
-        sim = float(np.dot(z_a, z_b) / (norm_a * norm_b))
-        return max(0.0, sim)
+            best: str = max(members, key=lambda p: position_ratings[p])
+            drop.update(p for p in members if p != best)
+        return [p for p in positions if p not in drop]
 
     def calculate_outfield_rating(
         self,
@@ -868,15 +765,14 @@ class MatchRatingsService:
                     self.H_BASE / half_length
                 )
 
-        calculated_ratings: list[float] = []
+        position_z_scores: dict[str, dict[str, float]] = {}
+        position_ratings: dict[str, float] = {}
         for pos in positions_played:
             p90_metrics: dict[str, int | float] = self._apply_bayesian_smoothing(
                 normalized_metrics=normalized_metrics,
                 pos=pos,
                 minutes_played=minutes_played,
             )
-            # Add the raw accuracy metrics to the p90_metrics
-            # dict for weight application
             perc_cols = [
                 "shot_accuracy",
                 "pass_accuracy",
@@ -934,6 +830,7 @@ class MatchRatingsService:
                 ),
                 normalized_metrics=normalized_metrics,
             )
+            position_z_scores[pos] = z_scores
             # Perfect efficiency fix: a player who scored every shot
             # (non_goal_shots == 0) should not be penalised for having zero shot volume.
             # Floor at 0.
@@ -1017,62 +914,26 @@ class MatchRatingsService:
                 bonus,
                 final_rating,
             )
-            calculated_ratings.append(final_rating)
+            position_ratings[pos] = final_rating
 
-        positions_played, calculated_ratings = self._collapse_mirror_positions(
-            list(positions_played), calculated_ratings
-        )
-
-        if len(calculated_ratings) == 1:
+        if len(positions_played) == 1:
+            final_rating = position_ratings[positions_played[0]]
             logger.debug(
                 "Outfield rating computed (player_id=%s, final=%.1f).",
                 performance.get("player_id"),
-                calculated_ratings[0],
+                final_rating,
             )
-            return round(calculated_ratings[0], 1)
+            return round(final_rating, 1)
 
-        r_max: float = max(calculated_ratings)
-        r_mean: float = float(np.mean(calculated_ratings))
-        r_min: float = min(calculated_ratings)
-
-        max_idx: int = int(np.argmax(calculated_ratings))
-        max_pos: str = positions_played[max_idx]
-        other_positions: list[str] = [
-            p for i, p in enumerate(positions_played) if i != max_idx
-        ]
-        mean_similarity: float = float(
-            np.mean(
-                [
-                    self._positional_cosine_similarity(max_pos, p)
-                    for p in other_positions
-                ]
-            )
-        )
-        alpha: float = self.ALPHA_BASE * mean_similarity
-
-        drag: float = alpha * (r_max - r_mean)
-        bonus: float = self.VERSATILITY_BETA * max(
-            0.0, r_min - self.VERSATILITY_THRESHOLD
-        )
-        hybrid_rating: float = r_max - drag + bonus
-
+        final_rating = self._multi_position_blend(position_ratings, position_z_scores)
         logger.debug(
-            (
-                "Hybrid outfield rating computed "
-                "(player_id=%s, r_max=%.2f, r_mean=%.2f, r_min=%.2f, "
-                "alpha=%.3f, drag=%.3f, bonus=%.3f, final=%.2f)."
-            ),
+            "Multi-position outfield rating computed (player_id=%s, positions=%s, "
+            "final=%.2f).",
             performance.get("player_id"),
-            r_max,
-            r_mean,
-            r_min,
-            alpha,
-            drag,
-            bonus,
-            hybrid_rating,
+            positions_played,
+            final_rating,
         )
-
-        return round(max(0.0, min(10.0, hybrid_rating)), 1)
+        return round(final_rating, 1)
 
     def _apply_bayesian_smoothing(
         self, normalized_metrics: dict[str, float], pos: str, minutes_played: float
@@ -2357,3 +2218,58 @@ class MatchRatingsService:
             bonus -= min(deficit * self.ST_WASTEFUL_SCALE, self.ST_WASTEFUL_CAP)
 
         return bonus
+
+    def _mean_absolute_z(self, z_scores: dict[str, float]) -> float:
+        """Compute the mean absolute z-score across a position's metrics.
+
+        Lower means the position calibration fits this player's stat profile
+        better, since their per-metric z-scores sit closer to that position's
+        historical mean.
+        """
+        values = [abs(v) for v in z_scores.values() if v != 0.0]
+        return float(np.mean(values)) if values else 1.0
+
+    def _multi_position_blend(
+        self,
+        position_ratings: dict[str, float],
+        position_z_scores: dict[str, dict[str, float]],
+    ) -> float:
+        """Blend per-position ratings for a player who featured in multiple roles.
+
+        Mirror-pair listings (e.g. LB/RB) are collapsed first so a lateral
+        position switch isn't double-counted. Remaining positions are weighted
+        by inverse mean-absolute-z (MAZ): the position whose calibration best
+        fits the player's actual stat profile contributes the most to the
+        final rating. A versatility bonus rewards players who rated well
+        across every listed position.
+
+        Args:
+            position_ratings: Final calculated rating per position played.
+            position_z_scores: Per-metric z-scores per position played, used
+                               to derive each position's MAZ fit score.
+
+        Returns:
+            The blended rating, clipped to [1.0, 10.0].
+        """
+        positions = self._collapse_mirror_positions(position_ratings)
+        if len(positions) == 1:
+            return position_ratings[positions[0]]
+
+        # Compute MAZ per position — fit weight is inverse MAZ
+        maz = {pos: self._mean_absolute_z(position_z_scores[pos]) for pos in positions}
+        raw_weights = {pos: 1.0 / max(maz[pos], 0.01) for pos in positions}
+        total_w = sum(raw_weights.values())
+        norm_weights = {pos: raw_weights[pos] / total_w for pos in positions}
+
+        # Weighted blend of position ratings
+        hybrid_base = sum(
+            norm_weights[pos] * position_ratings[pos] for pos in positions
+        )
+
+        # Versatility bonus — unchanged
+        r_min = min(position_ratings[pos] for pos in positions)
+        versatility_bonus = self.VERSATILITY_BETA * max(
+            0.0, r_min - self.VERSATILITY_THRESHOLD
+        )
+
+        return float(np.clip(hybrid_base + versatility_bonus, 1.0, 10.0))
