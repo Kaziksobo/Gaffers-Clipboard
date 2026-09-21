@@ -111,6 +111,8 @@ class MatchRatingsService:
         }
     )
 
+    GOAL_BONUS_CAP: Final[float] = 1.8
+
     # Assist bonus: γ x assists x isolation  # noqa: RUF003
     ASSIST_GAMMA: Final = MappingProxyType(
         {
@@ -1211,6 +1213,34 @@ class MatchRatingsService:
 
         return float(np.exp(z_build + 1.0)) if z_build < -1.0 else 1.0
 
+    def _calculate_goal_bonus(
+        self,
+        goals: float,
+        pos: str,
+        isolation_multiplier: float = 1.0,
+    ) -> float:
+        """Compute the post-sigmoid goal bonus for a single position pass.
+
+        Uses a power formula (n^1.5) rather than the triangular T(n) = n(n+1)/2
+        to produce a convex but less steeply accelerating reward curve. The raw
+        bonus is capped at GOAL_BONUS_CAP to prevent hat-tricks from overwhelming
+        the weights-driven base rating.
+
+        Args:
+            goals: Raw goal count for this position pass.
+            pos: Position key used to look up GOAL_ALPHA.
+            isolation_multiplier: Tactical isolation decay; pass 1.0 for
+                defensive positions where isolation doesn't apply.
+
+        Returns:
+            float: Goal bonus in rating-point space, capped at GOAL_BONUS_CAP.
+        """
+        if goals < 1:
+            return 0.0
+        alpha = self.GOAL_ALPHA.get(pos, 0.0)
+        raw = alpha * (goals**1.5) * isolation_multiplier
+        return min(raw, self.GOAL_BONUS_CAP)
+
     def _apply_pos_modifiers(
         self,
         base_rating: float,
@@ -1458,8 +1488,7 @@ class MatchRatingsService:
         # Goal and assist bonuses (no isolation — CB contributions are set-piece driven)
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += self.GOAL_ALPHA.get("CB", 0.0) * goals * (goals + 1) / 2
+        bonus += self._calculate_goal_bonus(goals, pos="CB")
         if assists >= 1:
             bonus += self.ASSIST_GAMMA.get("CB", 0.0) * assists * (assists + 1) / 2
 
@@ -1538,8 +1567,7 @@ class MatchRatingsService:
         # Goal and assist bonuses (no isolation for defenders)
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += self.GOAL_ALPHA.get("RB", 0.0) * goals * (goals + 1) / 2
+        bonus += self._calculate_goal_bonus(goals, pos="RB")
         if assists >= 1:
             bonus += self.ASSIST_GAMMA.get("RB", 0.0) * assists * (assists + 1) / 2
 
@@ -1625,14 +1653,9 @@ class MatchRatingsService:
         # Goal and assist bonuses (isolation applies — WBs are attacking contributors)
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += (
-                self.GOAL_ALPHA.get("RWB", 0.0)
-                * goals
-                * (goals + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_goal_bonus(
+            goals, pos="RWB", isolation_multiplier=isolation_multiplier
+        )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("RWB", 0.0)
@@ -1715,14 +1738,9 @@ class MatchRatingsService:
         # Goal and assist bonuses
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += (
-                self.GOAL_ALPHA.get("CDM", 0.0)
-                * goals
-                * (goals + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_goal_bonus(
+            goals, pos="CDM", isolation_multiplier=isolation_multiplier
+        )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("CDM", 0.0)
@@ -1815,14 +1833,9 @@ class MatchRatingsService:
         # Goal and assist bonuses
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += (
-                self.GOAL_ALPHA.get("CM", 0.0)
-                * goals
-                * (goals + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_goal_bonus(
+            goals, pos="CM", isolation_multiplier=isolation_multiplier
+        )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("CM", 0.0)
@@ -1895,14 +1908,9 @@ class MatchRatingsService:
 
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += (
-                self.GOAL_ALPHA.get("CAM", 0.0)
-                * goals
-                * (goals + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_goal_bonus(
+            goals, pos="CAM", isolation_multiplier=isolation_multiplier
+        )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("CAM", 0.0)
@@ -1979,14 +1987,9 @@ class MatchRatingsService:
 
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += (
-                self.GOAL_ALPHA.get("RM", 0.0)
-                * goals
-                * (goals + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_goal_bonus(
+            goals, pos="RM", isolation_multiplier=isolation_multiplier
+        )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("RM", 0.0)
@@ -2068,14 +2071,9 @@ class MatchRatingsService:
 
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += (
-                self.GOAL_ALPHA.get("RW", 0.0)
-                * goals
-                * (goals + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_goal_bonus(
+            goals, pos="RW", isolation_multiplier=isolation_multiplier
+        )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("RW", 0.0)
@@ -2156,14 +2154,9 @@ class MatchRatingsService:
 
         goals: float = performance_metrics.get("goals", 0)
         assists: float = performance_metrics.get("assists", 0)
-        if goals >= 1:
-            bonus += (
-                self.GOAL_ALPHA.get("ST", 0.0)
-                * goals
-                * (goals + 1)
-                / 2
-                * isolation_multiplier
-            )
+        bonus += self._calculate_goal_bonus(
+            goals, pos="ST", isolation_multiplier=isolation_multiplier
+        )
         if assists >= 1:
             bonus += (
                 self.ASSIST_GAMMA.get("ST", 0.0)
