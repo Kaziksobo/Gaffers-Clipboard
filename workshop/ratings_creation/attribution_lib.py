@@ -62,6 +62,36 @@ FBWB_POS = {"RB", "LB", "RWB", "LWB"}
 FBWB_DRIBBLE_THRESHOLD = 1.0
 FBWB_POSS_LOST_FLOOR = -1.0
 
+# Positions whose modifier method actually applies COLLAPSE_PENALTY
+# (_apply_cb_modifiers, _apply_fb_modifiers, _apply_wb_modifiers only - CDM/CM/
+# CAM/WM/Winger/ST never call it, even though some of them have a non-zero
+# CS_RATIOS entry for the clean sheet bonus).
+COLLAPSE_ELIGIBLE_POS = {"CB", "RB", "LB", "RWB", "LWB"}
+
+# The service's fixed 17-element stat profile, in dot-product order
+# (match_ratings_service.py: calculate_outfield_rating / _calculate_dot_product).
+# There is no svc._PROFILE_COLS attribute on the service - this list must be
+# kept in sync with the col_names list defined in both of those places.
+STAT_COLS = (
+    "goals_p90",
+    "assists_p90",
+    "non_goal_shots_p90",
+    "shot_accuracy",
+    "passes_p90",
+    "pass_accuracy",
+    "dribbles_p90",
+    "dribble_success_rate",
+    "tackles_p90",
+    "tackle_success_rate",
+    "offsides_p90",
+    "fouls_committed_p90",
+    "possession_won_p90",
+    "possession_lost_p90",
+    "distance_covered_p90",
+    "distance_sprinted_p90",
+    "xt_bonus_p90",
+)
+
 MASTERY_NAMES = {
     ("tackles_p90_z", "possession_won_p90_z"): (
         "Destroyer / Dominant Stopper / Enforcer / Third CB / Two-Way Flank"
@@ -214,76 +244,86 @@ class AttributionService(MatchRatingsService):
         self.attr["xg_against"] = xg_against
 
         dot = self.attr.get("dot_product", 0.0)
-        quality_factor = max(0.0, 1.0 - dot / 1.5)
-        adjusted_supremacy = result * quality_factor
+        # Capped at 1.0 so a negative dot_product can't push the quality factor
+        # above 1 and amplify the supremacy deduction past its uncapped value.
+        quality_factor = max(0.0, min(1.0, 1.0 - dot / 1.5))
+        pos = self.attr["pre_modifier"]["pos"]
+        # CB supremacy deductions are halved: a mid CB performance in a
+        # dominant match usually reflects a quiet game, not being carried.
+        pos_supremacy_scalar = self.CB_SUPREMACY_SCALAR if pos == "CB" else 1.0
+        adjusted_supremacy = result * quality_factor * pos_supremacy_scalar
         base_rating = self.attr["pre_modifier"]["base_rating"]
         bonus = self.attr.get("total_bonus", 0.0)
         raw_final = base_rating + bonus - adjusted_supremacy
         self.attr["quality_factor"] = quality_factor
+        self.attr["pos_supremacy_scalar"] = pos_supremacy_scalar
         self.attr["adjusted_supremacy"] = adjusted_supremacy
         self.attr["raw_final_rating"] = raw_final
         self.attr["position_final_rating"] = max(0.0, min(10.0, raw_final))
 
-        pos = self.attr["pre_modifier"]["pos"]
         self.position_snapshots[pos] = copy.deepcopy(self.attr)
         self.position_order.append(pos)
         return result
 
 
 def compute_hybrid_blend(svc: AttributionService, positions_played: list[str]) -> dict[str, Any]:
-    """Replicate the service's post-loop mirror-collapse + hybrid blend.
+    """Replicate the service's post-loop mirror-collapse + MAZ-weighted blend.
 
-    Mirrors match_ratings_service.calculate_outfield_rating (~lines 1022-1075).
+    Mirrors match_ratings_service.MatchRatingsService._multi_position_blend.
     Reuses the service's own constants/methods (MIRROR_PAIRS via
-    _collapse_mirror_positions, ALPHA_BASE, VERSATILITY_THRESHOLD,
-    VERSATILITY_BETA, _positional_cosine_similarity) so the weighting scheme
-    can't drift — only the blend *shape* below is duplicated and must be kept
-    in sync if that block changes.
-    """
-    ratings = [svc.position_snapshots[p]["position_final_rating"] for p in positions_played]
+    _collapse_mirror_positions, _mean_absolute_z, VERSATILITY_THRESHOLD,
+    VERSATILITY_BETA) so the weighting scheme can't drift — only the blend
+    *shape* below is duplicated and must be kept in sync if that block changes.
 
-    collapsed_positions, collapsed_ratings = svc._collapse_mirror_positions(
-        list(positions_played), list(ratings)
-    )
+    Positions whose calibration best fits the player's actual stat profile
+    (lowest mean-absolute-z) get the most weight, replacing the old
+    cosine-similarity + drag scheme that anchored on r_max.
+    """
+    position_ratings = {
+        p: svc.position_snapshots[p]["position_final_rating"] for p in positions_played
+    }
+    # z_scores_at_dot is captured post-floor (see _calculate_dot_product
+    # override above), matching what the service itself feeds into
+    # _multi_position_blend — position_z_scores[pos] there is the same dict
+    # object, mutated in place by every floor before the dot product runs.
+    position_z_scores = {
+        p: svc.position_snapshots[p]["z_scores_at_dot"] for p in positions_played
+    }
+
+    collapsed_positions = svc._collapse_mirror_positions(position_ratings)
 
     result: dict[str, Any] = {
         "positions_played": list(positions_played),
-        "ratings": ratings,
+        "ratings": [position_ratings[p] for p in positions_played],
         "collapsed_positions": collapsed_positions,
-        "collapsed_ratings": collapsed_ratings,
         "dropped_by_mirror": [p for p in positions_played if p not in collapsed_positions],
     }
 
-    if len(collapsed_ratings) <= 1:
-        single = collapsed_ratings[0] if collapsed_ratings else 0.0
+    if len(collapsed_positions) <= 1:
+        single = position_ratings[collapsed_positions[0]] if collapsed_positions else 0.0
         result.update(hybrid=False, final_rating=round(max(0.0, min(10.0, single)), 1))
         return result
 
-    r_max = max(collapsed_ratings)
-    r_mean = float(np.mean(collapsed_ratings))
-    r_min = min(collapsed_ratings)
-    max_idx = int(np.argmax(collapsed_ratings))
-    max_pos = collapsed_positions[max_idx]
-    other_positions = [p for i, p in enumerate(collapsed_positions) if i != max_idx]
-    similarities = {p: svc._positional_cosine_similarity(max_pos, p) for p in other_positions}
-    mean_similarity = float(np.mean(list(similarities.values())))
-    alpha = svc.ALPHA_BASE * mean_similarity
-    drag = alpha * (r_max - r_mean)
-    bonus = svc.VERSATILITY_BETA * max(0.0, r_min - svc.VERSATILITY_THRESHOLD)
-    hybrid_rating = r_max - drag + bonus
+    maz = {p: svc._mean_absolute_z(position_z_scores[p]) for p in collapsed_positions}
+    raw_weights = {p: 1.0 / max(maz[p], 0.01) for p in collapsed_positions}
+    total_w = sum(raw_weights.values())
+    norm_weights = {p: raw_weights[p] / total_w for p in collapsed_positions}
+
+    hybrid_base = sum(norm_weights[p] * position_ratings[p] for p in collapsed_positions)
+
+    r_min = min(position_ratings[p] for p in collapsed_positions)
+    versatility_bonus = svc.VERSATILITY_BETA * max(0.0, r_min - svc.VERSATILITY_THRESHOLD)
+    hybrid_rating = hybrid_base + versatility_bonus
 
     result.update(
         hybrid=True,
-        r_max=r_max,
-        r_mean=r_mean,
+        maz=maz,
+        raw_weights=raw_weights,
+        norm_weights=norm_weights,
+        position_ratings={p: position_ratings[p] for p in collapsed_positions},
+        hybrid_base=hybrid_base,
         r_min=r_min,
-        max_pos=max_pos,
-        other_positions=other_positions,
-        similarities=similarities,
-        mean_similarity=mean_similarity,
-        alpha=alpha,
-        drag=drag,
-        versatility_bonus=bonus,
+        versatility_bonus=versatility_bonus,
         hybrid_rating=hybrid_rating,
         final_rating=round(max(0.0, min(10.0, hybrid_rating)), 1),
     )
@@ -383,7 +423,7 @@ def build_position_report(
     minutes = pm["minutes_played"]
     pos_ms = snapshot["pos_means_stds"]
     pos_weights = svc.weights.get(pos, {})
-    stat_cols = list(svc._PROFILE_COLS)
+    stat_cols = list(STAT_COLS)
     p90 = snapshot["p90_metrics"]
     normalized_metrics = snapshot["normalized_metrics"]
     pre_floor = snapshot["z_scores"]
@@ -575,21 +615,35 @@ def build_position_report(
     iso = pm["isolation_multiplier"]
     alpha_goal = svc.GOAL_ALPHA.get(pos, 0.0)
     if goals >= 1:
-        t_goals = goals * (goals + 1) / 2
-        gb = alpha_goal * t_goals * iso
+        t_goals = goals**1.5
+        raw_goal_bonus = alpha_goal * t_goals * iso
+        gb = min(raw_goal_bonus, svc.GOAL_BONUS_CAP)
+        cap_note = (
+            f"  [capped at {svc.GOAL_BONUS_CAP}]"
+            if raw_goal_bonus > svc.GOAL_BONUS_CAP
+            else ""
+        )
         add(
             f"  Goal bonus         FIRED          {gb:>+8.4f}  "
-            f"(alpha={alpha_goal} x T({int(goals)})={int(t_goals)} x iso={iso:.3f})"
+            f"(alpha={alpha_goal} x {goals:.0f}^1.5={t_goals:.4f} x iso={iso:.3f} "
+            f"= {raw_goal_bonus:.4f}{cap_note})"
         )
     else:
         add(f"  Goal bonus         did not fire   {0.0:>+8.4f}  (goals=0)")
     gamma_assist = svc.ASSIST_GAMMA.get(pos, 0.0)
     if assists >= 1:
-        t_assists = assists * (assists + 1) / 2
-        ab = gamma_assist * t_assists * iso
+        t_assists = assists**1.5
+        raw_assist_bonus = gamma_assist * t_assists * iso
+        ab = min(raw_assist_bonus, svc.ASSIST_BONUS_CAP)
+        cap_note = (
+            f"  [capped at {svc.ASSIST_BONUS_CAP}]"
+            if raw_assist_bonus > svc.ASSIST_BONUS_CAP
+            else ""
+        )
         add(
             f"  Assist bonus       FIRED          {ab:>+8.4f}  "
-            f"(gamma={gamma_assist} x T({int(assists)})={int(t_assists)} x iso={iso:.3f})"
+            f"(gamma={gamma_assist} x {assists:.0f}^1.5={t_assists:.4f} x iso={iso:.3f} "
+            f"= {raw_assist_bonus:.4f}{cap_note})"
         )
     else:
         add(f"  Assist bonus       did not fire   {0.0:>+8.4f}  (assists=0)")
@@ -607,8 +661,38 @@ def build_position_report(
             f"-> {status} ({m['bonus']:>+.4f})"
         )
 
+    if pos == "CM":
+        # Progression Engine is computed inline in _apply_cm_modifiers (a flat
+        # base-excess tier, not routed through _apply_mastery_bonus), so it's
+        # never captured by mastery_log above - shown here directly instead,
+        # from the same z_scores_floored/CM_PROGRESSION_BASE_EXCESS the service uses.
+        passes_z = z_scores_floored.get("passes_p90_z", 0.0)
+        dribbles_z = z_scores_floored.get("dribbles_p90_z", 0.0)
+        progression_min = min(passes_z, dribbles_z)
+        add("    Progression Engine (CM)")
+        if progression_min > 1.2:
+            excess = (progression_min - 1.2) + svc.CM_PROGRESSION_BASE_EXCESS
+            capped_excess = min(excess, svc.MASTERY_EXCESS_CAP)
+            prog_bonus = capped_excess * svc.MASTERY_WEIGHT * impact
+            cap_note = (
+                f"  [excess capped at {svc.MASTERY_EXCESS_CAP}]"
+                if excess > svc.MASTERY_EXCESS_CAP
+                else ""
+            )
+            add(
+                f"      passes_p90_z={passes_z:.3f}  dribbles_p90_z={dribbles_z:.3f}  "
+                f"min={progression_min:.3f}  threshold=1.2  "
+                f"base_excess={svc.CM_PROGRESSION_BASE_EXCESS}  "
+                f"-> FIRED ({prog_bonus:>+.4f}{cap_note})"
+            )
+        else:
+            add(
+                f"      passes_p90_z={passes_z:.3f}  dribbles_p90_z={dribbles_z:.3f}  "
+                f"min={progression_min:.3f}  threshold=1.2  -> did not fire (+0.0000)"
+            )
+
     opponent_goals = pm["opponent_goals"]
-    if opponent_goals >= 3 and minutes >= 60 and svc.CS_RATIOS.get(pos, 0.0) > 0:
+    if pos in COLLAPSE_ELIGIBLE_POS and opponent_goals >= 3 and minutes >= 60:
         add(
             f"  Collapse penalty   FIRED          {-svc.COLLAPSE_PENALTY:>+8.4f}  "
             f"(opp_goals={int(opponent_goals)}, mins={minutes}>=60)"
@@ -672,11 +756,23 @@ def build_position_report(
         f"  Raw scalar:      {snapshot['supremacy_scalar']:+.4f}  "
         f"(team_xg={snapshot['team_xg']}, opp_xg={snapshot['xg_against']})"
     )
-    add(f"  Quality factor:  max(0, 1 - {dot:.3f}/1.5) = {snapshot['quality_factor']:.4f}")
     add(
-        f"  Adjusted:        {snapshot['supremacy_scalar']:.4f} x "
-        f"{snapshot['quality_factor']:.4f} = {snapshot['adjusted_supremacy']:+.4f}"
+        f"  Quality factor:  max(0, min(1, 1 - {dot:.3f}/1.5)) = "
+        f"{snapshot['quality_factor']:.4f}"
     )
+    pos_scalar = snapshot.get("pos_supremacy_scalar", 1.0)
+    if pos_scalar != 1.0:
+        add(f"  Position scalar: {pos} supremacy reduced to x{pos_scalar}")
+        add(
+            f"  Adjusted:        {snapshot['supremacy_scalar']:.4f} x "
+            f"{snapshot['quality_factor']:.4f} x {pos_scalar} = "
+            f"{snapshot['adjusted_supremacy']:+.4f}"
+        )
+    else:
+        add(
+            f"  Adjusted:        {snapshot['supremacy_scalar']:.4f} x "
+            f"{snapshot['quality_factor']:.4f} = {snapshot['adjusted_supremacy']:+.4f}"
+        )
     add("")
     add(f"  base_rating              {pm['base_rating']:>+10.4f}")
     add(f"  total_bonus              {total_bonus:>+10.4f}")
@@ -690,7 +786,7 @@ def build_position_report(
 
 
 def build_hybrid_report(blend: dict[str, Any]) -> list[str]:
-    """Build the multi-position mirror-collapse + hybrid-blend section."""
+    """Build the multi-position mirror-collapse + MAZ-weighted blend section."""
     lines: list[str] = []
     add = lines.append
     add("=" * 70)
@@ -717,35 +813,36 @@ def build_hybrid_report(blend: dict[str, Any]) -> list[str]:
         add(f"  FINAL RATING: {blend['final_rating']:.1f}")
         return lines
 
-    add(f"  r_max  ({blend['max_pos']}):  {blend['r_max']:.4f}")
-    add(f"  r_mean:            {blend['r_mean']:.4f}")
-    add(f"  r_min:             {blend['r_min']:.4f}")
-    add("")
-    add("  Cosine similarity to r_max position (drag input):")
-    for p, sim in blend["similarities"].items():
-        add(f"    {blend['max_pos']} <-> {p}: {sim:.4f}")
-    add(f"  mean_similarity: {blend['mean_similarity']:.4f}")
+    add("  MAZ (mean absolute z-score) fit per position - lower MAZ means the")
+    add("  position's calibration fits this performance better, so it gets more")
+    add("  weight in the blend:")
     add(
-        f"  alpha = ALPHA_BASE({MatchRatingsService.ALPHA_BASE}) x mean_similarity "
-        f"= {blend['alpha']:.4f}"
+        f"  {'Position':<10} {'MAZ':>8} {'1/MAZ':>10} {'Norm weight':>13} {'Rating':>8}"
     )
+    add(f"  {'-' * 55}")
+    for p in blend["collapsed_positions"]:
+        add(
+            f"  {p:<10} {blend['maz'][p]:>8.4f} {blend['raw_weights'][p]:>10.4f} "
+            f"{blend['norm_weights'][p]:>13.4f} {blend['position_ratings'][p]:>8.2f}"
+        )
+    add("")
     add(
-        f"  drag  = alpha x (r_max - r_mean) = {blend['alpha']:.4f} x "
-        f"({blend['r_max']:.4f} - {blend['r_mean']:.4f}) = {blend['drag']:.4f}"
+        "  hybrid_base = sum(norm_weight[pos] x rating[pos]) = "
+        f"{blend['hybrid_base']:.4f}"
     )
     add("")
+    add(f"  r_min (worst positional rating): {blend['r_min']:.4f}")
     add(
         f"  versatility_bonus = VERSATILITY_BETA({MatchRatingsService.VERSATILITY_BETA}) x "
         f"max(0, r_min - {MatchRatingsService.VERSATILITY_THRESHOLD}) "
         f"= {blend['versatility_bonus']:.4f}"
     )
     add("")
-    add("  hybrid_rating = r_max - drag + versatility_bonus")
+    add("  hybrid_rating = hybrid_base + versatility_bonus")
     add(
-        f"                = {blend['r_max']:.4f} - {blend['drag']:.4f} + "
-        f"{blend['versatility_bonus']:.4f}"
+        f"                = {blend['hybrid_base']:.4f} + "
+        f"{blend['versatility_bonus']:.4f} = {blend['hybrid_rating']:.4f}"
     )
-    add(f"                = {blend['hybrid_rating']:.4f}")
     add("")
     add(f"  FINAL RATING (clamped, rounded): {blend['final_rating']:.1f}")
     return lines
