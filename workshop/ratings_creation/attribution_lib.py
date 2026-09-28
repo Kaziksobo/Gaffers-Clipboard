@@ -361,7 +361,14 @@ def run_attribution(
         team_name=team_name,
     )
     positions_played = performance.get("positions_played", [])
-    blend = compute_hybrid_blend(svc, positions_played) if positions_played else {}
+    # final_rating is None when calculate_outfield_rating bails out before the
+    # per-position loop (e.g. minutes_played < 10) - no snapshots were ever
+    # recorded in that case, so there's nothing to blend.
+    blend = (
+        compute_hybrid_blend(svc, positions_played)
+        if positions_played and final_rating is not None
+        else {}
+    )
     return svc, final_rating, blend
 
 
