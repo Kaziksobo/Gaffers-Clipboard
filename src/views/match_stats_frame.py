@@ -225,6 +225,9 @@ class MatchStatsFrame(BaseViewFrame, OCRDataMixin, EntryFocusMixin):
         each visit starts from a known baseline.
         """
         self._dismissed_warnings.clear()
+        # Dismiss any suggestion popup left over from a previous visit
+        self.home_team_name.close_suggestions()
+        self.away_team_name.close_suggestions()
         # Reset team names
         self.home_team_name_var.set("Home Team")
         self.away_team_name_var.set("Away Team")

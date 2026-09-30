@@ -58,8 +58,12 @@ class PopupListMixin:
         real OS windows and re-triggers `focus_force`, which fights typing
         focus and can leave outside-click detection reading stale geometry.
         """
-        if self.dropdown_popup is not None:
+        # Building a CTkToplevel pumps the event loop, so a fast keystroke can
+        # re-enter here before `dropdown_popup` is assigned. Guard against it,
+        # otherwise a second window is created and the first is orphaned.
+        if self.dropdown_popup is not None or getattr(self, "_popup_opening", False):
             return
+        self._popup_opening = True
 
         anchor = self._popup_anchor()
         logger.debug(
@@ -106,6 +110,8 @@ class PopupListMixin:
         except Exception as exc:
             logger.exception(f"Failed to open popup. error='{exc}'")
             self._close_popup()
+        finally:
+            self._popup_opening = False
 
     def _render_popup_options(self: PopupListMixinHostProtocol) -> None:
         """Clear and repopulate the popup's option buttons from `_popup_values`."""

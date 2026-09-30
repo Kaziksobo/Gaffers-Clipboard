@@ -62,6 +62,11 @@ class AutocompleteEntry(ctk.CTkFrame, PopupListMixin):
         # The popup never takes keyboard focus (see _popup_takes_focus), so
         # Escape must be caught here on the entry instead of on the popup.
         self.entry.bind("<Escape>", lambda _e: self._close_popup())
+        # Tabbing/entering away from the field must also dismiss the popup,
+        # otherwise it lingers (it is a separate topmost window).
+        self.entry.bind("<Tab>", lambda _e: self._close_popup(), add="+")
+        self.entry.bind("<Return>", lambda _e: self._close_popup(), add="+")
+        self.bind("<Destroy>", lambda _e: self._close_popup(), add="+")
 
         logger.debug(
             f"AutocompleteEntry initialized with values_count={len(self.values)}, "
@@ -76,6 +81,10 @@ class AutocompleteEntry(ctk.CTkFrame, PopupListMixin):
         """
         self.values = values or []
         logger.debug(f"Autocomplete values updated. values_count={len(self.values)}")
+
+    def close_suggestions(self) -> None:
+        """Dismiss the suggestion popup if it is open."""
+        self._close_popup()
 
     def _popup_anchor(self) -> ctk.CTkBaseClass:
         """Return the entry the popup positions itself under.
