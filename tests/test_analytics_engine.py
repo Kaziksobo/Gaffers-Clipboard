@@ -131,26 +131,32 @@ def test_calculate_match_rating_routes_outfield_to_outfield_pipeline() -> None:
 def test_calculate_match_rating_caches_service_after_first_call(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Config is loaded exactly once; a second call reuses the cached service."""
-    load_calls: list[int] = []
-    original_load = AnalyticsEngine._load_configuration
+    """Each config file is loaded once; a second call reuses the cached service."""
+    loaded_files: list[str] = []
+    original_load = AnalyticsEngine._load_config
 
-    def counting_load(self: AnalyticsEngine) -> None:
-        """Delegate to the original loader while counting invocations."""
-        load_calls.append(1)
-        original_load(self)
+    def counting_load(self: AnalyticsEngine, filename: str) -> object:
+        """Delegate to the original loader while recording requested files."""
+        loaded_files.append(filename)
+        return original_load(self, filename)
 
-    monkeypatch.setattr(AnalyticsEngine, "_load_configuration", counting_load)
+    monkeypatch.setattr(AnalyticsEngine, "_load_config", counting_load)
 
     engine = AnalyticsEngine(_PROJECT_ROOT)
     engine.calculate_match_rating(
         _gk_performance(), _match_overview(), 6, "Valencia CF"
     )
+    first_service = engine._match_ratings_service
     engine.calculate_match_rating(
         _gk_performance(), _match_overview(), 6, "Valencia CF"
     )
 
-    assert len(load_calls) == 1
+    assert sorted(loaded_files) == [
+        "performance_means_stds.json",
+        "performance_weights.json",
+    ]
+    assert first_service is not None
+    assert engine._match_ratings_service is first_service
 
 
 def test_calculate_match_rating_gk_returns_float_in_valid_range() -> None:

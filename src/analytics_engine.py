@@ -17,8 +17,11 @@ lives in analytics services.
 import json
 import logging
 from pathlib import Path
+from typing import cast
 
+from services.analytics.match_ratings_service import MatchRatingsService
 from src.contracts.backend import (
+    JsonValue,
     MatchOverviewPayload,
     PerformanceMeansStdsMap,
     PerformanceWeightsMap,
@@ -45,59 +48,65 @@ class AnalyticsEngine:
         """
         self.project_root = project_root
 
-        self._performance_weights: PerformanceWeightsMap | None = None
-        self._performance_means_stds: PerformanceMeansStdsMap | None = None
+        self._config_cache: dict[str, JsonValue] = {}
+
         self._match_ratings_service: analytics_services.MatchRatingsService | None = (
             None
         )
 
-    def _get_match_rating_service(self) -> None:
-        """Initialize and cache the match ratings service.
+    def _load_config[T](self, filename: str) -> T:
+        """Load a JSON config file from `config/`, caching the parsed result.
 
-        This method ensures configuration is loaded and the underlying service is
-        constructed before any rating calculations are performed.
-        """
-        if self._match_ratings_service:
-            logger.debug("Using cached MatchRatingsService instance.")
-            return
-        if not self._performance_weights or not self._performance_means_stds:
-            logger.debug("Performance configuration not loaded; loading from disk.")
-            self._load_configuration()
-        if self._performance_weights and self._performance_means_stds:
-            self._match_ratings_service = analytics_services.MatchRatingsService(
-                self._performance_weights, self._performance_means_stds
-            )
-            logger.info(
-                "MatchRatingsService initialized (weights=%d, means_stds=%d).",
-                len(self._performance_weights),
-                len(self._performance_means_stds),
-            )
+        The file is read from disk on first request only; later calls for the
+        same filename return the cached value.
 
-    def _load_configuration(self) -> None:
-        """Load performance weights and normalization parameters from config files.
+        Args:
+            filename (str): Name of the file inside the project's `config/`
+                directory, e.g. "performance_weights.json".
 
         Raises:
-            FileNotFoundError: If the configuration files are missing.
-            json.JSONDecodeError: If the configuration files contain invalid JSON.
-            OSError: For other I/O errors when reading configuration files.
+            FileNotFoundError: If the configuration file is missing.
+            json.JSONDecodeError: If the file contains invalid JSON.
+            OSError: For other I/O errors when reading the file.
+
+        Returns:
+            T: The parsed JSON, cast to the caller's expected config type. The
+                shape is not validated at runtime.
         """
-        config_path: Path = self.project_root / "config"
-        weights_path: Path = config_path / "performance_weights.json"
-        means_stds_path: Path = config_path / "performance_means_stds.json"
-        logger.debug(
-            "Loading performance configuration from %s and %s.",
-            weights_path,
-            means_stds_path,
-        )
-        with Path.open(weights_path) as f:
-            self._performance_weights = json.load(f)
-        with Path.open(means_stds_path) as f:
-            self._performance_means_stds = json.load(f)
-        logger.info(
-            "Loaded performance configuration (weights=%d, means_stds=%d).",
-            len(self._performance_weights or {}),
-            len(self._performance_means_stds or {}),
-        )
+        if filename not in self._config_cache:
+            path: Path = self.project_root / "config" / filename
+            with path.open(encoding="utf-8") as f:
+                self._config_cache[filename] = json.load(f)
+        return cast("T", self._config_cache[filename])
+
+    def _get_match_rating_service(self) -> analytics_services.MatchRatingsService:
+        """Return the cached match ratings service, creating it on first use.
+
+        On the first call, loads the performance weights and historical
+        means/standard deviations through `_load_config()`, constructs a
+        `MatchRatingsService` from them, and caches the instance. Later calls
+        return the cached instance without touching disk.
+
+        Raises:
+            FileNotFoundError: If a configuration file is missing.
+            json.JSONDecodeError: If a configuration file contains invalid JSON.
+            OSError: For other I/O errors when reading configuration files.
+
+        Returns:
+            MatchRatingsService: The shared service instance used to calculate
+                goalkeeper and outfield ratings.
+        """
+        if self._match_ratings_service is None:
+            weights: PerformanceWeightsMap = self._load_config(
+                "performance_weights.json"
+            )
+            means_stds: PerformanceMeansStdsMap = self._load_config(
+                "performance_means_stds.json"
+            )
+            self._match_ratings_service = analytics_services.MatchRatingsService(
+                weights, means_stds
+            )
+        return self._match_ratings_service
 
     def calculate_match_rating(
         self,
@@ -139,20 +148,16 @@ class AnalyticsEngine:
             team_name,
             half_length,
         )
-        self._get_match_rating_service()
+        service: MatchRatingsService = self._get_match_rating_service()
 
-        if self._match_ratings_service:
-            if performance.get("performance_type") == "GK":
-                logger.debug("Routing to GK rating pipeline.")
-                return self._match_ratings_service.calculate_gk_rating(
-                    performance, match_overview, half_length, team_name
-                )
+        if performance.get("performance_type") == "GK":
+            logger.debug("Routing to GK rating pipeline.")
+            return service.calculate_gk_rating(
+                performance, match_overview, half_length, team_name
+            )
 
-            else:
-                logger.debug("Routing to outfield rating pipeline.")
-                return self._match_ratings_service.calculate_outfield_rating(
-                    performance, match_overview, half_length, team_name
-                )
-
-        logger.error("MatchRatingsService unavailable; cannot calculate rating.")
-        return None
+        else:
+            logger.debug("Routing to outfield rating pipeline.")
+            return service.calculate_outfield_rating(
+                performance, match_overview, half_length, team_name
+            )
