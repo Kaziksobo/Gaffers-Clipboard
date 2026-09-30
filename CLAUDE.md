@@ -38,12 +38,12 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
 - `App.PROJECT_ROOT = Path(__file__).parent.parent` is the canonical project root
 
 **`src/data_manager.py`** is the sole disk I/O layer.
-- All JSON reads and writes go through DataManager — no exceptions
+- All JSON reads and writes of career data go through DataManager — no exceptions (the only carve-out is `AnalyticsEngine` reading static `config/` files; see golden rule 2)
 - Delegates its internals to four Data Services in `src/services/data/`
 - Data Services may only be called by DataManager, not by App Services or app.py directly
 
 **`src/analytics_engine.py`** is the sole analytics orchestrator.
-- Lazy-loads config from `config/performance_weights.json` and `config/performance_means_stds.json` on first use
+- Lazy-loads static config from `config/` on first use via a shared `_load_config()` helper (one JSON file per service; currently `performance_weights.json` and `performance_means_stds.json`)
 - Delegates to Analytics Services in `src/services/analytics/`
 - Analytics Services may only be called by AnalyticsEngine, not by app.py or DataManager directly
 - Currently has one service: `MatchRatingsService`. New analytics features add new services here.
@@ -52,7 +52,7 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
 
 1. **Views only call `app.py`.** `src/views/` contains pure CustomTkinter UI. No business logic, no data manipulation, no service calls of any kind. Views receive data from the controller and emit user actions to it. Preliminary UI-layer validation (e.g. disabling a button when a field is empty) is acceptable.
 
-2. **Only DataManager reads and writes disk.** No service, view, utility, or controller may open a file directly except DataManager. If new analytics features need to persist data, that goes through DataManager.
+2. **Only DataManager reads and writes disk.** No service, view, utility, or controller may open a file directly except DataManager. If new analytics features need to persist data, that goes through DataManager. **One exception:** static, read-only files in `config/` (weights, centroids, coefficients) are loaded by `AnalyticsEngine` through its shared `_load_config()` helper. Nothing else reads or writes disk outside DataManager.
 
 3. **Only AnalyticsEngine calls Analytics Services.** `app.py` calls `analytics_engine.calculate_match_rating()` etc. It never imports or instantiates `MatchRatingsService` directly.
 
@@ -218,6 +218,7 @@ Key validation rules already enforced:
 **The `match_rating` field in persisted data is the output of the custom analytics algorithm, not EA's built-in system.** Never conflate these.
 
 ### Contracts (`src/contracts/`)
+- `analytics.py` — analytics service inputs/outputs and typed config shapes (planned; created alongside Form Scores)
 - `backend.py` — cross-layer TypedDicts and type aliases for payloads, buffers, and generic types
 - `coordinates.py` — OCR region bounds (normalised and pixel variants)
 - `ocr.py` — OCR preprocessing and debug payload types
@@ -233,10 +234,11 @@ Key validation rules already enforced:
 ### Pattern for adding new analytics features
 
 Every new analytics capability follows the same pattern:
-1. Create a new service class in `src/services/analytics/` (e.g. `form_score_service.py`)
-2. Add it to `AnalyticsEngine` with lazy initialisation matching the existing `_get_match_rating_service()` pattern
-3. Expose a public method on `AnalyticsEngine` for `app.py` to call
-4. `app.py` calls the engine method — never the service directly
+1. Create a new service class in `src/services/analytics/` (e.g. `form_scores_service.py`). Services are pure functions of their inputs — they never call DataManager or read match data themselves
+2. If it needs config, add one JSON file in `config/` and a typed config TypedDict in `src/contracts/analytics.py`
+3. Add a lazy getter to `AnalyticsEngine` that loads config through `_load_config()` and returns the cached service instance (refactor the existing `_get_match_rating_service()` to this shape when next touched)
+4. Expose a public method on `AnalyticsEngine` for `app.py` to call
+5. `app.py` fetches the inputs from a DataManager query (returned as TypedDicts from `src/contracts/analytics.py`, sorted by `in_game_date`), passes them to the engine method, and never calls the service directly
 
 ### Match ratings algorithm
 
@@ -255,12 +257,14 @@ Offline calibration only — excluded from ruff and ty:
 - `ratings_testing.ipynb` — stress tests and real Valencia CF match validation
 
 ### Upcoming Phase 8 features (from roadmap)
-All must follow the offline-weight / online-inference pattern:
-- **Form Scores** — EMA-based player form tracking
-- **Monte-Carlo Season Predictor** — numpy probability distributions
-- **Win-Condition Extraction** — Random Forest feature importances (train offline, load weights at runtime)
-- **Red Zone Injury Flags** — Logistic Regression (train offline, load weights at runtime)
-- **Tactical Fingerprinting** — K-Means clustering (train offline, store centroids)
+Any feature that involves training follows the offline-weight / online-inference pattern:
+- **Form Scores** — EMA-based player form tracking; no training. Decay factor and minimum-appearance threshold live in `config/form_scores.json`. Returns the full EMA series, ordered by `in_game_date`.
+- **Win-Condition Extraction** — *deferred until more data exists (especially lower-win-rate careers such as Ipswich).* Planned: ridge regression on goal difference using per-minute team-stat differentials (controllable stats only; `xg`, `shots` and `saves` excluded), trained offline with coefficients shipped as JSON. Random Forest permutation importance is an offline cross-check only.
+- **Tactical Fingerprinting** — K-Means clustering (K=3–5) trained offline; ship centroids plus scaler means/stds. Shares per-minute feature extraction with Win-Condition.
+- **Red Zone Injury Flags** — rule-based workload heuristic (rolling minutes and sprint load against the player's own baseline), last in the order. Logistic Regression is shelved: ~30–60 labelled injuries exist against the ~200–500 needed.
+- **Additional analytics** — Luck Gauge / Expected Points (Poisson on xG), Contract & Value Planner, Progression Watch, Best-Position Finder, Matchup Matrix, Season Review. All numpy / pure Python, no training.
+
+**Scrapped:** Monte-Carlo Season Predictor — it needs opponent standings data, which the app does not track.
 
 The constraint: no scikit-learn, pandas, or scipy in `src/`. These are trained in `workshop/` and their outputs (weights, centroids, coefficients) are stored as JSON in `config/` for the live engine to use.
 
@@ -294,6 +298,7 @@ Use `pytest-mock` for mocking service dependencies. Never mock `DataManager` in 
 ```
 src/
 ├── contracts/          # Protocol/TypedDict definitions — layer boundaries
+│   ├── analytics.py    # Analytics service I/O and config types (planned)
 │   ├── backend.py      # Cross-layer payload types and type aliases
 │   ├── coordinates.py  # OCR region bound types
 │   ├── ocr.py          # OCR preprocessing types
@@ -341,6 +346,9 @@ model/                  # KNN OCR model training scripts and artefacts
 - **Don't use relative imports.** Always `from src.x import y`.
 - **Don't add heavy computation to the live analytics path.** Pre-compute in `workshop/` notebooks, store outputs as JSON in `config/`, load at runtime.
 - **Don't instantiate DataManager, AnalyticsEngine, or App Services in views.** They are owned by `app.py`.
+- **Don't order time series by `datetime`.** Use `in_game_date` (with match id as the tiebreak). `datetime` is when the record was entered, which is wrong for backfilled matches.
+- **Don't compare volume stats across matches without normalising by `half_length`.** Convert to per-minute (or per-10-minute) values before using them as features.
+- **Don't let analytics services fetch their own data.** `app.py` pulls inputs from DataManager and passes them to the engine; services are pure functions of their inputs.
 
 ---
 

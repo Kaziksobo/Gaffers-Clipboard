@@ -177,28 +177,36 @@ The goal of this phase is to "harden" the application by improving stability, fo
 ----
 ## Phase 8: Analytics Engine & Squad Hub
 
-**Status: Starting**
+**Status: In progress**
 
-The goal of this phase is to transform the application from a raw data-entry tool into a living "Backroom Staff." This involves building a modular analytics engine using pure math, NumPy, and Scikit-Learn to generate actionable insights, and creating immersive UI dashboards to visualize this data.
+The goal of this phase is to transform the application from a raw data-entry tool into a living "Backroom Staff." This involves building a modular analytics engine using pure math and NumPy at runtime (any model training happens offline in `workshop/` with Scikit-Learn, and only the resulting weights ship as JSON config) to generate actionable insights, and creating immersive UI dashboards to visualize this data.
 
 ### To-Do List: 
-- [ ] **Core Analytics Engine (`src/analytics/`):**
-	- [ ] Implement **Custom Match Ratings**: Use weighted positional heuristics to calculate true player performances, bypassing the game's native rating system.
+- [ ] **Core Analytics Engine (`src/services/analytics/`):**
+	- [ ] Implement **Custom Match Ratings**: Use weighted positional heuristics to calculate true player performances, bypassing the game's native rating system. *(largely complete — final tweaks and documentation remaining)*
 	- [ ] Implement **Form Scores**: Create an Exponential Moving Average (EMA) algorithm to track highly reactive player form.
-	- [ ] Implement **Monte-Carlo Season Predictor**: Use `numpy` probability distributions to simulate remaining fixtures and predict league finish probabilities.
-- [ ] **Predictive & Tactical ML (Scikit-Learn):**
-	- [ ] **Win-Condition Extraction**: Train a Random Forest model on historical match data to extract feature importances (e.g., discovering that pass accuracy dictates 70% of win probability).
-	- [ ] **Red Zone Injury Flags**: Build a Logistic Regression model to flag players at high risk of injury based on recent sprint distance, rest days, and stamina.
-	- [ ] **Tactical Fingerprinting**: Use K-Means clustering to group historical matches/opponents by playstyle (e.g., High-Press, Possession).
+		- [ ] Return the full EMA series (not just the latest value) so the Deep-Dive charts can reuse it; require at least 3 rated appearances; decay factor and threshold live in `config/form_scores.json`.
+	- [-] ~~**Monte-Carlo Season Predictor**~~ — scrapped: it needs opponent standings data, which the app does not track.
+- [ ] **Predictive & Tactical ML (trained offline with Scikit-Learn, numpy at runtime):**
+	- [ ] **Win-Condition Extraction** *(deferred until there is more data, particularly from the lower-win-rate Ipswich career)*: Fit a ridge regression offline on goal difference using per-minute team-stat differentials (controllable stats only; xG, shots and saves excluded). Ship signed, standardised coefficients as JSON, and cross-check against Random Forest permutation importance offline.
+	- [ ] **Red Zone Injury Flags** *(last in the order)*: Rule-based workload heuristic (rolling minutes and sprint load against each player's own baseline). Logistic Regression is shelved until there are enough labelled injuries (~200–500 needed, ~30–60 available).
+	- [ ] **Tactical Fingerprinting**: Use K-Means clustering to group historical matches/opponents by playstyle (e.g., High-Press, Possession). Features are normalised per minute (shared with the Win-Condition feature extraction); centroids ship with their scaler means/stds.
+- [ ] **Additional Analytics:**
+	- [ ] **Luck Gauge & Expected Points**: Convert each match's xG for and against into win/draw/loss probabilities (Poisson) and compare expected points with actual points. No training or standings data required.
+	- [ ] **Contract & Value Planner**: Expiry timeline, rating-per-wage efficiency, and sell-high flags (older, high value, declining form), built from the financial snapshots.
+	- [ ] **Progression Watch**: Trend fit over attribute history to flag players developing or regressing faster than their age suggests; feeds the Deep-Dive trajectory charts.
+	- [ ] **Best-Position Finder**: Show which position each versatile player rates best in, reusing the multi-position logic in the ratings service.
+	- [ ] **Matchup Matrix**: Record which opponent archetypes you beat or struggle against (depends on Tactical Fingerprinting); core input for Match Day Prep.
+	- [ ] **Season Review**: End-of-season summary (record, top performers, xPts vs points, biggest risers) exported as a shareable image.
 - [ ] **UI Overhaul: The Manager's Office & Squad Hub:**
 	- [ ] Refactor `player_library_frame.py` into a dynamic, split-screen `Squad Hub`.
-	- [ ] Build the **Manager's Office Dashboard** to display top-level widgets upon loading a career (Title odds, Squad Value, Top Performers, Red Zone warnings).
+	- [ ] Build the **Manager's Office Dashboard** to display top-level widgets upon loading a career (form table, recent results, Squad Value, Top Performers, contract expiries, and win-condition insights once available).
 	- [ ] Create **Deep-Dive Profiles** (modals/sub-frames) for players, featuring radar charts for attributes and line graphs for growth/regression trajectories.
 - [ ] **Update the Match Loop:**
-	- [ ] Inject the Analytics Engine into the post-match save flow to provide instant feedback widgets (e.g., Custom Ratings display and Win-Condition feedback).
-	- [ ] Create a **Match Day Prep** screen displaying historical context against upcoming opponents and a Lineup Optimizer suggesting XIs based on form and fitness.
+	- [ ] Inject the Analytics Engine into the post-match save flow to provide instant feedback widgets (e.g., Custom Ratings display and Win-Condition feedback once that feature exists).
+	- [ ] Create a **Match Day Prep** screen displaying historical context against the next opponent (entered manually; head-to-head drawn from past results) and a Lineup Optimizer suggesting XIs based on form and availability (injuries, suspensions, sold/loaned status).
 - [ ] **Scouting & Recruitment:**
-	- [ ] Build a "Shortlist Comparison" feature utilizing Cosine Similarity to mathematically compare prospective transfers against an ideal positional profile.
+	- [ ] Build a "Shortlist Comparison" feature using per-position mean-centred similarity plus a separate level term to compare prospective transfers against an ideal positional profile built from the user's own best players in that position. Requires a shortlist data model so scouted players never enter the squad library.
 
 **End Goal for Phase 8:** The application automatically transforms raw OCR data into deep, actionable insights. The user interacts with highly visual dashboards that provide tactical feedback, injury warnings, and transfer advice, deeply enriching the realism of their career mode save.
 
