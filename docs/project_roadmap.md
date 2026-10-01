@@ -184,13 +184,17 @@ The goal of this phase is to transform the application from a raw data-entry too
 ### To-Do List: 
 - [ ] **Core Analytics Engine (`src/services/analytics/`):**
 	- [ ] Implement **Custom Match Ratings**: Use weighted positional heuristics to calculate true player performances, bypassing the game's native rating system. *(largely complete — final tweaks and documentation remaining)*
-	- [ ] Implement **Form Scores**: Create an Exponential Moving Average (EMA) algorithm to track highly reactive player form.
-		- [ ] Return the full EMA series (not just the latest value) so the Deep-Dive charts can reuse it; require at least 3 rated appearances; decay factor and threshold live in `config/form_scores.json`.
-	- [-] ~~**Monte-Carlo Season Predictor**~~ — scrapped: it needs opponent standings data, which the app does not track.
+	- [ ] Implement **Form Scores**: A descriptive recent-form indicator. An EMA of match ratings (alpha ~0.3, seeded with the position prior) is compared against a shrunk baseline and converted into a colour band using noise-aware thresholds (neutral below |z| of 1, soft tint from 1 to 2, strong colour from 2). Descriptive only: backtests show recent form does not predict future ratings, so it must not feed the Lineup Optimizer or any predictive model.
+		- [ ] Return the full EMA series (not just the latest value) so the Deep-Dive charts can reuse it; show the series from 3 rated appearances and colours from ~5; alpha, thresholds, `sigma_within` and the shrinkage constants live in `config/form_scores.json`, fitted offline from the final ratings.
+		- [ ] Expose the shrunk baseline ("reliable rating"): (n x player mean + k x position mean) / (n + k), k ~6, for ranking players (top performers, optimiser) instead of form.
 - [ ] **Predictive & Tactical ML (trained offline with Scikit-Learn, numpy at runtime):**
 	- [ ] **Win-Condition Extraction** *(deferred until there is more data, particularly from the lower-win-rate Ipswich career)*: Fit a ridge regression offline on goal difference using per-minute team-stat differentials (controllable stats only; xG, shots and saves excluded). Ship signed, standardised coefficients as JSON, and cross-check against Random Forest permutation importance offline.
 	- [ ] **Red Zone Injury Flags** *(last in the order)*: Rule-based workload heuristic (rolling minutes and sprint load against each player's own baseline). Logistic Regression is shelved until there are enough labelled injuries (~200–500 needed, ~30–60 available).
 	- [ ] **Tactical Fingerprinting**: Use K-Means clustering to group historical matches/opponents by playstyle (e.g., High-Press, Possession). Features are normalised per minute (shared with the Win-Condition feature extraction); centroids ship with their scaler means/stds.
+	- [ ] **Expected Rating** *(shelved until after Tactical Fingerprinting and the other Phase 8 analytics; plan in `docs/expected_rating_plan.md`)*: Predict a player's rating for the upcoming match, displayed as a range with its components rather than a single number.
+		- [ ] Aim for the most comprehensive candidate feature set drawn from **existing data only** (no new capture such as fitness or morale screenshots): shrunk player baseline, opponent effect, opponent archetype x position group, attributes and age, workload, season stage, match context; every feature must earn its place in walk-forward backtests.
+		- [ ] Model choice stays open: a hierarchical (mixed-effects) linear model first, gradient-boosted trees as a challenger. Training libraries are workshop-only; the shipped model is exported to JSON and evaluated with numpy.
+		- [ ] Findings so far (refit after any ratings change): the shrunk player mean (k ~6, ~8% error reduction vs the position average) and an opponent effect (r ~ +0.15) help; recent form, rest days, recent minutes, home/away, competition and return from injury showed no detectable effect. Rating variance is ~80% match-to-match noise, so expect modest gains.
 - [ ] **Additional Analytics:**
 	- [ ] **Luck Gauge & Expected Points**: Convert each match's xG for and against into win/draw/loss probabilities (Poisson) and compare expected points with actual points. No training or standings data required.
 	- [ ] **Contract & Value Planner**: Expiry timeline, rating-per-wage efficiency, and sell-high flags (older, high value, declining form), built from the financial snapshots.
@@ -204,7 +208,7 @@ The goal of this phase is to transform the application from a raw data-entry too
 	- [ ] Create **Deep-Dive Profiles** (modals/sub-frames) for players, featuring radar charts for attributes and line graphs for growth/regression trajectories.
 - [ ] **Update the Match Loop:**
 	- [ ] Inject the Analytics Engine into the post-match save flow to provide instant feedback widgets (e.g., Custom Ratings display and Win-Condition feedback once that feature exists).
-	- [ ] Create a **Match Day Prep** screen displaying historical context against the next opponent (entered manually; head-to-head drawn from past results) and a Lineup Optimizer suggesting XIs based on form and availability (injuries, suspensions, sold/loaned status).
+	- [ ] Create a **Match Day Prep** screen displaying historical context against the next opponent (entered manually; head-to-head drawn from past results) and a Lineup Optimizer suggesting XIs based on shrunk season rating (Expected Rating once built) and availability (injuries, suspensions, sold/loaned status).
 - [ ] **Scouting & Recruitment:**
 	- [ ] Build a "Shortlist Comparison" feature using per-position mean-centred similarity plus a separate level term to compare prospective transfers against an ideal positional profile built from the user's own best players in that position. Requires a shortlist data model so scouted players never enter the squad library.
 
