@@ -421,6 +421,7 @@ class App(ctk.CTk):
             match_difficulty,
             league,
         )
+        self._reset_career_session_state()
 
     def activate_career(self, career_name: str) -> None:
         """Switch the application's global context to the specified career.
@@ -436,6 +437,12 @@ class App(ctk.CTk):
             ValueError: If the target career cannot be loaded.
         """
         self._career_service.activate_career(career_name)
+        self._reset_career_session_state()
+
+    def _reset_career_session_state(self) -> None:
+        """Drop staged work and discrepancies belonging to the previous career."""
+        self.clear_session_buffers()
+        self._current_discrepancies.clear()
 
     def get_current_career_details(self) -> CareerMetadata | None:
         """Retrieve the metadata for the currently active career session.

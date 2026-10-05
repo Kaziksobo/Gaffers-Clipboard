@@ -19,7 +19,6 @@ import logging
 from pathlib import Path
 from typing import cast
 
-from services.analytics.match_ratings_service import MatchRatingsService
 from src.contracts.backend import (
     JsonValue,
     MatchOverviewPayload,
@@ -28,6 +27,7 @@ from src.contracts.backend import (
     PlayerPerformancePayload,
 )
 from src.services import analytics as analytics_services
+from src.services.analytics.match_ratings_service import MatchRatingsService
 
 logger = logging.getLogger(__name__)
 

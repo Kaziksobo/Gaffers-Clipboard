@@ -61,8 +61,8 @@ class MainMenuFrame(BaseViewFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_columnconfigure(2, weight=1)
-        for i in range(5):
-            self.grid_rowconfigure(i, weight=1 if i in [0, 4] else 0)
+        for i in range(6):
+            self.grid_rowconfigure(i, weight=1 if i in [0, 5] else 0)
 
         # Main Heading
         self.main_heading = ctk.CTkLabel(
@@ -116,6 +116,15 @@ class MainMenuFrame(BaseViewFrame):
         )
         self.career_settings_button.grid(row=4, column=1, pady=(10, 0), ipady=10)
 
+        # Switch Career Button
+        self.switch_career_button = ctk.CTkButton(
+            self,
+            text="Switch Career",
+            font=self.fonts["button"],
+            command=self._on_switch_career,
+        )
+        self.switch_career_button.grid(row=5, column=1, pady=(10, 20), ipady=10)
+
     def on_show(self) -> None:
         """Refresh heading and state-aware styling when the frame is shown.
 
@@ -165,6 +174,23 @@ class MainMenuFrame(BaseViewFrame):
 
         logger.warning("No active career found while generating welcome text.")
         return "Welcome to Gaffer's Clipboard!"
+
+    def _on_switch_career(self) -> None:
+        """Return to career selection, confirming before discarding staged work."""
+        if self.controller.has_unsaved_work():
+            result = self.show_warning(
+                title="Unsaved Work",
+                message=(
+                    "You have unsaved work in progress. Switching careers will "
+                    "discard it.\n\nAre you sure you want to continue?"
+                ),
+                options=["Yes, Discard It", "No, Stay Here"],
+            )
+            if result != "Yes, Discard It":
+                return
+            self.controller.clear_session_buffers()
+
+        self.controller.show_frame(self.controller.get_frame_class("CareerSelectFrame"))
 
     def _on_add_match(self) -> None:
         """Validate prerequisites before navigating to AddMatchFrame.
