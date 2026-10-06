@@ -10,7 +10,7 @@
 /scripts/reports
 /tests/reports
 coverage.xml
-/.coverage
+/.coverage*
 /.vscode
 **/.ipynb_checkpoints
 docs/.obsidian/
