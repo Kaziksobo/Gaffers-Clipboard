@@ -131,7 +131,9 @@ def test_save_match_passes_performances_through_with_force_save(
     performances = [_outfield()]
 
     match_service.save_match(  # type: ignore[arg-type]
-        overview, player_performances=performances, force_save=True  # type: ignore[arg-type]
+        overview,
+        player_performances=performances,
+        force_save=True,  # type: ignore[arg-type]
     )
 
     mock_dm.add_match.assert_called_once_with(
@@ -199,7 +201,9 @@ def test_save_match_skips_cohesion_check_when_force_save(
     ]
 
     match_service.save_match(  # type: ignore[arg-type]
-        overview, player_performances=performances, force_save=True  # type: ignore[arg-type]
+        overview,
+        player_performances=performances,
+        force_save=True,  # type: ignore[arg-type]
     )
 
     mock_dm.add_match.assert_called_once()

@@ -202,9 +202,7 @@ def test_in_game_date_rejects_invalid_format() -> None:
 def test_in_game_date_rejects_non_string_type() -> None:
     """A non-string, non-datetime value for a date field raises ValidationError."""
     with pytest.raises(ValidationError):
-        GKAttributeSnapshot.model_validate(
-            _gk_snapshot_payload(in_game_date=20240801)
-        )
+        GKAttributeSnapshot.model_validate(_gk_snapshot_payload(in_game_date=20240801))
 
 
 # ---------------------------------------------------------------------------
@@ -299,9 +297,7 @@ def test_player_rejects_sold_without_date_sold() -> None:
 
 def test_player_accepts_sold_with_date_sold() -> None:
     """A player flagged as sold with a valid date_sold is accepted."""
-    player = Player.model_validate(
-        _player_payload(sold=True, date_sold="15/08/24")
-    )
+    player = Player.model_validate(_player_payload(sold=True, date_sold="15/08/24"))
 
     assert player.sold is True
     assert player.date_sold is not None
@@ -340,12 +336,8 @@ def test_player_is_goalkeeper_returns_false_when_no_gk_in_positions() -> None:
 
 def test_player_current_attributes_returns_most_recent_snapshot() -> None:
     """current_attributes returns the snapshot with the most recent datetime."""
-    early = _gk_snapshot(
-        datetime=dt.datetime(2024, 1, 1), in_game_date="01/01/24"
-    )
-    late = _gk_snapshot(
-        datetime=dt.datetime(2024, 8, 1), in_game_date="01/08/24"
-    )
+    early = _gk_snapshot(datetime=dt.datetime(2024, 1, 1), in_game_date="01/01/24")
+    late = _gk_snapshot(datetime=dt.datetime(2024, 8, 1), in_game_date="01/08/24")
     player = Player.model_validate(
         _player_payload(positions=["GK"], attribute_history=[early, late])
     )
@@ -387,7 +379,7 @@ def test_player_accepts_valid_height_format(valid_height: str) -> None:
         "6ft 2in",
         "180cm",
         "6'2",
-        "6 2\"",
+        '6 2"',
         "",
     ],
 )
@@ -426,9 +418,7 @@ def test_financial_snapshot_rejects_empty_required_field() -> None:
 
 def test_financial_snapshot_defaults_empty_optional_field_to_zero() -> None:
     """An empty string for an optional field like release_clause defaults to 0."""
-    snapshot = FinancialSnapshot.model_validate(
-        _financial_payload(release_clause="")
-    )
+    snapshot = FinancialSnapshot.model_validate(_financial_payload(release_clause=""))
 
     assert snapshot.release_clause == 0
 
@@ -448,9 +438,7 @@ def test_career_metadata_title_cases_league() -> None:
 def test_career_metadata_title_cases_competitions() -> None:
     """Each entry in the competitions list is title-cased."""
     meta = CareerMetadata.model_validate(
-        _career_meta_payload(
-            competitions=["la liga", "uefa champions league"]
-        )
+        _career_meta_payload(competitions=["la liga", "uefa champions league"])
     )
 
     assert "La Liga" in meta.competitions
@@ -466,9 +454,7 @@ def test_career_metadata_rejects_empty_league() -> None:
 def test_career_metadata_rejects_invalid_starting_season_format() -> None:
     """A starting_season value that does not match yy/yy raises a ValidationError."""
     with pytest.raises(ValidationError):
-        CareerMetadata.model_validate(
-            _career_meta_payload(starting_season="2024/2025")
-        )
+        CareerMetadata.model_validate(_career_meta_payload(starting_season="2024/2025"))
 
 
 def test_career_metadata_accepts_valid_starting_season() -> None:
@@ -517,15 +503,13 @@ def test_career_metadata_raises_when_a_competition_item_is_not_a_string() -> Non
 def test_financial_snapshot_accepts_datetime_in_game_date() -> None:
     """FinancialSnapshot.in_game_date accepts a datetime object directly."""
     date = dt.datetime(2024, 8, 1)
-    snapshot = FinancialSnapshot.model_validate(
-        _financial_payload(in_game_date=date)
-    )
+    snapshot = FinancialSnapshot.model_validate(_financial_payload(in_game_date=date))
 
     assert snapshot.in_game_date == date
 
 
 def test_financial_snapshot_rejects_invalid_in_game_date_string() -> None:
-    """FinancialSnapshot.in_game_date raises ValidationError for an unparseable string."""
+    """FinancialSnapshot.in_game_date raises ValidationError for unparseable string."""
     with pytest.raises(ValidationError):
         FinancialSnapshot.model_validate(_financial_payload(in_game_date="not-a-date"))
 

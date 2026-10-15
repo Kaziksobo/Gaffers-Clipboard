@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 from src.services.data.json_service import JsonService
 
@@ -128,7 +128,7 @@ def test_load_json_list_recovers_valid_items_when_some_are_invalid(
     tmp_path: Path,
     service: JsonService,
 ) -> None:
-    """load_json (is_list=True) partially recovers valid items when some entries are bad."""
+    """load_json (is_list=True) keeps the valid items when some entries are bad."""
     path = tmp_path / "mixed.json"
     path.write_text(
         json.dumps([{"value": 1}, {"value": "bad"}, {"value": 3}]),

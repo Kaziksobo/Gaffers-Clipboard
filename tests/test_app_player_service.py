@@ -104,7 +104,9 @@ def test_save_financial_data_rejects_incomplete_input(
     """save_financial_data raises IncompleteDataError for any missing required field."""
     with pytest.raises(IncompleteDataError, match=expected_msg):
         player_service.save_financial_data(
-            player_name, financial_data, in_game_date  # type: ignore[arg-type]
+            player_name,
+            financial_data,
+            in_game_date,  # type: ignore[arg-type]
         )
 
 
@@ -116,7 +118,9 @@ def test_save_financial_data_delegates_on_valid_input(
     payload = {"wage": 50000, "market_value": 5000000}
 
     player_service.save_financial_data(
-        "Saka", payload, "01/08/24"  # type: ignore[arg-type]
+        "Saka",
+        payload,
+        "01/08/24",  # type: ignore[arg-type]
     )
 
     mock_dm.add_financial_data.assert_called_once_with("Saka", payload, "01/08/24")
@@ -131,7 +135,9 @@ def test_save_financial_data_wraps_backend_error(
 
     with pytest.raises(DataPersistenceError, match="Backend failed to save financial"):
         player_service.save_financial_data(
-            "Saka", {"wage": 1}, "01/08/24"  # type: ignore[arg-type]
+            "Saka",
+            {"wage": 1},
+            "01/08/24",  # type: ignore[arg-type]
         )
 
 

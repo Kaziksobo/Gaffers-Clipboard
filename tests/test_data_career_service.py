@@ -69,11 +69,13 @@ def test_prepare_new_career_loads_default_competitions_from_config(
     config_dir = tmp_path / "config"
     config_dir.mkdir()
     (config_dir / "league_competitions.json").write_text(
-        json.dumps({
-            "leagues": {
-                "La Liga": ["La Liga", "Copa Del Rey", "UEFA Champions League"]
+        json.dumps(
+            {
+                "leagues": {
+                    "La Liga": ["La Liga", "Copa Del Rey", "UEFA Champions League"]
+                }
             }
-        }),
+        ),
         encoding="utf-8",
     )
 
@@ -118,7 +120,7 @@ def test_prepare_new_career_returns_empty_competitions_on_corrupt_config(
     tmp_path: Path,
     service: CareerService,
 ) -> None:
-    """prepare_new_career falls back to empty competitions when config JSON is invalid."""
+    """prepare_new_career falls back to empty comp when config JSON is invalid."""
     config_dir = tmp_path / "config"
     config_dir.mkdir()
     (config_dir / "league_competitions.json").write_text(
@@ -144,7 +146,7 @@ def test_prepare_new_career_returns_empty_competitions_when_league_not_in_config
     tmp_path: Path,
     service: CareerService,
 ) -> None:
-    """prepare_new_career returns empty competitions when the league is not in the config."""
+    """prepare_new_career returns empty comps when the league is not in the config."""
     config_dir = tmp_path / "config"
     config_dir.mkdir()
     (config_dir / "league_competitions.json").write_text(
@@ -238,7 +240,7 @@ def test_build_display_name_returns_club_name_when_not_duplicate() -> None:
 
 
 def test_build_display_name_appends_manager_name_when_duplicate_with_metadata() -> None:
-    """build_display_name appends the manager name when duplicate and metadata is present."""
+    """build_display_name appends the manager name for duplicates with metadata."""
     detail = _detail("Valencia CF")
     meta = _metadata(manager_name="Ruben Baraja")
 
@@ -357,9 +359,7 @@ def test_add_competition_returns_false_when_already_present(
     """add_competition_to_metadata returns False when competition is already listed."""
     meta = _metadata(competitions=["La Liga"])
 
-    changed = service.add_competition_to_metadata(
-        metadata=meta, competition="la liga"
-    )
+    changed = service.add_competition_to_metadata(metadata=meta, competition="la liga")
 
     assert changed is False
     assert meta.competitions.count("La Liga") == 1
@@ -373,7 +373,7 @@ def test_add_competition_returns_false_when_already_present(
 def test_ensure_competition_not_referenced_raises_when_match_uses_it(
     service: CareerService,
 ) -> None:
-    """ensure_competition_not_referenced raises ValueError when a match references it."""
+    """ensure_competition_not_referenced raises ValueError if a match uses it."""
     matches = [_mock_match("La Liga")]
 
     with pytest.raises(ValueError, match="La Liga"):
@@ -453,7 +453,7 @@ def test_build_updated_metadata_applies_valid_patch(service: CareerService) -> N
 def test_build_updated_metadata_raises_on_invalid_patch(
     service: CareerService,
 ) -> None:
-    """build_updated_metadata raises ValidationError when the patch produces invalid data."""
+    """build_updated_metadata raises ValidationError if the patch is invalid."""
     meta = _metadata()
 
     with pytest.raises(ValidationError):

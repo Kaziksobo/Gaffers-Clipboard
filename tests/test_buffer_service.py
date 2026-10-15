@@ -5,7 +5,6 @@ from __future__ import annotations
 import pytest
 
 from src.exceptions import (
-    DataPersistenceError,
     DuplicateRecordError,
     IncompleteDataError,
     PlayerNotFoundInBufferError,
@@ -177,7 +176,7 @@ def test_has_unsaved_work_returns_true_when_performances_non_empty(
 def test_buffer_player_attributes_stores_outfield_page_2(
     buffer_service: BufferService,
 ) -> None:
-    """buffer_player_attributes stores page-2 outfield data in the correct buffer slot."""
+    """buffer_player_attributes stores p2 outfield data in the correct buffer slot."""
     buffer_service.buffer_player_attributes(
         {"name": "Saka", "in_game_date": "01/08/24", "position": "RW", "pace": 90},
         is_goalkeeper=False,
@@ -265,7 +264,7 @@ def test_reset_player_buffer_clears_only_player_attributes(
 def test_buffer_match_overview_raises_for_non_dict_input(
     buffer_service: BufferService,
 ) -> None:
-    """buffer_match_overview raises ValueError when given something other than a dict."""
+    """buffer_match_overview raises ValueError when not given a dict."""
     with pytest.raises(ValueError, match="must be a dictionary"):
         buffer_service.buffer_match_overview("not a dict")  # type: ignore[arg-type]
 
@@ -324,7 +323,7 @@ def test_remove_player_from_buffer_is_silent_when_player_not_found(
 def test_get_buffered_match_raises_when_no_overview_staged(
     buffer_service: BufferService,
 ) -> None:
-    """get_buffered_match raises IncompleteDataError when no match overview is buffered."""
+    """get_buffered_match raises IncompleteDataError when no mo is buffered."""
     with pytest.raises(IncompleteDataError, match="No match overview data found"):
         buffer_service.get_buffered_match()
 
@@ -337,7 +336,7 @@ def test_get_buffered_match_raises_when_no_overview_staged(
 def test_reset_match_buffers_clears_match_and_performances(
     buffer_service: BufferService,
 ) -> None:
-    """reset_match_buffers clears overview and performances but keeps player attributes."""
+    """reset_match_buffers clears overview and performances but keeps player attr."""
     buffer_service.buffer_match_overview({"in_game_date": "01/08/24"})
     buffer_service.buffer_player_performance({"player_name": "Saka"})
     buffer_service.buffer_player_attributes(
@@ -360,9 +359,7 @@ def test_update_match_overview_applies_corrections(
     buffer_service: BufferService,
 ) -> None:
     """update_match_overview overwrites existing keys with corrected values."""
-    buffer_service.buffer_match_overview(
-        {"in_game_date": "01/08/24", "home_score": 1}
-    )
+    buffer_service.buffer_match_overview({"in_game_date": "01/08/24", "home_score": 1})
 
     buffer_service.update_match_overview({"home_score": 2})
 
@@ -387,9 +384,7 @@ def test_update_player_performance_applies_corrections(
     buffer_service: BufferService,
 ) -> None:
     """update_player_performance overwrites stats for the named player."""
-    buffer_service.buffer_player_performance(
-        {"player_name": "Saka", "goals": 0}
-    )
+    buffer_service.buffer_player_performance({"player_name": "Saka", "goals": 0})
 
     buffer_service.update_player_performance("Saka", {"goals": 2})
 
@@ -432,7 +427,7 @@ def test_get_buffered_player_performances_skips_entry_missing_id_key(
 def test_get_buffered_player_performances_formats_gk_position_as_gk_string(
     buffer_service: BufferService,
 ) -> None:
-    """get_buffered_player_performances shows 'GK' for positions_played on GK records."""
+    """get_buffered_player_performances shows 'GK' for positions_played on GK data."""
     buffer_service.buffer_player_performance(
         {
             "player_name": "Raya",
@@ -469,10 +464,8 @@ def test_get_buffered_player_performances_formats_list_values_as_joined_string(
 def test_get_buffered_player_performances_replaces_none_with_default(
     buffer_service: BufferService,
 ) -> None:
-    """get_buffered_player_performances substitutes the default placeholder for None values."""
-    buffer_service.buffer_player_performance(
-        {"player_name": "Saka", "goals": None}
-    )
+    """get_buffered_player_performances substitutes default placeholder for None."""
+    buffer_service.buffer_player_performance({"player_name": "Saka", "goals": None})
 
     rows = buffer_service.get_buffered_player_performances(
         display_keys=["player_name", "goals"], default="-"

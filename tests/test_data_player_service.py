@@ -299,6 +299,7 @@ def test_update_existing_player_history_and_bio(
 
 def test_create_new_player_missing_data(data_player_service: PlayerService) -> None:
     """Test that creating a new player with missing fields raises ValueError."""
+
     class MockCoreFields:
         name = "John Doe"
         age = 22
@@ -338,6 +339,7 @@ def test_create_new_player_rejects_blank_strings(
     data_player_service: PlayerService,
 ) -> None:
     """Test that blank string inputs are rejected for new players."""
+
     class MockCoreFields:
         name = "John Doe"
         age = 22
@@ -395,6 +397,7 @@ def test_create_new_player_rejects_unrecognized_position(
     data_player_service: PlayerService,
 ) -> None:
     """Test that create_new_player surfaces a friendly error for a bad position."""
+
     class MockCoreFields:
         name = "John Doe"
         age = 22
