@@ -49,6 +49,7 @@ class AutocompleteEntry(ctk.CTkFrame, PopupListMixin):
         self.dropdown_popup: ctk.CTkToplevel | None = None
         self._popup_scroll: ctk.CTkScrollableFrame | None = None
         self._outside_click_bind_id: str | None = None
+        self._popup_opening: bool = False
         self._current_matches: list[str] = []
 
         self.entry = ctk.CTkEntry(

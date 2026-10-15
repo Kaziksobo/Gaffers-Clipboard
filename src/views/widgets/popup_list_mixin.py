@@ -61,7 +61,7 @@ class PopupListMixin:
         # Building a CTkToplevel pumps the event loop, so a fast keystroke can
         # re-enter here before `dropdown_popup` is assigned. Guard against it,
         # otherwise a second window is created and the first is orphaned.
-        if self.dropdown_popup is not None or getattr(self, "_popup_opening", False):
+        if self.dropdown_popup is not None or self._popup_opening:
             return
         self._popup_opening = True
 

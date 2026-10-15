@@ -53,6 +53,7 @@ class ScrollableDropdown(ctk.CTkFrame, PopupListMixin):
         self.dropdown_popup: ctk.CTkToplevel | None = None
         self._popup_scroll: ctk.CTkScrollableFrame | None = None
         self._outside_click_bind_id: str | None = None
+        self._popup_opening: bool = False
 
         self.button = ctk.CTkButton(
             self,
