@@ -16,14 +16,19 @@ lives in analytics services.
 
 import json
 import logging
+from collections.abc import Sequence
 from pathlib import Path
 from typing import cast
 
+from src.contracts.analytics import (
+    PerformanceMeansStdsMap,
+    PerformanceWeightsMap,
+    PlayerForm,
+    PlayerRatingHistory,
+)
 from src.contracts.backend import (
     JsonValue,
     MatchOverviewPayload,
-    PerformanceMeansStdsMap,
-    PerformanceWeightsMap,
     PlayerPerformancePayload,
 )
 from src.services import analytics as analytics_services
@@ -53,6 +58,7 @@ class AnalyticsEngine:
         self._match_ratings_service: analytics_services.MatchRatingsService | None = (
             None
         )
+        self._form_scores_service: analytics_services.FormScoresService | None = None
 
     def _load_config[T](self, filename: str) -> T:
         """Load a JSON config file from `config/`, caching the parsed result.
@@ -161,3 +167,16 @@ class AnalyticsEngine:
             return service.calculate_outfield_rating(
                 performance, match_overview, half_length, team_name
             )
+
+    def _get_form_scores_service(self) -> analytics_services.FormScoresService:
+        """Return the lazily created FormScoresService (no config required)."""
+        if self._form_scores_service is None:
+            self._form_scores_service = analytics_services.FormScoresService()
+        return self._form_scores_service
+
+    def calculate_form_scores(
+        self, histories: Sequence[PlayerRatingHistory]
+    ) -> list[PlayerForm]:
+        """Calculate form for each player history, preserving input order."""
+        service = self._get_form_scores_service()
+        return [service.calculate_player_form(history) for history in histories]

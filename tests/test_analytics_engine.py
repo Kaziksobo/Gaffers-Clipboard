@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -9,6 +10,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from src.analytics_engine import AnalyticsEngine
+from src.contracts.analytics import PlayerRatingHistory, RatedAppearance
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -69,6 +71,25 @@ def _match_overview() -> dict[str, object]:
         "home_stats": {"xg": 1.5, "saves": 2, "tackles": 12, "tackles_won": 8},
         "away_stats": {"xg": 0.8, "saves": 4, "tackles": 8, "tackles_won": 5},
     }
+
+
+def _form_history(
+    player_id: int, ratings: list[float], missed: int = 0
+) -> PlayerRatingHistory:
+    """Return a rating history with chronological appearances for the ratings."""
+    return PlayerRatingHistory(
+        player_id=player_id,
+        player_name=f"Player {player_id}",
+        appearances=[
+            RatedAppearance(
+                match_id=i + 1,
+                in_game_date=dt.datetime(2031, 8, 1) + dt.timedelta(days=7 * i),
+                rating=rating,
+            )
+            for i, rating in enumerate(ratings)
+        ],
+        matches_since_last_rated=missed,
+    )
 
 
 def test_calculate_match_rating_raises_when_config_missing(tmp_path: Path) -> None:
@@ -192,3 +213,76 @@ def test_calculate_match_rating_outfield_returns_none_for_low_minutes() -> None:
     )
 
     assert result is None
+
+
+def test_calculate_form_scores_returns_one_form_per_history_in_order(
+    tmp_path: Path,
+) -> None:
+    """Each history yields one PlayerForm, in the order the histories were given."""
+    engine = AnalyticsEngine(tmp_path)
+    histories = [
+        _form_history(3, [6.0, 6.5, 7.0]),
+        _form_history(1, [7.0, 7.5, 8.0]),
+        _form_history(2, [5.0, 5.5, 6.0]),
+    ]
+
+    result = engine.calculate_form_scores(histories)
+
+    assert [form["player_id"] for form in result] == [3, 1, 2]
+    assert [form["player_name"] for form in result] == [
+        "Player 3",
+        "Player 1",
+        "Player 2",
+    ]
+
+
+def test_calculate_form_scores_returns_empty_list_for_no_histories(
+    tmp_path: Path,
+) -> None:
+    """An empty history list gives an empty result."""
+    engine = AnalyticsEngine(tmp_path)
+
+    result = engine.calculate_form_scores([])
+
+    assert result == []
+
+
+def test_calculate_form_scores_needs_no_config_directory(tmp_path: Path) -> None:
+    """Form scoring works with no config directory, unlike match ratings."""
+    engine = AnalyticsEngine(tmp_path)
+
+    result = engine.calculate_form_scores([_form_history(1, [7.0, 7.5, 8.0])])
+
+    assert result[0]["rated_count"] == 3
+    assert result[0]["current"] is not None
+
+
+def test_calculate_form_scores_delegates_each_history_to_form_service() -> None:
+    """Every history is passed to the form service and its results are returned."""
+    engine = AnalyticsEngine(_PROJECT_ROOT)
+    form_a, form_b = MagicMock(), MagicMock()
+    mock_svc = MagicMock()
+    mock_svc.calculate_player_form.side_effect = [form_a, form_b]
+    engine._form_scores_service = mock_svc
+    histories = [_form_history(1, [6.0] * 3), _form_history(2, [7.0] * 3)]
+
+    result = engine.calculate_form_scores(histories)
+
+    assert result == [form_a, form_b]
+    called_with = [c.args[0] for c in mock_svc.calculate_player_form.call_args_list]
+    assert called_with == histories
+
+
+def test_calculate_form_scores_caches_service_after_first_call(
+    tmp_path: Path,
+) -> None:
+    """The form service is created lazily once and reused on later calls."""
+    engine = AnalyticsEngine(tmp_path)
+    assert engine._form_scores_service is None
+
+    engine.calculate_form_scores([_form_history(1, [6.0] * 3)])
+    first_service = engine._form_scores_service
+    engine.calculate_form_scores([_form_history(1, [6.0] * 3)])
+
+    assert first_service is not None
+    assert engine._form_scores_service is first_service

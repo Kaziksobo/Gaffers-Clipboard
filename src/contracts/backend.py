@@ -32,8 +32,6 @@ type OCRFlatStats = dict[str, OCRScalar]
 type OCRTeamStats = dict[str, OCRFlatStats]
 type OCRStatsResult = OCRFlatStats | OCRTeamStats
 type ROIMap = dict[str, ROIBounds]
-type PerformanceMeansStdsMap = dict[str, dict[str, dict[str, float] | float]]
-type PerformanceWeightsMap = dict[str, dict[str, float]]
 
 
 class SupportsId(Protocol):

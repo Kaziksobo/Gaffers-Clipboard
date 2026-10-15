@@ -22,11 +22,10 @@ from typing import Final, cast
 
 import numpy as np
 
+from src.contracts.analytics import PerformanceMeansStdsMap, PerformanceWeightsMap
 from src.contracts.backend import (
     MatchOverviewPayload,
     MatchStatsPayload,
-    PerformanceMeansStdsMap,
-    PerformanceWeightsMap,
     PlayerPerformancePayload,
 )
 
