@@ -104,6 +104,8 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
 - `cancel_match_review()`
 - `save_buffered_match(force_save)` — validate and persist the staged match
 - `get_latest_match_in_game_date()` → `datetime | None`
+- `get_squad_form()` → `dict[str, PlayerForm]` — current form for every player, keyed by name
+- `get_player_form(player_name)` → `PlayerForm | None`
 
 ### `DataManager` (`src/data_manager.py`) — what app.py calls
 
@@ -125,6 +127,7 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
 **Matches:**
 - `add_match(...)` — validate and persist a complete match record
 - `get_latest_match_in_game_date()` → `datetime | None`
+- `get_player_rating_histories(player_ids)` → `list[PlayerRatingHistory]` — rated appearances per player, for form scoring
 - `refresh_matches()` — reload matches from disk into memory cache
 
 ### `AnalyticsEngine` (`src/analytics_engine.py`) — what app.py calls
@@ -133,6 +136,8 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
   - Routes to `MatchRatingsService.calculate_gk_rating()` or `.calculate_outfield_rating()` based on `performance_type`
   - Lazy-loads config on first call; caches the service instance
   - Returns `None` if config is unavailable or player minutes are insufficient
+- `calculate_form_scores(histories)` → `list[PlayerForm]`
+  - Pure and config-free; lazily creates `FormScoresService` and preserves input order
 
 ---
 
@@ -258,7 +263,7 @@ Offline calibration only — excluded from ruff and ty:
 
 ### Upcoming Phase 8 features (from roadmap)
 Any feature that involves training follows the offline-weight / online-inference pattern:
-- **Form Scores** — descriptive recent-form indicator: absolute (not relative to the player's own baseline, and not position-related) EMA of match ratings (alpha 0.3), seeded at, and decaying toward, 6.0 (the ratings sigmoid midpoint) the longer a player goes unrated; only rated appearances count. Output is a continuous `form_score` in [-1, 1] that the theme maps to a red-amber-green gradient. No model training and no offline fitting: all constants (`ALPHA`, `PRIOR_MEAN`, `DECAY_PER_MISSED_MATCH`, `MIN_APPEARANCES`, `FORM_SATURATION_DELTA`) are hard-coded at the top of `form_scores_service.py` (no JSON config file for this service). The EMA series is computed on read from stored `match_rating` values (never persisted), ordered by (`in_game_date`, match id); decay uses k = tracked team matches (matches with player performances recorded) since the last rated appearance. Backtests show form does not predict future ratings: never feed it into the Lineup Optimizer or any predictive model.
+- **Form Scores** — descriptive recent-form indicator: absolute (not relative to the player's own baseline, and not position-related) EMA of match ratings (alpha 0.3), seeded at, and decaying toward, 6.0 (the ratings sigmoid midpoint) the longer a player goes unrated; only rated appearances count. Output is a continuous `form_score` in [-1, 1] that the theme maps to a red-amber-green gradient. No model training and no offline fitting: all constants (`ALPHA`, `PRIOR_MEAN`, `DECAY_PER_MISSED_MATCH`, `MIN_APPEARANCES`, `FORM_SATURATION_UP, FORM_SATURATION_DOWN`) are hard-coded at the top of `form_scores_service.py` (no JSON config file for this service). The EMA series is computed on read from stored `match_rating` values (never persisted), ordered by (`in_game_date`, match id); decay uses k = tracked team matches (matches with player performances recorded) since the last rated appearance. Backtests show form does not predict future ratings: never feed it into the Lineup Optimizer or any predictive model.
 - **Win-Condition Extraction** — *deferred until more data exists (especially lower-win-rate careers such as Ipswich).* Planned: ridge regression on goal difference using per-minute team-stat differentials (controllable stats only; `xg`, `shots` and `saves` excluded), trained offline with coefficients shipped as JSON. Random Forest permutation importance is an offline cross-check only.
 - **Tactical Fingerprinting** — K-Means clustering (K=3–5) trained offline; ship centroids plus scaler means/stds. Shares per-minute feature extraction with Win-Condition.
 - **Expected Rating** — *shelved until after Tactical Fingerprinting and the other Phase 8 analytics.* Per-match rating prediction shown as a range with its components. Candidate features must each earn their place in walk-forward backtests; training libraries are workshop-only and the shipped model is exported to JSON and evaluated with numpy (tree ensembles included, if they win). Findings so far: the shrunk player mean and an opponent effect help; recent form, rest, workload, home/away, competition and injury return showed no detectable effect. Existing data only (no new capture). Full plan: `docs/expected_rating_plan.md`.
