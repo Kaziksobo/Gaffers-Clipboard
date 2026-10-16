@@ -5,8 +5,10 @@ from __future__ import annotations
 import pytest
 
 from src.utils import (
+    blend_hex_colours,
     capitalize_competition_name,
     derive_season,
+    form_score_to_colour,
     normalize_team_name,
     safe_float_conversion,
     safe_int_conversion,
@@ -169,9 +171,7 @@ def test_normalize_team_name_raises_for_empty_target() -> None:
 
 def test_scale_coordinates_scales_leaf_roi() -> None:
     """scale_coordinates converts normalised ROI values to pixel coordinates."""
-    coords = {
-        "scoreboard": {"score": {"x1": 0.5, "y1": 0.25, "x2": 0.75, "y2": 0.5}}
-    }
+    coords = {"scoreboard": {"score": {"x1": 0.5, "y1": 0.25, "x2": 0.75, "y2": 0.5}}}
     result = scale_coordinates(coords, 1920, 1080)
     assert result["scoreboard"]["score"] == {
         "x1": 960,
@@ -192,3 +192,77 @@ def test_scale_coordinates_handles_nested_structure() -> None:
     result = scale_coordinates(coords, 1000, 500)
     assert result["match"]["home"] == {"x1": 0, "y1": 0, "x2": 500, "y2": 500}
     assert result["match"]["away"] == {"x1": 500, "y1": 0, "x2": 1000, "y2": 500}
+
+
+# ---------------------------------------------------------------------------
+# blend_hex_colours
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("t", "expected"),
+    [
+        (0.0, "#000000"),
+        (1.0, "#ffffff"),
+        (0.5, "#808080"),
+        (-1.0, "#000000"),
+        (2.0, "#ffffff"),
+    ],
+)
+def test_blend_hex_colours_interpolates_and_clamps(t: float, expected: str) -> None:
+    """blend_hex_colours interpolates linearly and clamps t to the 0-1 range."""
+    assert blend_hex_colours("#000000", "#ffffff", t) == expected
+
+
+def test_blend_hex_colours_blends_each_channel_independently() -> None:
+    """blend_hex_colours interpolates the red, green, and blue channels separately."""
+    assert blend_hex_colours("#ff0000", "#0000ff", 0.5) == "#800080"
+
+
+@pytest.mark.parametrize("bad", ["ff4c4c", "#fff", "#ff4c4cff", "", "#gg0000"])
+def test_blend_hex_colours_raises_for_invalid_start(bad: str) -> None:
+    """blend_hex_colours raises ValueError when the start colour is malformed."""
+    with pytest.raises(ValueError):
+        blend_hex_colours(bad, "#ffffff", 0.5)
+
+
+def test_blend_hex_colours_raises_for_invalid_end() -> None:
+    """blend_hex_colours raises ValueError when the end colour is malformed."""
+    with pytest.raises(ValueError):
+        blend_hex_colours("#000000", "ffffff", 0.5)
+
+
+# ---------------------------------------------------------------------------
+# form_score_to_colour
+# ---------------------------------------------------------------------------
+
+_RED = "#ff4c4c"
+_AMBER = "#ffcc00"
+_GREEN = "#4caf50"
+
+
+@pytest.mark.parametrize(
+    ("score", "expected"),
+    [
+        (0.0, _AMBER),
+        (1.0, _GREEN),
+        (-1.0, _RED),
+        (2.5, _GREEN),
+        (-2.5, _RED),
+    ],
+)
+def test_form_score_to_colour_hits_stops_and_saturates(
+    score: float, expected: str
+) -> None:
+    """The gradient returns the exact stop colours and saturates beyond +/-1."""
+    assert form_score_to_colour(score, _RED, _AMBER, _GREEN) == expected
+
+
+def test_form_score_to_colour_blends_toward_positive_above_zero() -> None:
+    """A positive score blends from amber toward green."""
+    assert form_score_to_colour(0.5, _RED, _AMBER, _GREEN) == "#a6be28"
+
+
+def test_form_score_to_colour_blends_toward_negative_below_zero() -> None:
+    """A negative score blends from amber toward red, not through green."""
+    assert form_score_to_colour(-0.5, _RED, _AMBER, _GREEN) == "#ff8c26"

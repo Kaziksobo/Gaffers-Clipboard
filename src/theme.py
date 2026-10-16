@@ -36,6 +36,9 @@ theme = SimpleNamespace(
         rating_ok="#ffcc00",
         rating_good="#4caf50",
         rating_great="#1b5e20",
+        form_negative="#ff4c4c",
+        form_neutral="#ffcc00",
+        form_positive="#4caf50",
         badge_bg="#3c3c3c",
     ),
 )

@@ -296,3 +296,68 @@ def safe_normalize_name(name: str) -> str | None:
         return None
     stripped = name.strip()
     return stripped.casefold() if stripped else None
+
+
+# --------------- Colour helpers ---------------
+
+
+def _hex_to_rgb(colour: str) -> tuple[int, int, int]:
+    """Parse a ``#rrggbb`` colour string into an (r, g, b) tuple.
+
+    Args:
+        colour: The colour to parse, e.g. ``"#ff4c4c"``.
+
+    Returns:
+        The red, green, and blue channel values, each from 0 to 255.
+
+    Raises:
+        ValueError: If the colour is not a valid ``#rrggbb`` string.
+    """
+    if len(colour) != 7 or colour[0] != "#":
+        raise ValueError(f"Expected a '#rrggbb' colour, got {colour!r}.")
+    return int(colour[1:3], 16), int(colour[3:5], 16), int(colour[5:7], 16)
+
+
+def blend_hex_colours(start: str, end: str, t: float) -> str:
+    """Linearly blends two ``#rrggbb`` colours.
+
+    Args:
+        start: The colour returned when ``t`` is 0.
+        end: The colour returned when ``t`` is 1.
+        t: The blend factor. Values outside 0 to 1 are clamped.
+
+    Returns:
+        The blended colour as a lowercase ``#rrggbb`` string.
+
+    Raises:
+        ValueError: If either colour is not a valid ``#rrggbb`` string.
+    """
+    t = max(0.0, min(1.0, t))
+    red, green, blue = (
+        round(a + (b - a) * t)
+        for a, b in zip(_hex_to_rgb(start), _hex_to_rgb(end), strict=True)
+    )
+    return f"#{red:02x}{green:02x}{blue:02x}"
+
+
+def form_score_to_colour(
+    score: float, negative: str, neutral: str, positive: str
+) -> str:
+    """Map a -1 to 1 form score onto a negative-neutral-positive colour gradient.
+
+    The neutral colour is a true midpoint stop: scores below 0 blend from neutral
+    towards the negative colour, and scores above 0 blend towards the positive
+    colour. Scores outside -1 to 1 saturate at the end colours.
+
+    Args:
+        score: The form score, where -1 is the worst, 0 is average, and 1 is the best.
+        negative: The ``#rrggbb`` colour at a score of -1.
+        neutral: The ``#rrggbb`` colour at a score of 0.
+        positive: The ``#rrggbb`` colour at a score of 1.
+
+    Returns:
+        The interpolated colour as a lowercase ``#rrggbb`` string.
+    """
+    if score >= 0:
+        return blend_hex_colours(neutral, positive, score)
+    return blend_hex_colours(neutral, negative, -score)
