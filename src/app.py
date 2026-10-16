@@ -21,11 +21,13 @@ import logging
 import tkinter as tk
 from datetime import datetime
 from pathlib import Path
+from types import SimpleNamespace
 from typing import cast
 
 import customtkinter as ctk
 
 from src.analytics_engine import AnalyticsEngine
+from src.contracts.analytics import PlayerForm
 from src.contracts.backend import (
     BufferedMatch,
     BufferedPlayer,
@@ -115,7 +117,7 @@ class App(ctk.CTk):
         self.geometry("1000x700")
         self.minsize(width=1000, height=700)
 
-        self._theme = theme
+        self._theme: SimpleNamespace = theme
 
         # Initialize dynamic fonts and bind to window resize for responsive scaling
         self.dynamic_fonts: dict[str, ctk.CTkFont] = self._initialize_dynamic_fonts()
@@ -1309,3 +1311,19 @@ class App(ctk.CTk):
             self._current_discrepancies = e.discrepancies
             # Re-raise so the PlayerStatsFrame can catch it and show the popup
             raise e
+
+    # --- Analytics queries ---
+    def get_squad_form(self) -> dict[str, PlayerForm]:
+        """Return current form for every player, keyed by name."""
+        histories = self._data_manager.get_player_rating_histories()
+        forms = self._analytics_engine.calculate_form_scores(histories)
+        return {form["player_name"]: form for form in forms}
+
+    def get_player_form(self, player_name: str) -> PlayerForm | None:
+        """Return current form for one player, or None if the player isn't found."""
+        player = self._data_manager.find_player_by_name(player_name)
+        if player is None:
+            return None
+        histories = self._data_manager.get_player_rating_histories({player.id})
+        forms = self._analytics_engine.calculate_form_scores(histories)
+        return forms[0] if forms else None

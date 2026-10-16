@@ -12,6 +12,7 @@ from typing import Protocol, runtime_checkable
 
 import customtkinter as ctk
 
+from src.contracts.analytics import PlayerForm
 from src.contracts.backend import (
     DisplayRows,
     FinancialDataPayload,
@@ -55,6 +56,9 @@ class SemanticColorsProtocol(Protocol):
     rating_ok: str
     rating_good: str
     rating_great: str
+    form_negative: str
+    form_neutral: str
+    form_positive: str
 
 
 @runtime_checkable
@@ -417,6 +421,17 @@ class LiveMatchRatingControllerProtocol(Protocol):
 
 
 @runtime_checkable
+class PlayerFormControllerProtocol(Protocol):
+    """Controller capability for reading player form scores."""
+
+    def get_squad_form(self) -> dict[str, PlayerForm]:
+        """Return current form for every player, keyed by player name."""
+
+    def get_player_form(self, player_name: str) -> PlayerForm | None:
+        """Return current form for one player, or None if the player is not found."""
+
+
+@runtime_checkable
 class AddGKFrameControllerProtocol(
     BaseViewControllerProtocol,
     PlayerDropdownControllerProtocol,
@@ -696,6 +711,7 @@ class PopupListMixinHostProtocol(Protocol):
     dropdown_height: int
     _outside_click_bind_id: str | None
     _popup_scroll: ctk.CTkScrollableFrame | None
+    _popup_opening: bool
 
     def cget(self, param: str) -> object:
         """Return a widget configuration option's current value."""
