@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
 import pytest
 
+from src.contracts.analytics import PlayerRatingHistory
 from src.services.data.match_service import MatchService
 
 
@@ -37,6 +38,40 @@ def _mock_match_with_teams(home: str, away: str) -> MagicMock:
     m.data.home_team_name = home
     m.data.away_team_name = away
     return m
+
+
+_BASE_DATE = datetime(2031, 8, 1)
+
+
+def _day(offset: int) -> datetime:
+    """Return the base in-game date shifted by the given number of days."""
+    return _BASE_DATE + timedelta(days=offset)
+
+
+def _mock_performance(player_id: int, rating: float | None) -> MagicMock:
+    """Return a mock performance with a player id and match rating."""
+    perf = MagicMock()
+    perf.player_id = player_id
+    perf.match_rating = rating
+    return perf
+
+
+def _mock_rated_match(
+    match_id: int, in_game_date: datetime, performances: list[MagicMock]
+) -> MagicMock:
+    """Return a mock Match with an id, in-game date, and player performances."""
+    m = MagicMock()
+    m.id = match_id
+    m.data.in_game_date = in_game_date
+    m.player_performances = performances
+    return m
+
+
+def _by_player_id(
+    histories: list[PlayerRatingHistory],
+) -> dict[int, PlayerRatingHistory]:
+    """Index rating histories by player id."""
+    return {history["player_id"]: history for history in histories}
 
 
 def _gk_payload(player_name: str = "David Raya") -> dict[str, object]:
@@ -170,7 +205,7 @@ def test_normalize_player_performances_skips_unknown_player(
 def test_normalize_player_performances_builds_outfield_model(
     service: MatchService,
 ) -> None:
-    """normalize_player_performances builds an OutfieldPlayerPerformance for Outfield type."""
+    """normalize_player_performances builds an outfield performance model."""
     from src.schemas import OutfieldPlayerPerformance
 
     players = [_mock_player("Bukayo Saka", 7)]
@@ -248,7 +283,7 @@ def test_build_goalkeeper_performance_sets_all_fields() -> None:
 
 
 def test_build_outfield_performance_sets_all_fields() -> None:
-    """_build_outfield_performance constructs a valid OutfieldPlayerPerformance model."""
+    """_build_outfield_performance returns a valid outfield performance model."""
     from src.schemas import OutfieldPlayerPerformance
 
     payload = _outfield_payload()
@@ -343,3 +378,228 @@ def test_normalize_team_names_returns_original_when_no_reference_match(
     )
 
     assert result == ["Atletico Madrid"]
+
+
+# ---------------------------------------------------------------------------
+# build_rated_histories
+# ---------------------------------------------------------------------------
+
+
+def test_build_rated_histories_orders_appearances_chronologically(
+    service: MatchService,
+) -> None:
+    """Appearances are chronological even when matches are passed out of order."""
+    players = [_mock_player("Saka", 1)]
+    matches = [
+        _mock_rated_match(3, _day(14), [_mock_performance(1, 7.0)]),
+        _mock_rated_match(1, _day(0), [_mock_performance(1, 6.0)]),
+        _mock_rated_match(2, _day(7), [_mock_performance(1, 8.0)]),
+    ]
+
+    result = service.build_rated_histories(matches, players)
+
+    appearances = result[0]["appearances"]
+    assert [a["match_id"] for a in appearances] == [1, 2, 3]
+    assert [a["rating"] for a in appearances] == [6.0, 8.0, 7.0]
+
+
+def test_build_rated_histories_breaks_date_ties_by_match_id(
+    service: MatchService,
+) -> None:
+    """Matches on the same in-game date are ordered by match id."""
+    players = [_mock_player("Saka", 1)]
+    matches = [
+        _mock_rated_match(5, _day(0), [_mock_performance(1, 7.0)]),
+        _mock_rated_match(4, _day(0), [_mock_performance(1, 6.0)]),
+    ]
+
+    result = service.build_rated_histories(matches, players)
+
+    assert [a["match_id"] for a in result[0]["appearances"]] == [4, 5]
+
+
+def test_build_rated_histories_appearances_carry_match_data(
+    service: MatchService,
+) -> None:
+    """Each appearance holds the match id, in-game date, and rating."""
+    players = [_mock_player("Saka", 1)]
+    matches = [_mock_rated_match(9, _day(3), [_mock_performance(1, 7.5)])]
+
+    result = service.build_rated_histories(matches, players)
+
+    assert result[0]["appearances"] == [
+        {"match_id": 9, "in_game_date": _day(3), "rating": 7.5}
+    ]
+
+
+def test_build_rated_histories_excludes_unrated_performances(
+    service: MatchService,
+) -> None:
+    """Performances without a match rating never become appearances."""
+    players = [_mock_player("Saka", 1)]
+    matches = [
+        _mock_rated_match(1, _day(0), [_mock_performance(1, None)]),
+        _mock_rated_match(2, _day(7), [_mock_performance(1, 7.0)]),
+    ]
+
+    result = service.build_rated_histories(matches, players)
+
+    assert [a["match_id"] for a in result[0]["appearances"]] == [2]
+
+
+def test_build_rated_histories_unrated_performance_does_not_reset_absence(
+    service: MatchService,
+) -> None:
+    """An unrated cameo leaves the absence count running."""
+    players = [_mock_player("Saka", 1), _mock_player("Raya", 2)]
+    matches = [
+        _mock_rated_match(
+            1, _day(0), [_mock_performance(1, 7.0), _mock_performance(2, 6.5)]
+        ),
+        _mock_rated_match(
+            2, _day(7), [_mock_performance(1, None), _mock_performance(2, 6.5)]
+        ),
+    ]
+
+    result = _by_player_id(service.build_rated_histories(matches, players))
+
+    assert len(result[1]["appearances"]) == 1
+    assert result[1]["matches_since_last_rated"] == 1
+
+
+def test_build_rated_histories_ignores_matches_without_performances(
+    service: MatchService,
+) -> None:
+    """Matches saved without player stats do not count as missed matches."""
+    players = [_mock_player("Saka", 1)]
+    matches = [
+        _mock_rated_match(1, _day(0), [_mock_performance(1, 7.0)]),
+        _mock_rated_match(2, _day(7), []),
+    ]
+
+    result = service.build_rated_histories(matches, players)
+
+    assert result[0]["matches_since_last_rated"] == 0
+
+
+def test_build_rated_histories_rated_in_latest_match_has_zero_missed(
+    service: MatchService,
+) -> None:
+    """A player rated in the most recent tracked match has zero missed matches."""
+    players = [_mock_player("Saka", 1)]
+    matches = [
+        _mock_rated_match(1, _day(0), [_mock_performance(1, 6.0)]),
+        _mock_rated_match(2, _day(7), [_mock_performance(1, 7.0)]),
+    ]
+
+    result = service.build_rated_histories(matches, players)
+
+    assert result[0]["matches_since_last_rated"] == 0
+
+
+def test_build_rated_histories_counts_missed_tracked_matches(
+    service: MatchService,
+) -> None:
+    """Each tracked match since a player's last rated one adds one to the count."""
+    players = [_mock_player("Saka", 1), _mock_player("Raya", 2)]
+    matches = [
+        _mock_rated_match(
+            1, _day(0), [_mock_performance(1, 7.0), _mock_performance(2, 6.0)]
+        ),
+        _mock_rated_match(2, _day(7), [_mock_performance(2, 6.0)]),
+        _mock_rated_match(3, _day(14), [_mock_performance(2, 6.0)]),
+    ]
+
+    result = _by_player_id(service.build_rated_histories(matches, players))
+
+    assert result[1]["matches_since_last_rated"] == 2
+    assert result[2]["matches_since_last_rated"] == 0
+
+
+def test_build_rated_histories_never_rated_player_has_empty_history(
+    service: MatchService,
+) -> None:
+    """A never-rated player gets no appearances and misses every tracked match."""
+    players = [_mock_player("Saka", 1), _mock_player("Raya", 2)]
+    matches = [
+        _mock_rated_match(i, _day(7 * i), [_mock_performance(1, 7.0)])
+        for i in range(1, 4)
+    ]
+
+    result = _by_player_id(service.build_rated_histories(matches, players))
+
+    assert result[2]["appearances"] == []
+    assert result[2]["matches_since_last_rated"] == 3
+
+
+def test_build_rated_histories_filters_by_player_ids(
+    service: MatchService,
+) -> None:
+    """Only the requested player ids are returned."""
+    players = [_mock_player("Saka", 1), _mock_player("Raya", 2)]
+    matches = [
+        _mock_rated_match(
+            1, _day(0), [_mock_performance(1, 7.0), _mock_performance(2, 6.0)]
+        )
+    ]
+
+    result = service.build_rated_histories(matches, players, player_ids={2})
+
+    assert [h["player_id"] for h in result] == [2]
+
+
+def test_build_rated_histories_ignores_performances_for_unknown_players(
+    service: MatchService,
+) -> None:
+    """Performances whose player id is not in the player list produce no history."""
+    players = [_mock_player("Saka", 1)]
+    matches = [
+        _mock_rated_match(
+            1, _day(0), [_mock_performance(1, 7.0), _mock_performance(99, 6.0)]
+        )
+    ]
+
+    result = service.build_rated_histories(matches, players)
+
+    assert [h["player_id"] for h in result] == [1]
+
+
+def test_build_rated_histories_with_no_matches_returns_empty_histories(
+    service: MatchService,
+) -> None:
+    """With no matches every player has an empty history and nothing missed."""
+    players = [_mock_player("Saka", 1), _mock_player("Raya", 2)]
+
+    result = service.build_rated_histories([], players)
+
+    assert [h["appearances"] for h in result] == [[], []]
+    assert [h["matches_since_last_rated"] for h in result] == [0, 0]
+
+
+def test_build_rated_histories_preserves_player_order_and_names(
+    service: MatchService,
+) -> None:
+    """Histories follow the order of the players list and carry id and name."""
+    players = [_mock_player("Raya", 2), _mock_player("Saka", 1)]
+
+    result = service.build_rated_histories([], players)
+
+    assert [(h["player_id"], h["player_name"]) for h in result] == [
+        (2, "Raya"),
+        (1, "Saka"),
+    ]
+
+
+def test_build_rated_histories_does_not_reorder_input_matches(
+    service: MatchService,
+) -> None:
+    """The caller's match list keeps its original order."""
+    players = [_mock_player("Saka", 1)]
+    matches = [
+        _mock_rated_match(2, _day(7), [_mock_performance(1, 7.0)]),
+        _mock_rated_match(1, _day(0), [_mock_performance(1, 6.0)]),
+    ]
+
+    service.build_rated_histories(matches, players)
+
+    assert [m.id for m in matches] == [2, 1]

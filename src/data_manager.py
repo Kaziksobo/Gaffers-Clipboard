@@ -41,6 +41,7 @@ from typing import Literal, TypeVar
 
 from pydantic import BaseModel
 
+from src.contracts.analytics import PlayerRatingHistory
 from src.contracts.backend import (
     CareerCreationArtifacts,
     CareerMetadataUpdate,
@@ -513,6 +514,23 @@ class DataManager:
         # Ensure we have the latest view of matches on disk
         self.refresh_matches()
         return self._match_service.get_latest_in_game_date(self.matches)
+
+    def get_player_rating_histories(
+        self, player_ids: set[int] | None = None
+    ) -> list[PlayerRatingHistory]:
+        """Return rated appearance histories for form scoring.
+
+        Args:
+            player_ids (set[int] | None): Restrict the output to these player
+                                          IDs. Defaults to None (all players).
+
+        Returns:
+            list[PlayerRatingHistory]: One history per player, built from the
+                                       cached matches and players.
+        """
+        return self._match_service.build_rated_histories(
+            self.matches, self.players, player_ids
+        )
 
     def normalize_team_name(self, name: str) -> str:
         """Canonicalize a team name against the current career's known team names.

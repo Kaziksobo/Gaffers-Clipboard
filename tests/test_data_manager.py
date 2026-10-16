@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -81,7 +82,7 @@ def test_get_career_details_returns_none_for_unknown_career(tmp_path: Path) -> N
 
 
 def test_get_career_details_resolves_duplicate_club_career(tmp_path: Path) -> None:
-    """get_career_details returns correct metadata when two careers share a club name."""
+    """get_career_details returns correct metadata for same-club careers."""
     dm = DataManager(project_root=tmp_path)
     dm.create_new_career(
         "Valencia CF", "Ruben Baraja", "24/25", 6, "Professional", "La Liga"
@@ -272,6 +273,35 @@ def test_get_latest_match_in_game_date_returns_none_without_career(
     result = dm.get_latest_match_in_game_date()
 
     assert result is None
+
+
+# ---------------------------------------------------------------------------
+# get_player_rating_histories
+# ---------------------------------------------------------------------------
+
+
+def test_get_player_rating_histories_returns_empty_without_career(
+    tmp_path: Path,
+) -> None:
+    """get_player_rating_histories returns an empty list when no career is loaded."""
+    dm = DataManager(project_root=tmp_path)
+
+    result = dm.get_player_rating_histories()
+
+    assert result == []
+
+
+def test_get_player_rating_histories_delegates_to_match_service(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """get_player_rating_histories passes cached matches, players, and ids through."""
+    dm = DataManager(project_root=tmp_path)
+    mock_build = MagicMock(return_value=[])
+    monkeypatch.setattr(dm._match_service, "build_rated_histories", mock_build)
+
+    dm.get_player_rating_histories({1, 2})
+
+    mock_build.assert_called_once_with(dm.matches, dm.players, {1, 2})
 
 
 # ---------------------------------------------------------------------------

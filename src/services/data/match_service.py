@@ -8,6 +8,7 @@ depend on other data services.
 import logging
 from datetime import datetime
 
+from src.contracts.analytics import PlayerRatingHistory, RatedAppearance
 from src.contracts.backend import (
     GoalkeeperPerformancePayload,
     MatchOverviewPayload,
@@ -230,6 +231,77 @@ class MatchService:
         except Exception as e:
             logger.warning("Failed to compute latest match date: %s", e)
             return None
+
+    def build_rated_histories(
+        self,
+        matches: list[Match],
+        players: list[Player],
+        player_ids: set[int] | None = None,
+    ) -> list[PlayerRatingHistory]:
+        """Build per-player rated appearance histories for form scoring.
+
+        Walks the matches in chronological order (in-game date, then match ID)
+        and collects each player's rated appearances. Only tracked matches, those
+        with at least one player performance recorded, count towards absence, so
+        matches saved without player stats never make a player look absent.
+
+        Args:
+            matches (list[Match]): The career's matches, in any order.
+            players (list[Player]): The career's players. One history is built
+                                    for each, after any filtering.
+            player_ids (set[int] | None): Restrict the output to these player
+                                          IDs. Defaults to None (all players).
+
+        Returns:
+            list[PlayerRatingHistory]: One history per player, in the order of
+                                       `players`. Appearances are chronological
+                                       and include only performances with a match
+                                       rating. `matches_since_last_rated` is 0 if
+                                       the player was rated in the most recent
+                                       tracked match, and equals the number of
+                                       tracked matches if they were never rated.
+        """
+        ordered: list[Match] = sorted(
+            matches, key=lambda match: (match.data.in_game_date, match.id)
+        )
+        tracked: list[Match] = [match for match in ordered if match.player_performances]
+
+        appearances: dict[int, list[RatedAppearance]] = {}
+        last_rated_index: dict[int, int] = {}
+        for index, match in enumerate(tracked):
+            for performance in match.player_performances:
+                if performance.match_rating is None:
+                    continue
+                appearances.setdefault(performance.player_id, []).append(
+                    RatedAppearance(
+                        match_id=match.id,
+                        in_game_date=match.data.in_game_date,
+                        rating=performance.match_rating,
+                    )
+                )
+                last_rated_index[performance.player_id] = index
+
+        total_tracked = len(tracked)
+        histories: list[PlayerRatingHistory] = []
+        for player in players:
+            if player_ids is not None and player.id not in player_ids:
+                continue
+            last_index = last_rated_index.get(player.id, -1)
+            histories.append(
+                PlayerRatingHistory(
+                    player_id=player.id,
+                    player_name=player.name,
+                    appearances=appearances.get(player.id, []),
+                    matches_since_last_rated=total_tracked - 1 - last_index,
+                )
+            )
+
+        logger.debug(
+            "Built rated histories (tracked=%d, players=%d).",
+            total_tracked,
+            len(histories),
+        )
+        return histories
 
     def _build_reference_names(
         self,
