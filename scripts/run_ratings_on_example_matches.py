@@ -32,11 +32,10 @@ import sys
 from pathlib import Path
 from typing import cast
 
+from src.contracts.analytics import PerformanceMeansStdsMap, PerformanceWeightsMap
 from src.contracts.backend import (
     JsonValue,
     MatchOverviewPayload,
-    PerformanceMeansStdsMap,
-    PerformanceWeightsMap,
     PlayerPerformancePayload,
 )
 from src.services.analytics import MatchRatingsService

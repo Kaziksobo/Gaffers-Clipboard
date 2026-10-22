@@ -23,12 +23,8 @@ import logging
 from pathlib import Path
 from typing import cast
 
-from src.contracts.backend import (
-    MatchOverviewPayload,
-    PerformanceMeansStdsMap,
-    PerformanceWeightsMap,
-    PlayerPerformancePayload,
-)
+from src.contracts.analytics import PerformanceMeansStdsMap, PerformanceWeightsMap
+from src.contracts.backend import MatchOverviewPayload, PlayerPerformancePayload
 from src.services.analytics.match_ratings_service import MatchRatingsService
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
