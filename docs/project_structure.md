@@ -21,6 +21,21 @@
         ├── project_roadmap.md
         ├── Quantitative Design of the Gaffers Clipboard Rating Algorithm.md
         ├── Quantitative_Design_of_the_Gaffers_Clipboard_Rating_Algorithm.pdf
+    └── 📁datasets
+        └── 📁careers
+            └── 📁arsenal_2
+                ├── matches.json
+                ├── metadata.json
+                ├── players.json
+            └── 📁ipswich_3
+                ├── matches.json
+                ├── metadata.json
+                ├── players.json
+            └── 📁valencia_cf_1
+                ├── matches.json
+                ├── metadata.json
+                ├── players.json
+        ├── careers.toml
     └── 📁logs
         ├── gaffers_clipboard_debug.log
         ├── gaffers_clipboard.log
@@ -35,11 +50,10 @@
         ├── stats_capture_1774297073.png
         ├── stats_capture_1774297274.png
     └── 📁scripts
-        └── 📁reports
-            ├── load_json_type_probe_report.json
-            ├── load_json_type_summary.json
         ├── add_half_length_to_matches.py
         ├── backfill_match_ratings.py
+        ├── full_attribution_report.py
+        ├── import_career.py
         ├── migrate_competition_acronyms.py
         ├── migrate_historical_stats.py
         ├── migrate_matches_team_names.py
@@ -47,6 +61,10 @@
         ├── ocr_workbench.py
         ├── probe_load_json_types.py
         ├── rate_latest_match.py
+        ├── refit_config.py
+        ├── regen_rating_anchors.py
+        ├── run_ratings_on_example_matches.py
+        ├── run_validation.py
         ├── summarize_report_types.py
         ├── sync_readme_metadata.py
     └── 📁src
@@ -112,16 +130,35 @@
         ├── theme.py
         ├── utils.py
     └── 📁tests
+        └── 📁data
+            ├── conftest.py
+            ├── test_dataset_integrity.py
+            ├── test_engine_real_histories.py
+            ├── test_old_save_compat.py
+            ├── test_rating_anchors.py
+            ├── test_rating_invariants.py
+            ├── test_workshop_crossval.py
+            ├── test_workshop_decompose.py
+            ├── test_workshop_fit.py
+            ├── test_workshop_gate.py
+            ├── test_workshop_inference.py
+            ├── test_workshop_rating.py
+            ├── test_workshop_refit.py
+            ├── test_workshop_reliability.py
+            ├── test_workshop_sweep.py
+            ├── test_workshop_variants.py
         └── 📁fixtures
+            └── 📁golden
+                ├── rating_anchors.json
             └── 📁screenshots
                 ├── gk_performance.png
+                ├── match_overview.png
                 ├── match_overview_2.png
                 ├── match_overview_3.png
                 ├── match_overview_4.png
                 ├── match_overview_5.png
                 ├── match_overview_6.png
                 ├── match_overview_7.png
-                ├── match_overview.png
                 ├── player_attributes_1_1.png
                 ├── player_attributes_1_2.png
                 ├── player_attributes_2_1.png
@@ -129,6 +166,7 @@
                 ├── player_attributes_3_1.png
                 ├── player_attributes_3_2.png
                 ├── player_attributes_gk.png
+                ├── player_performance.png
                 ├── player_performance_10.png
                 ├── player_performance_11.png
                 ├── player_performance_12.png
@@ -144,44 +182,88 @@
                 ├── player_performance_7.png
                 ├── player_performance_8.png
                 ├── player_performance_9.png
-                ├── player_performance.png
-            └── 📁testing_data
-                └── 📁data
-                    └── 📁valencia_cf_1
-                        ├── matches.json
-                        ├── metadata.json
-                        ├── players.json
-                    ├── careers_details.json
-        └── 📁reports
-            ├── coordinates_test_output.png
-            ├── ocr_test_report.json
+        ├── conftest.py
+        ├── test_analytics_engine.py
+        ├── test_app_career_service.py
+        ├── test_app_match_service.py
+        ├── test_app_player_service.py
         ├── test_buffer_service.py
         ├── test_competition_name_normalization.py
         ├── test_contract_name_uniqueness.py
         ├── test_coordinates.py
+        ├── test_data_career_service.py
+        ├── test_data_json_service.py
+        ├── test_data_manager.py
+        ├── test_data_match_service.py
         ├── test_data_player_service.py
+        ├── test_form_scores_service.py
         ├── test_integration_flow.py
         ├── test_ocr_full.py
+        ├── test_schemas.py
+        ├── test_utils.py
     └── 📁workshop
-        └── 📁ratings_creation
-            ├── cb_ratings_calculations.ipynb
+        └── 📁archive
             ├── cb_weights_calculations.ipynb
-            ├── cdm_ratings_calculations.ipynb
             ├── cdm_weights_calculations.ipynb
-            ├── cm_ratings_calculations.ipynb
             ├── cm_weights_calculations.ipynb
-            ├── fullback_ratings_calculations.ipynb
+            ├── compute_ns_quality_stats.ipynb
             ├── fullback_weights_calculations.ipynb
             ├── gk_ratings_calculations.ipynb
+            ├── goal_rescue_investigation.ipynb
+            ├── goal_rescue_retuning.ipynb
+            ├── holdout_gate.ipynb
+            ├── holdout_gate_arsenal.json
+            ├── option_a_baseline.ipynb
+            ├── option_a_bonus_calibration.ipynb
+            ├── rating_attribution.ipynb
+            ├── rating_ceiling_comparability.ipynb
+            ├── rating_construct_validity.ipynb
+            ├── rating_distributions.ipynb
+            ├── rating_goal_rescue.ipynb
+            ├── rating_output_diagnostics.ipynb
+            ├── rating_predictive_validity.ipynb
+            ├── rating_reliability.ipynb
+            ├── rating_scale_comparability.ipynb
+            ├── rating_sensitivity.ipynb
+            ├── rating_sensitivity_tornado.ipynb
+            ├── ratings_testing.ipynb
+            ├── README.md
+            ├── st_weights_calculations.ipynb
+            ├── unknown_pos_weights_calculations.ipynb
+            ├── winger_weights_calculations.ipynb
+        └── 📁calibration
+            └── 📁records
+                ├── refit_005d563f.json
+                ├── refit_80fbfa7a.json
+        └── 📁lib
+            ├── __init__.py
+            ├── crossval.py
+            ├── datasets.py
+            ├── decompose.py
+            ├── fit.py
+            ├── gate.py
+            ├── inference.py
+            ├── rating.py
+            ├── refit.py
+            ├── reliability.py
+            ├── report.py
+            ├── sweep.py
+            ├── variants.py
+        └── 📁ratings_creation
+            ├── anchored_means_stds.json
+            ├── attribution_lib.py
+            ├── pos_shares.json
             ├── position_means_stds.json
             ├── position_weights.json
-            ├── st_ratings_calculation.ipynb
-            ├── st_weights_calculations.ipynb
-            ├── unknown_pos_ratings_calculations.ipynb
-            ├── unknown_pos_weights_calculations.ipynb
-            ├── winger_ratings_calculations.ipynb
-            ├── winger_weights_calculations.ipynb
-        ├── ratings_testing.ipynb
+        └── 📁ratings_validation
+        └── 📁validation
+            ├── 00_fit_stability.ipynb
+            ├── 01_construct_validity.ipynb
+            ├── 02_distributions.ipynb
+            ├── 03_goal_rescue.ipynb
+            ├── 04_reliability.ipynb
+            ├── 05_sensitivity.ipynb
+        ├── README.md
     ├── .coverage
     ├── .gitignore
     ├── .markdownlint.json
