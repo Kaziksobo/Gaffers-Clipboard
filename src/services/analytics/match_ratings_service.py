@@ -89,6 +89,26 @@ class MatchRatingsService:
     # Multiplier applied to the supremacy scalar for CBs
     CB_SUPREMACY_SCALAR: Final[float] = 0.5
 
+    # z-score keys that make up a defender's quality score, per position.
+    _DEF_QUALITY_STATS: Final = MappingProxyType(
+        {
+            "CB": (
+                "tackles_p90_z",
+                "tackle_success_rate_z",
+                "possession_won_p90_z",
+                "possession_lost_p90_z",
+            ),
+            "CDM": (
+                "tackles_p90_z",
+                "tackle_success_rate_z",
+                "possession_won_p90_z",
+                "possession_lost_p90_z",
+                "passes_p90_z",
+                "pass_accuracy_z",
+            ),
+        }
+    )
+
     # Crude per-shot xG estimate; shared by goal bonus and wasteful-finisher penalty.
     XG_PER_SHOT: Final[float] = 0.1116
 
@@ -98,18 +118,18 @@ class MatchRatingsService:
     GOAL_ALPHA: Final = MappingProxyType(
         {
             "ST": 0.30,
-            "RW": 0.40,
-            "LW": 0.40,
+            "RW": 0.45,
+            "LW": 0.45,
             "RM": 0.35,
             "LM": 0.35,
-            "CM": 0.20,
-            "CAM": 0.28,
-            "CDM": 0.15,
-            "CB": 0.15,
-            "RB": 0.15,
-            "LB": 0.15,
-            "RWB": 0.22,
-            "LWB": 0.22,
+            "CM": 0.25,
+            "CAM": 0.30,
+            "CDM": 0.20,
+            "CB": 0.20,
+            "RB": 0.20,
+            "LB": 0.20,
+            "RWB": 0.25,
+            "LWB": 0.25,
         }
     )
 
@@ -119,16 +139,16 @@ class MatchRatingsService:
     ASSIST_GAMMA: Final = MappingProxyType(
         {
             "ST": 0.25,
-            "RW": 0.25,
-            "LW": 0.25,
-            "RM": 0.25,
-            "LM": 0.25,
+            "RW": 0.35,
+            "LW": 0.35,
+            "RM": 0.30,
+            "LM": 0.30,
             "CM": 0.25,
-            "CAM": 0.28,
-            "CDM": 0.15,
-            "CB": 0.15,
-            "RB": 0.15,
-            "LB": 0.15,
+            "CAM": 0.30,
+            "CDM": 0.25,
+            "CB": 0.20,
+            "RB": 0.20,
+            "LB": 0.20,
             "RWB": 0.22,
             "LWB": 0.22,
         }
@@ -163,16 +183,18 @@ class MatchRatingsService:
     # ST Wasteful Finisher Penalty
     ST_WASTEFUL_MIN_SHOTS: Final[float] = 3.0
     ST_WASTEFUL_MIN_DEFICIT: Final[float] = 0.40
-    ST_WASTEFUL_SCALE: Final[float] = 0.18
+    ST_WASTEFUL_SCALE: Final[float] = 0.23
     ST_WASTEFUL_CAP: Final[float] = 0.50
 
     # Winger Wastefulness Penalty (wasted_shots >= 3 AND creative == 0)
     WINGER_WASTEFUL_PER_SHOT: Final[float] = 0.15
 
-    # CB/FB clean sheet: xG-tiered x linear ramp (min(mp,60)/60)
-    CS_CB_LOW_XG: Final[float] = 0.50  # opponent xG <= 1.0
-    CS_CB_MID_XG: Final[float] = 0.36  # 1.0 < opponent xG < 2.0
-    CS_CB_HIGH_XG: Final[float] = 0.16  # opponent xG >= 2.0
+    # Clean sheet (CB tier values; other positions take a ratio of them):
+    # xG-tiered x linear ramp (min(mp,60)/60). Deliberately pays more for clean
+    # sheets against weak attacks than for ones held under siege.
+    CS_CB_LOW_XG: Final[float] = 0.60  # opponent xG <= 1.0
+    CS_CB_MID_XG: Final[float] = 0.48  # 1.0 < opponent xG < 2.0
+    CS_CB_HIGH_XG: Final[float] = 0.36  # opponent xG >= 2.0
 
     # Clean sheet position ratios (fraction of CB tier values)
     CS_RATIOS: Final = MappingProxyType(
@@ -182,7 +204,7 @@ class MatchRatingsService:
             "LB": 0.60,
             "RWB": 0.50,
             "LWB": 0.50,
-            "CDM": 0.48,
+            "CDM": 0.65,
             "CM": 0.36,
             "RM": 0.28,
             "LM": 0.28,
@@ -190,8 +212,28 @@ class MatchRatingsService:
         }
     )
 
-    # CB/FB collapse penalty (3+ goals conceded, 60+ minutes)
+    # FB/WB collapse penalty (3+ goals conceded, 60+ minutes)
     COLLAPSE_PENALTY: Final[float] = 0.20
+
+    # Defensive quality bonus (CB, CDM): quality x impact_scalar x weight x retention.
+    # Quality Q in [0, 1] is the fitted-weight-averaged z-score of the position's
+    # defensive stats, mapped linearly from DEF_QUALITY_LOW (Q = 0) to
+    # DEF_QUALITY_HIGH (Q = 1); the defaults mark roughly the 60th and 95th
+    # percentile of defenders. Retention shrinks the bonus as goals are conceded
+    # (it never touches the base rating, so a strong game still earns credit),
+    # and a flat collapse penalty replaces the old Dominant Stopper / Destroyer
+    # mastery overlap. Calibrated so an elite defender rates about 9.0 with a clean
+    # sheet, 8.4 conceding one and 7.5 conceding three.
+    DEF_QUALITY_WEIGHT: Final[float] = 1.0
+    DEF_QUALITY_MIN_MINUTES: Final[float] = 30.0
+    DEF_QUALITY_LOW: Final = MappingProxyType({"CB": 0.27, "CDM": 0.28})
+    DEF_QUALITY_HIGH: Final = MappingProxyType({"CB": 1.21, "CDM": 0.84})
+    # Share of the quality bonus kept by goals conceded (4 or more keeps none).
+    DEF_RETENTION: Final = MappingProxyType({0: 1.0, 1: 1.0, 2: 0.60, 3: 0.20})
+    # Extra retention when the goals came from low-quality chances
+    # (opponent xG <= half the goals conceded): likelier a mistake or a worldie.
+    DEF_RETENTION_LOW_XG_UPLIFT: Final[float] = 0.10
+    DEF_COLLAPSE_PENALTY: Final[float] = 0.30
 
     # Position-specific z-score floors applied post-z-scoring.
     # Prevents stats structurally irrelevant to a position from
@@ -1495,6 +1537,81 @@ class MatchRatingsService:
             weights,
         )
 
+    def _defensive_quality(
+        self, pos: str, z_scores: dict[str, float], minutes_played: float
+    ) -> float:
+        """Return the defender's quality score Q in [0, 1] for the quality bonus.
+
+        Q is the z-score of the position's defensive stats, averaged with the
+        fitted weights, mapped linearly between DEF_QUALITY_LOW and DEF_QUALITY_HIGH.
+        It is 0 below DEF_QUALITY_MIN_MINUTES.
+
+        Args:
+            pos: "CB" or "CDM".
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            minutes_played: Minutes on the pitch.
+
+        Returns:
+            float: Quality score, 0.0 (not elite) to 1.0 (elite).
+        """
+        if minutes_played < self.DEF_QUALITY_MIN_MINUTES:
+            return 0.0
+        weights = self.weights.get(pos, {})
+        keys = self._DEF_QUALITY_STATS[pos]
+        total = sum(weights.get(key.removesuffix("_z"), 0.0) for key in keys)
+        if total <= 0.0:
+            return 0.0
+        average = (
+            sum(
+                weights.get(key.removesuffix("_z"), 0.0) * z_scores.get(key, 0.0)
+                for key in keys
+            )
+            / total
+        )
+        low, high = self.DEF_QUALITY_LOW[pos], self.DEF_QUALITY_HIGH[pos]
+        return max(0.0, min(1.0, (average - low) / (high - low)))
+
+    def _defensive_retention(
+        self, opponent_goals: int | float, opponent_xg: float
+    ) -> float:
+        """Return the share of the quality bonus kept given goals conceded.
+
+        Args:
+            opponent_goals: Goals conceded by the player's team.
+            opponent_xg: Expected goals generated by the opponent.
+
+        Returns:
+            float: Retention in [0, 1]: DEF_RETENTION by goals conceded (0 from
+                four goals), plus DEF_RETENTION_LOW_XG_UPLIFT when the goals came
+                from chances worth at most half their number.
+        """
+        conceded = int(opponent_goals)
+        keep = self.DEF_RETENTION.get(conceded, 0.0)
+        if conceded > 0 and keep > 0.0 and opponent_xg <= 0.5 * conceded:
+            keep = min(1.0, keep + self.DEF_RETENTION_LOW_XG_UPLIFT)
+        return keep
+
+    def _apply_defensive_quality_bonus(
+        self,
+        pos: str,
+        z_scores: dict[str, float],
+        opponent_goals: int | float,
+        opponent_xg: float,
+        minutes_played: float,
+        impact_scalar: float,
+    ) -> float:
+        """Return the CB/CDM defensive quality bonus (rating points).
+
+        quality x impact_scalar x DEF_QUALITY_WEIGHT x retention. Paid for an
+        elite defensive game whatever the scoreline, shrinking as goals are
+        conceded.
+        """
+        quality = self._defensive_quality(pos, z_scores, minutes_played)
+        if quality <= 0.0:
+            return 0.0
+        retention = self._defensive_retention(opponent_goals, opponent_xg)
+        return quality * impact_scalar * self.DEF_QUALITY_WEIGHT * retention
+
     def _apply_cb_modifiers(
         self,
         z_scores: dict[str, float],
@@ -1508,10 +1625,12 @@ class MatchRatingsService:
 
         Philosophy:
         - Rewards rare attacking contributions (goals/assists) at a modest flat rate.
-        - Rewards dual defensive excellence (Dominant Stopper) and ball-playing
-        ability (Ball Playing Defender) proportionally via mastery bonuses.
+        - Rewards ball-playing ability (Ball Playing Defender) via a mastery bonus.
+        - Rewards an elite defensive game (tackling, winning the ball, keeping it)
+        through the quality bonus, kept in full for 0-1 goals conceded and shrinking
+        to nothing from four.
         - Contextually rewards clean sheets using xG tiers and a linear minutes
-        ramp, penalises heavy defensive collapses (3+ goals conceded).
+        ramp, and penalises heavy defensive collapses (3+ goals conceded) in full.
 
         Args:
             z_scores: Per-90 Z-scores for the player's performance metrics.
@@ -1532,21 +1651,22 @@ class MatchRatingsService:
         bonus += self._calculate_goal_bonus(goals, pos="CB")
         bonus += self._calculate_assist_bonus(assists, pos="CB")
 
-        # Dominant Stopper mastery
-        bonus += self._apply_mastery_bonus(
-            z_scores=z_scores,
-            key_a="tackles_p90_z",
-            key_b="possession_won_p90_z",
-            threshold=1.2,
-            impact_scalar=impact_scalar,
-        )
-
         # Ball Playing Defender mastery
         bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
             key_a="passes_p90_z",
             key_b="dribbles_p90_z",
             threshold=1.0,
+            impact_scalar=impact_scalar,
+        )
+
+        # Defensive quality bonus (elite defensive output, result-aware)
+        bonus += self._apply_defensive_quality_bonus(
+            pos="CB",
+            z_scores=z_scores,
+            opponent_goals=opponent_goals,
+            opponent_xg=opponent_xg,
+            minutes_played=minutes_played,
             impact_scalar=impact_scalar,
         )
 
@@ -1561,9 +1681,9 @@ class MatchRatingsService:
             else:
                 bonus += self.CS_CB_HIGH_XG * ratio * ramp
 
-        # Heavy collapse penalty
+        # Heavy collapse penalty (quality does not soften it)
         if opponent_goals >= 3 and minutes_played >= 60:
-            bonus -= self.COLLAPSE_PENALTY
+            bonus -= self.DEF_COLLAPSE_PENALTY
 
         return bonus
 
@@ -1748,8 +1868,11 @@ class MatchRatingsService:
 
         Philosophy:
         - Rewards rare attacking contributions scaled by isolation.
-        - Rewards Destroyer (defensive dominance) and Deep-Lying Playmaker
-        (passing excellence) mastery archetypes proportionally.
+        - Rewards an elite defensive game (tackling, winning the ball, keeping it,
+        passing) through the quality bonus, kept in full for 0-1 goals conceded
+        and shrinking to nothing from four.
+        - Rewards the Deep-Lying Playmaker (passing excellence) mastery archetype
+        proportionally.
         - The Reliable Pivot bonus rewards exceptional ball retention at elite
         passing volume — the hallmark of the position.
         - Clean sheet bonus uses the shared xG-tiered system at CDM ratio,
@@ -1779,15 +1902,6 @@ class MatchRatingsService:
             assists, pos="CDM", isolation_multiplier=isolation_multiplier
         )
 
-        # The Destroyer mastery
-        bonus += self._apply_mastery_bonus(
-            z_scores=z_scores,
-            key_a="tackles_p90_z",
-            key_b="possession_won_p90_z",
-            threshold=1.2,
-            impact_scalar=impact_scalar,
-        )
-
         # The Deep-Lying Playmaker mastery
         bonus += self._apply_mastery_bonus(
             z_scores=z_scores,
@@ -1812,6 +1926,16 @@ class MatchRatingsService:
                 elif poss_lost <= 2.0:
                     bonus += self.CDM_PIVOT_RELIABLE_SHIFT
 
+        # Defensive quality bonus (elite defensive output, result-aware)
+        bonus += self._apply_defensive_quality_bonus(
+            pos="CDM",
+            z_scores=z_scores,
+            opponent_goals=opponent_goals,
+            opponent_xg=opponent_xg,
+            minutes_played=minutes_played,
+            impact_scalar=impact_scalar,
+        )
+
         # xG-tiered clean sheet x linear ramp
         if opponent_goals == 0:
             ramp: float = min(minutes_played, 60.0) / 60.0
@@ -1822,6 +1946,10 @@ class MatchRatingsService:
                 bonus += self.CS_CB_MID_XG * ratio * ramp
             else:
                 bonus += self.CS_CB_HIGH_XG * ratio * ramp
+
+        # Heavy collapse penalty (quality does not soften it)
+        if opponent_goals >= 3 and minutes_played >= 60:
+            bonus -= self.DEF_COLLAPSE_PENALTY
 
         return bonus
 

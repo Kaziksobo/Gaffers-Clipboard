@@ -1,0 +1,180 @@
+{
+  "tolerance": 0.05,
+  "anchors": [
+    {
+      "label": "gk-best",
+      "career": "ipswich_3",
+      "match_id": 21,
+      "player_id": 4,
+      "expected": 10.0
+    },
+    {
+      "label": "gk-worst",
+      "career": "arsenal_2",
+      "match_id": 7,
+      "player_id": 2,
+      "expected": 4.4
+    },
+    {
+      "label": "st-multi-goal@arsenal_2",
+      "career": "arsenal_2",
+      "match_id": 32,
+      "player_id": 34,
+      "expected": 10.0
+    },
+    {
+      "label": "st-multi-goal@ipswich_3",
+      "career": "ipswich_3",
+      "match_id": 19,
+      "player_id": 38,
+      "expected": 9.9
+    },
+    {
+      "label": "st-multi-goal@valencia_cf_1",
+      "career": "valencia_cf_1",
+      "match_id": 39,
+      "player_id": 48,
+      "expected": 9.4
+    },
+    {
+      "label": "st-wasteful@arsenal_2",
+      "career": "arsenal_2",
+      "match_id": 26,
+      "player_id": 29,
+      "expected": 6.6
+    },
+    {
+      "label": "st-wasteful@ipswich_3",
+      "career": "ipswich_3",
+      "match_id": 15,
+      "player_id": 38,
+      "expected": 6.4
+    },
+    {
+      "label": "st-wasteful@valencia_cf_1",
+      "career": "valencia_cf_1",
+      "match_id": 93,
+      "player_id": 48,
+      "expected": 6.2
+    },
+    {
+      "label": "winger-assists@arsenal_2",
+      "career": "arsenal_2",
+      "match_id": 5,
+      "player_id": 34,
+      "expected": 6.7
+    },
+    {
+      "label": "winger-assists@valencia_cf_1",
+      "career": "valencia_cf_1",
+      "match_id": 129,
+      "player_id": 77,
+      "expected": 9.3
+    },
+    {
+      "label": "cm-top@arsenal_2",
+      "career": "arsenal_2",
+      "match_id": 11,
+      "player_id": 33,
+      "expected": 7.9
+    },
+    {
+      "label": "cm-top@valencia_cf_1",
+      "career": "valencia_cf_1",
+      "match_id": 69,
+      "player_id": 24,
+      "expected": 9.7
+    },
+    {
+      "label": "cm-cdm-blend",
+      "career": "arsenal_2",
+      "match_id": 24,
+      "player_id": 14,
+      "expected": 7.4
+    },
+    {
+      "label": "cdm-pivot-gate@arsenal_2",
+      "career": "arsenal_2",
+      "match_id": 16,
+      "player_id": 13,
+      "expected": 8.0
+    },
+    {
+      "label": "cdm-pivot-gate@ipswich_3",
+      "career": "ipswich_3",
+      "match_id": 12,
+      "player_id": 37,
+      "expected": 7.1
+    },
+    {
+      "label": "cdm-pivot-gate@valencia_cf_1",
+      "career": "valencia_cf_1",
+      "match_id": 121,
+      "player_id": 63,
+      "expected": 8.4
+    },
+    {
+      "label": "cb-clean-sheet@arsenal_2",
+      "career": "arsenal_2",
+      "match_id": 9,
+      "player_id": 32,
+      "expected": 8.6
+    },
+    {
+      "label": "cb-clean-sheet@ipswich_3",
+      "career": "ipswich_3",
+      "match_id": 8,
+      "player_id": 31,
+      "expected": 6.9
+    },
+    {
+      "label": "cb-clean-sheet@valencia_cf_1",
+      "career": "valencia_cf_1",
+      "match_id": 101,
+      "player_id": 11,
+      "expected": 10.0
+    },
+    {
+      "label": "cb-collapse",
+      "career": "arsenal_2",
+      "match_id": 12,
+      "player_id": 32,
+      "expected": 6.6
+    },
+    {
+      "label": "fb-attacking",
+      "career": "ipswich_3",
+      "match_id": 19,
+      "player_id": 36,
+      "expected": 6.7
+    },
+    {
+      "label": "wide-mid",
+      "career": "arsenal_2",
+      "match_id": 32,
+      "player_id": 24,
+      "expected": 8.8
+    },
+    {
+      "label": "cam",
+      "career": "ipswich_3",
+      "match_id": 22,
+      "player_id": 39,
+      "expected": 9.6
+    },
+    {
+      "label": "short-cameo",
+      "career": "arsenal_2",
+      "match_id": 3,
+      "player_id": 20,
+      "expected": 6.1
+    },
+    {
+      "label": "outfield-min",
+      "career": "valencia_cf_1",
+      "match_id": 67,
+      "player_id": 56,
+      "expected": 4.4
+    }
+  ]
+}

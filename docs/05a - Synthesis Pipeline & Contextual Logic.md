@@ -37,7 +37,7 @@ The core mechanic is **bottleneck synergy**: a bonus only activates when a playe
 - **Fullback "Third CB" Archetype:** Activates when both `tackles_z` and `possession_won_z` exceed 1.0. The bonus scales with $\min(tackles\_z, poss\_won\_z) - 1.0$.
 - **Fullback "Express Train" Archetype:** Activates when both `distance_sprinted_z` and `xt_bonus_z` exceed 1.0. The bonus scales with $\min(sprint\_z, xt\_z) - 1.0.$.
 
-Analogous bottleneck bonuses exist for every outfield position — a CDM "Destroyer" archetype gated on tackles and possession won, a CM "Progression Engine" gated on passes and dribbles, a CAM "Maestro" gated on passes and xT, and so on — each reflecting the paired tactical requirements of the role.
+Analogous bottleneck bonuses exist for every outfield position — a CDM "Deep-Lying Playmaker" archetype gated on passes and dribbles, a CM "Progression Engine" gated on passes and dribbles, a CAM "Maestro" gated on passes and xT, and so on — each reflecting the paired tactical requirements of the role. (The CB and CDM tackle-and-possession-won archetypes were replaced by the Defensive Quality Bonus below.)
 
 #### Absolute Output Multipliers
 
@@ -53,8 +53,9 @@ This `event_bonus` is computed here but held separately from $S_{raw}$; it is no
 
 The engine applies additional macro-contextual rewards and penalties specific to each position. Examples across the pipeline:
 
-- **Dynamic Clean Sheet Bonus (Defenders):** Scaled by opponent xG. A clean sheet against ${\leq}1.0$ xG yields a maximum $+0.50$ reward, reflecting genuine defensive dominance. Against ${\geq}2.0$ xG it yields a minimal $+0.15$, acknowledging the result may owe as much to poor opponent finishing or exceptional goalkeeping as to outfield defending.
-- **Collapse Penalty (Defenders):** A flat $-0.30$ is applied if the team concedes three or more goals and the player was on the pitch for at least 60 minutes.
+- **Dynamic Clean Sheet Bonus (Defenders):** Scaled by opponent xG, deliberately paying more for clean sheets against weak attacks. For a centre back, a clean sheet against ${\leq}1.0$ xG yields $+0.60$, against $1$ to $2$ xG $+0.48$, and against ${\geq}2.0$ xG $+0.36$; other positions take a fixed fraction (CDM $0.65$, fullback $0.6$).
+- **Defensive Quality Bonus (CB, CDM):** An elite defensive game earns up to $+1.0$ whatever the scoreline, shrinking as goals are conceded (full for 0 or 1, $0.6$ for 2, $0.2$ for 3, none from 4), so an excellent defender who concedes through a teammate's error is not marked down heavily. See Appendix A.
+- **Collapse Penalty (CB, CDM):** A flat $-0.30$ is applied if the team concedes three or more goals and the player was on the pitch for at least 60 minutes; quality does not soften it.
 - **Wasteful Finisher Penalty (Striker):** Assigns 0.20 xG per shot. If a striker takes more than 3 shots and generates a finishing deficit above 0.75, a scaling penalty capped at $-0.80$ is applied.
 - **Reliable Pivot Bonus (CDM):** If 60+ minutes are played with pass accuracy $\geq 92\%$ and elite passing volume, a tiered bonus rewards near-perfect ball retention: $+0.35$ for zero possession lost ("Perfect Metronome"), $+0.20$ for at most one loss ("Reliable Shift").
 - **Clean Sheet Bonus (Midfielders):** Central and defensive midfielders who complete 60+ minutes with zero goals conceded receive a flat $+0.15$, reflecting their role in screening the defensive line.

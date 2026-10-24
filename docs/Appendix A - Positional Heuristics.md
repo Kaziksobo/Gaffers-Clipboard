@@ -122,18 +122,32 @@ _Excess retention = positive involvements − (possession lost $\times\ 3.0$)._
 
 **Output Multipliers** Goal coefficient $G_{pos} = 0.6$, Assists $\times\ 0.45$ (both scaled by isolation multiplier).
 
-**Destroyer Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+**Deep-Lying Playmaker Bonus** Mastery on $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.2$: $\min(\text{excess}, 2.0) \times 0.15 \times$ impact scalar, at most $+0.30$.
 
-**Deep-Lying Playmaker Bonus** Activates when $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
-
-**Reliable Pivot** _(requires minutes $\geq 60$, pass accuracy $\geq 92\%$, and $passes_z > 1.0$)_
+**Reliable Pivot** _(requires minutes $\geq 45$, pass accuracy $\geq 88\%$ and at least 15 passes)_
 
 |Condition|Bonus|
 |---|---|
-|Possession lost $= 0$|$+0.35$ — Perfect Metronome|
-|Possession lost $\leq 1$|$+0.20$ — Reliable Shift|
+|Possession lost $= 0$|$+0.30$ — Perfect Metronome|
+|Possession lost $\leq 2$|$+0.20$ — Reliable Shift|
 
-**Clean Sheet Bonus** Flat $+0.20$ if opponent goals $= 0$ and minutes $\geq 60$.
+**Defensive Quality Bonus** _(replaces the old Destroyer mastery)_ Rewards an elite defensive game whatever the scoreline. A quality score $Q \in [0, 1]$ is the fitted-weight average of the position's defensive $z$-scores (tackles, tackle success, possession won, possession lost, passes, pass accuracy), mapped linearly from $0.28$ ($Q = 0$) to $0.84$ ($Q = 1$), and $Q = 0$ below 30 minutes. The bonus is $Q \times \text{impact scalar} \times 1.0 \times \text{retention}$, where retention depends on goals conceded:
+
+|Goals conceded|0|1|2|3|4+|
+|---|---|---|---|---|---|
+|Retention|$1.0$|$1.0$|$0.6$|$0.2$|$0$|
+
+Goals from low-quality chances (opponent xG at most half the goals conceded) retain a further $+0.1$. At most $+1.0$.
+
+**Dynamic Clean Sheet Bonus** Opponent goals $= 0$, scaled by $\min(\text{minutes}, 60)/60$ and the position ratio (CDM $0.65$, so at most $+0.39$). The tiers deliberately pay more for clean sheets against weak attacks:
+
+|Opponent xG|CB tier value (CDM pays $0.65\times$)|
+|---|---|
+|$\leq 1.0$|$+0.60$ — Defensive Dominance|
+|$1.0$ to $2.0$|$+0.48$ — Standard|
+|$\geq 2.0$|$+0.36$ — Held Under Siege|
+
+**Collapse Penalty** Flat $-0.30$ if opponent goals $\geq 3$ and minutes $\geq 60$. Quality does not soften it.
 
 ---
 
@@ -165,19 +179,25 @@ _Excess retention = positive involvements − (possession lost $\times\ 3.0$)._
 
 **Output Multipliers** Goal coefficient $G_{pos} = 0.75$, Assists $\times\ 0.55$.
 
-**Dominant Stopper Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+**Ball-Playing Defender Bonus** Mastery on $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.0$: $\min(\text{excess}, 2.0) \times 0.15 \times$ impact scalar, at most $+0.30$.
 
-**Ball-Playing Defender Bonus** Activates when $\min(\text{passes\_z},\ \text{poss\_won\_z}) > 1.0$; scales at $+0.20$ per $\sigma$ above threshold.
+**Defensive Quality Bonus** _(replaces the old tackles-and-possession-won mastery)_ Rewards an elite defensive game whatever the scoreline. A quality score $Q \in [0, 1]$ is the fitted-weight average of the position's defensive $z$-scores (tackles, tackle success, possession won, possession lost), mapped linearly from $0.27$ ($Q = 0$) to $1.21$ ($Q = 1$), and $Q = 0$ below 30 minutes. The bonus is $Q \times \text{impact scalar} \times 1.0 \times \text{retention}$, where retention depends on goals conceded:
 
-**Dynamic Clean Sheet Bonus**
+|Goals conceded|0|1|2|3|4+|
+|---|---|---|---|---|---|
+|Retention|$1.0$|$1.0$|$0.6$|$0.2$|$0$|
 
-|Opponent xG|Bonus|
+Goals from low-quality chances (opponent xG at most half the goals conceded) retain a further $+0.1$. At most $+1.0$.
+
+**Dynamic Clean Sheet Bonus** Opponent goals $= 0$, scaled by $\min(\text{minutes}, 60)/60$ and the position ratio (CB $1.0$). The tiers deliberately pay more for clean sheets against weak attacks:
+
+|Opponent xG|CB bonus|
 |---|---|
-|$\leq 1.0$|$+0.50$ — Defensive Dominance|
-|$\geq 2.0$|$+0.15$ — Fortunate Clean Sheet|
-|Otherwise|$+0.35$ — Standard|
+|$\leq 1.0$|$+0.60$ — Defensive Dominance|
+|$1.0$ to $2.0$|$+0.48$ — Standard|
+|$\geq 2.0$|$+0.36$ — Held Under Siege|
 
-**Collapse Penalty** Flat $-0.30$ if opponent goals $\geq 3$ and minutes $\geq 60$.
+**Collapse Penalty** Flat $-0.30$ if opponent goals $\geq 3$ and minutes $\geq 60$. Quality does not soften it.
 
 ---
 
