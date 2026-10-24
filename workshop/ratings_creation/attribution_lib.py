@@ -1,6 +1,7 @@
 """Shared attribution logic for tracing the outfield match-ratings algorithm.
 
-Both rating_attribution.ipynb (interactive, one-position-at-a-time walkthrough)
+Both rating_attribution.ipynb (archived in workshop/archive/; interactive,
+one-position-at-a-time walkthrough)
 and scripts/full_attribution_report.py (full per-position report for every
 position listed on a performance) import this module so the two never drift
 apart.
@@ -417,7 +418,7 @@ def build_position_report(
 ) -> list[str]:
     """Build the full step-by-step attribution report for one position.
 
-    Mirrors every step shown interactively in rating_attribution.ipynb (steps
+    Mirrors every step shown interactively in the archived rating_attribution.ipynb (steps
     1-4): half-length normalisation, Bayesian smoothing (with a worked
     example), the full z-score derivation (raw z, log transform, low-volume
     masking), floors, and the dot-product contributions with a bar chart —

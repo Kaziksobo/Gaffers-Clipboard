@@ -3,7 +3,7 @@
 
 Overview
 --------
-rating_attribution.ipynb (workshop/ratings_creation/) walks through the rating
+rating_attribution.ipynb (archived: workshop/archive/) walks through the rating
 pipeline for one performance, one position at a time. This script instead
 takes a real match record — either a single match object (as stored inside
 one entry of a career's matches.json) or the whole matches.json array — and
