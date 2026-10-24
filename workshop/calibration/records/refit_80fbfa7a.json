@@ -1,0 +1,41 @@
+{
+  "previous_hash": "d9d11fa28b85b3a1fa9661ef2fe3512a05c2edc0d6b1507e0cafd8aa47c0666b",
+  "new_hash": "80fbfa7a9da716e5d09774974f95c312d4e85af4df00f96623e5778cf6a728bd",
+  "backup": "workshop/calibration/candidates/previous_d9d11fa2",
+  "sources": {
+    "arsenal_2": {
+      "match_ids": [
+        1,
+        38
+      ],
+      "n_matches": 38
+    },
+    "ipswich_3": {
+      "match_ids": [
+        1,
+        22
+      ],
+      "n_matches": 22
+    },
+    "valencia_cf_1": {
+      "match_ids": [
+        1,
+        157
+      ],
+      "n_matches": 157
+    }
+  },
+  "rare_event_policy": {
+    "floor": 0.08,
+    "full_until_events": 10,
+    "data_only_from_events": 50
+  },
+  "rows_per_position": {
+    "CB": 560,
+    "CDM": 308,
+    "CM": 536,
+    "Fullback": 562,
+    "ST": 322,
+    "Winger": 546
+  }
+}

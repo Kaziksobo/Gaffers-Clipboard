@@ -1,0 +1,351 @@
+{
+  "description": "Provenance of a rating config. Validation notebooks read this to label career data as in-sample (inside a fitted range) or out-of-sample. tests/data/test_workshop_fit.py checks that the hash matches the files and that re-fitting the recorded sources (with the recorded rare-event policy) reproduces every fitted and derived section exactly.",
+  "config_hash": "005d563f42b3f3f44a4c762f48fc3db50eb233723e0df6749b4dc5dc14a0ded9",
+  "hashed_files": [
+    "performance_weights.json",
+    "performance_means_stds.json"
+  ],
+  "manifest_written": "2026-10-24",
+  "note": "Refit from scripts/refit_config.py.",
+  "fitted_sections": {
+    "CB": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 12,
+        "assists_p90": 10,
+        "offsides_p90": 1
+      }
+    },
+    "CDM": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 8,
+        "assists_p90": 27,
+        "offsides_p90": 0
+      }
+    },
+    "CM": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 106,
+        "assists_p90": 118,
+        "offsides_p90": 11
+      }
+    },
+    "LB": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 6,
+        "assists_p90": 60,
+        "offsides_p90": 6
+      }
+    },
+    "LW": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 143,
+        "assists_p90": 137,
+        "offsides_p90": 83
+      }
+    },
+    "RB": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 6,
+        "assists_p90": 60,
+        "offsides_p90": 6
+      }
+    },
+    "RW": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 143,
+        "assists_p90": 137,
+        "offsides_p90": 83
+      }
+    },
+    "ST": {
+      "method": "workshop/lib/fit.py",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {
+        "goals_p90": 141,
+        "assists_p90": 54,
+        "offsides_p90": 53
+      }
+    },
+    "GK": {
+      "method": "workshop/lib/fit.py:fit_gk",
+      "sources": {
+        "arsenal_2": {
+          "match_ids": [
+            1,
+            38
+          ],
+          "n_matches": 38
+        },
+        "ipswich_3": {
+          "match_ids": [
+            1,
+            22
+          ],
+          "n_matches": 22
+        },
+        "valencia_cf_1": {
+          "match_ids": [
+            1,
+            157
+          ],
+          "n_matches": 157
+        }
+      },
+      "rare_event_counts": {}
+    }
+  },
+  "derived_sections": {
+    "CAM": {
+      "method": "workshop/lib/fit.py:derive_sections",
+      "proxy": "CM",
+      "direct_fit": {
+        "rows": 29,
+        "weight": 0.0
+      }
+    },
+    "LM": {
+      "method": "workshop/lib/fit.py:derive_sections",
+      "proxy": "RW",
+      "direct_fit": {
+        "rows": 69,
+        "weight": 0.0
+      }
+    },
+    "LWB": {
+      "method": "workshop/lib/fit.py:derive_sections",
+      "proxy": "RB",
+      "direct_fit": {
+        "rows": 0,
+        "weight": 0.0
+      }
+    },
+    "RM": {
+      "method": "workshop/lib/fit.py:derive_sections",
+      "proxy": "RW",
+      "direct_fit": {
+        "rows": 69,
+        "weight": 0.0
+      }
+    },
+    "RWB": {
+      "method": "workshop/lib/fit.py:derive_sections",
+      "proxy": "RB",
+      "direct_fit": {
+        "rows": 0,
+        "weight": 0.0
+      }
+    }
+  },
+  "direct_fit_policy": {
+    "min_rows": 85,
+    "full_rows": 250
+  },
+  "legacy_sections": {
+    "note": "carried over unchanged from config; not reproduced by workshop/lib/fit.py",
+    "performance_weights.json": [],
+    "performance_means_stds.json": []
+  },
+  "rare_event_policy": {
+    "floor": 0.08,
+    "full_until_events": 10,
+    "data_only_from_events": 50
+  },
+  "rows_per_position": {
+    "CB": 560,
+    "CDM": 308,
+    "CM": 536,
+    "Fullback": 562,
+    "ST": 322,
+    "Winger": 546
+  }
+}
