@@ -24,15 +24,9 @@ def data_player_service() -> PlayerService:
 
 
 @pytest.fixture
-def fixture_data_path() -> Path:
-    """Return the path to the testing_data fixture directory."""
-    return _PROJECT_ROOT / "tests" / "fixtures" / "testing_data"
-
-
-@pytest.fixture
-def validation_data_path() -> Path:
-    """Return the path to the validation_data fixture directory."""
-    return _PROJECT_ROOT / "tests" / "fixtures" / "validation_data"
+def careers_path() -> Path:
+    """Return the path to the datasets/careers directory (full career saves)."""
+    return _PROJECT_ROOT / "datasets" / "careers"
 
 
 @pytest.fixture

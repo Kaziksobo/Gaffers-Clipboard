@@ -1,0 +1,2468 @@
+[
+    {
+        "id": 1,
+        "name": "David Button",
+        "nationality": "England",
+        "age": 37,
+        "height": "6'3\"",
+        "weight": 191,
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:53:32.301306",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "GK",
+                "position_type": "GK",
+                "diving": 61,
+                "handling": 59,
+                "kicking": 58,
+                "reflexes": 60,
+                "positioning": 60
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:36:04.447024",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 4000,
+                "market_value": 250000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 2,
+        "name": "Christian Walton",
+        "nationality": "England",
+        "age": 30,
+        "height": "6'5\"",
+        "weight": 158,
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:55:30.340188",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "GK",
+                "position_type": "GK",
+                "diving": 72,
+                "handling": 70,
+                "kicking": 69,
+                "reflexes": 72,
+                "positioning": 71
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:36:37.413185",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 18500,
+                "market_value": 1300000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-07-10T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 3,
+        "name": "Alex Palmer",
+        "nationality": "England",
+        "age": 29,
+        "height": "6'3\"",
+        "weight": 187,
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:56:03.380402",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "GK",
+                "position_type": "GK",
+                "diving": 73,
+                "handling": 71,
+                "kicking": 72,
+                "reflexes": 73,
+                "positioning": 72
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:37:05.613614",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 21000,
+                "market_value": 1800000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 4,
+        "name": "Arijanet Muric",
+        "nationality": "Kosovo",
+        "age": 27,
+        "height": "6'6\"",
+        "weight": 176,
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:56:48.771821",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "GK",
+                "position_type": "GK",
+                "diving": 74,
+                "handling": 72,
+                "kicking": 76,
+                "reflexes": 79,
+                "positioning": 73
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:37:56.883837",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 23500,
+                "market_value": 4400000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            },
+            {
+                "datetime": "2026-10-21T22:27:40.500152",
+                "in_game_date": "2026-12-21T00:00:00",
+                "wage": 28000,
+                "market_value": 6500000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 5,
+        "name": "Cieran Slicker",
+        "nationality": "Scotland",
+        "age": 23,
+        "height": "6'3\"",
+        "weight": 180,
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:57:14.917656",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "GK",
+                "position_type": "GK",
+                "diving": 62,
+                "handling": 62,
+                "kicking": 61,
+                "reflexes": 64,
+                "positioning": 60
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:38:35.635797",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 4000,
+                "market_value": 425000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": true
+    },
+    {
+        "id": 6,
+        "name": "Henry Gray",
+        "nationality": "New Zealand",
+        "age": 21,
+        "height": "6'4\"",
+        "weight": 187,
+        "positions": [
+            "GK"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:57:46.964557",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "GK",
+                "position_type": "GK",
+                "diving": 57,
+                "handling": 60,
+                "kicking": 59,
+                "reflexes": 60,
+                "positioning": 56
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:38:56.873461",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 2400,
+                "market_value": 375000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            },
+            {
+                "datetime": "2026-09-22T10:24:50.721278",
+                "in_game_date": "2026-07-03T00:00:00",
+                "wage": 3000,
+                "market_value": 375000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": true
+    },
+    {
+        "id": 7,
+        "name": "Conor Townsend",
+        "nationality": "England",
+        "age": 33,
+        "height": "6'0\"",
+        "weight": 160,
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:58:34.162804",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 64,
+                "sprint_speed": 64,
+                "agility": 68,
+                "balance": 71,
+                "jumping": 69,
+                "stamina": 51,
+                "strength": 70,
+                "aggression": 55,
+                "att_position": 59,
+                "composure": 60,
+                "interceptions": 66,
+                "reactions": 67,
+                "vision": 60,
+                "defensive_awareness": 68,
+                "ball_control": 66,
+                "crossing": 69,
+                "curve": 67,
+                "dribbling": 65,
+                "fk_accuracy": 60,
+                "finishing": 43,
+                "heading_accuracy": 56,
+                "long_pass": 56,
+                "long_shots": 45,
+                "penalties": 51,
+                "short_pass": 65,
+                "shot_power": 46,
+                "slide_tackle": 66,
+                "stand_tackle": 70,
+                "volleys": 41
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:39:22.385676",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 22500,
+                "market_value": 450000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 8,
+        "name": "Leif Davis",
+        "nationality": "England",
+        "age": 26,
+        "height": "6'0\"",
+        "weight": 154,
+        "positions": [
+            "LB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:59:10.985944",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "LB",
+                "position_type": "Outfield",
+                "acceleration": 78,
+                "sprint_speed": 80,
+                "agility": 74,
+                "balance": 75,
+                "jumping": 77,
+                "stamina": 82,
+                "strength": 70,
+                "aggression": 64,
+                "att_position": 73,
+                "composure": 72,
+                "interceptions": 71,
+                "reactions": 73,
+                "vision": 78,
+                "defensive_awareness": 69,
+                "ball_control": 74,
+                "crossing": 80,
+                "curve": 78,
+                "dribbling": 72,
+                "fk_accuracy": 74,
+                "finishing": 47,
+                "heading_accuracy": 64,
+                "long_pass": 72,
+                "long_shots": 56,
+                "penalties": 52,
+                "short_pass": 75,
+                "shot_power": 66,
+                "slide_tackle": 70,
+                "stand_tackle": 72,
+                "volleys": 40
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:39:43.498081",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 38000,
+                "market_value": 7000000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 9,
+        "name": "Dara O'Shea",
+        "nationality": "Ireland",
+        "age": 27,
+        "height": "6'2\"",
+        "weight": 163,
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T22:59:48.299242",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 69,
+                "sprint_speed": 69,
+                "agility": 58,
+                "balance": 63,
+                "jumping": 86,
+                "stamina": 72,
+                "strength": 80,
+                "aggression": 75,
+                "att_position": 34,
+                "composure": 63,
+                "interceptions": 75,
+                "reactions": 72,
+                "vision": 42,
+                "defensive_awareness": 75,
+                "ball_control": 62,
+                "crossing": 57,
+                "curve": 37,
+                "dribbling": 52,
+                "fk_accuracy": 28,
+                "finishing": 30,
+                "heading_accuracy": 78,
+                "long_pass": 66,
+                "long_shots": 22,
+                "penalties": 45,
+                "short_pass": 68,
+                "shot_power": 48,
+                "slide_tackle": 74,
+                "stand_tackle": 75,
+                "volleys": 30
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:40:39.868520",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 40000,
+                "market_value": 4900000,
+                "contract_length": 4,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 10,
+        "name": "Jacob Greaves",
+        "nationality": "England",
+        "age": 25,
+        "height": "6'4\"",
+        "weight": 191,
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:00:31.270235",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 67,
+                "sprint_speed": 66,
+                "agility": 57,
+                "balance": 55,
+                "jumping": 81,
+                "stamina": 71,
+                "strength": 80,
+                "aggression": 80,
+                "att_position": 51,
+                "composure": 71,
+                "interceptions": 74,
+                "reactions": 74,
+                "vision": 57,
+                "defensive_awareness": 75,
+                "ball_control": 67,
+                "crossing": 60,
+                "curve": 61,
+                "dribbling": 64,
+                "fk_accuracy": 28,
+                "finishing": 35,
+                "heading_accuracy": 71,
+                "long_pass": 68,
+                "long_shots": 38,
+                "penalties": 34,
+                "short_pass": 71,
+                "shot_power": 55,
+                "slide_tackle": 74,
+                "stand_tackle": 74,
+                "volleys": 31
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:41:08.319514",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 32000,
+                "market_value": 4300000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [
+            {
+                "datetime": "2026-09-25T12:48:17.014394",
+                "in_game_date": "2026-09-14T00:00:00",
+                "injury_detail": "Back Injury",
+                "time_out": 3,
+                "time_out_unit": "Weeks"
+            }
+        ],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 11,
+        "name": "Elkan Baggot",
+        "nationality": "Indonesia",
+        "age": 23,
+        "height": "6'4\"",
+        "weight": 189,
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:01:33.209416",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 56,
+                "sprint_speed": 54,
+                "agility": 43,
+                "balance": 37,
+                "jumping": 76,
+                "stamina": 66,
+                "strength": 81,
+                "aggression": 60,
+                "att_position": 25,
+                "composure": 57,
+                "interceptions": 60,
+                "reactions": 60,
+                "vision": 37,
+                "defensive_awareness": 64,
+                "ball_control": 51,
+                "crossing": 26,
+                "curve": 28,
+                "dribbling": 42,
+                "fk_accuracy": 29,
+                "finishing": 22,
+                "heading_accuracy": 66,
+                "long_pass": 46,
+                "long_shots": 18,
+                "penalties": 38,
+                "short_pass": 51,
+                "shot_power": 30,
+                "slide_tackle": 62,
+                "stand_tackle": 63,
+                "volleys": 20
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:41:32.369273",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 8600,
+                "market_value": 650000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 12,
+        "name": "Darnell Furlong",
+        "nationality": "England",
+        "age": 30,
+        "height": "6'0\"",
+        "weight": 167,
+        "positions": [
+            "RB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:02:12.049263",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "RB",
+                "position_type": "Outfield",
+                "acceleration": 71,
+                "sprint_speed": 75,
+                "agility": 71,
+                "balance": 68,
+                "jumping": 82,
+                "stamina": 84,
+                "strength": 74,
+                "aggression": 73,
+                "att_position": 64,
+                "composure": 63,
+                "interceptions": 67,
+                "reactions": 67,
+                "vision": 60,
+                "defensive_awareness": 68,
+                "ball_control": 71,
+                "crossing": 69,
+                "curve": 57,
+                "dribbling": 69,
+                "fk_accuracy": 36,
+                "finishing": 35,
+                "heading_accuracy": 72,
+                "long_pass": 57,
+                "long_shots": 30,
+                "penalties": 49,
+                "short_pass": 61,
+                "shot_power": 36,
+                "slide_tackle": 70,
+                "stand_tackle": 68,
+                "volleys": 30
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:41:56.275412",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 32000,
+                "market_value": 1700000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-07-15T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 13,
+        "name": "Ben Johnson",
+        "nationality": "England",
+        "age": 26,
+        "height": "5'11\"",
+        "weight": 152,
+        "positions": [
+            "RB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:03:04.455934",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "RB",
+                "position_type": "Outfield",
+                "acceleration": 69,
+                "sprint_speed": 70,
+                "agility": 66,
+                "balance": 69,
+                "jumping": 72,
+                "stamina": 70,
+                "strength": 70,
+                "aggression": 67,
+                "att_position": 63,
+                "composure": 65,
+                "interceptions": 73,
+                "reactions": 67,
+                "vision": 63,
+                "defensive_awareness": 73,
+                "ball_control": 70,
+                "crossing": 69,
+                "curve": 67,
+                "dribbling": 69,
+                "fk_accuracy": 39,
+                "finishing": 41,
+                "heading_accuracy": 65,
+                "long_pass": 60,
+                "long_shots": 47,
+                "penalties": 39,
+                "short_pass": 68,
+                "shot_power": 62,
+                "slide_tackle": 71,
+                "stand_tackle": 73,
+                "volleys": 30
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:42:14.157168",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 29000,
+                "market_value": 2200000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-08-01T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 14,
+        "name": "Harry Clarke",
+        "nationality": "England",
+        "age": 25,
+        "height": "5'11\"",
+        "weight": 176,
+        "positions": [
+            "RB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:04:00.737702",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "RB",
+                "position_type": "Outfield",
+                "acceleration": 78,
+                "sprint_speed": 82,
+                "agility": 68,
+                "balance": 72,
+                "jumping": 83,
+                "stamina": 80,
+                "strength": 79,
+                "aggression": 79,
+                "att_position": 58,
+                "composure": 65,
+                "interceptions": 63,
+                "reactions": 69,
+                "vision": 60,
+                "defensive_awareness": 68,
+                "ball_control": 66,
+                "crossing": 63,
+                "curve": 57,
+                "dribbling": 66,
+                "fk_accuracy": 41,
+                "finishing": 54,
+                "heading_accuracy": 68,
+                "long_pass": 58,
+                "long_shots": 58,
+                "penalties": 48,
+                "short_pass": 69,
+                "shot_power": 70,
+                "slide_tackle": 69,
+                "stand_tackle": 67,
+                "volleys": 57
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:42:56.551800",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 21000,
+                "market_value": 2100000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            },
+            {
+                "datetime": "2026-09-22T12:40:24.278048",
+                "in_game_date": "2026-08-04T00:00:00",
+                "wage": 25000,
+                "market_value": 2500000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 15,
+        "name": "Finley Barbrook",
+        "nationality": "England",
+        "age": 21,
+        "height": "6'1\"",
+        "weight": 158,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:04:39.939267",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 64,
+                "sprint_speed": 67,
+                "agility": 68,
+                "balance": 69,
+                "jumping": 67,
+                "stamina": 69,
+                "strength": 70,
+                "aggression": 60,
+                "att_position": 43,
+                "composure": 55,
+                "interceptions": 62,
+                "reactions": 63,
+                "vision": 58,
+                "defensive_awareness": 62,
+                "ball_control": 65,
+                "crossing": 47,
+                "curve": 46,
+                "dribbling": 59,
+                "fk_accuracy": 38,
+                "finishing": 43,
+                "heading_accuracy": 56,
+                "long_pass": 59,
+                "long_shots": 45,
+                "penalties": 45,
+                "short_pass": 60,
+                "shot_power": 48,
+                "slide_tackle": 61,
+                "stand_tackle": 59,
+                "volleys": 38
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:44:32.463972",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 5800,
+                "market_value": 875000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            },
+            {
+                "datetime": "2026-09-22T12:21:17.260937",
+                "in_game_date": "2026-08-03T00:00:00",
+                "wage": 7000,
+                "market_value": 875000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 16,
+        "name": "Jack Taylor",
+        "nationality": "Ireland",
+        "age": 28,
+        "height": "6'1\"",
+        "weight": 154,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:05:20.756245",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 68,
+                "sprint_speed": 69,
+                "agility": 71,
+                "balance": 74,
+                "jumping": 73,
+                "stamina": 78,
+                "strength": 70,
+                "aggression": 74,
+                "att_position": 66,
+                "composure": 67,
+                "interceptions": 69,
+                "reactions": 71,
+                "vision": 68,
+                "defensive_awareness": 68,
+                "ball_control": 71,
+                "crossing": 59,
+                "curve": 62,
+                "dribbling": 69,
+                "fk_accuracy": 54,
+                "finishing": 66,
+                "heading_accuracy": 69,
+                "long_pass": 69,
+                "long_shots": 74,
+                "penalties": 46,
+                "short_pass": 72,
+                "shot_power": 75,
+                "slide_tackle": 68,
+                "stand_tackle": 70,
+                "volleys": 56
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:45:16.626577",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 27500,
+                "market_value": 1800000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-08-01T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 17,
+        "name": "Azor Matusiwa",
+        "nationality": "Netherlands",
+        "age": 28,
+        "height": "5'8\"",
+        "weight": 158,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:06:45.501830",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 62,
+                "sprint_speed": 57,
+                "agility": 74,
+                "balance": 78,
+                "jumping": 70,
+                "stamina": 83,
+                "strength": 75,
+                "aggression": 84,
+                "att_position": 65,
+                "composure": 72,
+                "interceptions": 75,
+                "reactions": 72,
+                "vision": 69,
+                "defensive_awareness": 74,
+                "ball_control": 70,
+                "crossing": 53,
+                "curve": 54,
+                "dribbling": 66,
+                "fk_accuracy": 52,
+                "finishing": 46,
+                "heading_accuracy": 59,
+                "long_pass": 73,
+                "long_shots": 55,
+                "penalties": 50,
+                "short_pass": 75,
+                "shot_power": 65,
+                "slide_tackle": 71,
+                "stand_tackle": 75,
+                "volleys": 48
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:45:51.285888",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 40000,
+                "market_value": 4300000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 18,
+        "name": "Jack Clarke",
+        "nationality": "England",
+        "age": 25,
+        "height": "5'11\"",
+        "weight": 163,
+        "positions": [
+            "LM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:07:52.690054",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "LM",
+                "position_type": "Outfield",
+                "acceleration": 79,
+                "sprint_speed": 78,
+                "agility": 84,
+                "balance": 78,
+                "jumping": 62,
+                "stamina": 77,
+                "strength": 54,
+                "aggression": 53,
+                "att_position": 72,
+                "composure": 75,
+                "interceptions": 39,
+                "reactions": 73,
+                "vision": 70,
+                "defensive_awareness": 46,
+                "ball_control": 73,
+                "crossing": 71,
+                "curve": 65,
+                "dribbling": 76,
+                "fk_accuracy": 63,
+                "finishing": 74,
+                "heading_accuracy": 49,
+                "long_pass": 61,
+                "long_shots": 69,
+                "penalties": 80,
+                "short_pass": 69,
+                "shot_power": 70,
+                "slide_tackle": 33,
+                "stand_tackle": 35,
+                "volleys": 59
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:46:41.649060",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 33500,
+                "market_value": 4300000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 19,
+        "name": "Jaden Philogene",
+        "nationality": "England",
+        "age": 24,
+        "height": "5'10\"",
+        "weight": 147,
+        "positions": [
+            "LM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:08:28.244644",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "LM",
+                "position_type": "Outfield",
+                "acceleration": 82,
+                "sprint_speed": 84,
+                "agility": 84,
+                "balance": 75,
+                "jumping": 66,
+                "stamina": 74,
+                "strength": 66,
+                "aggression": 49,
+                "att_position": 73,
+                "composure": 76,
+                "interceptions": 32,
+                "reactions": 70,
+                "vision": 72,
+                "defensive_awareness": 41,
+                "ball_control": 78,
+                "crossing": 73,
+                "curve": 76,
+                "dribbling": 81,
+                "fk_accuracy": 49,
+                "finishing": 75,
+                "heading_accuracy": 45,
+                "long_pass": 64,
+                "long_shots": 75,
+                "penalties": 59,
+                "short_pass": 73,
+                "shot_power": 73,
+                "slide_tackle": 37,
+                "stand_tackle": 45,
+                "volleys": 58
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:47:11.780243",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 38000,
+                "market_value": 12500000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 20,
+        "name": "Kasey Mcateer",
+        "nationality": "Ireland",
+        "age": 24,
+        "height": "5'10\"",
+        "weight": 147,
+        "positions": [
+            "LM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:09:12.243815",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "LM",
+                "position_type": "Outfield",
+                "acceleration": 83,
+                "sprint_speed": 80,
+                "agility": 74,
+                "balance": 76,
+                "jumping": 76,
+                "stamina": 68,
+                "strength": 61,
+                "aggression": 65,
+                "att_position": 70,
+                "composure": 69,
+                "interceptions": 43,
+                "reactions": 67,
+                "vision": 67,
+                "defensive_awareness": 56,
+                "ball_control": 74,
+                "crossing": 63,
+                "curve": 65,
+                "dribbling": 71,
+                "fk_accuracy": 54,
+                "finishing": 69,
+                "heading_accuracy": 61,
+                "long_pass": 67,
+                "long_shots": 64,
+                "penalties": 56,
+                "short_pass": 69,
+                "shot_power": 68,
+                "slide_tackle": 49,
+                "stand_tackle": 57,
+                "volleys": 64
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:47:33.118464",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 25000,
+                "market_value": 2600000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-07-05T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 21,
+        "name": "Sammie Szmodics",
+        "nationality": "Ireland",
+        "age": 30,
+        "height": "5'6\"",
+        "weight": 147,
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:10:51.918756",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 80,
+                "sprint_speed": 74,
+                "agility": 83,
+                "balance": 88,
+                "jumping": 68,
+                "stamina": 78,
+                "strength": 50,
+                "aggression": 72,
+                "att_position": 73,
+                "composure": 74,
+                "interceptions": 53,
+                "reactions": 72,
+                "vision": 71,
+                "defensive_awareness": 50,
+                "ball_control": 73,
+                "crossing": 65,
+                "curve": 67,
+                "dribbling": 72,
+                "fk_accuracy": 62,
+                "finishing": 73,
+                "heading_accuracy": 60,
+                "long_pass": 64,
+                "long_shots": 70,
+                "penalties": 63,
+                "short_pass": 71,
+                "shot_power": 73,
+                "slide_tackle": 40,
+                "stand_tackle": 51,
+                "volleys": 68
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:47:51.295892",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 34000,
+                "market_value": 1900000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-07-17T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 22,
+        "name": "Conor Chaplin",
+        "nationality": "England",
+        "age": 29,
+        "height": "5'6\"",
+        "weight": 152,
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:11:33.656313",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 79,
+                "sprint_speed": 72,
+                "agility": 84,
+                "balance": 85,
+                "jumping": 64,
+                "stamina": 68,
+                "strength": 44,
+                "aggression": 67,
+                "att_position": 70,
+                "composure": 71,
+                "interceptions": 40,
+                "reactions": 71,
+                "vision": 71,
+                "defensive_awareness": 50,
+                "ball_control": 71,
+                "crossing": 63,
+                "curve": 67,
+                "dribbling": 70,
+                "fk_accuracy": 68,
+                "finishing": 71,
+                "heading_accuracy": 68,
+                "long_pass": 66,
+                "long_shots": 71,
+                "penalties": 66,
+                "short_pass": 70,
+                "shot_power": 72,
+                "slide_tackle": 43,
+                "stand_tackle": 38,
+                "volleys": 68
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:48:13.939013",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 30500,
+                "market_value": 1600000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-07-22T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 23,
+        "name": "Anis Mehmeti",
+        "nationality": "Albania",
+        "age": 25,
+        "height": "5'11\"",
+        "weight": 138,
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:36:30.033617",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 78,
+                "sprint_speed": 76,
+                "agility": 81,
+                "balance": 78,
+                "jumping": 69,
+                "stamina": 74,
+                "strength": 63,
+                "aggression": 63,
+                "att_position": 70,
+                "composure": 70,
+                "interceptions": 56,
+                "reactions": 70,
+                "vision": 71,
+                "defensive_awareness": 52,
+                "ball_control": 72,
+                "crossing": 67,
+                "curve": 67,
+                "dribbling": 75,
+                "fk_accuracy": 65,
+                "finishing": 71,
+                "heading_accuracy": 52,
+                "long_pass": 64,
+                "long_shots": 70,
+                "penalties": 66,
+                "short_pass": 70,
+                "shot_power": 70,
+                "slide_tackle": 51,
+                "stand_tackle": 56,
+                "volleys": 66
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:48:40.653298",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 28500,
+                "market_value": 2500000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 24,
+        "name": "Marcelino Nunez",
+        "nationality": "Chile",
+        "age": 26,
+        "height": "5'8\"",
+        "weight": 154,
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:37:11.631834",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 64,
+                "sprint_speed": 64,
+                "agility": 75,
+                "balance": 79,
+                "jumping": 63,
+                "stamina": 81,
+                "strength": 65,
+                "aggression": 64,
+                "att_position": 69,
+                "composure": 77,
+                "interceptions": 65,
+                "reactions": 74,
+                "vision": 76,
+                "defensive_awareness": 65,
+                "ball_control": 74,
+                "crossing": 68,
+                "curve": 75,
+                "dribbling": 74,
+                "fk_accuracy": 76,
+                "finishing": 66,
+                "heading_accuracy": 52,
+                "long_pass": 76,
+                "long_shots": 73,
+                "penalties": 67,
+                "short_pass": 75,
+                "shot_power": 81,
+                "slide_tackle": 63,
+                "stand_tackle": 66,
+                "volleys": 72
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:49:01.744415",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 34000,
+                "market_value": 3200000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 25,
+        "name": "Cameron Humphreys",
+        "nationality": "England",
+        "age": 22,
+        "height": "5'10\"",
+        "weight": 154,
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:37:54.591954",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 71,
+                "sprint_speed": 69,
+                "agility": 75,
+                "balance": 74,
+                "jumping": 65,
+                "stamina": 73,
+                "strength": 64,
+                "aggression": 64,
+                "att_position": 69,
+                "composure": 66,
+                "interceptions": 65,
+                "reactions": 73,
+                "vision": 70,
+                "defensive_awareness": 62,
+                "ball_control": 70,
+                "crossing": 67,
+                "curve": 62,
+                "dribbling": 68,
+                "fk_accuracy": 63,
+                "finishing": 66,
+                "heading_accuracy": 55,
+                "long_pass": 70,
+                "long_shots": 65,
+                "penalties": 55,
+                "short_pass": 69,
+                "shot_power": 62,
+                "slide_tackle": 61,
+                "stand_tackle": 65,
+                "volleys": 57
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:49:22.051368",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 13500,
+                "market_value": 1900000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-08-25T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 26,
+        "name": "Sindre Walle Egeli",
+        "nationality": "Norway",
+        "age": 20,
+        "height": "6'0\"",
+        "weight": 165,
+        "positions": [
+            "RM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:38:32.266489",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "RM",
+                "position_type": "Outfield",
+                "acceleration": 85,
+                "sprint_speed": 84,
+                "agility": 78,
+                "balance": 75,
+                "jumping": 61,
+                "stamina": 73,
+                "strength": 63,
+                "aggression": 58,
+                "att_position": 65,
+                "composure": 65,
+                "interceptions": 23,
+                "reactions": 63,
+                "vision": 64,
+                "defensive_awareness": 26,
+                "ball_control": 71,
+                "crossing": 63,
+                "curve": 48,
+                "dribbling": 71,
+                "fk_accuracy": 41,
+                "finishing": 65,
+                "heading_accuracy": 29,
+                "long_pass": 59,
+                "long_shots": 62,
+                "penalties": 49,
+                "short_pass": 64,
+                "shot_power": 60,
+                "slide_tackle": 29,
+                "stand_tackle": 24,
+                "volleys": 57
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:49:47.221989",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 15500,
+                "market_value": 2700000,
+                "contract_length": 4,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [
+            {
+                "datetime": "2026-09-25T12:48:51.465858",
+                "in_game_date": "2026-09-14T00:00:00",
+                "injury_detail": "Hip Injury",
+                "time_out": 2,
+                "time_out_unit": "Weeks"
+            }
+        ],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 27,
+        "name": "Chiedozie Ogbene",
+        "nationality": "Ivory Coast",
+        "age": 29,
+        "height": "5'11\"",
+        "weight": 165,
+        "positions": [
+            "RM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:39:36.226795",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "RM",
+                "position_type": "Outfield",
+                "acceleration": 87,
+                "sprint_speed": 90,
+                "agility": 78,
+                "balance": 65,
+                "jumping": 82,
+                "stamina": 73,
+                "strength": 72,
+                "aggression": 65,
+                "att_position": 65,
+                "composure": 67,
+                "interceptions": 62,
+                "reactions": 68,
+                "vision": 65,
+                "defensive_awareness": 64,
+                "ball_control": 70,
+                "crossing": 68,
+                "curve": 66,
+                "dribbling": 72,
+                "fk_accuracy": 58,
+                "finishing": 64,
+                "heading_accuracy": 62,
+                "long_pass": 57,
+                "long_shots": 62,
+                "penalties": 51,
+                "short_pass": 67,
+                "shot_power": 68,
+                "slide_tackle": 61,
+                "stand_tackle": 65,
+                "volleys": 60
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:50:07.730609",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 30000,
+                "market_value": 1600000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-07-28T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 28,
+        "name": "George Hirst",
+        "nationality": "Scotland",
+        "age": 27,
+        "height": "6'3\"",
+        "weight": 178,
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:40:15.189699",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 71,
+                "sprint_speed": 74,
+                "agility": 57,
+                "balance": 60,
+                "jumping": 85,
+                "stamina": 67,
+                "strength": 80,
+                "aggression": 67,
+                "att_position": 76,
+                "composure": 70,
+                "interceptions": 44,
+                "reactions": 68,
+                "vision": 62,
+                "defensive_awareness": 40,
+                "ball_control": 71,
+                "crossing": 42,
+                "curve": 56,
+                "dribbling": 64,
+                "fk_accuracy": 44,
+                "finishing": 73,
+                "heading_accuracy": 73,
+                "long_pass": 46,
+                "long_shots": 66,
+                "penalties": 66,
+                "short_pass": 66,
+                "shot_power": 73,
+                "slide_tackle": 32,
+                "stand_tackle": 38,
+                "volleys": 67
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:50:28.858800",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 38000,
+                "market_value": 2200000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 29,
+        "name": "Ali Al Hamadi",
+        "nationality": "Egypt",
+        "age": 24,
+        "height": "6'2\"",
+        "weight": 167,
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-21T23:40:56.016763",
+                "in_game_date": "2026-07-01T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 80,
+                "sprint_speed": 79,
+                "agility": 63,
+                "balance": 68,
+                "jumping": 81,
+                "stamina": 68,
+                "strength": 78,
+                "aggression": 67,
+                "att_position": 69,
+                "composure": 62,
+                "interceptions": 16,
+                "reactions": 64,
+                "vision": 58,
+                "defensive_awareness": 12,
+                "ball_control": 65,
+                "crossing": 34,
+                "curve": 46,
+                "dribbling": 66,
+                "fk_accuracy": 43,
+                "finishing": 70,
+                "heading_accuracy": 61,
+                "long_pass": 44,
+                "long_shots": 56,
+                "penalties": 60,
+                "short_pass": 58,
+                "shot_power": 63,
+                "slide_tackle": 12,
+                "stand_tackle": 18,
+                "volleys": 63
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T09:50:47.736535",
+                "in_game_date": "2026-07-01T00:00:00",
+                "wage": 12000,
+                "market_value": 1800000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": true,
+        "date_sold": "2026-07-09T00:00:00",
+        "loaned": false
+    },
+    {
+        "id": 30,
+        "name": "Taiwo Awoniyi",
+        "nationality": "Nigeria",
+        "age": 28,
+        "height": "6'0\"",
+        "weight": 185,
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T10:58:21.204974",
+                "in_game_date": "2026-07-17T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 65,
+                "sprint_speed": 75,
+                "agility": 55,
+                "balance": 62,
+                "jumping": 85,
+                "stamina": 54,
+                "strength": 88,
+                "aggression": 77,
+                "att_position": 76,
+                "composure": 63,
+                "interceptions": 33,
+                "reactions": 75,
+                "vision": 53,
+                "defensive_awareness": 25,
+                "ball_control": 70,
+                "crossing": 57,
+                "curve": 55,
+                "dribbling": 72,
+                "fk_accuracy": 44,
+                "finishing": 73,
+                "heading_accuracy": 75,
+                "long_pass": 56,
+                "long_shots": 66,
+                "penalties": 70,
+                "short_pass": 69,
+                "shot_power": 82,
+                "slide_tackle": 23,
+                "stand_tackle": 27,
+                "volleys": 68
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T11:08:00.146688",
+                "in_game_date": "2026-07-17T00:00:00",
+                "wage": 45000,
+                "market_value": 3700000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 31,
+        "name": "Tsuyoshi Watanabe",
+        "nationality": "Japan",
+        "age": 29,
+        "height": "6'0\"",
+        "weight": 167,
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T11:07:11.141965",
+                "in_game_date": "2026-07-18T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 76,
+                "sprint_speed": 77,
+                "agility": 64,
+                "balance": 48,
+                "jumping": 90,
+                "stamina": 74,
+                "strength": 82,
+                "aggression": 74,
+                "att_position": 33,
+                "composure": 68,
+                "interceptions": 77,
+                "reactions": 75,
+                "vision": 47,
+                "defensive_awareness": 79,
+                "ball_control": 67,
+                "crossing": 25,
+                "curve": 45,
+                "dribbling": 56,
+                "fk_accuracy": 38,
+                "finishing": 33,
+                "heading_accuracy": 76,
+                "long_pass": 70,
+                "long_shots": 46,
+                "penalties": 40,
+                "short_pass": 70,
+                "shot_power": 52,
+                "slide_tackle": 75,
+                "stand_tackle": 78,
+                "volleys": 22
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T11:07:34.825429",
+                "in_game_date": "2026-07-18T00:00:00",
+                "wage": 43500,
+                "market_value": 7500000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 32,
+        "name": "Nicolas Seiwald",
+        "nationality": "Austria",
+        "age": 25,
+        "height": "5'11\"",
+        "weight": 176,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T11:45:00.998111",
+                "in_game_date": "2026-07-27T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 74,
+                "sprint_speed": 72,
+                "agility": 77,
+                "balance": 78,
+                "jumping": 77,
+                "stamina": 82,
+                "strength": 74,
+                "aggression": 82,
+                "att_position": 70,
+                "composure": 71,
+                "interceptions": 89,
+                "reactions": 78,
+                "vision": 77,
+                "defensive_awareness": 79,
+                "ball_control": 77,
+                "crossing": 74,
+                "curve": 74,
+                "dribbling": 73,
+                "fk_accuracy": 60,
+                "finishing": 59,
+                "heading_accuracy": 65,
+                "long_pass": 80,
+                "long_shots": 68,
+                "penalties": 58,
+                "short_pass": 78,
+                "shot_power": 72,
+                "slide_tackle": 76,
+                "stand_tackle": 85,
+                "volleys": 59
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T11:45:26.036195",
+                "in_game_date": "2026-07-27T00:00:00",
+                "wage": 62000,
+                "market_value": 33000000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 10
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 33,
+        "name": "Vitor Reis",
+        "nationality": "Brazil",
+        "age": 20,
+        "height": "6'1\"",
+        "weight": 169,
+        "positions": [
+            "CB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T11:49:36.493424",
+                "in_game_date": "2026-07-18T00:00:00",
+                "position": "CB",
+                "position_type": "Outfield",
+                "acceleration": 70,
+                "sprint_speed": 79,
+                "agility": 64,
+                "balance": 58,
+                "jumping": 85,
+                "stamina": 71,
+                "strength": 77,
+                "aggression": 76,
+                "att_position": 29,
+                "composure": 70,
+                "interceptions": 77,
+                "reactions": 78,
+                "vision": 68,
+                "defensive_awareness": 79,
+                "ball_control": 71,
+                "crossing": 30,
+                "curve": 44,
+                "dribbling": 69,
+                "fk_accuracy": 35,
+                "finishing": 29,
+                "heading_accuracy": 81,
+                "long_pass": 75,
+                "long_shots": 35,
+                "penalties": 47,
+                "short_pass": 78,
+                "shot_power": 45,
+                "slide_tackle": 76,
+                "stand_tackle": 77,
+                "volleys": 32
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T11:50:05.365973",
+                "in_game_date": "2026-07-28T00:00:00",
+                "wage": 59000,
+                "market_value": 25000000,
+                "contract_length": 1,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 34,
+        "name": "Leon Bailey",
+        "nationality": "Jamaica",
+        "age": 28,
+        "height": "5'10\"",
+        "weight": 169,
+        "positions": [
+            "RM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T11:57:32.646195",
+                "in_game_date": "2026-07-28T00:00:00",
+                "position": "RM",
+                "position_type": "Outfield",
+                "acceleration": 88,
+                "sprint_speed": 84,
+                "agility": 91,
+                "balance": 88,
+                "jumping": 75,
+                "stamina": 64,
+                "strength": 61,
+                "aggression": 55,
+                "att_position": 76,
+                "composure": 73,
+                "interceptions": 28,
+                "reactions": 76,
+                "vision": 75,
+                "defensive_awareness": 45,
+                "ball_control": 80,
+                "crossing": 74,
+                "curve": 76,
+                "dribbling": 83,
+                "fk_accuracy": 72,
+                "finishing": 76,
+                "heading_accuracy": 57,
+                "long_pass": 65,
+                "long_shots": 74,
+                "penalties": 71,
+                "short_pass": 74,
+                "shot_power": 72,
+                "slide_tackle": 29,
+                "stand_tackle": 34,
+                "volleys": 73
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T11:58:06.726098",
+                "in_game_date": "2026-07-28T00:00:00",
+                "wage": 55000,
+                "market_value": 12000000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 35,
+        "name": "Finley Farbrook",
+        "nationality": "England",
+        "age": 21,
+        "height": "6'1\"",
+        "weight": 158,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T12:19:14.178161",
+                "in_game_date": "2026-08-01T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 64,
+                "sprint_speed": 67,
+                "agility": 68,
+                "balance": 69,
+                "jumping": 67,
+                "stamina": 69,
+                "strength": 70,
+                "aggression": 60,
+                "att_position": 43,
+                "composure": 55,
+                "interceptions": 62,
+                "reactions": 63,
+                "vision": 58,
+                "defensive_awareness": 62,
+                "ball_control": 65,
+                "crossing": 47,
+                "curve": 46,
+                "dribbling": 59,
+                "fk_accuracy": 38,
+                "finishing": 43,
+                "heading_accuracy": 56,
+                "long_pass": 59,
+                "long_shots": 46,
+                "penalties": 45,
+                "short_pass": 60,
+                "shot_power": 48,
+                "slide_tackle": 61,
+                "stand_tackle": 59,
+                "volleys": 38
+            }
+        ],
+        "financial_history": [],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 36,
+        "name": "Julian Araujo",
+        "nationality": "Mexico",
+        "age": 24,
+        "height": "5'9\"",
+        "weight": 154,
+        "positions": [
+            "RB"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T12:35:02.687403",
+                "in_game_date": "2026-08-04T00:00:00",
+                "position": "RB",
+                "position_type": "Outfield",
+                "acceleration": 86,
+                "sprint_speed": 80,
+                "agility": 79,
+                "balance": 71,
+                "jumping": 80,
+                "stamina": 74,
+                "strength": 70,
+                "aggression": 82,
+                "att_position": 68,
+                "composure": 69,
+                "interceptions": 73,
+                "reactions": 72,
+                "vision": 65,
+                "defensive_awareness": 75,
+                "ball_control": 69,
+                "crossing": 75,
+                "curve": 58,
+                "dribbling": 68,
+                "fk_accuracy": 37,
+                "finishing": 28,
+                "heading_accuracy": 73,
+                "long_pass": 66,
+                "long_shots": 36,
+                "penalties": 46,
+                "short_pass": 69,
+                "shot_power": 52,
+                "slide_tackle": 74,
+                "stand_tackle": 75,
+                "volleys": 34
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T12:36:07.991762",
+                "in_game_date": "2026-08-04T00:00:00",
+                "wage": 40000,
+                "market_value": 12500000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 37,
+        "name": "Callum Mcgregor",
+        "nationality": "Scotland",
+        "age": 33,
+        "height": "5'10\"",
+        "weight": 163,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-22T12:50:14.515895",
+                "in_game_date": "2026-08-12T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 77,
+                "sprint_speed": 74,
+                "agility": 83,
+                "balance": 86,
+                "jumping": 70,
+                "stamina": 93,
+                "strength": 68,
+                "aggression": 81,
+                "att_position": 78,
+                "composure": 83,
+                "interceptions": 71,
+                "reactions": 80,
+                "vision": 80,
+                "defensive_awareness": 75,
+                "ball_control": 83,
+                "crossing": 67,
+                "curve": 75,
+                "dribbling": 76,
+                "fk_accuracy": 61,
+                "finishing": 74,
+                "heading_accuracy": 54,
+                "long_pass": 79,
+                "long_shots": 79,
+                "penalties": 66,
+                "short_pass": 84,
+                "shot_power": 80,
+                "slide_tackle": 71,
+                "stand_tackle": 74,
+                "volleys": 75
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-22T12:54:55.576661",
+                "in_game_date": "2026-08-12T00:00:00",
+                "wage": 45000,
+                "market_value": 7500000,
+                "contract_length": 2,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [
+            {
+                "datetime": "2026-09-26T13:19:22.119931",
+                "in_game_date": "2026-09-23T00:00:00",
+                "injury_detail": "Bruised Elbow",
+                "time_out": 5,
+                "time_out_unit": "Days"
+            }
+        ],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 38,
+        "name": "Emanuel Emegha",
+        "nationality": "Netherlands",
+        "age": 23,
+        "height": "6'5\"",
+        "weight": 180,
+        "positions": [
+            "ST"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-24T17:45:41.548034",
+                "in_game_date": "2026-08-31T00:00:00",
+                "position": "ST",
+                "position_type": "Outfield",
+                "acceleration": 81,
+                "sprint_speed": 95,
+                "agility": 70,
+                "balance": 46,
+                "jumping": 92,
+                "stamina": 86,
+                "strength": 82,
+                "aggression": 65,
+                "att_position": 84,
+                "composure": 74,
+                "interceptions": 36,
+                "reactions": 79,
+                "vision": 66,
+                "defensive_awareness": 26,
+                "ball_control": 81,
+                "crossing": 50,
+                "curve": 64,
+                "dribbling": 70,
+                "fk_accuracy": 54,
+                "finishing": 83,
+                "heading_accuracy": 78,
+                "long_pass": 55,
+                "long_shots": 74,
+                "penalties": 72,
+                "short_pass": 74,
+                "shot_power": 81,
+                "slide_tackle": 25,
+                "stand_tackle": 24,
+                "volleys": 75
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-24T17:46:05.913917",
+                "in_game_date": "2026-08-31T00:00:00",
+                "wage": 60000,
+                "market_value": 29000000,
+                "contract_length": 4,
+                "release_clause": 0,
+                "sell_on_clause": 10
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 39,
+        "name": "Claudio Echeverri",
+        "nationality": "Argentina",
+        "age": 20,
+        "height": "5'7\"",
+        "weight": 143,
+        "positions": [
+            "CAM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-24T17:50:55.227730",
+                "in_game_date": "2026-08-31T00:00:00",
+                "position": "CAM",
+                "position_type": "Outfield",
+                "acceleration": 88,
+                "sprint_speed": 84,
+                "agility": 92,
+                "balance": 92,
+                "jumping": 59,
+                "stamina": 59,
+                "strength": 46,
+                "aggression": 54,
+                "att_position": 72,
+                "composure": 73,
+                "interceptions": 39,
+                "reactions": 71,
+                "vision": 70,
+                "defensive_awareness": 34,
+                "ball_control": 79,
+                "crossing": 74,
+                "curve": 82,
+                "dribbling": 81,
+                "fk_accuracy": 73,
+                "finishing": 70,
+                "heading_accuracy": 41,
+                "long_pass": 72,
+                "long_shots": 74,
+                "penalties": 54,
+                "short_pass": 75,
+                "shot_power": 69,
+                "slide_tackle": 41,
+                "stand_tackle": 46,
+                "volleys": 66
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-24T17:51:24.716918",
+                "in_game_date": "2026-08-31T00:00:00",
+                "wage": 56000,
+                "market_value": 14000000,
+                "contract_length": 0,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": false
+    },
+    {
+        "id": 40,
+        "name": "Nathan Matthews",
+        "nationality": "Wales",
+        "age": 17,
+        "height": "6'1\"",
+        "weight": 169,
+        "positions": [
+            "CDM"
+        ],
+        "attribute_history": [
+            {
+                "datetime": "2026-09-28T23:18:05.036886",
+                "in_game_date": "2026-10-05T00:00:00",
+                "position": "CDM",
+                "position_type": "Outfield",
+                "acceleration": 63,
+                "sprint_speed": 66,
+                "agility": 64,
+                "balance": 71,
+                "jumping": 60,
+                "stamina": 80,
+                "strength": 70,
+                "aggression": 69,
+                "att_position": 50,
+                "composure": 53,
+                "interceptions": 66,
+                "reactions": 69,
+                "vision": 52,
+                "defensive_awareness": 60,
+                "ball_control": 68,
+                "crossing": 45,
+                "curve": 43,
+                "dribbling": 50,
+                "fk_accuracy": 39,
+                "finishing": 45,
+                "heading_accuracy": 45,
+                "long_pass": 58,
+                "long_shots": 50,
+                "penalties": 41,
+                "short_pass": 73,
+                "shot_power": 55,
+                "slide_tackle": 59,
+                "stand_tackle": 68,
+                "volleys": 38
+            }
+        ],
+        "financial_history": [
+            {
+                "datetime": "2026-09-28T23:19:13.340571",
+                "in_game_date": "2026-10-05T00:00:00",
+                "wage": 11500,
+                "market_value": 2200000,
+                "contract_length": 3,
+                "release_clause": 0,
+                "sell_on_clause": 0
+            }
+        ],
+        "injury_history": [],
+        "suspension_history": [],
+        "sold": false,
+        "date_sold": null,
+        "loaned": true
+    }
+]

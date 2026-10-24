@@ -1,0 +1,21 @@
+{
+    "career_id": 3,
+    "club_name": "Ipswich",
+    "folder_name": "ipswich_3",
+    "manager_name": "Kazik Sobotnicki",
+    "created_at": "2026-09-21T22:52:01.149333",
+    "starting_season": "26/27",
+    "half_length": 10,
+    "difficulty": "Ultimate",
+    "league": "Premier League",
+    "competitions": [
+        "Premier League",
+        "FA Cup",
+        "EFL Cup",
+        "Community Shield",
+        "UEFA Champions League",
+        "UEFA Europa League",
+        "UEFA Europa Conference League",
+        "UEFA Super Cup"
+    ]
+}

@@ -1,0 +1,28 @@
+# Career dataset registry (managed by scripts/import_career.py).
+#
+# Each table is a career folder under datasets/careers/, stored exactly as the app
+# writes it. `tags` decide which workshop stages may use the career:
+#   calibration - fits weights, means/stds and anchors
+#   ood         - out-of-distribution validation only
+#   pool        - eligible for pooled analyses (e.g. possession-adjusted distance stats)
+# `ratings` is "stored" while match_rating still holds stale values from older
+# algorithm versions, or "stripped" once they have been nulled. Loaders ignore the
+# stored field either way. Tags can be edited by hand; the script preserves them.
+
+[arsenal_2]
+club = "Arsenal"
+matches = 38
+tags = ["ood", "pool"]
+ratings = "stripped"
+
+[ipswich_3]
+club = "Ipswich"
+matches = 22
+tags = ["ood", "pool"]
+ratings = "stripped"
+
+[valencia_cf_1]
+club = "Valencia CF"
+matches = 157
+tags = ["calibration", "pool"]
+ratings = "stripped"
