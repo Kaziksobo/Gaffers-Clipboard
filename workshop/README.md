@@ -82,4 +82,5 @@ Out-of-sample evidence comes from `lib/crossval.py`: for each career, a config f
 | `lib/reliable_rating.py` | Reliable-rating fit: REML variance components, player bootstrap, walk-forward backtest |
 | `calibration/` | Candidate configs (not tracked) and records of promotions |
 | `inputs/` | The external fit inputs: `anchored_means_stds.json` and `pos_shares.json` (from the calibration repo) |
-| `ratings_creation/` | `attribution_lib.py` (used by `scripts/full_attribution_report.py`) and the unused, stale pre-refit `position_*.json` |
+| `lib/attribution_lib.py` | Attribution tracing, used by `scripts/full_attribution_report.py` |
+| `reports/attribution/` | Reports written by `scripts/full_attribution_report.py` (not tracked) |

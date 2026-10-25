@@ -12,7 +12,7 @@ outfield performance in that match, plus the multi-position hybrid-blend
 section where a performance lists more than one position.
 
 Both the notebook and this script call the same report builders in
-workshop/ratings_creation/attribution_lib.py, so their output never drifts
+workshop/lib/attribution_lib.py, so their output never drifts
 apart.
 
 Quick Start
@@ -56,7 +56,7 @@ Flags
 
 --output-dir
         Base directory for reports. Defaults to
-        workshop/ratings_creation/rating_reports/. Each run writes into its
+        workshop/reports/attribution/. Each run writes into its
         own match_<id>_<timestamp>/ subfolder there.
 
 Output
@@ -84,17 +84,16 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
-ATTRIBUTION_LIB_DIR = PROJECT_ROOT / "workshop" / "ratings_creation"
-if str(ATTRIBUTION_LIB_DIR) not in sys.path:
-    sys.path.append(str(ATTRIBUTION_LIB_DIR))
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-from attribution_lib import (  # noqa: E402 # type: ignore
+from workshop.lib.attribution_lib import (  # noqa: E402
     build_full_report,
     load_config,
     run_attribution,
 )
 
-DEFAULT_REPORTS_DIR = PROJECT_ROOT / "workshop" / "ratings_creation" / "rating_reports"
+DEFAULT_REPORTS_DIR = PROJECT_ROOT / "workshop" / "reports" / "attribution"
 
 
 def resolve_match_path(match_file_arg: str | None, career: str | None) -> Path:
@@ -209,7 +208,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        help="Base directory for reports (default: rating_reports/).",
+        help="Base directory for reports (default: workshop/reports/attribution/).",
     )
     return parser.parse_args()
 

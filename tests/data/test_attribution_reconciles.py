@@ -3,19 +3,10 @@
 from __future__ import annotations
 
 import copy
-import importlib.util
-from pathlib import Path
 from typing import Any
 
 import pytest
-from workshop.lib import datasets, rating
-
-_LIB_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "workshop"
-    / "ratings_creation"
-    / "attribution_lib.py"
-)
+from workshop.lib import attribution_lib, datasets, rating
 
 # Components every performance in that position must log (whether or not they fire).
 _REQUIRED = {
@@ -41,13 +32,8 @@ _REQUIRED = {
 
 @pytest.fixture(scope="module")
 def lib() -> Any:  # noqa: ANN401
-    """Load attribution_lib.py (it lives outside any package)."""
-    spec = importlib.util.spec_from_file_location("attribution_lib", _LIB_PATH)
-    assert spec is not None
-    assert spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    """Return the attribution_lib module."""
+    return attribution_lib
 
 
 @pytest.fixture(scope="module")
