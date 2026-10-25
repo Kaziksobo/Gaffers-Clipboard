@@ -6,6 +6,14 @@ and scripts/full_attribution_report.py (full per-position report for every
 position listed on a performance) import this module so the two never drift
 apart.
 
+Every bonus and penalty is captured from the service itself: the service builds each
+one in a named helper (goal and assist bonus, mastery, defensive quality, fullback and
+centre-midfielder style, clean sheet, collapse, wasted shots, CDM pivot, striker hold-up,
+black hole and wasteful finisher) and AttributionService wraps those helpers to log the
+value they return, so the itemised bonuses always sum to the service's total. The report
+prints that sum next to the service total and flags any difference as UNATTRIBUTED;
+tests/data/test_attribution_reconciles.py enforces it on every real performance.
+
 Not wired up for goalkeeper performances — calculate_gk_rating() uses its own
 internal methods, none of which are hooked here.
 """
@@ -63,12 +71,6 @@ FBWB_POS = {"RB", "LB", "RWB", "LWB"}
 FBWB_DRIBBLE_THRESHOLD = 1.0
 FBWB_POSS_LOST_FLOOR = -1.0
 
-# Positions whose modifier method actually applies COLLAPSE_PENALTY
-# (_apply_cb_modifiers, _apply_fb_modifiers, _apply_wb_modifiers only - CDM/CM/
-# CAM/WM/Winger/ST never call it, even though some of them have a non-zero
-# CS_RATIOS entry for the clean sheet bonus).
-COLLAPSE_ELIGIBLE_POS = {"CB", "RB", "LB", "RWB", "LWB"}
-
 # The service's fixed 17-element stat profile, in dot-product order
 # (match_ratings_service.py: calculate_outfield_rating / _calculate_dot_product).
 # There is no svc._PROFILE_COLS attribute on the service - this list must be
@@ -93,20 +95,34 @@ STAT_COLS = (
     "xt_bonus_p90",
 )
 
-MASTERY_NAMES = {
-    ("tackles_p90_z", "possession_won_p90_z"): (
-        "Destroyer / Dominant Stopper / Enforcer / Third CB / Two-Way Flank"
-    ),
-    ("passes_p90_z", "dribbles_p90_z"): (
-        "Deep-Lying PM / Ball Playing Def / Progression Eng / Wide Playmaker / Complete Fwd"
-    ),
-    ("distance_sprinted_p90_z", "xt_bonus_p90_z"): "Express Train / Relentless Engine",
-    ("dribbles_p90_z", "xt_bonus_p90_z"): "Direct Threat",
-    ("passes_p90_z", "xt_bonus_p90_z"): "Wide Playmaker (Winger/CAM)",
-    ("non_goal_shots_p90_z", "xt_bonus_p90_z"): "Shadow Striker",
-    ("passes_p90_z", "tackles_p90_z"): "Two-Way Engine (WM)",
-    ("xt_bonus_p90_z", "dribbles_p90_z"): "Wide Progressor (WM)",
+# Mastery archetype names by position group and the two z-scores it gates on
+# (order as passed to _apply_mastery_bonus). Groups: LB/RB share FB, LWB/RWB WB,
+# LM/RM WM, LW/RW Winger.
+MASTERY_LABELS = {
+    ("CB", "passes_p90_z", "dribbles_p90_z"): "Ball Playing Defender",
+    ("CDM", "passes_p90_z", "dribbles_p90_z"): "Deep-Lying Playmaker",
+    ("WB", "distance_sprinted_p90_z", "xt_bonus_p90_z"): "Relentless Engine",
+    ("WB", "tackles_p90_z", "possession_won_p90_z"): "Two-Way Flank",
+    ("CAM", "passes_p90_z", "xt_bonus_p90_z"): "The Maestro",
+    ("CAM", "non_goal_shots_p90_z", "xt_bonus_p90_z"): "The Shadow Striker",
+    ("CAM", "tackles_p90_z", "possession_won_p90_z"): "The Modern 10",
+    ("WM", "passes_p90_z", "tackles_p90_z"): "Two-Way Engine",
+    ("WM", "xt_bonus_p90_z", "dribbles_p90_z"): "Wide Progressor",
+    ("Winger", "dribbles_p90_z", "xt_bonus_p90_z"): "The Direct Threat",
+    ("Winger", "passes_p90_z", "xt_bonus_p90_z"): "The Wide Playmaker",
+    ("Winger", "tackles_p90_z", "possession_won_p90_z"): "The Pressing Forward",
+    ("ST", "passes_p90_z", "dribbles_p90_z"): "The Complete Forward",
 }
+POS_GROUP = {
+    "LB": "FB", "RB": "FB", "LWB": "WB", "RWB": "WB", "LM": "WM", "RM": "WM",
+    "LW": "Winger", "RW": "Winger",
+}
+
+
+def mastery_label(pos: str, key_a: str, key_b: str) -> str:
+    """Return the archetype name for a mastery, falling back to its two z-scores."""
+    group = POS_GROUP.get(pos, pos)
+    return MASTERY_LABELS.get((group, key_a, key_b), f"{key_a} + {key_b}")
 
 
 def load_config(project_root: Path) -> tuple[dict, dict]:
@@ -160,6 +176,52 @@ class AttributionService(MatchRatingsService):
         self.attr["weights_at_dot"] = list(weights)
         return result
 
+    # -- bonus component capture -------------------------------------------------------
+    # Each helper below wraps the service method of the same name, returns exactly what
+    # the service computes, and logs it in self.attr["components"] (in call order).
+
+    def _log_component(self, label: str, value: float, text: str) -> None:
+        self.attr.setdefault("components", []).append(
+            {"label": label, "value": float(value), "text": text}
+        )
+
+    def _current_pos(self) -> str:
+        return self.attr.get("pre_modifier", {}).get("pos", "")
+
+    def _calculate_goal_bonus(
+        self, goals: float, pos: str, isolation_multiplier: float = 1.0
+    ) -> float:
+        value = super()._calculate_goal_bonus(goals, pos, isolation_multiplier)
+        if goals < 1:
+            text = "goals=0"
+        else:
+            alpha = self.GOAL_ALPHA.get(pos, 0.0)
+            raw_bonus = alpha * goals**1.5 * isolation_multiplier
+            cap = f"  [capped at {self.GOAL_BONUS_CAP}]" if raw_bonus > self.GOAL_BONUS_CAP else ""
+            text = (
+                f"alpha={alpha} x {goals:.0f}^1.5={goals**1.5:.4f} x "
+                f"iso={isolation_multiplier:.3f} = {raw_bonus:.4f}{cap}"
+            )
+        self._log_component("Goal bonus", value, text)
+        return value
+
+    def _calculate_assist_bonus(
+        self, assists: float, pos: str, isolation_multiplier: float = 1.0
+    ) -> float:
+        value = super()._calculate_assist_bonus(assists, pos, isolation_multiplier)
+        if assists < 1:
+            text = "assists=0"
+        else:
+            gamma = self.ASSIST_GAMMA.get(pos, 0.0)
+            raw_bonus = gamma * assists**1.5 * isolation_multiplier
+            cap = f"  [capped at {self.ASSIST_BONUS_CAP}]" if raw_bonus > self.ASSIST_BONUS_CAP else ""
+            text = (
+                f"gamma={gamma} x {assists:.0f}^1.5={assists**1.5:.4f} x "
+                f"iso={isolation_multiplier:.3f} = {raw_bonus:.4f}{cap}"
+            )
+        self._log_component("Assist bonus", value, text)
+        return value
+
     def _apply_mastery_bonus(
         self,
         z_scores: dict,
@@ -168,28 +230,207 @@ class AttributionService(MatchRatingsService):
         threshold: float,
         impact_scalar: float,
     ) -> float:
-        za = z_scores.get(key_a, 0.0)
-        zb = z_scores.get(key_b, 0.0)
+        value = super()._apply_mastery_bonus(z_scores, key_a, key_b, threshold, impact_scalar)
+        za, zb = z_scores.get(key_a, 0.0), z_scores.get(key_b, 0.0)
         mn = min(za, zb)
         excess = mn - threshold
-        fired = excess > 0
-        bonus = 0.0
-        if fired:
-            bonus = min(excess, self.MASTERY_EXCESS_CAP) * self.MASTERY_WEIGHT * impact_scalar
-        self.attr.setdefault("mastery_log", []).append(
-            {
-                "key_a": key_a,
-                "val_a": round(za, 4),
-                "key_b": key_b,
-                "val_b": round(zb, 4),
-                "threshold": threshold,
-                "min_z": round(mn, 4),
-                "excess": round(max(0.0, excess), 4),
-                "fired": fired,
-                "bonus": round(bonus, 4),
-            }
+        label = f"Mastery: {mastery_label(self._current_pos(), key_a, key_b)}"
+        text = f"{key_a}={za:.3f}  {key_b}={zb:.3f}  min={mn:.3f}  threshold={threshold}"
+        if excess > 0:
+            cap = f" [excess capped at {self.MASTERY_EXCESS_CAP}]" if excess > self.MASTERY_EXCESS_CAP else ""
+            text += (
+                f"  excess={excess:.3f}{cap} x weight {self.MASTERY_WEIGHT} "
+                f"x impact {impact_scalar:.3f}"
+            )
+        self._log_component(label, value, text)
+        return value
+
+    def _apply_defensive_quality_bonus(
+        self,
+        pos: str,
+        z_scores: dict,
+        opponent_goals: float,
+        opponent_xg: float,
+        minutes_played: float,
+        impact_scalar: float,
+    ) -> float:
+        value = super()._apply_defensive_quality_bonus(
+            pos, z_scores, opponent_goals, opponent_xg, minutes_played, impact_scalar
         )
-        return bonus
+        quality = self._defensive_quality(pos, z_scores, minutes_played)
+        retention = self._defensive_retention(opponent_goals, opponent_xg)
+        weights = self.weights.get(pos, {})
+        keys = self._DEF_QUALITY_STATS[pos]
+        total = sum(weights.get(k.removesuffix("_z"), 0.0) for k in keys)
+        avg = sum(weights.get(k.removesuffix("_z"), 0.0) * z_scores.get(k, 0.0) for k in keys) / total if total else 0.0
+        text = (
+            f"avg z={avg:.3f} mapped {self.DEF_QUALITY_LOW[pos]}->{self.DEF_QUALITY_HIGH[pos]} "
+            f"-> Q={quality:.3f}  x impact {impact_scalar:.3f} x weight {self.DEF_QUALITY_WEIGHT} "
+            f"x retention {retention:.2f} (conceded {int(opponent_goals)}, opp xG {opponent_xg:.2f})"
+        )
+        self._log_component(f"Defensive quality bonus ({pos})", value, text)
+        return value
+
+    def _style_text(self, parts: list[tuple[str, float, float, float]], paid: str, impact: float) -> str:
+        shown = "  |  ".join(
+            f"{name}: Q={q:.3f} x w={w} x retention {r:.2f}" for name, q, w, r in parts
+        )
+        return f"{shown}  -> better style paid: {paid} (impact {impact:.3f})"
+
+    def _apply_fb_style_bonus(
+        self,
+        z_scores: dict,
+        opponent_goals: float,
+        opponent_xg: float,
+        minutes_played: float,
+        impact_scalar: float,
+    ) -> float:
+        value = super()._apply_fb_style_bonus(
+            z_scores, opponent_goals, opponent_xg, minutes_played, impact_scalar
+        )
+        parts = []
+        for style, table in (
+            ("Stopper", self.FB_STOPPER_RETENTION),
+            ("Attacking", self.FB_ATTACKING_RETENTION),
+        ):
+            q = self._fb_style_quality(style, z_scores, minutes_played)
+            r = self._defensive_retention(opponent_goals, opponent_xg, table)
+            parts.append((style, q, self.FB_STYLE_WEIGHT[style], r))
+        paid = max(parts, key=lambda x: x[1] * x[2] * x[3])[0] if value > 0 else "none"
+        self._log_component("Fullback style bonus", value, self._style_text(parts, paid, impact_scalar))
+        return value
+
+    def _apply_cm_style_bonus(
+        self,
+        z_scores: dict,
+        opponent_goals: float,
+        opponent_xg: float,
+        minutes_played: float,
+        impact_scalar: float,
+    ) -> float:
+        value = super()._apply_cm_style_bonus(
+            z_scores, opponent_goals, opponent_xg, minutes_played, impact_scalar
+        )
+        parts = []
+        for style, table in (
+            ("BallWinner", self.CM_BALLWINNER_RETENTION),
+            ("Creative", self.CM_CREATIVE_RETENTION),
+        ):
+            q = self._cm_style_quality(style, z_scores, minutes_played)
+            r = self._defensive_retention(opponent_goals, opponent_xg, table)
+            parts.append((style, q, self.CM_STYLE_WEIGHT[style], r))
+        paid = max(parts, key=lambda x: x[1] * x[2] * x[3])[0] if value > 0 else "none"
+        self._log_component("CM style bonus", value, self._style_text(parts, paid, impact_scalar))
+        return value
+
+    def _clean_sheet_bonus(
+        self, ratio_key: str, opponent_goals: float, opponent_xg: float, minutes_played: float
+    ) -> float:
+        value = super()._clean_sheet_bonus(ratio_key, opponent_goals, opponent_xg, minutes_played)
+        if opponent_goals != 0:
+            text = f"opponent scored {int(opponent_goals)} - no bonus"
+        else:
+            ramp = min(minutes_played, 60.0) / 60.0
+            ratio = self.CS_RATIOS[ratio_key]
+            if opponent_xg <= 1.0:
+                tier_val, tier = self.CS_CB_LOW_XG, "low xG (<=1.0)"
+            elif opponent_xg < 2.0:
+                tier_val, tier = self.CS_CB_MID_XG, "mid xG (1.0-2.0)"
+            else:
+                tier_val, tier = self.CS_CB_HIGH_XG, "high xG (>=2.0)"
+            text = (
+                f"{tier}, xG={opponent_xg:.2f}: tier {tier_val} x ratio({ratio_key})={ratio} "
+                f"x ramp={ramp:.3f}"
+            )
+        self._log_component("Clean sheet", value, text)
+        return value
+
+    def _collapse_penalty(
+        self, opponent_goals: float, minutes_played: float, magnitude: float
+    ) -> float:
+        value = super()._collapse_penalty(opponent_goals, minutes_played, magnitude)
+        if value:
+            text = f"opp_goals={int(opponent_goals)}>=3, mins={minutes_played}>=60 -> -{magnitude}"
+        else:
+            text = f"needs 3+ conceded and 60+ minutes (conceded {int(opponent_goals)}, mins {minutes_played})"
+        self._log_component("Collapse penalty", value, text)
+        return value
+
+    def _wasted_shots_penalty(self, performance_metrics: dict, per_shot: float) -> float:
+        value = super()._wasted_shots_penalty(performance_metrics, per_shot)
+        goals = performance_metrics.get("goals", 0)
+        assists = performance_metrics.get("assists", 0)
+        wasted = performance_metrics.get("shots", 0) - goals
+        if value:
+            text = f"wasted shots={wasted:.0f} (>=3) with no goal or assist: -({wasted:.0f}-2) x {per_shot}"
+        else:
+            text = f"needs 3+ wasted shots and no goal or assist (wasted={wasted:.0f}, goals+assists={goals + assists:.0f})"
+        self._log_component("Wasted-shots penalty", value, text)
+        return value
+
+    def _cdm_pivot_bonus(self, performance_metrics: dict, minutes_played: float) -> float:
+        value = super()._cdm_pivot_bonus(performance_metrics, minutes_played)
+        poss_lost = performance_metrics.get("possession_lost", 0.0)
+        pass_acc = performance_metrics.get("pass_accuracy", 0.0)
+        raw_passes = performance_metrics.get("passes", 0.0)
+        gate = (
+            minutes_played >= self.CDM_PIVOT_MIN_MINUTES
+            and pass_acc >= self.CDM_PIVOT_MIN_PASS_ACC
+            and raw_passes >= self.CDM_PIVOT_MIN_PASSES_RAW
+        )
+        tier = (
+            "Perfect Metronome (poss_lost==0)"
+            if gate and poss_lost == 0
+            else "Reliable Shift (poss_lost<=2)" if gate and poss_lost <= 2 else "no tier"
+        )
+        text = (
+            f"gate {'OPEN' if gate else 'CLOSED'}: mins>={self.CDM_PIVOT_MIN_MINUTES} ({minutes_played}), "
+            f"pass_acc>={self.CDM_PIVOT_MIN_PASS_ACC} ({pass_acc}), "
+            f"passes>={self.CDM_PIVOT_MIN_PASSES_RAW} ({raw_passes:.2f}); poss_lost={poss_lost:.0f} -> {tier}"
+        )
+        self._log_component("CDM Reliable Pivot", value, text)
+        return value
+
+    def _st_holdup_bonus(self, performance_metrics: dict) -> float:
+        value = super()._st_holdup_bonus(performance_metrics)
+        inv = sum(performance_metrics.get(k, 0) for k in ("passes", "dribbles", "shots"))
+        lost = performance_metrics.get("possession_lost", 0)
+        ratio = inv / max(lost, 1.0)
+        text = (
+            f"involvement={inv:.1f} (>= {self.ST_HOLDUP_MIN_INV}), involvement/lost={ratio:.2f} "
+            f"(> {self.ST_HOLDUP_MIN_RATIO}); lost={lost:.0f}"
+        )
+        if value:
+            text += f" -> min(excess x {self.ST_HOLDUP_SCALE}, cap {self.ST_HOLDUP_CAP})"
+        self._log_component("ST Hold-Up bonus", value, text)
+        return value
+
+    def _st_blackhole_penalty(self, performance_metrics: dict) -> float:
+        value = super()._st_blackhole_penalty(performance_metrics)
+        inv = sum(performance_metrics.get(k, 0) for k in ("passes", "dribbles", "shots"))
+        lost = performance_metrics.get("possession_lost", 0)
+        text = (
+            f"lost={lost:.0f} (> {self.ST_BLACKHOLE_MIN_POSS_LOST}), lost/involvement="
+            f"{lost / max(inv, 1.0):.2f} (> {self.ST_BLACKHOLE_MIN_RATIO})"
+        )
+        if value:
+            text += f" -> -min(excess x {self.ST_BLACKHOLE_SCALE}, cap {self.ST_BLACKHOLE_CAP})"
+        self._log_component("ST Black Hole penalty", value, text)
+        return value
+
+    def _st_wasteful_penalty(self, performance_metrics: dict, goals: float) -> float:
+        value = super()._st_wasteful_penalty(performance_metrics, goals)
+        shots = performance_metrics.get("shots", 0)
+        est_xg = shots * self.XG_PER_SHOT
+        deficit = est_xg - goals
+        text = (
+            f"shots={shots:.0f} (> {self.ST_WASTEFUL_MIN_SHOTS}), est xG={est_xg:.2f}, "
+            f"goals={goals:.0f}, deficit={deficit:.2f} (> {self.ST_WASTEFUL_MIN_DEFICIT})"
+        )
+        if value:
+            text += f" -> -min(deficit x {self.ST_WASTEFUL_SCALE}, cap {self.ST_WASTEFUL_CAP})"
+        self._log_component("ST Wasteful Finisher penalty", value, text)
+        return value
 
     def _apply_pos_modifiers(
         self,
@@ -209,7 +450,7 @@ class AttributionService(MatchRatingsService):
             "opponent_goals": opponent_goals,
             "opponent_xg": round(opponent_xg, 3),
             "minutes_played": minutes_played,
-            "impact_scalar": round(impact_scalar, 4),
+            "impact_scalar": impact_scalar,
             "isolation_multiplier": round(isolation_multiplier, 4),
             "goals": performance_metrics.get("goals", 0),
             "assists": performance_metrics.get("assists", 0),
@@ -218,7 +459,7 @@ class AttributionService(MatchRatingsService):
             "pass_accuracy": performance_metrics.get("pass_accuracy", 0),
             "possession_lost": performance_metrics.get("possession_lost", 0),
         }
-        self.attr["mastery_log"] = []
+        self.attr["components"] = []
         bonus = super()._apply_pos_modifiers(
             base_rating=base_rating,
             z_scores=z_scores,
@@ -537,7 +778,9 @@ def build_position_report(
     perf_eff_eligible = goals_raw >= 1 and non_goal_shots_smoothed == 0.0
     pos_floors = dict(svc.Z_SCORE_FLOORS.get(pos, {}))
     fbwb_eligible = pos in FBWB_POS
-    dribbles_z_pre = pre_floor.get("dribbles_p90_z", 0.0)
+    # The service tests the dribble gate after the position floors, so read the
+    # dribble z that actually reached the dot product.
+    dribbles_z_pre = z_scores_floored.get("dribbles_p90_z", pre_floor.get("dribbles_p90_z", 0.0))
     fbwb_gate_open = fbwb_eligible and dribbles_z_pre > FBWB_DRIBBLE_THRESHOLD
 
     # Every floor the service can apply - perfect-efficiency fix, static
@@ -560,7 +803,7 @@ def build_position_report(
     if fbwb_eligible:
         z_key = "possession_lost_p90_z"
         pre = pre_floor.get(z_key, 0.0)
-        post = z_scores_floored.get(z_key, pre) if fbwb_gate_open else pre
+        post = z_scores_floored.get(z_key, pre)  # what the service actually used
         comparator = ">" if fbwb_gate_open else "<="
         reason = (
             f"FB/WB dribble-forgiveness gate: dribbles_p90_z={dribbles_z_pre:.4f} "
@@ -607,6 +850,9 @@ def build_position_report(
         )
     add(f"  {'-' * 90}")
     add(f"  {'DOT PRODUCT':<26} {'':>9} {'':>12} {'':>3} {dot:>+14.5f}")
+    contrib_sum = sum(c for _, _, _, c in contribs)
+    check = "OK" if abs(contrib_sum - dot) < 1e-9 else f"MISMATCH (itemised {contrib_sum:+.5f})"
+    add(f"  Check: sum of the contributions above vs the service's dot product: {check}")
     add("  (Fl: F = a floor from the section above changed this z-score before the dot product)")
     add("")
     impact = pm["impact_scalar"]
@@ -614,146 +860,31 @@ def build_position_report(
     adjusted = dot if dot >= 0 else dot * impact
     add(f"  Impact scalar: sqrt(min({minutes},90)/90) = {impact:.4f}  [{dot_str}]")
     add(f"  Adjusted dot:  {adjusted:.5f}")
-    add(f"  BASE RATING:   sigmoid({adjusted:.5f}) = {pm['base_rating']:.4f}")
+    sig = svc._apply_sigmoid_transformation(raw_score=adjusted)
+    sig_check = "OK" if abs(sig - pm["base_rating"]) < 1e-9 else f"MISMATCH (recomputed {sig:.4f})"
+    add(f"  BASE RATING:   sigmoid({adjusted:.5f}) = {pm['base_rating']:.4f}  [{sig_check}]")
     add("")
 
-    add("BONUSES")
-    goals = pm["goals"]
-    assists = pm["assists"]
-    iso = pm["isolation_multiplier"]
-    alpha_goal = svc.GOAL_ALPHA.get(pos, 0.0)
-    if goals >= 1:
-        t_goals = goals**1.5
-        raw_goal_bonus = alpha_goal * t_goals * iso
-        gb = min(raw_goal_bonus, svc.GOAL_BONUS_CAP)
-        cap_note = (
-            f"  [capped at {svc.GOAL_BONUS_CAP}]"
-            if raw_goal_bonus > svc.GOAL_BONUS_CAP
-            else ""
-        )
+    add("BONUSES AND PENALTIES (every component the service applied, in order)")
+    components = snapshot.get("components", [])
+    add(f"  {'Component':<36} {'Status':<13} {'Value':>9}  Detail")
+    add(f"  {'-' * 100}")
+    for comp in components:
+        value = comp["value"]
+        status = "did not fire" if abs(value) < 1e-12 else ("PENALTY" if value < 0 else "FIRED")
+        add(f"  {comp['label']:<36} {status:<13} {value:>+9.4f}  {comp['text']}")
+    if not components:
+        add(f"  No bonus components were logged for position '{pos}'.")
+    itemised = sum(c["value"] for c in components)
+    service_total = snapshot["total_bonus"]
+    add(f"  {'-' * 100}")
+    add(f"  {'Sum of the components above':<36} {'':<13} {itemised:>+9.4f}")
+    add(f"  {'Service total bonus':<36} {'':<13} {service_total:>+9.4f}")
+    if abs(itemised - service_total) > 1e-9:
         add(
-            f"  Goal bonus         FIRED          {gb:>+8.4f}  "
-            f"(alpha={alpha_goal} x {goals:.0f}^1.5={t_goals:.4f} x iso={iso:.3f} "
-            f"= {raw_goal_bonus:.4f}{cap_note})"
+            f"  {'UNATTRIBUTED':<36} {'':<13} {service_total - itemised:>+9.4f}"
+            "  <-- part of the service's bonus this report does not itemise"
         )
-    else:
-        add(f"  Goal bonus         did not fire   {0.0:>+8.4f}  (goals=0)")
-    gamma_assist = svc.ASSIST_GAMMA.get(pos, 0.0)
-    if assists >= 1:
-        t_assists = assists**1.5
-        raw_assist_bonus = gamma_assist * t_assists * iso
-        ab = min(raw_assist_bonus, svc.ASSIST_BONUS_CAP)
-        cap_note = (
-            f"  [capped at {svc.ASSIST_BONUS_CAP}]"
-            if raw_assist_bonus > svc.ASSIST_BONUS_CAP
-            else ""
-        )
-        add(
-            f"  Assist bonus       FIRED          {ab:>+8.4f}  "
-            f"(gamma={gamma_assist} x {assists:.0f}^1.5={t_assists:.4f} x iso={iso:.3f} "
-            f"= {raw_assist_bonus:.4f}{cap_note})"
-        )
-    else:
-        add(f"  Assist bonus       did not fire   {0.0:>+8.4f}  (assists=0)")
-
-    add("")
-    add("  Mastery conditions (bonus fires when both z-scores exceed the threshold):")
-    for m in snapshot.get("mastery_log", []):
-        key = (m["key_a"], m["key_b"])
-        name = MASTERY_NAMES.get(key, f"{m['key_a']} + {m['key_b']}")
-        status = "FIRED" if m["fired"] else "did not fire"
-        add(f"    {name}")
-        add(
-            f"      {m['key_a']}={m['val_a']:.3f}  {m['key_b']}={m['val_b']:.3f}  "
-            f"min={m['min_z']:.3f}  threshold={m['threshold']}  "
-            f"-> {status} ({m['bonus']:>+.4f})"
-        )
-
-    if pos == "CM":
-        # Progression Engine is computed inline in _apply_cm_modifiers (a flat
-        # base-excess tier, not routed through _apply_mastery_bonus), so it's
-        # never captured by mastery_log above - shown here directly instead,
-        # from the same z_scores_floored/CM_PROGRESSION_BASE_EXCESS the service uses.
-        passes_z = z_scores_floored.get("passes_p90_z", 0.0)
-        dribbles_z = z_scores_floored.get("dribbles_p90_z", 0.0)
-        progression_min = min(passes_z, dribbles_z)
-        add("    Progression Engine (CM)")
-        if progression_min > 1.2:
-            excess = (progression_min - 1.2) + svc.CM_PROGRESSION_BASE_EXCESS
-            capped_excess = min(excess, svc.MASTERY_EXCESS_CAP)
-            prog_bonus = capped_excess * svc.MASTERY_WEIGHT * impact
-            cap_note = (
-                f"  [excess capped at {svc.MASTERY_EXCESS_CAP}]"
-                if excess > svc.MASTERY_EXCESS_CAP
-                else ""
-            )
-            add(
-                f"      passes_p90_z={passes_z:.3f}  dribbles_p90_z={dribbles_z:.3f}  "
-                f"min={progression_min:.3f}  threshold=1.2  "
-                f"base_excess={svc.CM_PROGRESSION_BASE_EXCESS}  "
-                f"-> FIRED ({prog_bonus:>+.4f}{cap_note})"
-            )
-        else:
-            add(
-                f"      passes_p90_z={passes_z:.3f}  dribbles_p90_z={dribbles_z:.3f}  "
-                f"min={progression_min:.3f}  threshold=1.2  -> did not fire (+0.0000)"
-            )
-
-    opponent_goals = pm["opponent_goals"]
-    if pos in COLLAPSE_ELIGIBLE_POS and opponent_goals >= 3 and minutes >= 60:
-        add(
-            f"  Collapse penalty   FIRED          {-svc.COLLAPSE_PENALTY:>+8.4f}  "
-            f"(opp_goals={int(opponent_goals)}, mins={minutes}>=60)"
-        )
-
-    if pos == "CDM":
-        poss_lost = pm["possession_lost"]
-        pass_acc = pm["pass_accuracy"]
-        raw_passes = snapshot["normalized_metrics"].get("passes", 0.0)
-        gate = (
-            minutes >= svc.CDM_PIVOT_MIN_MINUTES
-            and pass_acc >= svc.CDM_PIVOT_MIN_PASS_ACC
-            and raw_passes >= svc.CDM_PIVOT_MIN_PASSES_RAW
-        )
-        add("")
-        add(
-            f"  CDM Reliable Pivot gate: {'OPEN' if gate else 'CLOSED'} "
-            f"(mins>={svc.CDM_PIVOT_MIN_MINUTES}: {minutes}, "
-            f"pass_acc>={svc.CDM_PIVOT_MIN_PASS_ACC}: {pass_acc}, "
-            f"passes_raw>={svc.CDM_PIVOT_MIN_PASSES_RAW}: {raw_passes:.2f})"
-        )
-        if gate:
-            if poss_lost == 0:
-                add(f"    Perfect Metronome: poss_lost==0 -> +{svc.CDM_PIVOT_PERFECT_METRONOME}")
-            elif poss_lost <= 2:
-                add(
-                    f"    Reliable Shift: poss_lost={poss_lost}<=2 -> "
-                    f"+{svc.CDM_PIVOT_RELIABLE_SHIFT}"
-                )
-            else:
-                add(f"    poss_lost={poss_lost} > 2 - neither tier fires")
-
-    opp_xg_val = pm["opponent_xg"]
-    cs_ratio = svc.CS_RATIOS.get(pos, 0.0)
-    add("")
-    if opponent_goals == 0 and cs_ratio > 0:
-        ramp = min(minutes, 60.0) / 60.0
-        if opp_xg_val <= 1.0:
-            tier_val, tier_name = svc.CS_CB_LOW_XG, "low xG (<=1.0)"
-        elif opp_xg_val < 2.0:
-            tier_val, tier_name = svc.CS_CB_MID_XG, "mid xG (1.0-2.0)"
-        else:
-            tier_val, tier_name = svc.CS_CB_HIGH_XG, "high xG (>=2.0)"
-        cs_bonus = tier_val * cs_ratio * ramp
-        add(
-            f"  Clean sheet ({tier_name}, xG={opp_xg_val}): "
-            f"{tier_val} x ratio={cs_ratio} x ramp={ramp:.3f} = {cs_bonus:+.4f}"
-        )
-    elif opponent_goals == 0:
-        add(f"  Clean sheet: {pos} has CS ratio=0 - no bonus")
-    else:
-        add(f"  Clean sheet: opponent scored {int(opponent_goals)} - no bonus")
-
     add("")
     total_bonus = snapshot["total_bonus"]
     add(f"  TOTAL BONUS: {total_bonus:+.4f}")
