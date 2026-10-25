@@ -173,6 +173,15 @@ def derive_season(date_str: str) -> str:
     return f"{(year - 1) % 100:02d}/{year:02d}"
 
 
+def season_start_year(date: datetime) -> int:
+    """Return the calendar year in which a date's football season started.
+
+    July (month 7) onward starts a new season, matching ``derive_season``.
+    E.g. 01/07/29 -> 2029, 15/01/30 -> 2029.
+    """
+    return date.year if date.month >= 7 else date.year - 1
+
+
 def safe_float_conversion(value: str | int | float | None) -> float | None:
     """Safely converts a value to a float, returning None if conversion fails.
 

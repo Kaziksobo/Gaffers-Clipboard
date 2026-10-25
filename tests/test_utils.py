@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import datetime as dt
+
 import pytest
 
 from src.utils import (
@@ -14,6 +16,7 @@ from src.utils import (
     safe_int_conversion,
     safe_normalize_name,
     scale_coordinates,
+    season_start_year,
 )
 
 # ---------------------------------------------------------------------------
@@ -82,6 +85,39 @@ def test_safe_float_conversion(value: object, expected: float | None) -> None:
 def test_derive_season(date_str: str, expected_season: str) -> None:
     """derive_season returns the correct football season string for a date."""
     assert derive_season(date_str) == expected_season
+
+
+# ---------------------------------------------------------------------------
+# season_start_year
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("date", "expected_year"),
+    [
+        (dt.datetime(2029, 6, 30), 2028),
+        (dt.datetime(2029, 7, 1), 2029),
+        (dt.datetime(2029, 12, 31), 2029),
+        (dt.datetime(2030, 1, 15), 2029),
+        (dt.datetime(2030, 6, 30), 2029),
+        (dt.datetime(2030, 7, 1), 2030),
+    ],
+)
+def test_season_start_year(date: dt.datetime, expected_year: int) -> None:
+    """season_start_year returns the calendar year in which the season started."""
+    assert season_start_year(date) == expected_year
+
+
+@pytest.mark.parametrize(
+    "date_str",
+    ["01/07/24", "31/08/24", "01/06/24", "15/01/25", "30/06/25"],
+)
+def test_season_start_year_agrees_with_derive_season(date_str: str) -> None:
+    """season_start_year and derive_season place every date in the same season."""
+    date = dt.datetime.strptime(date_str, "%d/%m/%y")
+    expected_prefix = f"{season_start_year(date) % 100:02d}/"
+
+    assert derive_season(date_str).startswith(expected_prefix)
 
 
 # ---------------------------------------------------------------------------

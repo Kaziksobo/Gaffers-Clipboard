@@ -88,3 +88,24 @@ class PlayerForm(TypedDict):
     current: float | None
     form_score: float | None
     matches_since_last_rated: int
+
+
+class ReliableRating(TypedDict):
+    """A player's estimated underlying quality, returned by the analytics engine.
+
+    Internal-only: consumed by the lineup optimiser and other analytics, never
+    displayed directly.
+
+    Attributes:
+        player_id: Unique ID of the player.
+        rating: Estimated underlying quality on the match-rating scale, shrunk
+            toward the population mean the fewer rated appearances the player has.
+        n: Number of rated appearances the estimate is based on.
+        std_error: Posterior standard deviation of ``rating``; smaller means
+            more certain.
+    """
+
+    player_id: int
+    rating: float
+    n: int
+    std_error: float

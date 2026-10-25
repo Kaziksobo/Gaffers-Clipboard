@@ -1,22 +1,24 @@
 """
-AnalyticsEngine - match rating orchestration.
+AnalyticsEngine - analytics orchestration.
 
 This module defines `AnalyticsEngine`, a lightweight coordinator that loads
-rating configuration and delegates match rating calculations to analytics
-services.
+analytics configuration and delegates calculations to analytics services.
 
 Responsibilities:
 - Load performance weights and mean/std configuration from config files.
-- Instantiate analytics services with configuration.
+- Lazily instantiate analytics services, passing configuration to those that
+  need it.
 - Route player performance payloads to GK or outfield rating pipelines.
+- Run per-player analytics (form scores, reliable ratings) over rating
+  histories supplied by the caller.
 
-The engine focuses on orchestration and configuration loading; rating logic
+The engine focuses on orchestration and configuration loading; analytics logic
 lives in analytics services.
 """
 
 import json
 import logging
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 from typing import cast
 
@@ -25,6 +27,7 @@ from src.contracts.analytics import (
     PerformanceWeightsMap,
     PlayerForm,
     PlayerRatingHistory,
+    ReliableRating,
 )
 from src.contracts.backend import (
     JsonValue,
@@ -32,7 +35,9 @@ from src.contracts.backend import (
     PlayerPerformancePayload,
 )
 from src.services import analytics as analytics_services
+from src.services.analytics.form_scores_service import FormScoresService
 from src.services.analytics.match_ratings_service import MatchRatingsService
+from src.services.analytics.reliable_rating_service import ReliableRatingService
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +64,9 @@ class AnalyticsEngine:
             None
         )
         self._form_scores_service: analytics_services.FormScoresService | None = None
+        self._reliable_rating_service: (
+            analytics_services.ReliableRatingService | None
+        ) = None
 
     def _load_config[T](self, filename: str) -> T:
         """Load a JSON config file from `config/`, caching the parsed result.
@@ -178,5 +186,37 @@ class AnalyticsEngine:
         self, histories: Sequence[PlayerRatingHistory]
     ) -> list[PlayerForm]:
         """Calculate form for each player history, preserving input order."""
-        service = self._get_form_scores_service()
+        service: FormScoresService = self._get_form_scores_service()
         return [service.calculate_player_form(history) for history in histories]
+
+    def _get_reliable_rating_service(
+        self,
+    ) -> analytics_services.ReliableRatingService:
+        """Return the lazily created ReliableRatingService (no config required)."""
+        if self._reliable_rating_service is None:
+            self._reliable_rating_service = analytics_services.ReliableRatingService()
+        return self._reliable_rating_service
+
+    def calculate_reliable_ratings(
+        self, histories: Sequence[PlayerRatingHistory]
+    ) -> dict[int, ReliableRating]:
+        """Calculate reliable ratings for each player history, keyed by player ID.
+
+        Delegates the per-player estimate to the reliable rating service, then drops
+        players with no rated appearances, since the prior alone is not a rating.
+        Callers should therefore look players up with ``.get()``. The estimates are
+        internal-only and feed downstream analytics such as the lineup optimiser.
+
+        Args:
+            histories (Sequence[PlayerRatingHistory]): One history per player, each
+                with rated appearances in chronological order.
+
+        Returns:
+            dict[int, ReliableRating]: Reliable ratings keyed by player ID. Players
+                with no rated appearances are omitted.
+        """
+        service: ReliableRatingService = self._get_reliable_rating_service()
+        ratings: Iterator[ReliableRating | None] = (
+            service.calculate_player_rating(h) for h in histories
+        )
+        return {r["player_id"]: r for r in ratings if r is not None}
