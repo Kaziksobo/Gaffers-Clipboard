@@ -202,39 +202,14 @@
         ├── test_schemas.py
         ├── test_utils.py
     └── 📁workshop
-        └── 📁archive
-            ├── cb_weights_calculations.ipynb
-            ├── cdm_weights_calculations.ipynb
-            ├── cm_weights_calculations.ipynb
-            ├── compute_ns_quality_stats.ipynb
-            ├── fullback_weights_calculations.ipynb
-            ├── gk_ratings_calculations.ipynb
-            ├── goal_rescue_investigation.ipynb
-            ├── goal_rescue_retuning.ipynb
-            ├── holdout_gate.ipynb
-            ├── holdout_gate_arsenal.json
-            ├── option_a_baseline.ipynb
-            ├── option_a_bonus_calibration.ipynb
-            ├── rating_attribution.ipynb
-            ├── rating_ceiling_comparability.ipynb
-            ├── rating_construct_validity.ipynb
-            ├── rating_distributions.ipynb
-            ├── rating_goal_rescue.ipynb
-            ├── rating_output_diagnostics.ipynb
-            ├── rating_predictive_validity.ipynb
-            ├── rating_reliability.ipynb
-            ├── rating_scale_comparability.ipynb
-            ├── rating_sensitivity.ipynb
-            ├── rating_sensitivity_tornado.ipynb
-            ├── ratings_testing.ipynb
-            ├── README.md
-            ├── st_weights_calculations.ipynb
-            ├── unknown_pos_weights_calculations.ipynb
-            ├── winger_weights_calculations.ipynb
         └── 📁calibration
             └── 📁records
                 ├── refit_005d563f.json
                 ├── refit_80fbfa7a.json
+        └── 📁inputs
+            ├── anchored_means_stds.json
+            ├── pos_shares.json
+            ├── README.md
         └── 📁lib
             ├── __init__.py
             ├── crossval.py
@@ -250,12 +225,9 @@
             ├── sweep.py
             ├── variants.py
         └── 📁ratings_creation
-            ├── anchored_means_stds.json
             ├── attribution_lib.py
-            ├── pos_shares.json
             ├── position_means_stds.json
             ├── position_weights.json
-        └── 📁ratings_validation
         └── 📁validation
             ├── 00_fit_stability.ipynb
             ├── 01_construct_validity.ipynb

@@ -41,7 +41,7 @@ from sklearn.covariance import MinCovDet
 
 from workshop.lib import datasets
 
-INPUTS_DIR = datasets.PROJECT_ROOT / "workshop" / "ratings_creation"
+INPUTS_DIR = datasets.PROJECT_ROOT / "workshop" / "inputs"
 LIVE_CONFIG_DIR = datasets.PROJECT_ROOT / "config"
 WEIGHTS_FILE = "performance_weights.json"
 MEANS_STDS_FILE = "performance_means_stds.json"

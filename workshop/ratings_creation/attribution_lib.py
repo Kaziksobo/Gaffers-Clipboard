@@ -1,6 +1,6 @@
 """Shared attribution logic for tracing the outfield match-ratings algorithm.
 
-Both rating_attribution.ipynb (archived in workshop/archive/; interactive,
+Both rating_attribution.ipynb (retired, in git history; interactive,
 one-position-at-a-time walkthrough)
 and scripts/full_attribution_report.py (full per-position report for every
 position listed on a performance) import this module so the two never drift

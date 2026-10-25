@@ -261,7 +261,7 @@ Offline only: `workshop/lib` is excluded from ruff and ty (the tests that cover 
 - **Config generation:** `uv run python scripts/refit_config.py [--import <export folder>] [--promote]` fits weights, means and stds on all careers (`workshop/lib/fit.py`: PCA with MCD per position, the goalkeeper heuristic, rare-event std floor, derived wing-back/wide-midfielder/CAM sections blended into their own fits as rows accumulate). Without `--promote` it only previews. `config/fit_manifest.json` records what the live config was fitted on; tests refit those sources and require an exact match.
 - **Validation:** `uv run python scripts/run_validation.py` executes `workshop/validation/*.ipynb` (fit stability via leave-one-career-out, construct validity, distributions, goal rescue, reliability, sensitivity) against the live config; narrative is computed so nothing stale is stored.
 - **Hand-set bonus values** (goal alpha, assist gamma, wasteful-finisher scale, goalkeeper floors) are constants in `match_ratings_service.py`, changed by hand.
-- `workshop/archive/` holds retired notebooks (including the original `*_weights_calculations` notebooks); see its README.
+- The original `*_weights_calculations` notebooks and the pre-consolidation validation notebooks are retired; they remain in git history.
 
 ### Upcoming Phase 8 features (from roadmap)
 Any feature that involves training follows the offline-weight / online-inference pattern:

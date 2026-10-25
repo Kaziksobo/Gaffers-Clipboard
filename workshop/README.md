@@ -43,7 +43,7 @@ To roll back: copy the three files from the backup folder over `config/` (or `gi
   `DirectFitPolicy.min_rows` (85) rows its own fit blends in, reaching full weight at 250. The own-fit specs and
   philosophies are in `fit.DIRECT_SPECS`; **they are placeholders copied from the proxies**, to be set to the role's own
   values before the blend carries real weight.
-- **Anchored inputs** (`ratings_creation/anchored_means_stds.json`, `pos_shares.json`) come from the calibration repo and are
+- **Anchored inputs** (`inputs/anchored_means_stds.json`, `inputs/pos_shares.json`) come from the calibration repo and are
   not refitted. About a third of each position's stats are anchored; the rest take their mean and std from the pooled rows.
 - **Rare-event floor** (`fit.RareEventPolicy`): goals, assists and offsides with few events get a floor under their std
   (0.08 up to 10 events, falling to zero by 50), so one event cannot produce an extreme z-score.
@@ -77,5 +77,5 @@ Out-of-sample evidence comes from `lib/crossval.py`: for each career, a config f
 | `lib/fit.py`, `lib/refit.py`, `lib/crossval.py` | The fit, rare-event and direct-fit policies, promotion, leave-one-career-out |
 | `lib/gate.py`, `lib/inference.py`, `lib/reliability.py`, `lib/sweep.py`, `lib/decompose.py`, `lib/variants.py`, `lib/report.py` | Analysis helpers |
 | `calibration/` | Candidate configs (not tracked) and records of promotions |
-| `ratings_creation/` | The external fit inputs (`anchored_means_stds.json`, `pos_shares.json`), `attribution_lib.py`, and the stale pre-refit `position_*.json` |
-| `archive/` | Retired notebooks awaiting removal by the owner (see its README) |
+| `inputs/` | The external fit inputs: `anchored_means_stds.json` and `pos_shares.json` (from the calibration repo) |
+| `ratings_creation/` | `attribution_lib.py` (used by `scripts/full_attribution_report.py`) and the unused, stale pre-refit `position_*.json` |
