@@ -96,6 +96,4 @@ def band(icc: float) -> str:
         return "poor"
     if icc < 0.75:
         return "moderate"
-    if icc < 0.9:
-        return "good"
-    return "excellent"
+    return "good" if icc < 0.9 else "excellent"

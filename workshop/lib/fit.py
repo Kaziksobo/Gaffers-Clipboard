@@ -139,9 +139,7 @@ class RareEventPolicy:
 
     def apply(self, std: float, events: int) -> float:
         """Return ``std`` raised to the floor for this event count (0 events: unchanged)."""
-        if events == 0:
-            return std
-        return max(std, self.floor_for(events))
+        return std if events == 0 else max(std, self.floor_for(events))
 
 
 @dataclass(frozen=True)
