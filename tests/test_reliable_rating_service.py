@@ -42,6 +42,7 @@ def pinned_constants(monkeypatch: pytest.MonkeyPatch) -> None:
     numbers must not depend on their live values. Drift defaults to zero; tests
     that exercise drift patch it themselves.
     """
+    monkeypatch.setattr(ReliableRatingService, "PRIOR_MEAN", 6.0)
     monkeypatch.setattr(ReliableRatingService, "PRIOR_VARIANCE", 0.25)
     monkeypatch.setattr(ReliableRatingService, "OBSERVATION_VARIANCE", 0.58)
     monkeypatch.setattr(ReliableRatingService, "SEASON_DRIFT_VARIANCE", 0.0)

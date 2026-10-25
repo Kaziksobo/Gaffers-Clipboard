@@ -67,6 +67,7 @@ kept.
 | `03_goal_rescue` | Does a goal paper over a bad performance? |
 | `04_reliability` | Is a rating stable under off-by-one input noise (ICC), by position and for goalkeepers? |
 | `05_sensitivity` | Which hand-set constants actually move ratings? |
+| `06_reliable_rating` | How much of a match rating is stable player quality, and what are the reliable-rating constants (prior mean, between and within variance, drift)? |
 
 Out-of-sample evidence comes from `lib/crossval.py`: for each career, a config fitted on all the others rates it.
 
@@ -78,6 +79,7 @@ Out-of-sample evidence comes from `lib/crossval.py`: for each career, a config f
 | `lib/datasets.py`, `lib/rating.py` | Load careers as frames; recompute ratings with the live (or a candidate) config |
 | `lib/fit.py`, `lib/refit.py`, `lib/crossval.py` | The fit, rare-event and direct-fit policies, promotion, leave-one-career-out |
 | `lib/gate.py`, `lib/inference.py`, `lib/reliability.py`, `lib/sweep.py`, `lib/decompose.py`, `lib/variants.py`, `lib/report.py` | Analysis helpers |
+| `lib/reliable_rating.py` | Reliable-rating fit: REML variance components, player bootstrap, walk-forward backtest |
 | `calibration/` | Candidate configs (not tracked) and records of promotions |
 | `inputs/` | The external fit inputs: `anchored_means_stds.json` and `pos_shares.json` (from the calibration repo) |
 | `ratings_creation/` | `attribution_lib.py` (used by `scripts/full_attribution_report.py`) and the unused, stale pre-refit `position_*.json` |

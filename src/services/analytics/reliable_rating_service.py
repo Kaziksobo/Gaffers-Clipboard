@@ -41,26 +41,26 @@ class ReliableRatingService:
 
     # ── Prior ─────────────────────────────────────────────────────────────────────
 
-    # Population mean of match ratings (the ratings sigmoid midpoint). Every
-    # player's estimate starts here and is pulled back toward it when evidence is thin.
-    PRIOR_MEAN: Final[float] = 6.0
+    # Grand mean of match ratings (row-pooled REML on the fitted careers). Every
+    # estimate starts here and is pulled back toward it when evidence is thin. Not the
+    # sigmoid midpoint (6.0): real ratings average higher. Fitted on top-flight
+    # careers only (Arsenal, Valencia, Ipswich), so it may sit too high for
+    # lower-level squads; it shifts as more varied careers are added and notebook 06
+    # is re-run.
+    PRIOR_MEAN: Final[float] = 6.442
 
-    # Between-player variance of true quality (sigma_b^2). Provisional: a rough
-    # estimate from early data, to be fitted offline in the workshop notebook.
-    PRIOR_VARIANCE: Final[float] = 0.25
+    # Between-player variance of true quality (sigma_b^2)..
+    PRIOR_VARIANCE: Final[float] = 0.088
 
     # ── Observation noise ─────────────────────────────────────────────────────────
 
-    # Within-player, match-to-match variance of ratings (sigma_o^2). Provisional: a
-    # rough estimate from early data, to be fitted offline in the workshop notebook.
-    OBSERVATION_VARIANCE: Final[float] = 0.58
+    # Within-player, match-to-match variance of ratings (sigma_o^2).
+    OBSERVATION_VARIANCE: Final[float] = 0.826
 
     # ── Drift ─────────────────────────────────────────────────────────────────────
 
-    # Variance added to a player's true-quality estimate per in-game season elapsed
-    # since their previous rated appearance (q). 0 gives a plain shrunk mean.
-    # Provisional: kept at 0 until the workshop notebook shows drift improves
-    # held-out error.
+    # Drift (q): 0 because only one career spans seasons, so the data can't yet
+    # identify it. Notebook 06 applies the adoption rule on every re-run.
     SEASON_DRIFT_VARIANCE: Final[float] = 0.0
 
     def calculate_player_rating(

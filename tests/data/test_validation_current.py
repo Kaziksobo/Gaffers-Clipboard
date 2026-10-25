@@ -31,8 +31,16 @@ def _header_text(path: Path) -> str:
 
 
 def test_the_validation_suite_exists() -> None:
-    """The six validation notebooks are present."""
-    assert [p.name[:2] for p in _NOTEBOOKS] == ["00", "01", "02", "03", "04", "05"]
+    """The seven validation notebooks are present."""
+    assert [p.name[:2] for p in _NOTEBOOKS] == [
+        "00",
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+    ]
 
 
 @pytest.mark.parametrize("path", _NOTEBOOKS, ids=lambda p: p.stem)

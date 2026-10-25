@@ -46,7 +46,7 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
 - Lazy-loads static config from `config/` on first use via a shared `_load_config()` helper (one JSON file per service; currently `performance_weights.json` and `performance_means_stds.json`)
 - Delegates to Analytics Services in `src/services/analytics/`
 - Analytics Services may only be called by AnalyticsEngine, not by app.py or DataManager directly
-- Currently has one service: `MatchRatingsService`. New analytics features add new services here.
+- Services so far: `MatchRatingsService`, `FormScoresService`, `ReliableRatingService`. New analytics features add new services here.
 
 ### The Five Golden Rules
 
@@ -127,7 +127,7 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
 **Matches:**
 - `add_match(...)` — validate and persist a complete match record
 - `get_latest_match_in_game_date()` → `datetime | None`
-- `get_player_rating_histories(player_ids)` → `list[PlayerRatingHistory]` — rated appearances per player, for form scoring
+- `get_player_rating_histories(player_ids)` → `list[PlayerRatingHistory]` — rated appearances per player, for form scoring and reliable ratings
 - `refresh_matches()` — reload matches from disk into memory cache
 
 ### `AnalyticsEngine` (`src/analytics_engine.py`) — what app.py calls
@@ -138,6 +138,8 @@ App (src/app.py)                    ← sole view interactor, sole orchestrator
   - Returns `None` if config is unavailable or player minutes are insufficient
 - `calculate_form_scores(histories)` → `list[PlayerForm]`
   - Pure and config-free; lazily creates `FormScoresService` and preserves input order
+- `calculate_reliable_ratings(histories)` → `dict[int, ReliableRating]`
+  - Pure and config-free; lazily creates `ReliableRatingService`; keyed by player ID, with players who have no rated appearances omitted (use `.get()`). Internal only: `app.py` has no passthrough until a consumer exists
 
 ---
 
@@ -259,13 +261,14 @@ Every new analytics capability follows the same pattern:
 Offline only: `workshop/lib` is excluded from ruff and ty (the tests that cover it are linted). Details in `workshop/README.md`; the step-by-step for adding matches is `docs/adding_career_data.md`.
 - **Data:** career exports live in `datasets/careers/<career>/` with a `datasets/careers.toml` manifest. Never touch the app's live `data/` folder. Add or update a career with `scripts/import_career.py` (validates, strips stale stored ratings).
 - **Config generation:** `uv run python scripts/refit_config.py [--import <export folder>] [--promote]` fits weights, means and stds on all careers (`workshop/lib/fit.py`: PCA with MCD per position, the goalkeeper heuristic, rare-event std floor, derived wing-back/wide-midfielder/CAM sections blended into their own fits as rows accumulate). Without `--promote` it only previews. `config/fit_manifest.json` records what the live config was fitted on; tests refit those sources and require an exact match.
-- **Validation:** `uv run python scripts/run_validation.py` executes `workshop/validation/*.ipynb` (fit stability via leave-one-career-out, construct validity, distributions, goal rescue, reliability, sensitivity) against the live config; narrative is computed so nothing stale is stored.
+- **Validation:** `uv run python scripts/run_validation.py` executes `workshop/validation/*.ipynb` (fit stability via leave-one-career-out, construct validity, distributions, goal rescue, reliability, sensitivity, and the reliable-rating fit) against the live config; narrative is computed so nothing stale is stored. Notebook 06's constants are pasted into `reliable_rating_service.py` by hand: re-run it after any rating-service or config change, because its config hash does not cover hand-set constants.
 - **Hand-set bonus values** (goal alpha, assist gamma, wasteful-finisher scale, goalkeeper floors) are constants in `match_ratings_service.py`, changed by hand.
 - The original `*_weights_calculations` notebooks and the pre-consolidation validation notebooks are retired; they remain in git history.
 
 ### Upcoming Phase 8 features (from roadmap)
 Any feature that involves training follows the offline-weight / online-inference pattern:
 - **Form Scores** — descriptive recent-form indicator: absolute (not relative to the player's own baseline, and not position-related) EMA of match ratings (alpha 0.3), seeded at, and decaying toward, 6.0 (the ratings sigmoid midpoint) the longer a player goes unrated; only rated appearances count. Output is a continuous `form_score` in [-1, 1] that the theme maps to a red-amber-green gradient. No model training and no offline fitting: all constants (`ALPHA`, `PRIOR_MEAN`, `DECAY_PER_MISSED_MATCH`, `MIN_APPEARANCES`, `FORM_SATURATION_UP`, `FORM_SATURATION_DOWN`) are hard-coded at the top of `form_scores_service.py` (no JSON config file for this service). The EMA series is computed on read from stored `match_rating` values (never persisted), ordered by (`in_game_date`, match id); decay uses k = tracked team matches (matches with player performances recorded) since the last rated appearance. Backtests show form does not predict future ratings: never feed it into the Lineup Optimizer or any predictive model.
+- **Reliable Rating** — internal estimate of a player's underlying quality, never shown: a local-level (Kalman-style) filter over rated appearances, started at a fitted grand mean (`PRIOR_MEAN`, about 6.4, not the 6.0 sigmoid midpoint) with a prior worth about 9 appearances, plus an optional per-season drift (`SEASON_DRIFT_VARIANCE`, 0 until two careers span seasons). Constants are hard-coded at the top of `reliable_rating_service.py` and fitted offline by `workshop/validation/06_reliable_rating.ipynb` (helpers in `workshop/lib/reliable_rating.py`); returns `None` with no rated appearances. Fitted on top-flight careers only, so it may sit too high for lower-level squads. Ranks players for the Lineup Optimizer and top performers; distinct from Form Scores.
 - **Win-Condition Extraction** — *deferred until more data exists (especially lower-win-rate careers such as Ipswich).* Planned: ridge regression on goal difference using per-minute team-stat differentials (controllable stats only; `xg`, `shots` and `saves` excluded), trained offline with coefficients shipped as JSON. Random Forest permutation importance is an offline cross-check only.
 - **Tactical Fingerprinting** — K-Means clustering (K=3–5) trained offline; ship centroids plus scaler means/stds. Shares per-minute feature extraction with Win-Condition.
 - **Expected Rating** — *shelved until after Tactical Fingerprinting and the other Phase 8 analytics.* Per-match rating prediction shown as a range with its components. Candidate features must each earn their place in walk-forward backtests; training libraries are workshop-only and the shipped model is exported to JSON and evaluated with numpy (tree ensembles included, if they win). Findings so far: the shrunk player mean and an opponent effect help; recent form, rest, workload, home/away, competition and injury return showed no detectable effect. Existing data only (no new capture). Full plan: `docs/expected_rating_plan.md`.
@@ -307,14 +310,16 @@ Use `pytest-mock` for mocking service dependencies. Never mock `DataManager` in 
 ```
 src/
 ├── contracts/          # Protocol/TypedDict definitions — layer boundaries
-│   ├── analytics.py    # Analytics service I/O and config types (planned)
+│   ├── analytics.py    # Analytics service I/O and config types
 │   ├── backend.py      # Cross-layer payload types and type aliases
 │   ├── coordinates.py  # OCR region bound types
 │   ├── ocr.py          # OCR preprocessing types
 │   └── ui.py           # UI-layer Protocol definitions
 ├── services/
 │   ├── analytics/      # Analytics engine (Phase 8)
-│   │   └── match_ratings_service.py
+│   │   ├── form_scores_service.py
+│   │   ├── match_ratings_service.py
+│   │   └── reliable_rating_service.py
 │   ├── app/            # Business logic services (buffer, career, match, OCR, player, screenshot)
 │   └── data/           # Data persistence services (career, json, match, player)
 ├── views/              # Pure CustomTkinter UI — no business logic

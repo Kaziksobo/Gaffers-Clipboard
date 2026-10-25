@@ -297,6 +297,7 @@ def test_calculate_reliable_ratings_returns_ratings_keyed_by_player_id(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Each rated player gets an entry keyed by id, with values from the service."""
+    monkeypatch.setattr(ReliableRatingService, "PRIOR_MEAN", 6.0)
     monkeypatch.setattr(ReliableRatingService, "PRIOR_VARIANCE", 0.25)
     monkeypatch.setattr(ReliableRatingService, "OBSERVATION_VARIANCE", 0.58)
     monkeypatch.setattr(ReliableRatingService, "SEASON_DRIFT_VARIANCE", 0.0)
