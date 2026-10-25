@@ -111,7 +111,7 @@ _Excess retention = positive involvements − (possession lost $\times\ 3.0$)._
 |Ball-winner|tackles, tackle success, possession won, possession lost|$0.85$|$1.64$|$1.35$|
 |Creative|passes, pass accuracy, xT, dribbles, dribble success, sprint distance|$0.76$|$1.19$|$1.10$|
 
-The bounds are roughly the 90th and 99th percentile of CM games, so only very elite games qualify (about one in eight CM games is paid anything). Retention by goals conceded (4 means 4 or more), with a further $+0.1$ when the goals came from low-quality chances:
+The bounds are roughly the 90th and 99th percentile of CM games, so only very elite games qualify (about one in eight CM games is paid anything). Retention by goals conceded (4 means 4 or more):
 
 |Goals conceded|0|1|2|3|4|
 |---|---|---|---|---|---|
@@ -147,7 +147,7 @@ The bounds are roughly the 90th and 99th percentile of CM games, so only very el
 |---|---|---|---|---|---|
 |Retention|$1.0$|$1.0$|$0.6$|$0.2$|$0$|
 
-Goals from low-quality chances (opponent xG at most half the goals conceded) retain a further $+0.1$. At most $+1.0$.
+At most $+1.0$.
 
 **Dynamic Clean Sheet Bonus** Opponent goals $= 0$, scaled by $\min(\text{minutes}, 60)/60$ and the position ratio (CDM $0.65$, so at most $+0.39$). The tiers deliberately pay more for clean sheets against weak attacks:
 
@@ -197,7 +197,7 @@ Goals from low-quality chances (opponent xG at most half the goals conceded) ret
 |---|---|---|---|---|---|
 |Retention|$1.0$|$1.0$|$0.6$|$0.2$|$0$|
 
-Goals from low-quality chances (opponent xG at most half the goals conceded) retain a further $+0.1$. At most $+1.0$.
+At most $+1.0$.
 
 **Dynamic Clean Sheet Bonus** Opponent goals $= 0$, scaled by $\min(\text{minutes}, 60)/60$ and the position ratio (CB $1.0$). The tiers deliberately pay more for clean sheets against weak attacks:
 
@@ -224,7 +224,7 @@ Goals from low-quality chances (opponent xG at most half the goals conceded) ret
 |Stopper|tackles, tackle success, possession won, possession lost|$0.66$|$1.36$|$1.4$|
 |Attacking|dribbles, dribble success, sprint distance, xT, passes, pass accuracy|$0.46$|$1.11$|$0.9$|
 
-The bounds are roughly the 80th and 98th percentile of fullback games. Retention by goals conceded (4 means 4 or more), with a further $+0.1$ when the goals came from low-quality chances (opponent xG at most half the goals):
+The bounds are roughly the 80th and 98th percentile of fullback games. Retention by goals conceded (4 means 4 or more):
 
 |Goals conceded|0|1|2|3|4|
 |---|---|---|---|---|---|

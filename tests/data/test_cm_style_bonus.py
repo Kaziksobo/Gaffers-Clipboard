@@ -39,12 +39,11 @@ def test_retention_tables_follow_the_schedules_and_never_rise(
 ) -> None:
     """Ball-winner keeps less than creative as goals go in."""
     ball_winner = [
-        service._defensive_retention(g, 9.0, service.CM_BALLWINNER_RETENTION)
+        service._defensive_retention(g, service.CM_BALLWINNER_RETENTION)
         for g in range(7)
     ]
     creative = [
-        service._defensive_retention(g, 9.0, service.CM_CREATIVE_RETENTION)
-        for g in range(7)
+        service._defensive_retention(g, service.CM_CREATIVE_RETENTION) for g in range(7)
     ]
     assert ball_winner == pytest.approx([1.0, 1.0, 0.7, 0.4, 0.0, 0.0, 0.0])
     assert creative == pytest.approx([1.0, 1.0, 0.85, 0.6, 0.4, 0.4, 0.4])
@@ -66,11 +65,11 @@ def test_the_bonus_pays_the_better_style_not_the_sum(
 ) -> None:
     """With both styles elite the larger single bonus is paid."""
     both = {**_BALL_WINNER_Z, **_CREATIVE_Z}
-    clean = service._apply_cm_style_bonus(both, 0, 0.5, 90, 1.0)
+    clean = service._apply_cm_style_bonus(both, 0, 90, 1.0)
     assert clean == pytest.approx(max(service.CM_STYLE_WEIGHT.values()))
-    only_creative = service._apply_cm_style_bonus(_CREATIVE_Z, 0, 0.5, 90, 1.0)
+    only_creative = service._apply_cm_style_bonus(_CREATIVE_Z, 0, 90, 1.0)
     assert only_creative == pytest.approx(service.CM_STYLE_WEIGHT["Creative"])
-    after_four = service._apply_cm_style_bonus(both, 4, 4.0, 90, 1.0)
+    after_four = service._apply_cm_style_bonus(both, 4, 90, 1.0)
     assert after_four == pytest.approx(0.4 * service.CM_STYLE_WEIGHT["Creative"])
 
 

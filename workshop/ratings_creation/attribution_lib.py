@@ -250,15 +250,14 @@ class AttributionService(MatchRatingsService):
         pos: str,
         z_scores: dict,
         opponent_goals: float,
-        opponent_xg: float,
         minutes_played: float,
         impact_scalar: float,
     ) -> float:
         value = super()._apply_defensive_quality_bonus(
-            pos, z_scores, opponent_goals, opponent_xg, minutes_played, impact_scalar
+            pos, z_scores, opponent_goals, minutes_played, impact_scalar
         )
         quality = self._defensive_quality(pos, z_scores, minutes_played)
-        retention = self._defensive_retention(opponent_goals, opponent_xg)
+        retention = self._defensive_retention(opponent_goals)
         weights = self.weights.get(pos, {})
         keys = self._DEF_QUALITY_STATS[pos]
         total = sum(weights.get(k.removesuffix("_z"), 0.0) for k in keys)
@@ -266,7 +265,7 @@ class AttributionService(MatchRatingsService):
         text = (
             f"avg z={avg:.3f} mapped {self.DEF_QUALITY_LOW[pos]}->{self.DEF_QUALITY_HIGH[pos]} "
             f"-> Q={quality:.3f}  x impact {impact_scalar:.3f} x weight {self.DEF_QUALITY_WEIGHT} "
-            f"x retention {retention:.2f} (conceded {int(opponent_goals)}, opp xG {opponent_xg:.2f})"
+            f"x retention {retention:.2f} (conceded {int(opponent_goals)})"
         )
         self._log_component(f"Defensive quality bonus ({pos})", value, text)
         return value
@@ -281,12 +280,11 @@ class AttributionService(MatchRatingsService):
         self,
         z_scores: dict,
         opponent_goals: float,
-        opponent_xg: float,
         minutes_played: float,
         impact_scalar: float,
     ) -> float:
         value = super()._apply_fb_style_bonus(
-            z_scores, opponent_goals, opponent_xg, minutes_played, impact_scalar
+            z_scores, opponent_goals, minutes_played, impact_scalar
         )
         parts = []
         for style, table in (
@@ -294,7 +292,7 @@ class AttributionService(MatchRatingsService):
             ("Attacking", self.FB_ATTACKING_RETENTION),
         ):
             q = self._fb_style_quality(style, z_scores, minutes_played)
-            r = self._defensive_retention(opponent_goals, opponent_xg, table)
+            r = self._defensive_retention(opponent_goals, table)
             parts.append((style, q, self.FB_STYLE_WEIGHT[style], r))
         paid = max(parts, key=lambda x: x[1] * x[2] * x[3])[0] if value > 0 else "none"
         self._log_component("Fullback style bonus", value, self._style_text(parts, paid, impact_scalar))
@@ -304,12 +302,11 @@ class AttributionService(MatchRatingsService):
         self,
         z_scores: dict,
         opponent_goals: float,
-        opponent_xg: float,
         minutes_played: float,
         impact_scalar: float,
     ) -> float:
         value = super()._apply_cm_style_bonus(
-            z_scores, opponent_goals, opponent_xg, minutes_played, impact_scalar
+            z_scores, opponent_goals, minutes_played, impact_scalar
         )
         parts = []
         for style, table in (
@@ -317,7 +314,7 @@ class AttributionService(MatchRatingsService):
             ("Creative", self.CM_CREATIVE_RETENTION),
         ):
             q = self._cm_style_quality(style, z_scores, minutes_played)
-            r = self._defensive_retention(opponent_goals, opponent_xg, table)
+            r = self._defensive_retention(opponent_goals, table)
             parts.append((style, q, self.CM_STYLE_WEIGHT[style], r))
         paid = max(parts, key=lambda x: x[1] * x[2] * x[3])[0] if value > 0 else "none"
         self._log_component("CM style bonus", value, self._style_text(parts, paid, impact_scalar))

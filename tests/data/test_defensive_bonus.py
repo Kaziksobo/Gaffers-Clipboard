@@ -29,24 +29,9 @@ def test_retention_follows_the_schedule_and_never_rises(
     service: MatchRatingsService,
 ) -> None:
     """Retention is 1, 1, 0.6, 0.2, 0 by goals conceded and never increases."""
-    for xg in (0.1, 0.8, 1.4, 2.5, 4.0, 9.0):
-        series = [service._defensive_retention(g, xg) for g in range(7)]
-        assert series == sorted(series, reverse=True), (xg, series)
-        assert series[4:] == [0.0, 0.0, 0.0]
-    assert service._defensive_retention(0, 3.0) == 1.0
-    assert service._defensive_retention(1, 3.0) == 1.0
-    assert service._defensive_retention(2, 3.0) == pytest.approx(0.6)
-    assert service._defensive_retention(3, 5.0) == pytest.approx(0.2)
-
-
-def test_goals_from_low_quality_chances_keep_a_little_more(
-    service: MatchRatingsService,
-) -> None:
-    """The uplift applies when opponent xG is at most half the goals, never at 4+."""
-    assert service._defensive_retention(2, 0.9) == pytest.approx(0.7)
-    assert service._defensive_retention(2, 1.1) == pytest.approx(0.6)
-    assert service._defensive_retention(3, 1.5) == pytest.approx(0.3)
-    assert service._defensive_retention(4, 0.1) == 0.0
+    series = [service._defensive_retention(g) for g in range(7)]
+    assert series == pytest.approx([1.0, 1.0, 0.6, 0.2, 0.0, 0.0, 0.0])
+    assert series == sorted(series, reverse=True)
 
 
 @pytest.mark.parametrize("pos", ["CB", "CDM"])
@@ -65,13 +50,13 @@ def test_quality_bonus_is_quality_times_impact_times_retention(
     service: MatchRatingsService, pos: str
 ) -> None:
     """The bonus multiplies the three factors and shrinks with goals conceded."""
-    full = service._apply_defensive_quality_bonus(pos, _ELITE_Z, 0, 0.5, 90, 1.0)
+    full = service._apply_defensive_quality_bonus(pos, _ELITE_Z, 0, 90, 1.0)
     assert full == pytest.approx(service.DEF_QUALITY_WEIGHT)
-    half = service._apply_defensive_quality_bonus(pos, _ELITE_Z, 0, 0.5, 90, 0.5)
+    half = service._apply_defensive_quality_bonus(pos, _ELITE_Z, 0, 90, 0.5)
     assert half == pytest.approx(0.5 * full)
-    two = service._apply_defensive_quality_bonus(pos, _ELITE_Z, 2, 3.0, 90, 1.0)
+    two = service._apply_defensive_quality_bonus(pos, _ELITE_Z, 2, 90, 1.0)
     assert two == pytest.approx(0.6 * full)
-    assert service._apply_defensive_quality_bonus(pos, _ELITE_Z, 4, 3.0, 90, 1.0) == 0
+    assert service._apply_defensive_quality_bonus(pos, _ELITE_Z, 4, 90, 1.0) == 0
 
 
 @pytest.mark.parametrize("pos", ["CB", "CDM"])

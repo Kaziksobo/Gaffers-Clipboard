@@ -39,11 +39,10 @@ def test_retention_tables_follow_the_schedules_and_never_rise(
 ) -> None:
     """The stopper keeps less than the attacking style as goals go in."""
     stopper = [
-        service._defensive_retention(g, 9.0, service.FB_STOPPER_RETENTION)
-        for g in range(7)
+        service._defensive_retention(g, service.FB_STOPPER_RETENTION) for g in range(7)
     ]
     attacking = [
-        service._defensive_retention(g, 9.0, service.FB_ATTACKING_RETENTION)
+        service._defensive_retention(g, service.FB_ATTACKING_RETENTION)
         for g in range(7)
     ]
     assert stopper == pytest.approx([1.0, 1.0, 0.7, 0.4, 0.0, 0.0, 0.0])
@@ -67,12 +66,12 @@ def test_the_bonus_pays_the_better_style_not_the_sum(
 ) -> None:
     """With both styles elite, the larger single bonus is paid."""
     both = {**_STOPPER_Z, **_ATTACKING_Z}
-    clean = service._apply_fb_style_bonus(both, 0, 0.5, 90, 1.0)
+    clean = service._apply_fb_style_bonus(both, 0, 90, 1.0)
     assert clean == pytest.approx(max(service.FB_STYLE_WEIGHT.values()))
-    only_attacking = service._apply_fb_style_bonus(_ATTACKING_Z, 0, 0.5, 90, 1.0)
+    only_attacking = service._apply_fb_style_bonus(_ATTACKING_Z, 0, 90, 1.0)
     assert only_attacking == pytest.approx(service.FB_STYLE_WEIGHT["Attacking"])
     # four goals conceded: the stopper keeps nothing, the attacking style keeps 40%
-    after_four = service._apply_fb_style_bonus(both, 4, 4.0, 90, 1.0)
+    after_four = service._apply_fb_style_bonus(both, 4, 90, 1.0)
     assert after_four == pytest.approx(0.4 * service.FB_STYLE_WEIGHT["Attacking"])
 
 
@@ -111,8 +110,8 @@ def test_attacking_style_keeps_a_larger_share_of_its_bonus_when_conceding(
     """Three conceded: the stopper keeps 40% of its bonus, the attacking style 60%."""
     kept = {}
     for style, z in (("Stopper", _STOPPER_Z), ("Attacking", _ATTACKING_Z)):
-        clean = service._apply_fb_style_bonus(z, 0, 3.0, 90, 1.0)
-        three = service._apply_fb_style_bonus(z, 3, 3.0, 90, 1.0)
+        clean = service._apply_fb_style_bonus(z, 0, 90, 1.0)
+        three = service._apply_fb_style_bonus(z, 3, 90, 1.0)
         kept[style] = three / clean
     assert kept["Stopper"] == pytest.approx(0.4)
     assert kept["Attacking"] == pytest.approx(0.6)
