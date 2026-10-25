@@ -203,24 +203,27 @@ Goals from low-quality chances (opponent xG at most half the goals conceded) ret
 
 #### Fullback (LB / RB)
 
-**Conditional Z-Score Floors** The Tactical Instruction Floor is conditional on whether the Third CB archetype is active. The archetype is active when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.0$.
+**Z-Score Floors** None applied in the positional modifier (the old tactical-instruction floor was removed).
 
-|Metric|Third CB Active|Third CB Inactive|
-|---|---|---|
-|`dribbles_p90_z`|$0.00$ (lifted to neutral)|$-0.50$|
-|`xt_bonus_p90_z`|$0.00$ (lifted to neutral)|$-0.50$|
+**Output Multipliers** Goal and assist bonuses are post-sigmoid at the fullback rates.
 
-**Output Multipliers** Goal coefficient $G_{pos} = 0.5$, Assists $\times\ 0.4$.
+**Fullback Style Bonus** _(replaces the Third CB, Express Train and Wide Playmaker masteries)_ The better of two style bonuses is paid, not their sum, so a fullback is rewarded for his best style without penalty for the other. A style's quality $Q \in [0, 1]$ is the fitted-weight average of its $z$-scores, mapped linearly between the bounds below, and $Q = 0$ under 30 minutes. Each bonus is $Q \times \text{impact scalar} \times \text{weight} \times \text{retention}$.
 
-**Third CB Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.0$; scales at $+0.25$ per $\sigma$ above threshold.
+|Style|Stats|$Q = 0$ at|$Q = 1$ at|Weight|
+|---|---|---|---|---|
+|Stopper|tackles, tackle success, possession won, possession lost|$0.66$|$1.36$|$1.4$|
+|Attacking|dribbles, dribble success, sprint distance, xT, passes, pass accuracy|$0.46$|$1.11$|$0.9$|
 
-**Express Train Bonus** Activates when $\min(\text{sprint\_z},\ \text{xt\_z}) > 1.0$; scales at $+0.20$ per $\sigma$ above threshold.
+The bounds are roughly the 80th and 98th percentile of fullback games. Retention by goals conceded (4 means 4 or more), with a further $+0.1$ when the goals came from low-quality chances (opponent xG at most half the goals):
 
-**Wide Playmaker Bonus** Activates when $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.0$; scales at $+0.15$ per $\sigma$ above threshold.
+|Goals conceded|0|1|2|3|4|
+|---|---|---|---|---|---|
+|Stopper|$1.0$|$1.0$|$0.7$|$0.4$|$0$|
+|Attacking|$1.0$|$1.0$|$0.85$|$0.6$|$0.4$|
 
-**Dynamic Clean Sheet Bonus** Identical to CB logic.
+**Dynamic Clean Sheet Bonus** The CB tiers at a fullback ratio of $0.7$ (so at most $+0.42$).
 
-**Collapse Penalty** Flat $-0.30$ if opponent goals $\geq 3$ and minutes $\geq 60$.
+**Collapse Penalty** Flat $-0.30$ if opponent goals $\geq 3$ and minutes $\geq 60$. Quality does not soften it.
 
 ---
 
