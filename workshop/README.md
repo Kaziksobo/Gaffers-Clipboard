@@ -6,6 +6,8 @@ app's live `data/` folder.
 
 ## Adding new data and refreshing the config
 
+Full step-by-step guide: [`docs/adding_career_data.md`](../docs/adding_career_data.md). In short:
+
 Collected more matches (say 20 more Ipswich ones)? From the repository root:
 
 ```

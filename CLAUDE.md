@@ -256,7 +256,7 @@ Every new analytics capability follows the same pattern:
 - `match_rating` stored on `OutfieldPlayerPerformance` and `GoalkeeperPerformance` is this algorithm's output, not EA's native rating
 
 ### Rating calibration and validation (`workshop/`, `datasets/`, `scripts/`)
-Offline only: `workshop/lib` is excluded from ruff and ty (the tests that cover it are linted). Details in `workshop/README.md`.
+Offline only: `workshop/lib` is excluded from ruff and ty (the tests that cover it are linted). Details in `workshop/README.md`; the step-by-step for adding matches is `docs/adding_career_data.md`.
 - **Data:** career exports live in `datasets/careers/<career>/` with a `datasets/careers.toml` manifest. Never touch the app's live `data/` folder. Add or update a career with `scripts/import_career.py` (validates, strips stale stored ratings).
 - **Config generation:** `uv run python scripts/refit_config.py [--import <export folder>] [--promote]` fits weights, means and stds on all careers (`workshop/lib/fit.py`: PCA with MCD per position, the goalkeeper heuristic, rare-event std floor, derived wing-back/wide-midfielder/CAM sections blended into their own fits as rows accumulate). Without `--promote` it only previews. `config/fit_manifest.json` records what the live config was fitted on; tests refit those sources and require an exact match.
 - **Validation:** `uv run python scripts/run_validation.py` executes `workshop/validation/*.ipynb` (fit stability via leave-one-career-out, construct validity, distributions, goal rescue, reliability, sensitivity) against the live config; narrative is computed so nothing stale is stored.
@@ -270,7 +270,7 @@ Any feature that involves training follows the offline-weight / online-inference
 - **Tactical Fingerprinting** — K-Means clustering (K=3–5) trained offline; ship centroids plus scaler means/stds. Shares per-minute feature extraction with Win-Condition.
 - **Expected Rating** — *shelved until after Tactical Fingerprinting and the other Phase 8 analytics.* Per-match rating prediction shown as a range with its components. Candidate features must each earn their place in walk-forward backtests; training libraries are workshop-only and the shipped model is exported to JSON and evaluated with numpy (tree ensembles included, if they win). Findings so far: the shrunk player mean and an opponent effect help; recent form, rest, workload, home/away, competition and injury return showed no detectable effect. Existing data only (no new capture). Full plan: `docs/expected_rating_plan.md`.
 - **Red Zone Injury Flags** — rule-based workload heuristic (rolling minutes and sprint load against the player's own baseline), last in the order. Logistic Regression is shelved: ~30–60 labelled injuries exist against the ~200–500 needed.
-- **Additional analytics** — Luck Gauge / Expected Points (Poisson on xG), Contract & Value Planner, Progression Watch, Best-Position Finder, Matchup Matrix, Season Review. All numpy / pure Python, no training.
+- **Additional analytics** — Luck Gauge / Expected Points (Poisson on xG), Contract & Value Planner, Progression Watch, Best-Position Finder and Role Profile (a player's actual role from per-match style scores), Matchup Matrix, Season Review. All numpy / pure Python, no training.
 
 **Scrapped:** Monte-Carlo Season Predictor — it needs opponent standings data, which the app does not track.
 

@@ -142,13 +142,17 @@ def test_pooled_fit_is_well_formed() -> None:
 
 def test_pooling_provenance_is_recorded() -> None:
     """The fit result says which careers and match ranges fed it."""
+    ipswich = [m["id"] for m in datasets.load_career("ipswich_3").matches]
     result = fit.fit_positions(
         fit.load_sources({"valencia_cf_1": (1, 60), "ipswich_3": None}),
         positions=["CB"],
     )
     assert result.sources == {
         "valencia_cf_1": {"match_ids": [1, 60], "n_matches": 60},
-        "ipswich_3": {"match_ids": [1, 22], "n_matches": 22},
+        "ipswich_3": {
+            "match_ids": [min(ipswich), max(ipswich)],
+            "n_matches": len(ipswich),
+        },
     }
 
 
@@ -219,10 +223,15 @@ def test_policy_touches_only_rare_stats_below_the_floor() -> None:
             assert after["mean"] == before["mean"]
             if stat not in fit.RARE_EVENT_COLUMNS:
                 assert after == before
-    assert floored.rare_events["RB"]["goals_p90"] == 6
-    assert floored.means_stds["RB"]["goals_p90"]["std"] == pytest.approx(0.08)
-    assert plain.means_stds["RB"]["goals_p90"]["std"] < 0.08
-    assert floored.means_stds["CDM"]["offsides_p90"]["std"] == 0.0
+    policy = fit.RareEventPolicy()
+    for section, counts in floored.rare_events.items():
+        for stat in ("goals_p90", "assists_p90"):
+            events = counts[stat]
+            before = plain.means_stds[section][stat]
+            after = floored.means_stds[section][stat]
+            assert after["std"] == pytest.approx(policy.apply(before["std"], events))
+            if events == 0:  # no events: the stat stays inactive
+                assert after == before
     assert floored.policy == {
         "floor": 0.08,
         "full_until_events": 10,

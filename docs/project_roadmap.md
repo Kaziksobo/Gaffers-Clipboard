@@ -199,6 +199,7 @@ The goal of this phase is to transform the application from a raw data-entry too
 	- [ ] **Contract & Value Planner**: Expiry timeline, rating-per-wage efficiency, and sell-high flags (older, high value, declining form), built from the financial snapshots.
 	- [ ] **Progression Watch**: Trend fit over attribute history to flag players developing or regressing faster than their age suggests; feeds the Deep-Dive trajectory charts.
 	- [ ] **Best-Position Finder**: Show which position each versatile player rates best in, reusing the multi-position logic in the ratings service.
+	- [ ] **Role Profile**: Summarise the role a player actually plays from his stats. Each match gets continuous style scores (for fullbacks: Stopper, Progressor, Creator; the same per-match scores the style-aware defensive bonuses use), and the profile aggregates stored scores over time: share of matches by dominant style and average quality per style. Per-match and stateless in the rating service; the aggregation is a separate analytics service built with the Best-Position Finder.
 	- [ ] **Matchup Matrix**: Record which opponent archetypes you beat or struggle against (depends on Tactical Fingerprinting); core input for Match Day Prep.
 	- [ ] **Season Review**: End-of-season summary (record, top performers, xPts vs points, biggest risers) exported as a shareable image.
 - [ ] **UI Overhaul: The Manager's Office & Squad Hub:**
