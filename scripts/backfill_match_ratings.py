@@ -15,20 +15,18 @@ shape when saving.
 Usage:
     python scripts/backfill_match_ratings.py
     python scripts/backfill_match_ratings.py --overwrite
+    python scripts/backfill_match_ratings.py --overwrite --dry-run
+    python scripts/backfill_match_ratings.py --career arsenal_2 ipswich_3
 """
 
 import argparse
 import json
 import logging
 from pathlib import Path
-from typing import cast
+from typing import NamedTuple, cast
 
-from src.contracts.backend import (
-    MatchOverviewPayload,
-    PerformanceMeansStdsMap,
-    PerformanceWeightsMap,
-    PlayerPerformancePayload,
-)
+from src.contracts.analytics import PerformanceMeansStdsMap, PerformanceWeightsMap
+from src.contracts.backend import MatchOverviewPayload, PlayerPerformancePayload
 from src.services.analytics.match_ratings_service import MatchRatingsService
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -190,20 +188,40 @@ def load_matches_container(
     return None
 
 
+class RatingChange(NamedTuple):
+    """A single edit to a performance's rating (``None`` means no value)."""
+
+    old: object
+    new: object
+
+    @property
+    def is_value_change(self) -> bool:
+        """Whether the stored rating value actually differs."""
+        return self.old != self.new
+
+
+def format_rating(value: object) -> str:
+    """Format a rating for log output."""
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return f"{value:.4f}"
+    return "none" if value is None else str(value)
+
+
 def copy_legacy_rating_if_present(
     perf: dict[str, object],
     overwrite_existing: bool,
-) -> bool:
+) -> RatingChange | None:
     """Copy legacy rating into match_rating when appropriate."""
     if not overwrite_existing and "rating" in perf:
+        change = RatingChange(perf.get("match_rating"), perf.get("rating"))
         perf["match_rating"] = perf.get("rating")
         perf.pop("rating", None)
-        return True
+        return change
 
     if overwrite_existing and "rating" in perf:
         perf.pop("rating", None)
 
-    return False
+    return None
 
 
 def calculate_match_rating(
@@ -243,13 +261,14 @@ def update_performance_rating(
     team_name: str,
     career_name: str,
     overwrite_existing: bool,
-) -> bool:
-    """Update a single performance entry and return whether it changed."""
+) -> RatingChange | None:
+    """Update a single performance entry and return the change made, if any."""
     if not overwrite_existing and "match_rating" in perf:
-        return False
+        return None
 
-    if copy_legacy_rating_if_present(perf, overwrite_existing):
-        return True
+    legacy_change = copy_legacy_rating_if_present(perf, overwrite_existing)
+    if legacy_change is not None:
+        return legacy_change
 
     performance_type = perf.get("performance_type")
     perf_payload = cast(PlayerPerformancePayload, perf)
@@ -263,16 +282,101 @@ def update_performance_rating(
         career_name=career_name,
     )
     if rating is None:
-        return False
+        return None
 
+    change = RatingChange(perf.get("match_rating"), rating)
     perf["match_rating"] = rating
-    return True
+    return change
+
+
+def change_verb(overwrite_existing: bool, dry_run: bool) -> str:
+    """Return the log verb describing a change for the current run mode."""
+    if dry_run:
+        return "Would change" if overwrite_existing else "Would set"
+    return "Changed" if overwrite_existing else "Set"
+
+
+def log_rating_change(
+    verb: str,
+    match: dict[str, object],
+    match_overview: MatchOverviewPayload,
+    perf: dict[str, object],
+    change: RatingChange,
+) -> None:
+    """Log a single old -> new rating change with its match and player."""
+    logger.info(
+        "  %s | match %s (%s) | player %s: %s -> %s",
+        verb,
+        match.get("id"),
+        match_overview.get("in_game_date"),
+        perf.get("player_id"),
+        format_rating(change.old),
+        format_rating(change.new),
+    )
+
+
+def log_career_summary(
+    career_dir: Path,
+    value_changes: int,
+    updates_made: int,
+    dry_run: bool,
+) -> None:
+    """Log how many ratings changed in value versus structure-only edits."""
+    logger.info(
+        "%s %s ratings for career: %s (%s unchanged in value)",
+        "Would update" if dry_run else "Updated",
+        value_changes,
+        career_dir.name,
+        updates_made - value_changes,
+    )
+
+
+def backfill_match(
+    match: dict[str, object],
+    ratings_service: MatchRatingsService,
+    team_name: str,
+    default_half_length: int,
+    career_name: str,
+    overwrite_existing: bool,
+    verb: str,
+) -> tuple[int, int]:
+    """Update every performance in a match; return (edits, value changes)."""
+    match_overview = resolve_match_overview(match)
+    match_half_length = coerce_half_length(
+        match_overview.get("half_length"), default_half_length
+    )
+    updates_made = 0
+    value_changes = 0
+
+    for perf in resolve_match_performances(match):
+        if not isinstance(perf, dict):
+            continue
+
+        change = update_performance_rating(
+            perf=perf,
+            ratings_service=ratings_service,
+            match_overview=match_overview,
+            match_half_length=match_half_length,
+            team_name=team_name,
+            career_name=career_name,
+            overwrite_existing=overwrite_existing,
+        )
+        if change is None:
+            continue
+
+        updates_made += 1
+        if change.is_value_change:
+            value_changes += 1
+            log_rating_change(verb, match, match_overview, perf, change)
+
+    return updates_made, value_changes
 
 
 def backfill_career(
     career_dir: Path,
     ratings_service: MatchRatingsService,
     overwrite_existing: bool,
+    dry_run: bool = False,
 ) -> None:
     # sourcery skip: low-code-quality
     """Process a single career directory to backfill match ratings.
@@ -280,6 +384,8 @@ def backfill_career(
     Args:
         career_dir (Path): The path to the specific career directory.
         ratings_service (MatchRatingsService): The initialized ratings service.
+        overwrite_existing (bool): Recalculate ratings that already exist.
+        dry_run (bool): Report changes without writing them to disk.
     """
     context = resolve_career_context(career_dir)
     if context is None:
@@ -291,42 +397,33 @@ def backfill_career(
     if matches_result is None:
         return
     matches, matches_container = matches_result
+    verb = change_verb(overwrite_existing, dry_run)
     updates_made = 0
+    value_changes = 0
 
     for match in matches:
         if not isinstance(match, dict):
             continue
 
-        match_overview = resolve_match_overview(match)
-        performances = resolve_match_performances(match)
-        match_half_length = coerce_half_length(
-            match_overview.get("half_length"), half_length
+        match_updates, match_value_changes = backfill_match(
+            match=match,
+            ratings_service=ratings_service,
+            team_name=team_name,
+            default_half_length=half_length,
+            career_name=career_dir.name,
+            overwrite_existing=overwrite_existing,
+            verb=verb,
         )
+        updates_made += match_updates
+        value_changes += match_value_changes
 
-        for perf in performances:
-            if not isinstance(perf, dict):
-                continue
-
-            if update_performance_rating(
-                perf=perf,
-                ratings_service=ratings_service,
-                match_overview=match_overview,
-                match_half_length=match_half_length,
-                team_name=team_name,
-                career_name=career_dir.name,
-                overwrite_existing=overwrite_existing,
-            ):
-                updates_made += 1
-
-    if updates_made > 0:
-        save_json_file(matches_path, matches_container)
-        logger.info(
-            "Updated %s ratings for career: %s",
-            updates_made,
-            career_dir.name,
-        )
-    else:
+    if updates_made == 0:
         logger.info("No missing ratings found for career: %s", career_dir.name)
+        return
+
+    if not dry_run:
+        save_json_file(matches_path, matches_container)
+    log_career_summary(career_dir, value_changes, updates_made, dry_run)
 
 
 def parse_args() -> argparse.Namespace:
@@ -339,6 +436,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Recalculate and overwrite existing match ratings.",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show the changes that would be made without writing any files.",
+    )
+    parser.add_argument(
+        "--career",
+        nargs="+",
+        metavar="FOLDER",
+        help="Only process these career folder names (e.g. arsenal_2).",
+    )
     return parser.parse_args()
 
 
@@ -346,8 +454,9 @@ def main() -> None:
     """Orchestrate the backfill process across all saved careers."""
     args = parse_args()
     logger.info(
-        "Starting Match Ratings Backfill Migration (overwrite=%s)...",
+        "Starting Match Ratings Backfill Migration (overwrite=%s, dry_run=%s)...",
         args.overwrite,
+        args.dry_run,
     )
 
     career_dirs = resolve_career_dirs()
@@ -355,11 +464,22 @@ def main() -> None:
         logger.error("No career directories found in %s", DATA_DIR)
         return
 
+    if args.career:
+        available = {path.name: path for path in career_dirs}
+        if unknown := [name for name in args.career if name not in available]:
+            logger.error(
+                "Unknown career(s): %s. Available: %s",
+                ", ".join(unknown),
+                ", ".join(sorted(available)),
+            )
+            return
+        career_dirs = [available[name] for name in dict.fromkeys(args.career)]
+
     weights, means_stds = load_analytics_configs()
     ratings_service = MatchRatingsService(weights=weights, means_stds=means_stds)
 
     for career_dir in career_dirs:
-        backfill_career(career_dir, ratings_service, args.overwrite)
+        backfill_career(career_dir, ratings_service, args.overwrite, args.dry_run)
 
     logger.info("Match Ratings Backfill Migration Complete.")
 
