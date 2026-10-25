@@ -76,21 +76,21 @@
       "career": "arsenal_2",
       "match_id": 11,
       "player_id": 33,
-      "expected": 7.9
+      "expected": 9.0
     },
     {
       "label": "cm-top@valencia_cf_1",
       "career": "valencia_cf_1",
       "match_id": 69,
       "player_id": 24,
-      "expected": 9.7
+      "expected": 9.9
     },
     {
       "label": "cm-cdm-blend",
       "career": "arsenal_2",
       "match_id": 24,
       "player_id": 14,
-      "expected": 7.4
+      "expected": 7.5
     },
     {
       "label": "cdm-pivot-gate@arsenal_2",

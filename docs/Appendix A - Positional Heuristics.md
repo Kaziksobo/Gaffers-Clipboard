@@ -104,11 +104,21 @@ _Excess retention = positive involvements − (possession lost $\times\ 3.0$)._
 
 **Output Multipliers** Goal coefficient $G_{pos} = 1.0$, Assists $\times\ 0.75$ (both scaled by isolation multiplier).
 
-**Enforcer Bonus** Activates when $\min(\text{tackles\_z},\ \text{poss\_won\_z}) > 1.5$; scales at $+0.25$ per $\sigma$ above threshold.
+**CM Style Bonus** _(replaces the Enforcer and Progression Engine masteries)_ Rewards a very elite game that does not depend on a goal or assist. The better of two style bonuses is paid, not their sum. A style's quality $Q \in [0, 1]$ is the fitted-weight average of its $z$-scores, mapped linearly between the bounds below, and $Q = 0$ under 30 minutes. Each bonus is $Q \times \text{impact scalar} \times \text{weight} \times \text{retention}$.
 
-**Progression Engine Bonus** Activates when $\min(\text{passes\_z},\ \text{dribbles\_z}) > 1.2$; scales at $+0.25$ per $\sigma$ above threshold.
+|Style|Stats|$Q = 0$ at|$Q = 1$ at|Weight|
+|---|---|---|---|---|
+|Ball-winner|tackles, tackle success, possession won, possession lost|$0.85$|$1.64$|$1.35$|
+|Creative|passes, pass accuracy, xT, dribbles, dribble success, sprint distance|$0.76$|$1.19$|$1.10$|
 
-**Clean Sheet Bonus** Flat $+0.15$ if opponent goals $= 0$ and minutes $\geq 60$.
+The bounds are roughly the 90th and 99th percentile of CM games, so only very elite games qualify (about one in eight CM games is paid anything). Retention by goals conceded (4 means 4 or more), with a further $+0.1$ when the goals came from low-quality chances:
+
+|Goals conceded|0|1|2|3|4|
+|---|---|---|---|---|---|
+|Ball-winner|$1.0$|$1.0$|$0.7$|$0.4$|$0$|
+|Creative|$1.0$|$1.0$|$0.85$|$0.6$|$0.4$|
+
+**Clean Sheet Bonus** The CB tiers at a CM ratio of $0.36$ (at most $+0.22$). There is no collapse penalty.
 
 ---
 

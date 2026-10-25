@@ -109,6 +109,26 @@ class MatchRatingsService:
         }
     )
 
+    # z-score keys that make up a central midfielder's style scores.
+    _CM_STYLE_STATS: Final = MappingProxyType(
+        {
+            "BallWinner": (
+                "tackles_p90_z",
+                "tackle_success_rate_z",
+                "possession_won_p90_z",
+                "possession_lost_p90_z",
+            ),
+            "Creative": (
+                "passes_p90_z",
+                "pass_accuracy_z",
+                "xt_bonus_p90_z",
+                "dribbles_p90_z",
+                "dribble_success_rate_z",
+                "distance_sprinted_p90_z",
+            ),
+        }
+    )
+
     # z-score keys that make up a defender's quality score, per position.
     _DEF_QUALITY_STATS: Final = MappingProxyType(
         {
@@ -271,6 +291,22 @@ class MatchRatingsService:
         {0: 1.0, 1: 1.0, 2: 0.70, 3: 0.40, 4: 0.0}
     )
     FB_ATTACKING_RETENTION: Final = MappingProxyType(
+        {0: 1.0, 1: 1.0, 2: 0.85, 3: 0.60, 4: 0.40}
+    )
+
+    # CM style bonus: same mechanism as the fullback style bonus, with the better of
+    # Ball-winner (defensive output) or Creative (passing, xT and dribbling), mapped
+    # from roughly the 90th (Q = 0) to the 99th (Q = 1) percentile of CM games, so
+    # only very elite games qualify. Calibrated so a very elite game with no goal or
+    # assist rates about 8.6. CM has no collapse penalty. (CM_PROGRESSION_BASE_EXCESS
+    # is no longer used by the service.)
+    CM_STYLE_WEIGHT: Final = MappingProxyType({"BallWinner": 1.35, "Creative": 1.10})
+    CM_STYLE_LOW: Final = MappingProxyType({"BallWinner": 0.85, "Creative": 0.76})
+    CM_STYLE_HIGH: Final = MappingProxyType({"BallWinner": 1.64, "Creative": 1.19})
+    CM_BALLWINNER_RETENTION: Final = MappingProxyType(
+        {0: 1.0, 1: 1.0, 2: 0.70, 3: 0.40, 4: 0.0}
+    )
+    CM_CREATIVE_RETENTION: Final = MappingProxyType(
         {0: 1.0, 1: 1.0, 2: 0.85, 3: 0.60, 4: 0.40}
     )
 
@@ -1658,18 +1694,34 @@ class MatchRatingsService:
         retention = self._defensive_retention(opponent_goals, opponent_xg)
         return quality * impact_scalar * self.DEF_QUALITY_WEIGHT * retention
 
-    def _fb_style_quality(
-        self, style: str, z_scores: dict[str, float], minutes_played: float
+    def _style_quality(
+        self,
+        weights_key: str,
+        keys: tuple[str, ...],
+        low: float,
+        high: float,
+        z_scores: dict[str, float],
+        minutes_played: float,
     ) -> float:
-        """Return a fullback style's quality score Q in [0, 1].
+        """Return a style's quality score Q in [0, 1].
 
         The fitted-weight average of the style's z-scores, mapped linearly from
-        FB_STYLE_LOW to FB_STYLE_HIGH. It is 0 below DEF_QUALITY_MIN_MINUTES.
+        ``low`` (Q = 0) to ``high`` (Q = 1). It is 0 below DEF_QUALITY_MIN_MINUTES.
+
+        Args:
+            weights_key: Config section whose fitted weights average the z-scores.
+            keys: z-score keys making up the style.
+            low: Weighted-average z-score that maps to Q = 0.
+            high: Weighted-average z-score that maps to Q = 1.
+            z_scores: Per-90 Z-scores for the player's performance metrics.
+            minutes_played: Minutes on the pitch.
+
+        Returns:
+            float: Quality score, 0.0 to 1.0.
         """
         if minutes_played < self.DEF_QUALITY_MIN_MINUTES:
             return 0.0
-        weights = self.weights.get("RB", {})  # RB and LB share one fit
-        keys = self._FB_STYLE_STATS[style]
+        weights = self.weights.get(weights_key, {})
         total = sum(weights.get(key.removesuffix("_z"), 0.0) for key in keys)
         if total <= 0.0:
             return 0.0
@@ -1680,8 +1732,60 @@ class MatchRatingsService:
             )
             / total
         )
-        low, high = self.FB_STYLE_LOW[style], self.FB_STYLE_HIGH[style]
         return max(0.0, min(1.0, (average - low) / (high - low)))
+
+    def _fb_style_quality(
+        self, style: str, z_scores: dict[str, float], minutes_played: float
+    ) -> float:
+        """Return a fullback style's quality score Q in [0, 1] (RB, LB share a fit)."""
+        return self._style_quality(
+            "RB",
+            self._FB_STYLE_STATS[style],
+            self.FB_STYLE_LOW[style],
+            self.FB_STYLE_HIGH[style],
+            z_scores,
+            minutes_played,
+        )
+
+    def _cm_style_quality(
+        self, style: str, z_scores: dict[str, float], minutes_played: float
+    ) -> float:
+        """Return a central midfielder style's quality score Q in [0, 1]."""
+        return self._style_quality(
+            "CM",
+            self._CM_STYLE_STATS[style],
+            self.CM_STYLE_LOW[style],
+            self.CM_STYLE_HIGH[style],
+            z_scores,
+            minutes_played,
+        )
+
+    def _apply_cm_style_bonus(
+        self,
+        z_scores: dict[str, float],
+        opponent_goals: int | float,
+        opponent_xg: float,
+        minutes_played: float,
+        impact_scalar: float,
+    ) -> float:
+        """Return the CM style bonus (rating points): the better style wins.
+
+        Each style pays quality x impact_scalar x weight x retention; only the
+        larger is paid.
+        """
+        best = 0.0
+        for style, table in (
+            ("BallWinner", self.CM_BALLWINNER_RETENTION),
+            ("Creative", self.CM_CREATIVE_RETENTION),
+        ):
+            quality = self._cm_style_quality(style, z_scores, minutes_played)
+            if quality <= 0.0:
+                continue
+            retention = self._defensive_retention(opponent_goals, opponent_xg, table)
+            best = max(
+                best, quality * impact_scalar * self.CM_STYLE_WEIGHT[style] * retention
+            )
+        return best
 
     def _apply_fb_style_bonus(
         self,
@@ -2047,8 +2151,9 @@ class MatchRatingsService:
 
         Philosophy:
         - Rewards goal and assist contributions equally, scaled by isolation.
-        - Rewards The Enforcer (defensive work rate) and Progression Engine
-        (passing and dribbling creativity) mastery archetypes proportionally.
+        - Rewards very elite non-scoring games through the style bonus: the
+        better of Ball-winner (defensive output) and Creative (passing, xT and
+        dribbling), shrinking as goals are conceded.
         - Clean sheet bonus uses the shared xG-tiered system at CM ratio,
         acknowledging the midfielder's role in defensive structure.
         - No collapse penalty — CM is not a primary defensive position.
@@ -2077,27 +2182,14 @@ class MatchRatingsService:
             assists, pos="CM", isolation_multiplier=isolation_multiplier
         )
 
-        # The Enforcer mastery
-        bonus += self._apply_mastery_bonus(
+        # Style bonus (better of Ball-winner / Creative, result-aware)
+        bonus += self._apply_cm_style_bonus(
             z_scores=z_scores,
-            key_a="tackles_p90_z",
-            key_b="possession_won_p90_z",
-            threshold=1.2,
+            opponent_goals=opponent_goals,
+            opponent_xg=opponent_xg,
+            minutes_played=minutes_played,
             impact_scalar=impact_scalar,
         )
-
-        # The Progression Engine mastery
-        progression_min = min(
-            z_scores.get("passes_p90_z", 0.0),
-            z_scores.get("dribbles_p90_z", 0.0),
-        )
-        if progression_min > 1.2:
-            excess = (progression_min - 1.2) + self.CM_PROGRESSION_BASE_EXCESS
-            bonus += (
-                min(excess, self.MASTERY_EXCESS_CAP)
-                * self.MASTERY_WEIGHT
-                * impact_scalar
-            )
 
         # xG-tiered clean sheet x linear ramp
         if opponent_goals == 0:
